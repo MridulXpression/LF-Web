@@ -9,4 +9,7 @@ export const endPoints = {
   getCategories: "/categories",
   getBanners: "/banners",
   getBlogs: "/get-blogs",
+  getBoards: "/wishlist-board",
+  addBoard: "/wishlist-board",
+  addProductToBoard: "/board-product",
 };

@@ -53,13 +53,6 @@ const ListingCard = ({
             <Zap size={16} className="text-orange-500" />
           </button> */}
         </div>
-
-        {/* Discount Badge */}
-        {/* {discountPercentage && (
-          <div className="absolute top-3 left-3 bg-red-500 text-white text-xs font-medium px-2 py-1 rounded">
-            {discountPercentage}% OFF
-          </div>
-        )} */}
       </div>
 
       {/* Product Info */}

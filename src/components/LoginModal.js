@@ -27,6 +27,7 @@ const PhoneAuthModal = ({ isOpen, setIsOpen }) => {
   const signInEndPoint = `${endPoints.signin}`; // For "Sign In" - login
   const verifyOtpendPoint = `${endPoints.verifyOtp}`;
   const resendOtpendPoint = `${endPoints.resendOtp}`;
+  const updateUserEndPoint = `${endPoints.updateUser}`;
 
   const handlePhoneSubmit = async () => {
     if (!phoneNumber || phoneNumber.length < 10) {
@@ -131,7 +132,7 @@ const PhoneAuthModal = ({ isOpen, setIsOpen }) => {
       };
 
       // Use signup endpoint for user details submission
-      const res = await axiosHttp.put(signUpEndPoint, formData);
+      const res = await axiosHttp.put(updateUserEndPoint, formData);
 
       if (res.status === 200) {
         console.log("Signup successful:", res.data);
