@@ -1,24 +1,38 @@
 import axiosHttp from "@/utils/axioshttp";
 import { endPoints } from "@/utils/endpoints";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 const useCreateBoard = () => {
-  const [boards, setBoards] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
-  const addBoards = async () => {
+  const createBoard = async (payload) => {
+    setLoading(true);
+    setError(null);
+
     try {
-      const endPoint = `${endPoints.addProductToBoard}`;
-      const result = await axiosHttp.post(endPoint);
-      if (result?.status === 200) {
-        setBoards(result?.data?.data);
+      // payload should contain: { userId, name }
+      const endPoint = `${endPoints.addBoard}`; // Make sure this is the correct endpoint
+      const result = await axiosHttp.post(endPoint, payload);
+
+      if (result?.status === 200 || result?.status === 201) {
+        setLoading(false);
+        return result?.data?.data || result?.data; // Return the created board
+      } else {
+        throw new Error("Failed to create board");
       }
-    } catch (err) {}
+    } catch (err) {
+      setError(err.message || "Something went wrong");
+      setLoading(false);
+      throw err; // Re-throw so the component can handle it
+    }
   };
 
-  useEffect(() => {
-    addBoards();
-  }, []);
-  return boards;
+  return {
+    createBoard,
+    loading,
+    error,
+  };
 };
 
 export default useCreateBoard;

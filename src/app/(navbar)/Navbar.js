@@ -130,7 +130,7 @@ const Navbar = () => {
                   alt="LaFetch Logo"
                   width={80}
                   height={80}
-                  className="mr-2"
+                  className="mr-2 h-auto"
                 />
               </div>
             </div>

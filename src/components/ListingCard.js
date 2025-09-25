@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { Heart, Share2, Zap, ShoppingBag } from "lucide-react";
+import { Heart, ShoppingBag } from "lucide-react";
+import CreateBoardModal from "./WishlistBoardModal";
 
 const ListingCard = ({
   images,
@@ -11,53 +12,69 @@ const ListingCard = ({
   originalPrice,
   discountPercentage,
   id,
+  onCreateBoard,
+  onGetBoards,
+  onAddProductToBoard,
 }) => {
   const [isWishlisted, setIsWishlisted] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const handleWishlistClick = () => {
+    setIsWishlisted(true);
+    setIsModalOpen(true);
+  };
+
+  const productData = {
+    id,
+    images,
+    title,
+    brand,
+    rating,
+    reviewCount,
+    currentPrice,
+    originalPrice,
+    discountPercentage,
+  };
 
   return (
-    <div className="relative overflow-hidden w-[220px] h-[500px] flex flex-col">
-      {/* Product Image */}
-      <div className="relative bg-gray-50 overflow-hidden group flex-shrink-0 h-[300px]">
-        <img
-          src={
-            images && images.length > 0
-              ? images[0]
-              : "https://images.unsplash.com/photo-1434389677669-e08b4cac3105?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80"
-          }
-          alt={title || "Product"}
-          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-        />
+    <>
+      <div className="relative overflow-hidden w-[220px] h-[500px] flex flex-col">
+        {/* Product Image */}
+        <div className="relative bg-gray-50 overflow-hidden group flex-shrink-0 h-[300px]">
+          <img
+            src={
+              images?.length > 0
+                ? images[0]
+                : "https://images.unsplash.com/photo-1434389677669-e08b4cac3105?..."
+            }
+            alt={title || "Product"}
+            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+          />
 
-        {/* Action Icons */}
-        <div className="absolute top-3 right-3 flex flex-col gap-2">
-          {/* Wishlist Icon */}
-          <button
-            onClick={() => setIsWishlisted(!isWishlisted)}
-            className="w-8 h-8 rounded-full bg-white shadow-md flex items-center justify-center hover:bg-gray-50 transition-colors duration-200"
-          >
-            <Heart
-              size={16}
-              className={`${
-                isWishlisted ? "text-red-500 fill-red-500" : "text-gray-600"
-              } transition-colors duration-200`}
-            />
-          </button>
+          {/* Action Icons */}
+          <div className="absolute top-3 right-3 flex flex-col gap-2">
+            {/* Wishlist Icon */}
+            <button
+              onClick={handleWishlistClick}
+              className="w-8 h-8 rounded-full bg-white shadow-md flex items-center justify-center hover:bg-gray-50 transition-colors duration-200"
+            >
+              <Heart
+                size={16}
+                className={`${
+                  isWishlisted ? "text-red-500 fill-red-500" : "text-gray-600"
+                } transition-colors duration-200`}
+              />
+            </button>
 
-          {/* Share Icon */}
-          <button className="w-8 h-8 rounded-full bg-white shadow-md flex items-center justify-center hover:bg-gray-50 transition-colors duration-200">
-            <ShoppingBag size={16} className="text-gray-600" />
-          </button>
-
-          {/* Flash Sale Icon */}
-          {/* <button className="w-8 h-8 rounded-full bg-white shadow-md flex items-center justify-center hover:bg-gray-50 transition-colors duration-200">
-            <Zap size={16} className="text-orange-500" />
-          </button> */}
+            {/* Shopping Bag */}
+            <button className="w-8 h-8 rounded-full bg-white shadow-md flex items-center justify-center hover:bg-gray-50 transition-colors duration-200">
+              <ShoppingBag size={16} className="text-gray-600" />
+            </button>
+          </div>
         </div>
-      </div>
 
-      {/* Product Info */}
-      <div className="p-3  justify-between">
-        <div>
+        {/* Product Info */}
+        <div className="p-3 justify-between">
           {/* Rating */}
           {rating && (
             <div className="flex items-center gap-1 mb-2">
@@ -105,34 +122,40 @@ const ListingCard = ({
           >
             {title || "Product Title"}
           </h3>
-        </div>
 
-        {/* Price Section */}
-        <div className="mt-auto">
-          <div className="flex items-baseline gap-1 flex-wrap">
-            <span className="text-base font-bold text-gray-900 ">
-              Rs. {currentPrice}
-            </span>
-            {originalPrice && (
-              <span className="text-sm text-gray-500 line-through">
-                Rs. {originalPrice}
+          {/* Price Section */}
+          <div className="mt-auto">
+            <div className="flex items-baseline gap-1 flex-wrap">
+              <span className="text-base font-bold text-gray-900 ">
+                Rs. {currentPrice}
               </span>
-            )}
-            {discountPercentage && (
-              <div className="mt-[2px]">
-                <span className="text-xs text-green-600 font-medium">
-                  (
-                  {typeof discountPercentage === "string"
-                    ? discountPercentage
-                    : `${discountPercentage}%`}{" "}
-                  OFF)
+              {originalPrice && (
+                <span className="text-sm text-gray-500 line-through">
+                  Rs. {originalPrice}
                 </span>
-              </div>
-            )}
+              )}
+              {discountPercentage && (
+                <span className="text-xs text-green-600 font-medium">
+                  ({discountPercentage}% OFF)
+                </span>
+              )}
+            </div>
           </div>
         </div>
       </div>
-    </div>
+
+      {/* Modal */}
+      {isModalOpen && (
+        <CreateBoardModal
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          productData={productData}
+          onCreateBoard={onCreateBoard}
+          onGetBoards={onGetBoards}
+          onAddProductToBoard={onAddProductToBoard}
+        />
+      )}
+    </>
   );
 };
 

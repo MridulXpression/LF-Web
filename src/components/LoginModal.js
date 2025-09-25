@@ -95,6 +95,7 @@ const PhoneAuthModal = ({ isOpen, setIsOpen }) => {
 
         if (authType === "login") {
           dispatch(setUser(response.data.data));
+
           setCurrentStep("welcome");
         } else {
           setCurrentStep("details");
