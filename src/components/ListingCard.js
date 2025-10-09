@@ -1,76 +1,79 @@
 import { useState } from "react";
 import { Heart, ShoppingBag } from "lucide-react";
 import CreateBoardModal from "./WishlistBoardModal";
+import { useDispatch } from "react-redux";
+import { openWishlistModal } from "@/redux/slices/loginmodalSlice";
+import Link from "next/link";
+import Image from "next/image";
 
 const ListingCard = ({
-  images,
+  imageUrls,
   title,
   brand,
   rating,
   reviewCount,
-  currentPrice,
-  originalPrice,
+  basePrice,
+  mrp,
   discountPercentage,
   id,
-  onCreateBoard,
-  onGetBoards,
-  onAddProductToBoard,
 }) => {
-  const [isWishlisted, setIsWishlisted] = useState(false);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [showModal, setShowModal] = useState(false); // Add this state
+  const dispatch = useDispatch();
 
   const handleWishlistClick = () => {
-    setIsWishlisted(true);
-    setIsModalOpen(true);
+    setShowModal(true); // Set this card's modal to show
+    dispatch(openWishlistModal());
   };
 
   const productData = {
     id,
-    images,
+    imageUrls,
     title,
     brand,
     rating,
     reviewCount,
-    currentPrice,
-    originalPrice,
+    basePrice,
+    mrp,
     discountPercentage,
   };
 
   return (
     <>
       <div className="relative overflow-hidden w-[220px] h-[500px] flex flex-col">
-        {/* Product Image */}
-        <div className="relative bg-gray-50 overflow-hidden group flex-shrink-0 h-[300px]">
-          <img
-            src={
-              images?.length > 0
-                ? images[0]
-                : "https://images.unsplash.com/photo-1434389677669-e08b4cac3105?..."
-            }
-            alt={title || "Product"}
-            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-          />
-
-          {/* Action Icons */}
-          <div className="absolute top-3 right-3 flex flex-col gap-2">
-            {/* Wishlist Icon */}
-            <button
-              onClick={handleWishlistClick}
-              className="w-8 h-8 rounded-full bg-white shadow-md flex items-center justify-center hover:bg-gray-50 transition-colors duration-200"
-            >
-              <Heart
-                size={16}
-                className={`${
-                  isWishlisted ? "text-red-500 fill-red-500" : "text-gray-600"
-                } transition-colors duration-200`}
+        {/* Product Image with Link */}
+        <Link
+          href={`/products/${id}`}
+          onClick={() => localStorage.setItem("ProductId", id)}
+        >
+          <div className="relative bg-gray-50 overflow-hidden group flex-shrink-0 h-[300px] cursor-pointer">
+            {imageUrls?.length > 0 && (
+              <Image
+                src={imageUrls[0]}
+                alt={title || "Product"}
+                fill
+                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
               />
-            </button>
-
-            {/* Shopping Bag */}
-            <button className="w-8 h-8 rounded-full bg-white shadow-md flex items-center justify-center hover:bg-gray-50 transition-colors duration-200">
-              <ShoppingBag size={16} className="text-gray-600" />
-            </button>
+            )}
           </div>
+        </Link>
+
+        {/* Action Icons */}
+        <div className="absolute top-3 right-3 flex flex-col gap-2">
+          {/* Wishlist Icon */}
+          <button
+            onClick={handleWishlistClick}
+            className="w-8 h-8 rounded-full bg-white shadow-md flex items-center justify-center hover:bg-gray-50 transition-colors duration-200"
+          >
+            <Heart
+              size={16}
+              className={`text-black transition-colors duration-200 cursor-pointer`}
+            />
+          </button>
+
+          {/* Shopping Bag */}
+          <button className="w-8 h-8 rounded-full bg-white shadow-md flex items-center justify-center hover:bg-gray-50 transition-colors duration-200">
+            <ShoppingBag size={16} className="text-gray-600" />
+          </button>
         </div>
 
         {/* Product Info */}
@@ -127,11 +130,11 @@ const ListingCard = ({
           <div className="mt-auto">
             <div className="flex items-baseline gap-1 flex-wrap">
               <span className="text-base font-bold text-gray-900 ">
-                Rs. {currentPrice}
+                Rs. {basePrice}
               </span>
-              {originalPrice && (
+              {mrp && (
                 <span className="text-sm text-gray-500 line-through">
-                  Rs. {originalPrice}
+                  Rs. {mrp}
                 </span>
               )}
               {discountPercentage && (
@@ -144,15 +147,13 @@ const ListingCard = ({
         </div>
       </div>
 
-      {/* Modal */}
-      {isModalOpen && (
+      {/* Only render modal if showModal is true for this card */}
+      {showModal && (
         <CreateBoardModal
-          isOpen={isModalOpen}
-          onClose={() => setIsModalOpen(false)}
           productData={productData}
-          onCreateBoard={onCreateBoard}
-          onGetBoards={onGetBoards}
-          onAddProductToBoard={onAddProductToBoard}
+          onClose={() => {
+            setShowModal(false);
+          }}
         />
       )}
     </>

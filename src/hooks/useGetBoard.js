@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 
 const useGetBoard = (query) => {
   const [boards, setBoards] = useState([]);
-  console.log("set-oards", boards);
+
   const getBoards = async () => {
     try {
       const endPoint = `${endPoints.getBoards}/${query}`;
@@ -16,9 +16,13 @@ const useGetBoard = (query) => {
   };
 
   useEffect(() => {
-    getBoards();
-  }, []);
-  return boards;
+    if (query) {
+      getBoards();
+    }
+  }, [query]); // Added query as dependency
+
+  // Return both boards data and the fetch function
+  return { data: boards, refetch: getBoards };
 };
 
 export default useGetBoard;

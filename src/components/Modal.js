@@ -1,12 +1,24 @@
 import { useState } from "react";
 import { X, Heart, Minus, Plus } from "lucide-react";
 import Image from "next/image";
+import { useSelector, useDispatch } from "react-redux";
+import { closeProductViewModal } from "@/redux/slices/loginmodalSlice";
+import Link from "next/link";
 
-const ProductModal = ({ product, isOpen, onClose }) => {
+const ProductModal = () => {
+  const dispatch = useDispatch();
+  const isOpen = useSelector((state) => state.modal.productViewModal);
+  const product = useSelector((state) => state.modal.selectedProduct);
+
   const [selectedSize, setSelectedSize] = useState("S");
   const [quantity, setQuantity] = useState(1);
 
-  if (!isOpen) return null;
+  // Replace onClose prop with dispatch
+  const handleClose = () => {
+    dispatch(closeProductViewModal());
+  };
+
+  if (!isOpen || !product) return null;
 
   const handleQuantityChange = (type) => {
     if (type === "increment") {
@@ -15,18 +27,19 @@ const ProductModal = ({ product, isOpen, onClose }) => {
       setQuantity((prev) => prev - 1);
     }
   };
+  console.log("Product in Modal:", product);
 
   return (
-    <div className="fixed inset-0 bg-black/30 backdrop-blur-xs flex items-center justify-center z-50 p-4 overflow-auto">
-      <div className="bg-white w-full max-w-4xl rounded-lg shadow-lg overflow-hidden">
-        <div className="flex flex-col md:flex-row overflow-y-auto  max-h-[650px]">
+    <div className="fixed inset-0  backdrop-blur-xs flex items-center justify-center z-50 p-4 overflow-auto">
+      <div className="bg-white w-full max-w-3xl  overflow-hidden">
+        <div className="flex flex-col md:flex-row overflow-y-auto  max-h-[400px]">
           {/* Product Image */}
           <div className="md:w-1/2 w-full relative bg-gray-50 flex items-center justify-center ">
-            <button className="absolute top-4 right-4 w-8 h-8 bg-white rounded-full flex items-center justify-center shadow-md z-10">
+            {/* <button className="absolute top-4 right-4 w-8 h-8 bg-white rounded-full flex items-center justify-center shadow-md z-10">
               <Heart className="w-5 h-5 text-gray-400 hover:text-red-500 transition-colors" />
-            </button>
+            </button> */}
 
-            <div className="relative w-full h-70 md:h-[650px]">
+            <div className="relative w-full h-70 md:h-[400px]">
               <Image
                 src={
                   product?.imageUrls
@@ -51,8 +64,8 @@ const ProductModal = ({ product, isOpen, onClose }) => {
                 <p className="text-xl text-gray-900">Rs. {product.basePrice}</p>
               </div>
               <button
-                onClick={onClose}
-                className="w-8 h-8 bg-white rounded-full flex items-center justify-center shadow-md cursor-pointer"
+                onClick={handleClose}
+                className="w-8 h-8   flex items-center justify-center cursor-pointer"
               >
                 <X className="w-5 h-5 text-gray-600" />
               </button>
@@ -63,13 +76,13 @@ const ProductModal = ({ product, isOpen, onClose }) => {
               <p className="text-gray-600 mb-1 text-sm leading-snug">
                 {product.description}
               </p>
-              <button className="text-black font-medium underline text-sm">
+              {/* <button className="text-black font-medium underline text-sm">
                 View More
-              </button>
+              </button> */}
             </div>
 
             {/* Size Selection */}
-            <div className="mb-4">
+            {/* <div className="mb-4">
               <label className="block text-black font-medium mb-2 text-sm">
                 Size: {selectedSize}
               </label>
@@ -100,10 +113,10 @@ const ProductModal = ({ product, isOpen, onClose }) => {
                   </svg>
                 </div>
               </div>
-            </div>
+            </div> */}
 
             {/* Quantity and Add to Cart */}
-            <div className="mb-4 flex flex-col sm:flex-row sm:items-center gap-3">
+            {/* <div className="mb-4 flex flex-col sm:flex-row sm:items-center gap-3">
               <div className="flex items-center border border-gray-300 rounded-md w-24 text-black">
                 <button
                   onClick={() => handleQuantityChange("decrement")}
@@ -125,13 +138,17 @@ const ProductModal = ({ product, isOpen, onClose }) => {
               <button className="bg-white border border-black text-black py-2 px-5 rounded-md hover:bg-gray-50 transition-colors font-medium text-sm w-full sm:w-auto">
                 Add to cart
               </button>
-            </div>
+            </div> */}
 
             {/* Buy Now Button */}
             <div>
-              <button className="w-full sm:w-[120px] bg-black text-white py-2 px-4 rounded-md transition-colors font-medium text-sm">
-                Buy Now
-              </button>
+              <Link
+                href={`/products/${product.id} `}
+                onClick={() => localStorage.setItem("ProductId", id)}
+                className="w-full sm:w-[120px] bg-black text-white py-2 px-4 rounded-md transition-colors font-medium text-sm"
+              >
+                View Product Details
+              </Link>
             </div>
           </div>
         </div>

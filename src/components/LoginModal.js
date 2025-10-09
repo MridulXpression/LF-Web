@@ -6,11 +6,13 @@ import { endPoints } from "@/utils/endpoints";
 import axiosHttp from "@/utils/axioshttp";
 import { Toaster, toast } from "react-hot-toast";
 
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { setUser } from "@/redux/slices/userSlice";
+import { closePhoneAuthModal } from "@/redux/slices/loginmodalSlice";
 
-const PhoneAuthModal = ({ isOpen, setIsOpen }) => {
+const PhoneAuthModal = () => {
   const dispatch = useDispatch(); // ✅ Initialize dispatch
+  const isOpen = useSelector((state) => state.modal.phoneAuthModal); // 🔥 use redux
   const [currentStep, setCurrentStep] = useState("phone");
   const [authType, setAuthType] = useState("login"); // "login" or "signup"
   const [phoneNumber, setPhoneNumber] = useState("");
@@ -136,7 +138,7 @@ const PhoneAuthModal = ({ isOpen, setIsOpen }) => {
       const res = await axiosHttp.put(updateUserEndPoint, formData);
 
       if (res.status === 200) {
-        console.log("Signup successful:", res.data);
+        dispatch(setUser(res.data.data));
         setCurrentStep("welcome");
       } else {
         alert(`Signup failed: ${res.data?.message || "Please try again"}`);
@@ -164,7 +166,7 @@ const PhoneAuthModal = ({ isOpen, setIsOpen }) => {
   };
 
   const closeModal = () => {
-    setIsOpen(false);
+    dispatch(closePhoneAuthModal());
     setCurrentStep("phone");
     setAuthType("login");
     setPhoneNumber("");

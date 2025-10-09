@@ -3,7 +3,7 @@ import ProductCard from "@/components/Card";
 import useProducts from "@/hooks/useProducts";
 
 const MenNewInSection = () => {
-  const query = "gender=2";
+  const query = "gender=1";
   const fetchproducts = useProducts(query);
   console.log(fetchproducts, "fetch");
 

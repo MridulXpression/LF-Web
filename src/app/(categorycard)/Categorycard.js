@@ -7,14 +7,17 @@ const CategorySection = () => {
     {
       title: "",
       backgroundImage: "/images/women.png",
+      href: "/shop/women",
     },
     {
       title: "",
       backgroundImage: "/images/men.png",
+      href: "/shop/men",
     },
     {
       title: "",
       backgroundImage: "/images/accessories.png",
+      href: "/shop/accessories",
     },
   ];
 
@@ -27,6 +30,7 @@ const CategorySection = () => {
               key={index}
               title={category.title}
               backgroundImage={category.backgroundImage}
+              href={category.href}
             />
           ))}
         </div>

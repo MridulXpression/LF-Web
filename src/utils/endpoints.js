@@ -1,5 +1,5 @@
 export const endPoints = {
-  getProducts: "/products",
+  getProducts: "/products?status=1",
   auth: "/auth/sign-up-send-otp",
   signin: "/auth/sign-in-send-otp",
   verifyOtp: "/auth/verify-otp",
@@ -12,4 +12,14 @@ export const endPoints = {
   getBoards: "/wishlist-board",
   addBoard: "/wishlist-board",
   addProductToBoard: "/board-product",
+  productdetialsbyid: "/product",
+  addProductToCart: "/add-to-cart",
+  deleteBoard: "/wishlist-board",
+  editBoard: "/wishlist-board",
+  getBoardsProducts: "/board-products",
+  deleteBoardProduct: "/board-product",
+  productSuggestion: "/product-suggestion",
+  productSearch: "/product-search",
+  deleteCartItem: "/cart-item",
+  getCoupons: "/coupons",
 };

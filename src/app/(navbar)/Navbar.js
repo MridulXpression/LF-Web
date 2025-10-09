@@ -4,7 +4,11 @@ import { useState, useRef, useEffect } from "react";
 import { Search, Heart, ShoppingBag, User, Menu, X } from "lucide-react";
 import Image from "next/image";
 import PhoneAuthModal from "@/components/LoginModal";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { openPhoneAuthModal } from "@/redux/slices/loginmodalSlice";
+import { useRouter } from "next/navigation";
+import axiosHttp from "@/utils/axioshttp";
+import Link from "next/link";
 
 // Sample menu data for demonstration
 const menuData = [
@@ -85,12 +89,55 @@ const menuData = [
 
 const Navbar = () => {
   const user = useSelector((state) => state.user.userInfo);
-  console.log("User info from Redux:", user);
   const [showSearchDropdown, setShowSearchDropdown] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState(null);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [suggestions, setSuggestions] = useState([]);
+  const [isLoadingSuggestions, setIsLoadingSuggestions] = useState(false);
   const searchDropdownRef = useRef(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const dispatch = useDispatch();
+  const router = useRouter();
+
+  // Fetch suggestions as user types
+  useEffect(() => {
+    if (searchQuery.trim().length > 0) {
+      setIsLoadingSuggestions(true);
+      const debounceTimer = setTimeout(async () => {
+        try {
+          const response = await axiosHttp.post(
+            `product-suggestion?key=${encodeURIComponent(searchQuery)}`
+          );
+          setSuggestions(response.data.data || []);
+        } catch (error) {
+          console.error("Error fetching suggestions:", error);
+          setSuggestions([]);
+        } finally {
+          setIsLoadingSuggestions(false);
+        }
+      }, 300); // Debounce delay
+
+      return () => clearTimeout(debounceTimer);
+    } else {
+      setSuggestions([]);
+    }
+  }, [searchQuery]);
+
+  // Handle search on Enter key
+  const handleSearch = async (e) => {
+    if (e.key === "Enter" && searchQuery.trim()) {
+      setShowSearchDropdown(false);
+      // Navigate to shop page with search query
+      router.push(`/products?search=${encodeURIComponent(searchQuery.trim())}`);
+    }
+  };
+
+  // Handle suggestion click
+  const handleSuggestionClick = (suggestion) => {
+    setSearchQuery(suggestion);
+    setShowSearchDropdown(false);
+    router.push(`/products?search=${encodeURIComponent(suggestion)}`);
+  };
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -270,14 +317,17 @@ const Navbar = () => {
               <div className="flex items-center space-x-4">
                 <button
                   onClick={() => setShowSearchDropdown(!showSearchDropdown)}
-                  className="p-2 text-[#808080] hover:text-gray-900"
+                  className="p-2 text-[#808080] hover:text-gray-900 cursor-pointer"
                 >
                   <Search className="w-5 h-5" />
                 </button>
 
-                <button className="p-2 text-[#808080] hover:text-gray-900">
+                <Link
+                  href="/wishlist-boards"
+                  className="p-2 text-[#808080] hover:text-gray-900 cursor-pointer"
+                >
                   <Heart className="w-5 h-5" />
-                </button>
+                </Link>
 
                 <button className="p-2 text-[#808080] hover:text-gray-900">
                   <ShoppingBag className="w-5 h-5" />
@@ -289,7 +339,7 @@ const Navbar = () => {
                   </span>
                 ) : (
                   <button
-                    onClick={() => setIsModalOpen(true)}
+                    onClick={() => dispatch(openPhoneAuthModal())}
                     className="p-2 text-[#808080] hover:text-gray-900 cursor-pointer"
                   >
                     <User className="w-5 h-5" />
@@ -385,9 +435,13 @@ const Navbar = () => {
                 <button className="p-2 text-[#808080]">
                   <Search className="w-5 h-5" />
                 </button>
-                <button className="p-2 text-[#808080]">
+                <Link
+                  href="/wishlist-boards"
+                  className="p-2 text-[#808080] hover:text-gray-900 cursor-pointer"
+                >
                   <Heart className="w-5 h-5" />
-                </button>
+                </Link>
+
                 <button className="p-2 text-[#808080]">
                   <ShoppingBag className="w-5 h-5" />
                 </button>
@@ -404,7 +458,7 @@ const Navbar = () => {
       {showSearchDropdown && (
         <div
           ref={searchDropdownRef}
-          className="sticky top-26 bg-white border-b border-gray-200 z-40"
+          className="absolute left-0 top-24 w-screen max-w-[100vw] bg-white border border-gray-200 shadow-lg z-40"
         >
           <div className="px-4 sm:px-6 lg:px-12 py-6">
             {/* Search Bar */}
@@ -412,8 +466,12 @@ const Navbar = () => {
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
               <input
                 type="text"
-                placeholder="Search products..."
-                className="w-full pl-10 pr-4 py-3 border-b text-black border-gray-300 rounded-lg "
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                onKeyDown={handleSearch}
+                placeholder="Search products... (Press Enter to search)"
+                className="w-full pl-10 pr-4 py-3 border-b text-black border-gray-300 rounded-lg focus:outline-none focus:border-gray-500"
+                autoFocus
               />
             </div>
 
@@ -421,65 +479,29 @@ const Navbar = () => {
               {/* Left Side - Suggestions */}
               <div className="flex-1 pr-8">
                 <h3 className="font-semibold text-gray-900 mb-4">
-                  Suggestions
+                  {isLoadingSuggestions
+                    ? "Loading..."
+                    : suggestions.length > 0
+                    ? "Suggestions"
+                    : "Searches"}
                 </h3>
-                <div className="grid grid-cols-2 gap-8">
-                  <div>
-                    <ul className="space-y-3">
-                      <li>
-                        <a
-                          href="#"
-                          className="text-gray-600 hover:text-gray-900"
+                <div className="grid grid-cols-1 gap-3">
+                  {suggestions.length > 0
+                    ? suggestions.map((suggestion, idx) => (
+                        <button
+                          key={idx}
+                          onClick={() => handleSuggestionClick(suggestion)}
+                          className="text-gray-600 hover:text-gray-900 text-left hover:bg-gray-50 px-2 py-1 rounded transition-colors"
                         >
-                          Kurta
-                        </a>
-                      </li>
-                      <li>
-                        <a
-                          href="#"
-                          className="text-gray-600 hover:text-gray-900"
-                        >
-                          Nehru jackets
-                        </a>
-                      </li>
-                      <li>
-                        <a
-                          href="#"
-                          className="text-gray-600 hover:text-gray-900"
-                        >
-                          payjamas
-                        </a>
-                      </li>
-                    </ul>
-                  </div>
-                  <div>
-                    <ul className="space-y-3">
-                      <li>
-                        <a
-                          href="#"
-                          className="text-gray-600 hover:text-gray-900"
-                        >
-                          Wallet
-                        </a>
-                      </li>
-                      <li>
-                        <a
-                          href="#"
-                          className="text-gray-600 hover:text-gray-900"
-                        >
-                          Handbag
-                        </a>
-                      </li>
-                      <li>
-                        <a
-                          href="#"
-                          className="text-gray-600 hover:text-gray-900"
-                        >
-                          Shorts for men
-                        </a>
-                      </li>
-                    </ul>
-                  </div>
+                          {suggestion}
+                        </button>
+                      ))
+                    : !isLoadingSuggestions &&
+                      suggestions.length === 0 && (
+                        <p className="text-gray-500 text-sm">
+                          No suggestions found
+                        </p>
+                      )}
                 </div>
               </div>
 
@@ -505,7 +527,7 @@ const Navbar = () => {
           </div>
         </div>
       )}
-      <PhoneAuthModal isOpen={isModalOpen} setIsOpen={setIsModalOpen} />
+      <PhoneAuthModal />
     </>
   );
 };

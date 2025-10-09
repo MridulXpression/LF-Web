@@ -5,16 +5,25 @@ import { X, Plus } from "lucide-react";
 import useAddProductToBoard from "@/hooks/useAddProductToBoard";
 import useCreateBoard from "@/hooks/useCreateBoard";
 import useGetBoard from "@/hooks/useGetBoard";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Toaster, toast } from "react-hot-toast";
 import Image from "next/image";
+import { closeWishlistModal } from "@/redux/slices/loginmodalSlice";
 
-const CreateBoardModal = ({ isOpen, onClose, productData }) => {
+const CreateBoardModal = ({ productData, onClose }) => {
+  console.log("Product Data in Modal:", productData);
   const [selectedBoard, setSelectedBoard] = useState(null);
   const [newBoardName, setNewBoardName] = useState("");
   const [isCreating, setIsCreating] = useState(false);
   const [isAddingProduct, setIsAddingProduct] = useState(false);
 
+  const dispatch = useDispatch();
+  const isOpen = useSelector((state) => state.modal.wishlistModal); // Update selector to match slice
+
+  const handleClose = () => {
+    dispatch(closeWishlistModal());
+    onClose(); // Call the onClose prop to reset the card's state
+  };
   const user = useSelector((state) => state.user.userInfo);
 
   const {
@@ -29,7 +38,7 @@ const CreateBoardModal = ({ isOpen, onClose, productData }) => {
   } = useCreateBoard();
 
   const query = user?.id;
-  const getBoards = useGetBoard(query);
+  const { data: getBoards, refetch: fetchBoards } = useGetBoard(query);
   console.log("modal-boards", getBoards);
 
   const handleCreateBoard = async () => {
@@ -43,12 +52,16 @@ const CreateBoardModal = ({ isOpen, onClose, productData }) => {
         name: newBoardName.trim(),
       };
 
-      const response = await createBoard(payload); // Store the response
+      const response = await createBoard(payload);
       setNewBoardName("");
-      toast.success(response?.message || "Board created successfully!"); // Use the response
+      toast.success(response?.message || "Board created successfully!");
+
+      // refresh list
+      fetchBoards();
     } catch (error) {
-      console.error("Error creating board:", error);
-      toast.error(error?.message || "Failed to create board");
+      const errorMessage = error?.response?.data?.message;
+
+      toast.error(errorMessage);
     } finally {
       setIsCreating(false);
     }
@@ -63,25 +76,20 @@ const CreateBoardModal = ({ isOpen, onClose, productData }) => {
 
       if (response?.success) {
         toast.success(response.message || "Added to board successfully");
-        // Keep modal open briefly so the toast remains visible if Toaster is in-modal
         setTimeout(() => {
-          onClose();
+          handleClose();
         }, 1500);
       } else {
         toast.error(response?.message || "Failed to add product to board");
-
-        // Close modal after a short delay for error cases
         setTimeout(() => {
-          onClose();
+          handleClose();
         }, 2000);
       }
     } catch (error) {
       console.error("Error adding product to board:", error);
       toast.error(error?.message || "Failed to add product to board");
-
-      // Close modal after a short delay for caught errors
       setTimeout(() => {
-        onClose();
+        handleClose();
       }, 2000);
     } finally {
       setIsAddingProduct(false);
@@ -97,12 +105,12 @@ const CreateBoardModal = ({ isOpen, onClose, productData }) => {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
       <div
-        className="absolute inset-0 bg-black/30 backdrop-blur-xs bg-opacity-50"
-        onClick={onClose}
+        className="absolute inset-0  backdrop-blur-sm bg-opacity-50"
+        onClick={handleClose}
       />
       <Toaster position="top-right" reverseOrder={false} />
 
-      <div className="relative bg-white   w-full max-w-3xl mx-4 flex overflow-hidden max-h-[90vh]">
+      <div className="relative bg-white w-full max-w-3xl mx-4 flex overflow-hidden max-h-[400px]">
         {/* Left Panel */}
         <div className="flex-1 p-6">
           {/* Header */}
@@ -111,12 +119,12 @@ const CreateBoardModal = ({ isOpen, onClose, productData }) => {
               <h2 className="text-xl font-bold text-gray-900 flex items-center gap-3">
                 CREATE BOARD
               </h2>
-              <p className="text-sm text-gray-600 ">
+              <p className="text-sm text-gray-600">
                 Create your own collection
               </p>
             </div>
             <button
-              onClick={onClose}
+              onClick={handleClose}
               className="text-gray-400 hover:text-gray-600"
             >
               <X size={20} />
@@ -134,13 +142,13 @@ const CreateBoardModal = ({ isOpen, onClose, productData }) => {
                 placeholder="Write Name"
                 value={newBoardName}
                 onChange={(e) => setNewBoardName(e.target.value)}
-                className="flex-1 px-3 py-2 border border-gray-300    text-sm placeholder-gray-500 focus:outline-none focus:border-gray-400 text-black"
+                className="flex-1 px-3 py-2 border border-gray-300 text-sm placeholder-gray-500 focus:outline-none focus:border-gray-400 text-black"
                 onKeyDown={(e) => e.key === "Enter" && handleCreateBoard()}
               />
               <button
                 onClick={handleCreateBoard}
                 disabled={!newBoardName.trim() || isCreating}
-                className="px-4 py-2 bg-gray-900 text-white    text-sm font-medium hover:bg-gray-800 disabled:bg-gray-400 flex items-center gap-1"
+                className="px-4 py-2 bg-gray-900 text-white text-sm font-medium hover:bg-gray-800 disabled:bg-gray-400 flex items-center gap-1"
               >
                 <Plus size={16} />
                 {isCreating ? "Creating..." : "Create"}
@@ -149,11 +157,11 @@ const CreateBoardModal = ({ isOpen, onClose, productData }) => {
           </div>
 
           {/* Existing Boards */}
-          <div className="mb-6 h-[290px]">
+          <div className="mb-6 max-h-[250px]">
             <h3 className="text-sm font-medium text-gray-900 mb-3">
               Select Existing Board
             </h3>
-            <div className="space-y-2 max-h-[250px] overflow-y-auto">
+            <div className="space-y-2 max-h-[100px] overflow-y-auto">
               {!getBoards ? (
                 <div className="text-center py-4 text-gray-500">
                   Loading boards...
@@ -167,15 +175,12 @@ const CreateBoardModal = ({ isOpen, onClose, productData }) => {
                   <div
                     key={board.id}
                     onClick={() => handleBoardSelect(board)}
-                    className={`flex items-center gap-3 p-3 border   cursor-pointer transition-colors ${
+                    className={`flex items-center gap-3 p-3 border cursor-pointer transition-colors ${
                       selectedBoard?.id === board.id
                         ? "border-gray-900 bg-gray-50"
                         : "border-gray-200 hover:border-gray-300"
                     }`}
                   >
-                    {/* <div className="w-10 h-10 bg-gray-100   flex-shrink-0 flex items-center justify-center">
-                      <span className="text-xs text-gray-600">📋</span>
-                    </div> */}
                     <div className="flex-1">
                       <h4 className="text-sm font-medium text-gray-900">
                         {board.name}
@@ -194,7 +199,7 @@ const CreateBoardModal = ({ isOpen, onClose, productData }) => {
           <button
             onClick={handleContinue}
             disabled={!selectedBoard || isAddingProduct || addProductLoading}
-            className="w-full bg-gray-900 text-white py-3    font-medium hover:bg-gray-800 disabled:bg-gray-400 disabled:cursor-not-allowed"
+            className="w-full bg-gray-900 text-white py-3 font-medium hover:bg-gray-800 disabled:bg-gray-400 disabled:cursor-not-allowed"
           >
             {isAddingProduct || addProductLoading
               ? "Adding Product..."
@@ -205,15 +210,21 @@ const CreateBoardModal = ({ isOpen, onClose, productData }) => {
         {/* Right Panel - Product Preview */}
         <div className="w-80 bg-gray-50 p-6 flex flex-col">
           {productData ? (
-            <div className="flex flex-col h-full">
-              <div className="aspect-[3/4] bg-white   overflow-hidden mb-4">
-                <Image
-                  src={productData.images?.[0]}
-                  alt={productData.title}
-                  width={400}
-                  height={400}
-                  className=" object-cover"
-                />
+            <div className="flex flex-col max-h-full">
+              <div className="max-h-[300px] overflow-hidden mb-4">
+                {productData.imageUrls?.[0] ? (
+                  <Image
+                    src={productData.imageUrls[0]}
+                    alt={productData.title || "Product Image"}
+                    width={250}
+                    height={250}
+                    className="object-cover"
+                  />
+                ) : (
+                  <div className="w-full h-64 bg-gray-200 flex items-center justify-center text-gray-500">
+                    No image available
+                  </div>
+                )}
               </div>
 
               <div className="flex-1 flex flex-col">
@@ -240,7 +251,7 @@ const CreateBoardModal = ({ isOpen, onClose, productData }) => {
                     </div>
                     {productData.reviewCount && (
                       <span className="text-xs text-gray-500">
-                        | {productData.reviewCount}
+                        {/* | {productData.reviewCount} */}
                       </span>
                     )}
                   </div>
@@ -256,7 +267,7 @@ const CreateBoardModal = ({ isOpen, onClose, productData }) => {
                 <div className="mt-auto">
                   <div className="flex items-center gap-2 flex-wrap">
                     <span className="text-lg font-bold text-gray-900">
-                      Rs. {productData.currentPrice}
+                      Rs. {productData.basePrice}
                     </span>
                     {productData.originalPrice && (
                       <span className="text-sm text-gray-500 line-through">

@@ -3,17 +3,19 @@ import { persistStore, persistReducer } from "redux-persist";
 import storage from "redux-persist/lib/storage";
 import cartReducer from "./slices/cartSlice";
 import userReducer from "./slices/userSlice";
+import modalReducer from "./slices/loginmodalSlice";
 import { combineReducers } from "redux";
 
 const rootReducer = combineReducers({
   cart: cartReducer,
   user: userReducer,
+  modal: modalReducer,
 });
 
 const persistConfig = {
   key: "root",
   storage,
-  whitelist: ["cart", "user"],
+  whitelist: ["cart", "user", "  modal"],
 };
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

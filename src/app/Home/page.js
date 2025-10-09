@@ -16,7 +16,7 @@ const page = () => {
       <HomePage />
       <NewDropsSection />
       <CategorySection />
-      {/* <TrendingNowSection /> */}
+      <TrendingNowSection />
       <HomeCarousel />
       <TrendingBlog />
       <PhoneAuthModal />
