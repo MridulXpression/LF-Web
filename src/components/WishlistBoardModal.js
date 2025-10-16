@@ -11,7 +11,6 @@ import Image from "next/image";
 import { closeWishlistModal } from "@/redux/slices/loginmodalSlice";
 
 const CreateBoardModal = ({ productData, onClose }) => {
-  console.log("Product Data in Modal:", productData);
   const [selectedBoard, setSelectedBoard] = useState(null);
   const [newBoardName, setNewBoardName] = useState("");
   const [isCreating, setIsCreating] = useState(false);
@@ -39,7 +38,6 @@ const CreateBoardModal = ({ productData, onClose }) => {
 
   const query = user?.id;
   const { data: getBoards, refetch: fetchBoards } = useGetBoard(query);
-  console.log("modal-boards", getBoards);
 
   const handleCreateBoard = async () => {
     if (!newBoardName.trim()) return;

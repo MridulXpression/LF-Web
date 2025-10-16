@@ -36,7 +36,7 @@ const ProductActions = ({ onAddToWishlist, productData }) => {
         <button
           onClick={handleAddToBag}
           disabled={loading}
-          className="w-full cursor-pointer bg-black text-white py-3.5 rounded font-bold text-sm hover:bg-pink-700 transition-colors shadow-sm disabled:bg-gray-400 disabled:cursor-not-allowed"
+          className="w-full cursor-pointer bg-black text-white py-3.5 rounded font-bold text-sm   shadow-sm disabled:bg-gray-400 disabled:cursor-not-allowed"
         >
           {loading ? "Adding..." : "Add to Bag"}
         </button>

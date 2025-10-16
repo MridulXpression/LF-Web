@@ -7,6 +7,7 @@ import AddressModal from "@/components/AddressModal";
 import DeleteConfirmModal from "@/components/DeleteModal";
 import axiosHttp from "@/utils/axioshttp";
 import useGetCoupons from "@/hooks/useGetCoupons";
+import Link from "next/link";
 
 const CheckOutAddress = () => {
   const [products, setProducts] = useState([]);
@@ -146,11 +147,16 @@ const CheckOutAddress = () => {
       <div className="max-w-7xl mx-auto px-4">
         {/* Progress Steps */}
         <div className="mb-8 flex items-center justify-center gap-2 text-sm">
-          <span className="text-black">BAG</span>
+          <Link href="/checkout/bag" className="text-black">
+            BAG
+          </Link>
           <span className="text-black">--------</span>
-          <span className="text-black underline decoration-[#988BFF] decoration-[2px] font-bold">
+          <Link
+            href="/checkout/address"
+            className="text-black underline decoration-[#988BFF] decoration-[2px] font-bold"
+          >
             ADDRESS
-          </span>
+          </Link>
           <span className="text-black">--------</span>
           <span className="text-black">PAYMENT</span>
         </div>
@@ -171,7 +177,7 @@ const CheckOutAddress = () => {
               </div>
               <button
                 onClick={handleAddNewAddress}
-                className="flex items-center gap-2 px-4 py-2 border border-gray-300 text-black rounded hover:bg-gray-50"
+                className="flex items-center gap-2 px-4 py-2 border border-gray-300 text-black rounded hover:bg-gray-50 cursor-pointer"
               >
                 <span className="text-xl">+</span>
                 Add New Address
@@ -245,13 +251,8 @@ const CheckOutAddress = () => {
                   alert("Please select an address to proceed.");
                   return;
                 }
-                // Add your payment navigation logic here
-                console.log(
-                  "Proceed to pay clicked with addressId:",
-                  selectedAddressId
-                );
               }}
-              className="mt-6 w-full px-4 py-3 bg-[#988BFF] text-white font-semibold rounded hover:bg-[#7f76e8] cursor-pointer"
+              className="mt-6 w-full px-4 py-3 bg-black  text-white font-semibold rounded  cursor-pointer"
             >
               Proceed to Pay
             </button>

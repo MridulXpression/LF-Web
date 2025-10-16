@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect, use } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useSelector } from "react-redux";
 
 import OrderSummary from "@/components/OrderSummary";
@@ -7,13 +7,18 @@ import axiosHttp from "@/utils/axioshttp";
 import { endPoints } from "@/utils/endpoints";
 import CartProductCard from "@/components/CartProductCard";
 import useGetCoupons from "@/hooks/useGetCoupons";
+import Link from "next/link";
+import DeleteConfirmModal from "@/components/DeleteModal";
 
 const ShoppingCart = () => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [selectedItems, setSelectedItems] = useState(new Set());
+  const isInitialMount = useRef(true);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [deleteTargetId, setDeleteTargetId] = useState(null);
 
   const getCoupons = useGetCoupons();
-  console.log("Available Coupons:", getCoupons);
 
   // Get userId from Redux
   const userInfo = useSelector((state) => state.user?.userInfo);
@@ -26,6 +31,14 @@ const ShoppingCart = () => {
     }
   }, [userId]);
 
+  // Auto-select all items ONLY when products load initially
+  useEffect(() => {
+    if (products.length > 0 && isInitialMount.current) {
+      setSelectedItems(new Set(products.map((p) => p.cartItemId)));
+      isInitialMount.current = false;
+    }
+  }, [products]);
+
   const fetchCartItems = async () => {
     try {
       setLoading(true);
@@ -35,7 +48,7 @@ const ShoppingCart = () => {
         // Transform API data to component format
         const transformedData = response.data.data.map((item) => ({
           id: item.id,
-          cartItemId: item.id, // Keep original cart item ID for deletion
+          cartItemId: item.id,
           productId: item.productId,
           variantId: item.variantId,
           name: item.product.title,
@@ -45,16 +58,16 @@ const ShoppingCart = () => {
           imageUrls: item.product.imageUrls,
           price: item.product_variant.price,
           originalPrice: item.product.mrp || item.product.basePrice,
-          size: item.product_variant.title, // Size from variant
-          quantity: 1, // Default quantity, adjust if API provides this
-          availableSizes: [item.product_variant.title], // You may need to fetch all variants for available sizes
+          size: item.product_variant.title,
+          quantity: 1,
+          availableSizes: [item.product_variant.title],
           type: item.product.type,
           tags: item.product.tags,
           hasCOD: item.product.hasCOD,
           hasExchange: item.product.hasExchange,
           exchangeDays: item.product.exchangeDays,
         }));
-        console.log("🛒 Transformed Cart Data:", transformedData);
+
         setProducts(transformedData);
       }
       setLoading(false);
@@ -66,16 +79,24 @@ const ShoppingCart = () => {
 
   const handleRemove = async (productId) => {
     try {
-      // Delete from API with userId and productId
-      await axiosHttp.delete(endPoints.deleteCartItem, {
+      const isDeleted = await axiosHttp.delete(endPoints.deleteCartItem, {
         data: {
           userId: userId,
           productId: productId,
         },
       });
-
-      // Update local state
-      setProducts(products.filter((p) => p.productId !== productId));
+      if (isDeleted) {
+        // Remove from selectedItems before fetching
+        const itemToRemove = products.find((p) => p.productId === productId);
+        if (itemToRemove) {
+          setSelectedItems((prev) => {
+            const newSet = new Set(prev);
+            newSet.delete(itemToRemove.cartItemId);
+            return newSet;
+          });
+        }
+        fetchCartItems();
+      }
     } catch (error) {
       console.error("Error removing cart item:", error);
     }
@@ -83,15 +104,13 @@ const ShoppingCart = () => {
 
   const handleQuantityChange = async (cartItemId, quantity) => {
     try {
-      // Update quantity in API if you have an endpoint
-      // await axiosHttp.patch(`${endPoints.updateCartItem}/${cartItemId}`, { quantity });
-
-      // Update local state
-      setProducts(
-        products.map((p) =>
+      setProducts((prevProducts) => {
+        const updatedProducts = prevProducts.map((p) =>
           p.cartItemId === cartItemId ? { ...p, quantity } : p
-        )
-      );
+        );
+
+        return updatedProducts;
+      });
     } catch (error) {
       console.error("Error updating quantity:", error);
     }
@@ -99,16 +118,53 @@ const ShoppingCart = () => {
 
   const handleSizeChange = async (cartItemId, size) => {
     try {
-      // Update size/variant in API if you have an endpoint
-      // await axiosHttp.patch(`${endPoints.updateCartItem}/${cartItemId}`, { size });
-
-      // Update local state
-      setProducts(
-        products.map((p) => (p.cartItemId === cartItemId ? { ...p, size } : p))
+      setProducts((prevProducts) =>
+        prevProducts.map((p) =>
+          p.cartItemId === cartItemId ? { ...p, size } : p
+        )
       );
     } catch (error) {
       console.error("Error updating size:", error);
     }
+  };
+
+  // Handle individual item selection
+  const handleToggleSelect = (cartItemId) => {
+    setSelectedItems((prev) => {
+      const newSet = new Set(prev);
+      if (newSet.has(cartItemId)) {
+        newSet.delete(cartItemId);
+      } else {
+        newSet.add(cartItemId);
+      }
+      return newSet;
+    });
+  };
+
+  // Handle select all/deselect all
+  const handleSelectAll = () => {
+    if (selectedItems.size === products.length) {
+      setSelectedItems(new Set());
+    } else {
+      setSelectedItems(new Set(products.map((p) => p.cartItemId)));
+    }
+  };
+
+  // Filter selected products for checkout
+  const selectedProducts = React.useMemo(() => {
+    const filtered = products.filter((p) => selectedItems.has(p.cartItemId));
+
+    return filtered;
+  }, [products, selectedItems]);
+
+  const openDeleteModal = (productId) => {
+    setDeleteTargetId(productId);
+    setIsDeleteModalOpen(true);
+  };
+
+  const handleConfirmDelete = async () => {
+    await handleRemove(deleteTargetId);
+    setIsDeleteModalOpen(false);
   };
 
   if (loading) {
@@ -124,12 +180,16 @@ const ShoppingCart = () => {
       <div className="max-w-7xl mx-auto px-4">
         {/* Progress Steps */}
         <div className="mb-8 flex items-center justify-center gap-2 text-sm">
-          <span className="text-black underline decoration-[#988BFF] decoration-[2px] font-bold ">
+          <Link
+            href="/checkout/bag"
+            className="text-black underline decoration-[#988BFF] decoration-[2px] font-bold"
+          >
             BAG
-          </span>
-
+          </Link>
           <span className="text-black">--------</span>
-          <span className="text-black">ADDRESS</span>
+          <Link href="/checkout/address" className="text-black ">
+            ADDRESS
+          </Link>
           <span className="text-black">--------</span>
           <span className="text-black">PAYMENT</span>
         </div>
@@ -155,20 +215,56 @@ const ShoppingCart = () => {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             {/* Left Side - Product Cards */}
             <div className="lg:col-span-2">
-              {products.map((product) => (
-                <CartProductCard
-                  key={product.cartItemId}
-                  product={product}
-                  onRemove={handleRemove}
-                  onQuantityChange={handleQuantityChange}
-                  onSizeChange={handleSizeChange}
+              {/* Select All Checkbox */}
+              <div className="mb-4 flex items-center gap-2  p-4 rounded-lg ">
+                <input
+                  type="checkbox"
+                  checked={
+                    selectedItems.size === products.length &&
+                    products.length > 0
+                  }
+                  onChange={handleSelectAll}
+                  className="w-5 h-5 cursor-pointer accent-black"
                 />
-              ))}
+                <span className="text-sm font-medium text-black">
+                  Select All ({selectedItems.size}/{products.length})
+                </span>
+              </div>
+
+              {/* Product Cards */}
+              <div className="">
+                {products.map((product) => (
+                  <CartProductCard
+                    key={product.cartItemId}
+                    product={product}
+                    onRemove={() => openDeleteModal(product.productId)} // 👈 change here
+                    onQuantityChange={handleQuantityChange}
+                    onSizeChange={handleSizeChange}
+                    isSelected={selectedItems.has(product.cartItemId)}
+                    onToggleSelect={handleToggleSelect}
+                  />
+                ))}
+
+                <DeleteConfirmModal
+                  isOpen={isDeleteModalOpen}
+                  onClose={() => setIsDeleteModalOpen(false)}
+                  onConfirm={handleConfirmDelete}
+                  title="Remove Item"
+                  message="Are you sure you want to remove this item from your cart?"
+                  confirmText="Remove"
+                />
+              </div>
             </div>
 
             {/* Right Side - Order Summary */}
             <div className="lg:col-span-1">
-              <OrderSummary products={products} coupons={getCoupons} />
+              <OrderSummary
+                key={`order-summary-${selectedProducts
+                  .map((p) => `${p.cartItemId}-${p.quantity}`)
+                  .join("-")}`}
+                products={selectedProducts}
+                coupons={getCoupons}
+              />
             </div>
           </div>
         )}

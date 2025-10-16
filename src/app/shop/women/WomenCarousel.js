@@ -13,8 +13,6 @@ const WomenCarousel = () => {
       image: banner.image,
     })) || [];
 
-  console.log(slides, "slides");
-
   if (!fetchBanners || fetchBanners.length === 0) {
     return (
       <div className="w-full bg-white relative min-h-[50vh] md:min-h-[60vh] lg:min-h-screen flex items-center justify-center">

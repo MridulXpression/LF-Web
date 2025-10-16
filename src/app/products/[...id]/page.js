@@ -6,6 +6,7 @@ import ProductInfo from "@/components/ProductHeader";
 import ProductActions from "@/components/ProductActions";
 import Navbar from "@/app/(navbar)/Navbar";
 import ProductDetails from "@/components/ProductDetails";
+import ReviewCard from "@/components/ReviewCard";
 
 // Helper to extract unique sizes
 const extractSizesFromVariants = (variants) => {
@@ -54,6 +55,15 @@ const extractSizesFromVariants = (variants) => {
     const indexB = sizeOrder.indexOf(b.value);
     return (indexA === -1 ? 999 : indexA) - (indexB === -1 ? 999 : indexB);
   });
+};
+
+const getReviews = async () => {
+  try {
+    const productId = localStorage.getItem("ProductId");
+    const response = await axiosHttp.get(`/reviews/productId=${productId}`);
+  } catch (error) {
+    console.error("Error fetching reviews:", error);
+  }
 };
 
 export default function ProductPage({ params }) {
@@ -126,6 +136,14 @@ export default function ProductPage({ params }) {
               brand={data.description}
             />
           </div>
+        </div>
+        <div className="pt-[50px]">
+          <ReviewCard
+            name="John Doe"
+            rating={4}
+            timeAgo="2 weeks ago"
+            comment="The fabric's texture is so good! the quality and the stitch of the fabric is good, feels like a luxury product, the fit and the designs are so versatile, that goes so fashionable."
+          />
         </div>
       </div>
     </div>

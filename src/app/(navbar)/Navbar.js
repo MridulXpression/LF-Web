@@ -9,6 +9,8 @@ import { openPhoneAuthModal } from "@/redux/slices/loginmodalSlice";
 import { useRouter } from "next/navigation";
 import axiosHttp from "@/utils/axioshttp";
 import Link from "next/link";
+import useCategories from "@/hooks/useCategories";
+import UserDropdown from "@/components/UserDrpdown";
 
 // Sample menu data for demonstration
 const menuData = [
@@ -99,6 +101,12 @@ const Navbar = () => {
   const dispatch = useDispatch();
   const router = useRouter();
 
+  const query = "type=category&gender=1";
+  const useCategory = useCategories(query);
+
+  const subquery = "type=sub";
+  const useSubCategories = useCategories(subquery);
+
   // Fetch suggestions as user types
   useEffect(() => {
     if (searchQuery.trim().length > 0) {
@@ -171,7 +179,7 @@ const Navbar = () => {
                 <Menu className="w-6 h-6" />
               </button>
 
-              <div className=" flex items-center">
+              <Link href="/" className=" flex items-center">
                 <Image
                   src="/images/logo.png"
                   alt="LaFetch Logo"
@@ -179,7 +187,7 @@ const Navbar = () => {
                   height={80}
                   className="mr-2 h-auto"
                 />
-              </div>
+              </Link>
             </div>
           </div>
         </div>
@@ -207,12 +215,24 @@ const Navbar = () => {
                     onMouseEnter={() => setActiveDropdown(index)}
                     onMouseLeave={() => setActiveDropdown(null)}
                   >
-                    <a
-                      href="#"
+                    <Link
+                      href={
+                        menu.title === "All Brands"
+                          ? "/brands"
+                          : menu.title === "Men"
+                          ? "/shop/men"
+                          : menu.title === "Women"
+                          ? "/shop/women"
+                          : menu.title === "Accessories"
+                          ? "/shop/accessories"
+                          : menu.title === "Blogs"
+                          ? "/blogs"
+                          : "#"
+                      }
                       className="text-[13px] text-[#808080] hover:text-gray-900"
                     >
                       {menu.title}
-                    </a>
+                    </Link>
 
                     {/* Unified Dropdown Style */}
                     {activeDropdown === index && (
@@ -299,12 +319,12 @@ const Navbar = () => {
                 >
                   Most Popular
                 </a>
-                <a
-                  href="#"
+                <Link
+                  href="/blogs"
                   className="text-[13px] text-[#808080] hover:text-gray-900"
                 >
                   Blogs
-                </a>
+                </Link>
                 <a
                   href="#"
                   className="text-[13px] text-[#808080] hover:text-gray-900"
@@ -329,14 +349,14 @@ const Navbar = () => {
                   <Heart className="w-5 h-5" />
                 </Link>
 
-                <button className="p-2 text-[#808080] hover:text-gray-900">
+                <Link
+                  href="/checkout/bag"
+                  className="p-2 text-[#808080] hover:text-gray-900 cursor-pointer"
+                >
                   <ShoppingBag className="w-5 h-5" />
-                </button>
-
+                </Link>
                 {user ? (
-                  <span className="text-black font-medium">
-                    {user.fullName}
-                  </span>
+                  <UserDropdown user={user} />
                 ) : (
                   <button
                     onClick={() => dispatch(openPhoneAuthModal())}
@@ -442,9 +462,12 @@ const Navbar = () => {
                   <Heart className="w-5 h-5" />
                 </Link>
 
-                <button className="p-2 text-[#808080]">
+                <Link
+                  href="/checkout/bag"
+                  className="p-2 text-[#808080] hover:text-gray-900 cursor-pointer"
+                >
                   <ShoppingBag className="w-5 h-5" />
-                </button>
+                </Link>
                 <button className="p-2 text-[#808080]">
                   <User className="w-5 h-5" />
                 </button>

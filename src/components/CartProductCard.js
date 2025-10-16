@@ -1,11 +1,14 @@
 import React from "react";
 import { X } from "lucide-react";
+import Image from "next/image";
 
 const CartProductCard = ({
   product,
   onRemove,
   onQuantityChange,
   onSizeChange,
+  isSelected,
+  onToggleSelect,
 }) => {
   const discountPercent =
     product.originalPrice > product.price
@@ -24,7 +27,7 @@ const CartProductCard = ({
 
   // Decrement Quantity
   const handleDecrease = () => {
-    if (product.quantity > 50) {
+    if (product.quantity > 1) {
       onQuantityChange(product.cartItemId, product.quantity - 1);
     }
   };
@@ -32,12 +35,24 @@ const CartProductCard = ({
   return (
     <div className="border-b border-gray-300 p-4 mb-4 pb-6">
       <div className="flex gap-4">
+        {/* Checkbox for Selection */}
+        <div className="flex items-start pt-2">
+          <input
+            type="checkbox"
+            checked={isSelected}
+            onChange={() => onToggleSelect(product.cartItemId)}
+            className="w-5 h-5 cursor-pointer accent-black"
+          />
+        </div>
+
         {/* Product Image */}
-        <div className="w-32 h-40 flex-shrink-0">
-          <img
+        <div className="w-[80px] h-[80px] md:w-[150px] md:h-[150px] flex-shrink-0">
+          <Image
             src={product.image}
             alt={product.name}
-            className="w-full h-full object-cover rounded"
+            width={150}
+            height={150}
+            className="w-full h-full object-fill rounded"
           />
         </div>
 

@@ -9,7 +9,7 @@ const Footer = () => {
   const handleNewsletterSubmit = () => {
     if (email) {
       // Handle newsletter subscription
-      console.log("Newsletter subscription:", email);
+
       setEmail("");
     }
   };

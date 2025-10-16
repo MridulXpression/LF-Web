@@ -1,6 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import Link from "next/link"; // ✅ Import Link
+import Image from "next/image";
 
 const BoardCard = ({ board, onUpdate, onDelete }) => {
   const [isEditing, setIsEditing] = useState(false);
@@ -43,12 +44,14 @@ const BoardCard = ({ board, onUpdate, onDelete }) => {
         <div className="aspect-[4/5] relative">
           {/* ✅ Wrap image with Link */}
           <Link href={`/wishlist-board-products/${board.id}`}>
-            <img
+            <Image
               src={
                 board.image ||
-                "https://images.unsplash.com/photo-1490481651871-ab68de25d43d?w=400"
+                "https://cdn.shopify.com/s/files/1/0553/6186/3863/products/0I1A7431copy-pichi.jpg?v=1617715629"
               }
               alt={board.name}
+              width={500}
+              height={500}
               className="w-full h-full object-cover cursor-pointer"
             />
           </Link>

@@ -9,7 +9,7 @@ axiosHttp.interceptors.request.use(
   (config) => {
     // Access state directly from store
     const state = store.getState();
-    console.log("state", state);
+
     const token = state.user?.token;
 
     if (token) {

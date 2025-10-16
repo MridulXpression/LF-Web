@@ -8,11 +8,14 @@ import axiosHttp from "@/utils/axioshttp";
 import Link from "next/link";
 
 const ShopByCategoriesPage = () => {
+  const searchParams = useSearchParams();
   const [openFilters, setOpenFilters] = useState({});
-  const allProducts = useProducts(); // All products from the hook
+  const genderValue = searchParams.get("gender");
+  const query = genderValue ? `gender=${genderValue}` : "";
+
+  const allProducts = useProducts(query);
   const [searchResults, setSearchResults] = useState(null);
   const [isSearching, setIsSearching] = useState(false);
-  const searchParams = useSearchParams();
   const searchQuery = searchParams.get("search");
 
   // Fetch search results when search query changes
@@ -170,7 +173,7 @@ const ShopByCategoriesPage = () => {
                     reviewCount={product.numReviews?.toString() || "0"}
                     basePrice={basePrice}
                     mrp={mrp}
-                    discountPercentage={`${discountPercentage}%`}
+                    discountPercentage={`${discountPercentage}`}
                     id={product.id}
                   />
                 );

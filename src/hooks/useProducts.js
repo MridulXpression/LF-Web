@@ -9,7 +9,7 @@ const useProducts = (query) => {
     try {
       let endPoint;
       if (query) {
-        endPoint = `${endPoints.getProducts}?${query}`;
+        endPoint = `${endPoints.getProducts}&${query}`;
       } else {
         endPoint = `${endPoints.getProducts}`;
       }

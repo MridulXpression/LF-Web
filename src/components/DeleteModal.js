@@ -5,21 +5,22 @@ const DeleteConfirmModal = ({
   onClose,
   onConfirm,
   loading = false,
+  title = "Remove Item",
+  message = "Are you sure you want to remove this item from your cart?",
+  confirmText = "Remove",
 }) => {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-lg max-w-md w-full p-6">
-        <h2 className="text-xl font-semibold text-black mb-4">
-          Delete Address
-        </h2>
+    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+      <div className="bg-white rounded-lg max-w-md w-full p-6 shadow-lg">
+        {/* Title */}
+        <h2 className="text-xl font-semibold text-black mb-4">{title}</h2>
 
-        <p className="text-gray-600 mb-6">
-          Are you sure you want to delete this address? This action cannot be
-          undone.
-        </p>
+        {/* Message */}
+        <p className="text-gray-600 mb-6">{message}</p>
 
+        {/* Buttons */}
         <div className="flex justify-end gap-3">
           <button
             onClick={onClose}
@@ -31,9 +32,9 @@ const DeleteConfirmModal = ({
           <button
             onClick={onConfirm}
             disabled={loading}
-            className="px-6 py-2 bg-red-500 text-white rounded hover:bg-red-600 disabled:opacity-50"
+            className="px-6 py-2 bg-red-600 text-white rounded hover:bg-red-700 disabled:opacity-50"
           >
-            {loading ? "Deleting..." : "Delete"}
+            {loading ? "Removing..." : confirmText}
           </button>
         </div>
       </div>

@@ -9,6 +9,7 @@ export const endPoints = {
   getCategories: "/categories",
   getBanners: "/banners",
   getBlogs: "/get-blogs",
+  getBlogbyid: "/view-blog",
   getBoards: "/wishlist-board",
   addBoard: "/wishlist-board",
   addProductToBoard: "/board-product",
@@ -22,4 +23,6 @@ export const endPoints = {
   productSearch: "/product-search",
   deleteCartItem: "/cart-item",
   getCoupons: "/coupons",
+  getBrands: "/brands",
+  getBrandsProducts: "/view-brand",
 };

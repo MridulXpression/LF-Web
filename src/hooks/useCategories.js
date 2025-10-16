@@ -15,7 +15,7 @@ const useCategories = (query) => {
       }
 
       const result = await axiosHttp.get(endPoint);
-      console.log(result, "resultCollection");
+
       if (result?.status === 200) {
         setCategories(result?.data?.data);
       }
