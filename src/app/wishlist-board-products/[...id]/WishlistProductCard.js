@@ -62,37 +62,55 @@ const WishlistProductCard = () => {
   };
 
   return (
-    <div className="bg-white p-6">
-      <div className="max-w-[1400px] mx-auto px-4">
-        <div className="grid grid-cols-1 md:grid-cols-5 gap-6">
-          {products.map((item) => {
-            const { product } = item;
-            const fallbackImage = "";
+    <div className="bg-white p-6 min-h-screen flex items-center justify-center">
+      <div className="max-w-[1400px] w-full px-4">
+        {products.length === 0 ? (
+          <div className="flex flex-col items-center justify-center min-h-[60vh]">
+            <h2 className="text-2xl font-semibold text-gray-700 mb-4">
+              No products found
+            </h2>
+            <p className="text-gray-500 mb-6">
+              Looks like this board is empty. Start adding some products!
+            </p>
+            <a
+              href="/wishlist-boards"
+              className="inline-block bg-black text-white px-6 py-3  transition"
+            >
+              Back to Boards
+            </a>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-5 gap-6">
+            {products.map((item) => {
+              const { product } = item;
+              const fallbackImage = "";
 
-            return (
-              <WishlistCard
-                key={item.id}
-                id={product?.id}
-                imageSrc={product?.imageUrls?.[0] || fallbackImage}
-                imageAlt={product?.title || "Product Image"}
-                rating={product?.rating || 0}
-                reviewCount={product?.numReviews || 0}
-                brandName={product?.brand || "Unknown Brand"}
-                productName={product?.title || "Unknown Product"}
-                currentPrice={product?.basePrice || 0}
-                originalPrice={product?.mrp || 0}
-                discount={
-                  product?.mrp && product?.basePrice
-                    ? `${Math.round(
-                        ((product.mrp - product.basePrice) / product.mrp) * 100
-                      )}% OFF`
-                    : "0% OFF"
-                }
-                onDelete={handleDelete}
-              />
-            );
-          })}
-        </div>
+              return (
+                <WishlistCard
+                  key={item.id}
+                  id={product?.id}
+                  imageSrc={product?.imageUrls?.[0] || fallbackImage}
+                  imageAlt={product?.title || "Product Image"}
+                  rating={product?.rating || 0}
+                  reviewCount={product?.numReviews || 0}
+                  brandName={product?.brand || "Unknown Brand"}
+                  productName={product?.title || "Unknown Product"}
+                  currentPrice={product?.basePrice || 0}
+                  originalPrice={product?.mrp || 0}
+                  discount={
+                    product?.mrp && product?.basePrice
+                      ? `${Math.round(
+                          ((product.mrp - product.basePrice) / product.mrp) *
+                            100
+                        )}% OFF`
+                      : "0% OFF"
+                  }
+                  onDelete={handleDelete}
+                />
+              );
+            })}
+          </div>
+        )}
       </div>
     </div>
   );

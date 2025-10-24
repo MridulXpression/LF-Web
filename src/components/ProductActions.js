@@ -5,6 +5,7 @@ import { openWishlistModal } from "@/redux/slices/loginmodalSlice";
 import CreateBoardModal from "./WishlistBoardModal";
 import useAddProductToCart from "@/hooks/useAddProductToCart";
 import toast, { Toaster } from "react-hot-toast";
+import { addToCart } from "@/redux/slices/cartSlice";
 
 const ProductActions = ({ onAddToWishlist, productData }) => {
   const [showModal, setShowModal] = useState(false);
@@ -18,6 +19,9 @@ const ProductActions = ({ onAddToWishlist, productData }) => {
 
   const handleAddToBag = async () => {
     const result = await addProductToCart();
+    console.log(productData, "DASDASDSA");
+    const variantId = localStorage.getItem("selectedVariantId");
+    dispatch(addToCart({ product: productData, variantId }));
 
     if (result.success) {
       toast.success(result.message, {

@@ -5,20 +5,22 @@ import Navbar from "../(navbar)/Navbar";
 
 export default function AccountLayout({ children }) {
   return (
-    <div className="min-h-screen bg-white">
-      {/* Navbar container with full width */}
+    <>
+      {/* Navbar OUTSIDE the min-h-screen container */}
       <div className="w-full bg-white">
         <Navbar />
       </div>
 
-      {/* Content container with max-width */}
-      <div className="max-w-[1400px] mx-auto">
-        <AccountHeader />
-        <div className="flex">
-          <AccountSidebar />
-          <div className="flex-1 bg-white">{children}</div>
+      {/* Main content should fill screen height */}
+      <div className="min-h-screen bg-white">
+        <div className="max-w-[1400px] mx-auto">
+          <AccountHeader />
+          <div className="flex">
+            <AccountSidebar />
+            <div className="flex-1 bg-white">{children}</div>
+          </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }

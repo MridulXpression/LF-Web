@@ -26,6 +26,7 @@ const WishlistCard = ({
   // ✅ Navigate to product details page
   const handleViewProduct = () => {
     if (id) {
+      localStorage.setItem("ProductId", id);
       router.push(`/products/${id}`);
     }
   };

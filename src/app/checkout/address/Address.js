@@ -8,6 +8,7 @@ import DeleteConfirmModal from "@/components/DeleteModal";
 import axiosHttp from "@/utils/axioshttp";
 import useGetCoupons from "@/hooks/useGetCoupons";
 import Link from "next/link";
+import Footer from "@/components/footer";
 
 const CheckOutAddress = () => {
   const [products, setProducts] = useState([]);
@@ -19,6 +20,7 @@ const CheckOutAddress = () => {
   const [editingAddress, setEditingAddress] = useState(null);
   const [deletingAddressId, setDeletingAddressId] = useState(null);
   const [deleteLoading, setDeleteLoading] = useState(false);
+  const [orderTotal, setOrderTotal] = useState(0);
 
   const getCoupons = useGetCoupons();
   const userInfo = useSelector((state) => state.user?.userInfo);
@@ -134,9 +136,47 @@ const CheckOutAddress = () => {
     }
   };
 
+  const handleRazorpayPayment = () => {
+    if (!selectedAddressId) {
+      alert("Please select an address to proceed.");
+      return;
+    }
+    const amountInPaise = orderTotal * 100;
+    console.log("Initiating payment of:", amountInPaise);
+
+    const options = {
+      key: process.env.NEXT_PUBLIC_RAZOR_PAY_KEY_ID,
+      amount: amountInPaise, // amount in paise (₹500)
+      currency: "INR",
+      name: "LaFetch",
+      description: "Demo Transaction",
+      image: "/logo.png", // optional
+      handler: function (response) {
+        alert(
+          "Payment Successful! Payment ID: " + response.razorpay_payment_id
+        );
+        console.log("Payment Success:", response);
+      },
+      prefill: {
+        name: userInfo?.fullName,
+        email: userInfo?.email,
+        contact: userInfo?.phone,
+      },
+      notes: {
+        address: "Test Transaction - No backend",
+      },
+      theme: {
+        color: "#988BFF",
+      },
+    };
+
+    const rzp = new window.Razorpay(options);
+    rzp.open();
+  };
+
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center text-lg text-black">
+      <div className="min-h-screen bg-white flex items-center justify-center text-lg text-black">
         Loading your cart...
       </div>
     );
@@ -242,17 +282,16 @@ const CheckOutAddress = () => {
 
           {/* Right Side - Order Summary */}
           <div className="lg:col-span-1 flex flex-col">
-            <OrderSummary products={products} coupons={getCoupons} />
+            <OrderSummary
+              products={products}
+              coupons={getCoupons}
+              onAmountChange={(amount) => setOrderTotal(amount)}
+            />
 
             {/* Proceed to Pay Button */}
             <button
-              onClick={() => {
-                if (!selectedAddressId) {
-                  alert("Please select an address to proceed.");
-                  return;
-                }
-              }}
-              className="mt-6 w-full px-4 py-3 bg-black  text-white font-semibold rounded  cursor-pointer"
+              onClick={handleRazorpayPayment}
+              className="mt-6 w-full px-4 py-3 bg-black text-white font-semibold rounded cursor-pointer"
             >
               Proceed to Pay
             </button>

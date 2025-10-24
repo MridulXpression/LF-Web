@@ -1,3 +1,4 @@
+import Footer from "@/components/footer";
 import Navbar from "../(navbar)/Navbar";
 import WishlistBoards from "./Board";
 
@@ -6,6 +7,7 @@ const page = () => {
     <div>
       <Navbar />
       <WishlistBoards />
+      <Footer />
     </div>
   );
 };

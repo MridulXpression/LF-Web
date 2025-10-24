@@ -6,6 +6,7 @@ import useProducts from "@/hooks/useProducts";
 import { useSearchParams } from "next/navigation";
 import axiosHttp from "@/utils/axioshttp";
 import Link from "next/link";
+import useSortedProducts from "@/hooks/useProductSort";
 
 const ShopByCategoriesPage = () => {
   const searchParams = useSearchParams();
@@ -18,7 +19,10 @@ const ShopByCategoriesPage = () => {
   const [isSearching, setIsSearching] = useState(false);
   const searchQuery = searchParams.get("search");
 
-  // Fetch search results when search query changes
+  // 👇 maintain selected sort filter
+  const [sortQuery, setSortQuery] = useState(""); // default no sort
+  const sortedProducts = useSortedProducts(sortQuery);
+
   useEffect(() => {
     if (searchQuery) {
       setIsSearching(true);
@@ -33,7 +37,6 @@ const ShopByCategoriesPage = () => {
       const response = await axiosHttp.post(
         `product-search?key=${encodeURIComponent(query)}`
       );
-      // Fix: use response.data.data instead of response.data.products
       setSearchResults(response.data.data || []);
     } catch (error) {
       console.error("Error fetching search results:", error);
@@ -43,8 +46,15 @@ const ShopByCategoriesPage = () => {
     }
   };
 
-  // Use search results if available, otherwise use all products
-  const products = searchResults !== null ? searchResults : allProducts;
+  // 👇 choose products source (sorted or normal or search)
+  let products = [];
+  if (searchResults !== null) {
+    products = searchResults;
+  } else if (sortQuery) {
+    products = sortedProducts;
+  } else {
+    products = allProducts;
+  }
 
   const toggleFilter = (filterName) => {
     setOpenFilters((prev) => ({
@@ -66,6 +76,30 @@ const ShopByCategoriesPage = () => {
       options: ["Under ₹500", "₹500-₹1000", "₹1000-₹2000", "Above ₹2000"],
     },
   ];
+
+  // 👇 handle sort change
+  const handleSortChange = (e) => {
+    const value = e.target.value;
+    switch (value) {
+      case "Price: Low to High":
+        setSortQuery("price_asc");
+        break;
+      case "Price: High to Low":
+        setSortQuery("price_desc");
+        break;
+      case "Customer Rating":
+        setSortQuery("rating");
+        break;
+      case "Discount":
+        setSortQuery("discount");
+        break;
+      case "Newest First":
+        setSortQuery("whats_new");
+        break;
+      default:
+        setSortQuery(""); // reset to default (unsorted)
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -92,26 +126,21 @@ const ShopByCategoriesPage = () => {
 
         {/* Main Content */}
         <div className="flex-1 p-6">
-          {/* Header */}
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center gap-4">
-              {searchQuery && (
-                <div className="text-sm text-gray-600">
-                  Showing results for:{" "}
-                  <span className="font-semibold text-gray-900">
-                    "{searchQuery}"
-                  </span>
-                </div>
-              )}
               {!searchQuery && (
                 <>
                   <span className="text-sm text-black">Sort by:</span>
-                  <select className="text-sm text-black border border-gray-300 rounded px-3 py-1">
-                    <option>Popularity</option>
+                  <select
+                    onChange={handleSortChange}
+                    className="text-sm text-black border border-gray-300 rounded px-3 py-1"
+                  >
+                    <option>All Products</option>
                     <option>Price: Low to High</option>
                     <option>Price: High to Low</option>
-                    <option>Newest First</option>
                     <option>Customer Rating</option>
+                    <option>Discount</option>
+                    <option>Newest First</option>
                   </select>
                 </>
               )}
@@ -134,7 +163,7 @@ const ShopByCategoriesPage = () => {
           )}
 
           {/* No Results */}
-          {!isSearching && searchQuery && products?.length === 0 && (
+          {!isSearching && products?.length === 0 && (
             <div className="flex flex-col justify-center items-center h-64 text-center">
               <div className="text-gray-900 text-xl font-semibold mb-2">
                 No products found
@@ -155,7 +184,6 @@ const ShopByCategoriesPage = () => {
           {!isSearching && products?.length > 0 && (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-10 justify-items-center">
               {products.map((product) => {
-                // Calculate discount only if both mrp and basePrice exist and are valid numbers
                 const mrp = Number(product.mrp);
                 const basePrice = Number(product.basePrice);
                 const discountPercentage =
@@ -168,7 +196,7 @@ const ShopByCategoriesPage = () => {
                     key={product.id}
                     imageUrls={product.imageUrls || []}
                     title={product.title}
-                    brand={product.brandId || "Brand"} // You might want to fetch actual brand name
+                    brand={product.brandId || "Brand"}
                     rating={product.rating || 0}
                     reviewCount={product.numReviews?.toString() || "0"}
                     basePrice={basePrice}

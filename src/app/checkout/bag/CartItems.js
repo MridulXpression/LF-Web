@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useEffect, useRef } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
 import OrderSummary from "@/components/OrderSummary";
 import axiosHttp from "@/utils/axioshttp";
@@ -9,8 +9,10 @@ import CartProductCard from "@/components/CartProductCard";
 import useGetCoupons from "@/hooks/useGetCoupons";
 import Link from "next/link";
 import DeleteConfirmModal from "@/components/DeleteModal";
+import { removeFromCart, setCartItems } from "@/redux/slices/cartSlice";
 
 const ShoppingCart = () => {
+  const dispatch = useDispatch();
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedItems, setSelectedItems] = useState(new Set());
@@ -69,6 +71,7 @@ const ShoppingCart = () => {
         }));
 
         setProducts(transformedData);
+        dispatch(setCartItems(transformedData)); // ✅ keep Redux count in sync
       }
       setLoading(false);
     } catch (error) {
@@ -164,13 +167,30 @@ const ShoppingCart = () => {
 
   const handleConfirmDelete = async () => {
     await handleRemove(deleteTargetId);
+
+    // ✅ Remove from Redux store as well
+    const deletedProduct = products.find((p) => p.productId === deleteTargetId);
+    if (deletedProduct) {
+      dispatch(removeFromCart(deletedProduct.variantId));
+    }
+
     setIsDeleteModalOpen(false);
   };
+
+  if (!userId) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-lg text-black font-medium">
+          Please log in to see your cart.
+        </div>
+      </div>
+    );
+  }
 
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-lg">Loading your cart...</div>
+        <div className="text-lg text-black">Loading your cart...</div>
       </div>
     );
   }

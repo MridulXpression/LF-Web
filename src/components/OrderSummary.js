@@ -1,10 +1,15 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
 import { X } from "lucide-react";
 import Link from "next/link";
 
-const OrderSummary = ({ products, onProceed, coupons = [] }) => {
+const OrderSummary = ({
+  products,
+  onProceed,
+  coupons = [],
+  onAmountChange,
+}) => {
   const pathname = usePathname(); // ✅ get current route
   const [selectedCoupon, setSelectedCoupon] = useState(null);
   const [showModal, setShowModal] = useState(false);
@@ -41,6 +46,11 @@ const OrderSummary = ({ products, onProceed, coupons = [] }) => {
   };
 
   const isAddressPage = pathname === "/checkout/address"; // ✅ check route
+  useEffect(() => {
+    if (onAmountChange) {
+      onAmountChange(totalPrice);
+    }
+  }, [totalPrice, onAmountChange]);
 
   return (
     <div className="bg-white rounded-lg shadow-sm p-6 sticky top-4">

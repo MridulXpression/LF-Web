@@ -25,4 +25,6 @@ export const endPoints = {
   getCoupons: "/coupons",
   getBrands: "/brands",
   getBrandsProducts: "/view-brand",
+  logout: "/auth/sign-out",
+  sortProduct: "/sort-products",
 };

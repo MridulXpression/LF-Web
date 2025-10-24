@@ -11,6 +11,7 @@ import axiosHttp from "@/utils/axioshttp";
 import Link from "next/link";
 import useCategories from "@/hooks/useCategories";
 import UserDropdown from "@/components/UserDrpdown";
+import { usePathname } from "next/navigation";
 
 // Sample menu data for demonstration
 const menuData = [
@@ -27,19 +28,7 @@ const menuData = [
       },
     ],
   },
-  {
-    title: "MasterMenu",
-    sections: [
-      {
-        heading: "Clothing",
-        items: ["Shirts", "T-Shirts", "Jeans", "Formal Wear"],
-      },
-      {
-        heading: "Footwear",
-        items: ["Casual Shoes", "Formal Shoes", "Sneakers"],
-      },
-    ],
-  },
+
   {
     title: "Men",
     sections: [
@@ -91,6 +80,7 @@ const menuData = [
 
 const Navbar = () => {
   const user = useSelector((state) => state.user.userInfo);
+  const cartTotal = useSelector((state) => state.cart.totalItems);
   const [showSearchDropdown, setShowSearchDropdown] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState(null);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -100,6 +90,7 @@ const Navbar = () => {
   const searchDropdownRef = useRef(null);
   const dispatch = useDispatch();
   const router = useRouter();
+  const pathname = usePathname();
 
   const query = "type=category&gender=1";
   const useCategory = useCategories(query);
@@ -229,7 +220,20 @@ const Navbar = () => {
                           ? "/blogs"
                           : "#"
                       }
-                      className="text-[13px] text-[#808080] hover:text-gray-900"
+                      className={`text-[13px] pb-2 ${
+                        pathname === "/brands" && menu.title === "All Brands"
+                          ? "font-semibold text-black border-b-2 border-black"
+                          : pathname === "/shop/men" && menu.title === "Men"
+                          ? "font-semibold text-black border-b-2 border-black"
+                          : pathname === "/shop/women" && menu.title === "Women"
+                          ? "font-semibold text-black border-b-2 border-black"
+                          : pathname === "/shop/accessories" &&
+                            menu.title === "Accessories"
+                          ? "font-semibold text-black border-b-2 border-black"
+                          : pathname === "/blogs" && menu.title === "Blogs"
+                          ? "font-semibold text-black border-b-2 border-black"
+                          : "text-[#808080] hover:text-gray-900"
+                      }`}
                     >
                       {menu.title}
                     </Link>
@@ -351,10 +355,16 @@ const Navbar = () => {
 
                 <Link
                   href="/checkout/bag"
-                  className="p-2 text-[#808080] hover:text-gray-900 cursor-pointer"
+                  className="relative p-2 text-[#808080] hover:text-gray-900 cursor-pointer"
                 >
                   <ShoppingBag className="w-5 h-5" />
+                  {cartTotal > 0 && (
+                    <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-semibold rounded-full h-4 w-4 flex items-center justify-center">
+                      {cartTotal}
+                    </span>
+                  )}
                 </Link>
+
                 {user ? (
                   <UserDropdown user={user} />
                 ) : (

@@ -122,24 +122,6 @@ const CartProductCard = ({
               </>
             )}
           </div>
-
-          {/* Additional Info */}
-          {(product.hasCOD || product.hasExchange) && (
-            <div className="mt-2 flex gap-3 text-xs text-black">
-              {product.hasCOD && (
-                <span className="flex items-center gap-1">
-                  <span className="w-1.5 h-1.5 bg-green-500 rounded-full"></span>
-                  COD Available
-                </span>
-              )}
-              {product.hasExchange && (
-                <span className="flex items-center gap-1">
-                  <span className="w-1.5 h-1.5 bg-blue-500 rounded-full"></span>
-                  {product.exchangeDays} days exchange
-                </span>
-              )}
-            </div>
-          )}
         </div>
       </div>
     </div>
