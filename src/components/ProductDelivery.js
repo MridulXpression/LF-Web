@@ -4,10 +4,20 @@ import { MapPin, Truck, RefreshCw, Shield } from "lucide-react";
 
 const DeliveryOptions = ({ pincode, deliveryInfo, onCheckPincode }) => {
   const [pin, setPin] = useState(pincode || "");
+  const [loading, setLoading] = useState(false);
 
-  const handleCheck = () => {
-    if (onCheckPincode) {
-      onCheckPincode(pin);
+  const handleCheck = async () => {
+    if (onCheckPincode && pin.length === 6) {
+      setLoading(true);
+      await onCheckPincode(pin);
+      setLoading(false);
+    }
+  };
+
+  // Handle Enter key
+  const handleKeyDown = async (e) => {
+    if (e.key === "Enter" && pin.length === 6) {
+      await handleCheck();
     }
   };
 
@@ -24,16 +34,18 @@ const DeliveryOptions = ({ pincode, deliveryInfo, onCheckPincode }) => {
             type="text"
             value={pin}
             onChange={(e) => setPin(e.target.value)}
+            onKeyDown={handleKeyDown}
             placeholder="Enter pincode"
-            className="flex-1 outline-none text-sm"
+            className="flex-1 outline-none text-sm text-black"
             maxLength={6}
           />
         </div>
         <button
           onClick={handleCheck}
           className="px-5 py-2.5 text-pink-600 font-bold text-sm hover:bg-pink-50 transition-colors"
+          disabled={loading || pin.length !== 6}
         >
-          CHECK
+          {loading ? "Checking..." : "CHECK"}
         </button>
       </div>
 

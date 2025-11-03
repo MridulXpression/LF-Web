@@ -7,6 +7,8 @@ import ProductActions from "@/components/ProductActions";
 import Navbar from "@/app/(navbar)/Navbar";
 import ProductDetails from "@/components/ProductDetails";
 import ReviewCard from "@/components/ReviewCard";
+import ProductDelivery from "@/components/ProductDelivery";
+import axiosHttp from "@/utils/axioshttp";
 
 // Helper to extract unique sizes
 const extractSizesFromVariants = (variants) => {
@@ -69,13 +71,13 @@ const getReviews = async () => {
 export default function ProductPage({ params }) {
   const unwrappedParams = React.use(params);
   const data = useProductsById(unwrappedParams.id);
-
+  // Delivery info state
+  const [deliveryInfo, setDeliveryInfo] = React.useState(null);
   // Extract sizes from variants
   const sizes = useMemo(() => {
     if (!data?.variants) return [];
     return extractSizesFromVariants(data.variants);
   }, [data?.variants]);
-
   // Calculate discount
   const discount = useMemo(() => {
     if (data?.variants?.[0]?.compareAtPrice && data?.variants?.[0]?.price) {
@@ -85,6 +87,49 @@ export default function ProductPage({ params }) {
     }
     return 0;
   }, [data?.variants]);
+  // Handler for checking pincode
+  const handleCheckPincode = async (pin) => {
+    try {
+      const variantId = sizes?.[0]?.variantId;
+      if (!variantId || !pin || pin.length !== 6) return;
+
+      const payload = { variantId, deliveryPostalCode: pin };
+
+      const response = await axiosHttp.post("/check-serviceability", payload);
+
+      // Directly use backend response
+      if (response?.data?.status === 200) {
+        setDeliveryInfo([
+          {
+            icon: "truck",
+            title: "Estimated Delivery",
+            description: response.data.deliveryDate
+              ? `Delivery by ${response.data.deliveryDate}`
+              : "Serviceability info unavailable.",
+          },
+        ]);
+      } else {
+        // If backend sends status != 200, show its message
+        setDeliveryInfo([
+          {
+            icon: "truck",
+            title: "Delivery Info",
+            description: response?.data?.message || "Something went wrong.",
+          },
+        ]);
+      }
+    } catch (error) {
+      // Show backend message if available
+      const backendMessage = error?.response?.data?.message;
+      setDeliveryInfo([
+        {
+          icon: "truck",
+          title: "Delivery Info",
+          description: backendMessage || "Could not fetch delivery info.",
+        },
+      ]);
+    }
+  };
 
   // ✅ Show loading spinner while data is being fetched
   if (!data)
@@ -93,7 +138,6 @@ export default function ProductPage({ params }) {
         <div className="w-12 h-12 border-4 border-gray-300 border-t-blue-500 rounded-full animate-spin"></div>
       </div>
     );
-
   const handleAddToBag = () => {
     console.log("Add to bag clicked");
   };
@@ -128,6 +172,13 @@ export default function ProductPage({ params }) {
               onAddToBag={handleAddToBag}
               onAddToWishlist={handleAddToWishlist}
               productData={data}
+            />
+
+            {/* Delivery Options below ProductActions */}
+            <ProductDelivery
+              pincode=""
+              deliveryInfo={deliveryInfo}
+              onCheckPincode={handleCheckPincode}
             />
 
             <ProductDetails

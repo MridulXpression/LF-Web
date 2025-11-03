@@ -72,6 +72,27 @@ const ShoppingCart = () => {
 
         setProducts(transformedData);
         dispatch(setCartItems(transformedData)); // ✅ keep Redux count in sync
+
+        // Try to restore saved checkout selection (match by productId+variantId)
+        try {
+          const saved = localStorage.getItem(`lafetch_checkout_${userId}`);
+          if (saved) {
+            const parsed = JSON.parse(saved);
+            if (parsed.items && Array.isArray(parsed.items)) {
+              const savedCartItemIds = new Set();
+              parsed.items.forEach((s) => {
+                const match = transformedData.find(
+                  (t) =>
+                    t.productId === s.productId && t.variantId === s.variantId
+                );
+                if (match) savedCartItemIds.add(match.cartItemId);
+              });
+              if (savedCartItemIds.size > 0) setSelectedItems(savedCartItemIds);
+            }
+          }
+        } catch (e) {
+          console.warn("Failed to restore checkout state:", e);
+        }
       }
       setLoading(false);
     } catch (error) {
@@ -79,6 +100,41 @@ const ShoppingCart = () => {
       setLoading(false);
     }
   };
+
+  // Persist checkout state to localStorage whenever products or selection changes
+  useEffect(() => {
+    if (!userId) return;
+    try {
+      const key = `lafetch_checkout_${userId}`;
+      const existingRaw = localStorage.getItem(key);
+      let existing = {};
+      if (existingRaw) existing = JSON.parse(existingRaw);
+
+      const itemsToSave = products.map((p) => ({
+        cartItemId: p.cartItemId,
+        productId: p.productId,
+        variantId: p.variantId,
+        productName: p.name,
+        quantity: p.quantity || 1,
+        unitPrice: p.price || 0,
+        // No discount/tax for now
+        discount: 0,
+        tax: 0,
+        total: +((p.price || 0) * (p.quantity || 1)).toFixed(2),
+        sku: p.sku || "",
+        hsn: p.hsn || "",
+        selected: selectedItems.has(p.cartItemId),
+      }));
+
+      const merged = {
+        ...(existing || {}),
+        items: itemsToSave,
+      };
+      localStorage.setItem(key, JSON.stringify(merged));
+    } catch (e) {
+      console.warn("Failed to persist checkout state:", e);
+    }
+  }, [products, selectedItems, userId]);
 
   const handleRemove = async (productId) => {
     try {

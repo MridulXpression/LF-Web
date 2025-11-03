@@ -13,7 +13,8 @@ const AccountHeader = () => {
   const [loading, setLoading] = useState(false);
   const [userData, setUserData] = useState(null);
 
-  const userId = useSelector((state) => state.user?.id || 2); // fallback to 2 if redux not set
+  const userInfo = useSelector((state) => state.user?.userInfo);
+  const userId = userInfo?.id;
 
   // ✅ Fetch user data
   const fetchUserData = async () => {

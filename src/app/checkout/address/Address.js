@@ -1,6 +1,7 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
+import { useRouter } from "next/navigation";
 import OrderSummary from "@/components/OrderSummary";
 import AddressCard from "@/components/AddressCard";
 import AddressModal from "@/components/AddressModal";
@@ -25,11 +26,24 @@ const CheckOutAddress = () => {
   const getCoupons = useGetCoupons();
   const userInfo = useSelector((state) => state.user?.userInfo);
   const userId = userInfo?.id;
+  const router = useRouter();
 
   useEffect(() => {
     if (userId) {
       fetchCartItems();
       fetchAddresses();
+      // Load saved checkout from localStorage (if any)
+      try {
+        const saved = localStorage.getItem(`lafetch_checkout_${userId}`);
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          if (parsed.selectedAddressId)
+            setSelectedAddressId(parsed.selectedAddressId);
+          if (parsed.orderTotal) setOrderTotal(parsed.orderTotal);
+        }
+      } catch (e) {
+        console.warn("Failed to load checkout state:", e);
+      }
     }
   }, [userId]);
 
@@ -141,37 +155,124 @@ const CheckOutAddress = () => {
       alert("Please select an address to proceed.");
       return;
     }
-    const amountInPaise = orderTotal * 100;
-    console.log("Initiating payment of:", amountInPaise);
+    // Re-fetch latest cart items to build a correct payload before payment
+    (async () => {
+      try {
+        const cartResp = await axiosHttp.get(`/cart-items/${userId}`);
+        const cartData = (cartResp.data && cartResp.data.data) || [];
 
-    const options = {
-      key: process.env.NEXT_PUBLIC_RAZOR_PAY_KEY_ID,
-      amount: amountInPaise, // amount in paise (₹500)
-      currency: "INR",
-      name: "LaFetch",
-      description: "Demo Transaction",
-      image: "/logo.png", // optional
-      handler: function (response) {
-        alert(
-          "Payment Successful! Payment ID: " + response.razorpay_payment_id
+        // Build items array expected by backend (no discount/tax for now)
+        const items = cartData.map((item) => {
+          const unitPrice = item.product_variant?.price || 0;
+          const quantity = item.quantity || 1;
+          return {
+            productName: item.product?.title || "",
+            productId: item.productId,
+            variantId: item.variantId,
+            quantity,
+            unitPrice,
+            // explicitly set no discount/tax for now
+            discount: 0,
+            tax: 0,
+            total: +(unitPrice * quantity).toFixed(2),
+            sku: item.product?.sku || "",
+            hsn: item.product?.hsn || "",
+          };
+        });
+
+        const total = items.reduce(
+          (s, it) => s + (it.unitPrice || 0) * (it.quantity || 1),
+          0
         );
-        console.log("Payment Success:", response);
-      },
-      prefill: {
-        name: userInfo?.fullName,
-        email: userInfo?.email,
-        contact: userInfo?.phone,
-      },
-      notes: {
-        address: "Test Transaction - No backend",
-      },
-      theme: {
-        color: "#988BFF",
-      },
-    };
+        const totalMRP = cartData.reduce(
+          (s, it) => s + (it.product?.mrp || it.product?.basePrice || 0),
+          0
+        );
 
-    const rzp = new window.Razorpay(options);
-    rzp.open();
+        const amountInPaise = Math.round(total * 100);
+
+        const options = {
+          key: process.env.NEXT_PUBLIC_RAZOR_PAY_KEY_ID,
+          amount: amountInPaise,
+          currency: "INR",
+          name: "LaFetch",
+          description: "Order Payment",
+          image: "/logo.png",
+          prefill: {
+            name: userInfo?.fullName,
+            email: userInfo?.email,
+            contact: userInfo?.phone,
+          },
+          notes: {
+            address: "LaFetch order payment",
+          },
+          theme: { color: "#988BFF" },
+          // handler will be called on successful payment
+          handler: async function (response) {
+            try {
+              // Build final payload per spec
+              const payload = {
+                userId: userId,
+                shippingAddressId: selectedAddressId,
+                items,
+                totalMRP: +totalMRP.toFixed(2),
+                total: +total.toFixed(2),
+                paymentMethod: "prepaid",
+                paymentInfo: {
+                  provider: "razorpay",
+                  method: "card",
+                  amount: +total.toFixed(2),
+                  providerPaymentId: response.razorpay_payment_id,
+                  providerOrderId: response.razorpay_order_id || null,
+                  providerSignature: response.razorpay_signature || null,
+                },
+              };
+
+              // Call place-order endpoint only after payment success
+              const placeResp = await axiosHttp.post(`/place-order`, payload);
+              if (
+                placeResp.data &&
+                (placeResp.data.status === 200 || placeResp.data.status === 201)
+              ) {
+                // Clear saved checkout state for this user
+                try {
+                  localStorage.removeItem(`lafetch_checkout_${userId}`);
+                } catch (e) {}
+
+                // Redirect or show success
+                router.push("/");
+              } else {
+                console.error("Place order failed:", placeResp.data);
+                alert(
+                  "Payment succeeded but placing order failed. Please contact support."
+                );
+              }
+            } catch (err) {
+              console.error("Error placing order after payment:", err);
+              alert(
+                "Payment succeeded but placing order failed. Please try again."
+              );
+            }
+          },
+        };
+
+        // Save checkout state to localStorage before opening payment
+        try {
+          localStorage.setItem(
+            `lafetch_checkout_${userId}`,
+            JSON.stringify({ selectedAddressId, items, orderTotal: total })
+          );
+        } catch (e) {
+          console.warn("Could not persist checkout state:", e);
+        }
+
+        const rzp = new window.Razorpay(options);
+        rzp.open();
+      } catch (err) {
+        console.error("Error initiating payment:", err);
+        alert("Could not start payment. Please try again later.");
+      }
+    })();
   };
 
   if (loading) {
@@ -291,7 +392,7 @@ const CheckOutAddress = () => {
             {/* Proceed to Pay Button */}
             <button
               onClick={handleRazorpayPayment}
-              className="mt-6 w-full px-4 py-3 bg-black text-white font-semibold rounded cursor-pointer"
+              className="mt-6 w-full px-4 py-3  bg-black text-white font-semibold rounded cursor-pointer"
             >
               Proceed to Pay
             </button>

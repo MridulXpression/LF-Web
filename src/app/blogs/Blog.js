@@ -6,8 +6,8 @@ import useBlog from "@/hooks/useBlog";
 const HomePage = () => {
   const getBlog = useBlog();
 
-  const firstBlog = getBlog?.[4]; // Hero blog
-  const remainingBlogs = getBlog?.filter((_, index) => index !== 4) || []; // All except index 4
+  const firstBlog = getBlog?.[0]; // Hero blog
+  const remainingBlogs = getBlog?.filter((_, index) => index !== 0) || []; // All except index 4
 
   return (
     <div className="bg-white min-h-screen">

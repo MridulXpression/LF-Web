@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import {
   Package,
@@ -11,10 +11,12 @@ import {
   XCircle,
   Truck,
 } from "lucide-react";
+import DeleteAccountModal from "./DeleteAccountModal";
 
 const AccountSidebar = () => {
   const router = useRouter();
   const pathname = usePathname();
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   const menuItems = [
     { id: "orders", label: "My Orders", icon: Package, section: "account" },
@@ -62,53 +64,66 @@ const AccountSidebar = () => {
   };
 
   return (
-    <div className="w-72 bg-gray-50 border-r border-gray-200 p-6">
-      <div className="mb-6">
-        <h2 className="text-sm font-semibold text-gray-500 mb-3">My Account</h2>
-        {menuItems
-          .filter((item) => item.section === "account")
-          .map((item) => (
-            <button
-              key={item.id}
-              onClick={() => handleNavigation(item.id)}
-              className={`w-full flex items-center gap-3 px-3 py-2   mb-1 transition-colors cursor-pointer ${
-                pathname.includes(item.id)
-                  ? "bg-white text-gray-900 font-medium border-r-[2px] border-black"
-                  : "text-gray-700 hover:bg-gray-100"
-              }`}
-            >
-              <item.icon className="w-5 h-5" />
-              <span>{item.label}</span>
-            </button>
-          ))}
+    <>
+      <div className="w-72 bg-gray-50 border-r border-gray-200 p-6">
+        <div className="mb-6">
+          <h2 className="text-sm font-semibold text-gray-500 mb-3">
+            My Account
+          </h2>
+          {menuItems
+            .filter((item) => item.section === "account")
+            .map((item) => (
+              <button
+                key={item.id}
+                onClick={() => handleNavigation(item.id)}
+                className={`w-full flex items-center gap-3 px-3 py-2 mb-1 transition-colors cursor-pointer ${
+                  pathname.includes(item.id)
+                    ? "bg-white text-gray-900 font-medium border-r-[2px] border-black"
+                    : "text-gray-700 hover:bg-gray-100"
+                }`}
+              >
+                <item.icon className="w-5 h-5" />
+                <span>{item.label}</span>
+              </button>
+            ))}
+        </div>
+
+        <div className="mb-6">
+          <h2 className="text-sm font-semibold text-gray-500 mb-3">Support</h2>
+          {menuItems
+            .filter((item) => item.section === "support")
+            .map((item) => (
+              <button
+                key={item.id}
+                onClick={() => handleNavigation(item.id)}
+                className={`w-full flex items-center gap-3 px-3 py-2 mb-1 transition-colors cursor-pointer ${
+                  pathname.includes(item.id)
+                    ? "bg-white text-gray-900 font-medium"
+                    : "text-gray-700 hover:bg-gray-100"
+                }`}
+              >
+                <item.icon className="w-5 h-5" />
+                <span>{item.label}</span>
+              </button>
+            ))}
+        </div>
+
+        <div className="mt-8 space-y-2">
+          <button
+            onClick={() => setShowDeleteModal(true)}
+            className="w-full px-4 py-2 bg-red-50 text-red-600 hover:bg-red-100 transition-colors"
+          >
+            Delete Account
+          </button>
+        </div>
       </div>
 
-      <div className="mb-6">
-        <h2 className="text-sm font-semibold text-gray-500 mb-3">Support</h2>
-        {menuItems
-          .filter((item) => item.section === "support")
-          .map((item) => (
-            <button
-              key={item.id}
-              onClick={() => handleNavigation(item.id)}
-              className={`w-full flex items-center gap-3 px-3 py-2   mb-1 transition-colors cursor-pointer ${
-                pathname.includes(item.id)
-                  ? "bg-white text-gray-900 font-medium"
-                  : "text-gray-700 hover:bg-gray-100"
-              }`}
-            >
-              <item.icon className="w-5 h-5" />
-              <span>{item.label}</span>
-            </button>
-          ))}
-      </div>
-
-      <div className="mt-8 space-y-2">
-        <button className="w-full px-4 py-2 bg-red-50 text-red-600   hover:bg-red-100 transition-colors">
-          Delete Account
-        </button>
-      </div>
-    </div>
+      {/* Delete Account Modal */}
+      <DeleteAccountModal
+        isOpen={showDeleteModal}
+        onClose={() => setShowDeleteModal(false)}
+      />
+    </>
   );
 };
 

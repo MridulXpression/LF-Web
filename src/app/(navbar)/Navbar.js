@@ -12,71 +12,43 @@ import Link from "next/link";
 import useCategories from "@/hooks/useCategories";
 import UserDropdown from "@/components/UserDrpdown";
 import { usePathname } from "next/navigation";
+import useGetCategoriesHierarchy from "@/hooks/useCategoriesHirerarchy";
 
-// Sample menu data for demonstration
-const menuData = [
-  {
+// Function to generate menu data with dynamic categories and static headings
+const getMenuData = (categories) => {
+  const allBrandsMenu = {
     title: "All Brands",
-    sections: [
-      {
-        heading: "Clothing",
-        items: ["Shirts", "T-Shirts", "Jeans", "Formal Wear"],
-      },
-      {
-        heading: "Footwear",
-        items: ["Casual Shoes", "Formal Shoes", "Sneakers"],
-      },
-    ],
-  },
+    sections: [],
+  };
 
-  {
-    title: "Men",
-    sections: [
-      {
-        heading: "Clothing",
-        items: ["Shirts", "T-Shirts", "Jeans", "Formal Wear"],
-      },
-      {
-        heading: "Footwear",
-        items: ["Casual Shoes", "Formal Shoes", "Sneakers"],
-      },
-    ],
-  },
-  {
-    title: "Women",
-    sections: [
-      {
-        heading: "Clothing",
-        items: ["Shirts", "T-Shirts", "Jeans", "Formal Wear"],
-      },
-      {
-        heading: "Footwear",
-        items: ["Casual Shoes", "Formal Shoes", "Sneakers"],
-      },
-    ],
-  },
-  {
-    title: "Accessories",
-    sections: [
-      {
-        heading: "Indian Wear",
-        items: ["Kurta", "Nehru Jackets", "Payjamas"],
-      },
-      {
-        heading: "Western Wear",
-        items: ["Shirts", "T-Shirts", "Jeans", "Trousers"],
-      },
-      {
-        heading: "Footwear",
-        items: ["Sneakers", "Formal Shoes", "Sports Shoes"],
-      },
-      {
-        heading: "Bags",
-        items: ["Backpacks", "Handbags", "Wallets"],
-      },
-    ],
-  },
-];
+  // Transform categories hierarchy into menu structure
+  const dynamicMenus =
+    categories?.map((category) => ({
+      title: category.name,
+      sections: category.children.map((child) => ({
+        heading: child.name,
+        items: child.children.map((subChild) => subChild.name),
+      })),
+    })) || [];
+
+  const endStaticMenus = [
+    {
+      title: "MostPopular",
+      sections: [],
+    },
+    {
+      title: "Blogs",
+      sections: [],
+    },
+    {
+      title: "Track Order",
+      sections: [],
+    },
+  ];
+
+  // Combine menus in the desired sequence: AllBrands -> Dynamic Categories -> Static Menus
+  return [allBrandsMenu, ...dynamicMenus, ...endStaticMenus];
+};
 
 const Navbar = () => {
   const user = useSelector((state) => state.user.userInfo);
@@ -85,6 +57,22 @@ const Navbar = () => {
   const [activeDropdown, setActiveDropdown] = useState(null);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const getMenuHref = (title) => {
+    const t = (title || "").toString().toLowerCase().trim();
+    if (!t) return "#";
+
+    // Common static routes
+    if (t === "all brands" || t === "allbrands" || t === "all_brands")
+      return "/brands";
+    if (t === "blogs") return "/blogs";
+    if (t === "mostpopular" || t === "most popular") return "#";
+    if (t === "track order" || t === "trackorder") return "#";
+
+    // Known category mappings
+    if (t.includes("women")) return "/shop/women";
+    if (t.includes("men")) return "/shop/men";
+    if (t.includes("accessor")) return "/shop/accessories";
+  };
   const [suggestions, setSuggestions] = useState([]);
   const [isLoadingSuggestions, setIsLoadingSuggestions] = useState(false);
   const searchDropdownRef = useRef(null);
@@ -97,6 +85,12 @@ const Navbar = () => {
 
   const subquery = "type=sub";
   const useSubCategories = useCategories(subquery);
+
+  const categoriesHierarchy = useGetCategoriesHierarchy();
+  console.log("Categories Hierarchy:", categoriesHierarchy);
+
+  // Generate menu data using the categories hierarchy
+  const menuData = getMenuData(categoriesHierarchy);
 
   // Fetch suggestions as user types
   useEffect(() => {
@@ -199,142 +193,113 @@ const Navbar = () => {
 
               {/* Center Section - Navigation Links */}
               <div className="flex items-center space-x-6">
-                {menuData.map((menu, index) => (
-                  <div
-                    key={index}
-                    className="relative group"
-                    onMouseEnter={() => setActiveDropdown(index)}
-                    onMouseLeave={() => setActiveDropdown(null)}
-                  >
-                    <Link
-                      href={
-                        menu.title === "All Brands"
-                          ? "/brands"
-                          : menu.title === "Men"
-                          ? "/shop/men"
-                          : menu.title === "Women"
-                          ? "/shop/women"
-                          : menu.title === "Accessories"
-                          ? "/shop/accessories"
-                          : menu.title === "Blogs"
-                          ? "/blogs"
-                          : "#"
+                {menuData.map((menu, index) => {
+                  const href = getMenuHref(menu.title);
+                  const isActive = pathname === href;
+                  const hasDropdown = menu.sections && menu.sections.length > 0;
+
+                  return (
+                    <div
+                      key={index}
+                      className="relative group"
+                      onMouseEnter={() =>
+                        hasDropdown && setActiveDropdown(index)
                       }
-                      className={`text-[13px] pb-2 ${
-                        pathname === "/brands" && menu.title === "All Brands"
-                          ? "font-semibold text-black border-b-2 border-black"
-                          : pathname === "/shop/men" && menu.title === "Men"
-                          ? "font-semibold text-black border-b-2 border-black"
-                          : pathname === "/shop/women" && menu.title === "Women"
-                          ? "font-semibold text-black border-b-2 border-black"
-                          : pathname === "/shop/accessories" &&
-                            menu.title === "Accessories"
-                          ? "font-semibold text-black border-b-2 border-black"
-                          : pathname === "/blogs" && menu.title === "Blogs"
-                          ? "font-semibold text-black border-b-2 border-black"
-                          : "text-[#808080] hover:text-gray-900"
-                      }`}
+                      onMouseLeave={() =>
+                        hasDropdown && setActiveDropdown(null)
+                      }
                     >
-                      {menu.title}
-                    </Link>
+                      <Link
+                        href={href}
+                        className={`text-[13px] pb-2 ${
+                          isActive
+                            ? "font-semibold text-black border-b-2 border-black"
+                            : "text-[#808080] hover:text-gray-900"
+                        }`}
+                      >
+                        {menu.title}
+                      </Link>
 
-                    {/* Unified Dropdown Style */}
-                    {activeDropdown === index && (
-                      <div className="absolute -left-5 top-full  w-[700px] bg-white shadow-lg border border-gray-100 z-50">
-                        <div className="p-6">
-                          <div className="flex justify-between">
-                            {/* Menu Sections */}
-                            <div className="flex-1 flex flex-wrap gap-x-8 gap-y-6">
-                              {menu.sections.slice(0, 3).map((section, idx) => (
-                                <div key={idx} className="flex-shrink-0">
-                                  <h3 className="text-sm font-semibold text-gray-900 mb-3">
-                                    {section.heading}
-                                  </h3>
-                                  <ul className="space-y-2">
-                                    {section.items.map((item, itemIdx) => (
-                                      <li key={itemIdx}>
-                                        <a
-                                          href="#"
-                                          className="text-xs text-gray-600 hover:text-gray-900"
+                      {/* Unified Dropdown Style */}
+                      {hasDropdown && activeDropdown === index && (
+                        <div className="absolute -left-5 top-full  w-[700px] bg-white shadow-lg border border-gray-100 z-50">
+                          <div className="p-6">
+                            <div className="flex justify-between">
+                              {/* Menu Sections */}
+                              <div className="flex-1 flex flex-wrap gap-x-8 gap-y-6">
+                                {menu.sections
+                                  .slice(0, 3)
+                                  .map((section, idx) => (
+                                    <div key={idx} className="flex-shrink-0">
+                                      <h3 className="text-sm font-semibold text-gray-900 mb-3">
+                                        {section.heading}
+                                      </h3>
+                                      <ul className="space-y-2">
+                                        {section.items.map((item, itemIdx) => (
+                                          <li key={itemIdx}>
+                                            <a
+                                              href="#"
+                                              className="text-xs text-gray-600 hover:text-gray-900"
+                                            >
+                                              {item}
+                                            </a>
+                                          </li>
+                                        ))}
+                                      </ul>
+                                    </div>
+                                  ))}
+                                {menu.sections.length > 3 && (
+                                  <div className="w-full flex gap-x-8">
+                                    {menu.sections
+                                      .slice(3)
+                                      .map((section, idx) => (
+                                        <div
+                                          key={idx + 3}
+                                          className="flex-shrink-0"
                                         >
-                                          {item}
-                                        </a>
-                                      </li>
-                                    ))}
-                                  </ul>
-                                </div>
-                              ))}
-                              {menu.sections.length > 3 && (
-                                <div className="w-full flex gap-x-8">
-                                  {menu.sections
-                                    .slice(3)
-                                    .map((section, idx) => (
-                                      <div
-                                        key={idx + 3}
-                                        className="flex-shrink-0"
-                                      >
-                                        <h3 className="text-sm font-semibold text-gray-900 mb-3">
-                                          {section.heading}
-                                        </h3>
-                                        <ul className="space-y-2">
-                                          {section.items.map(
-                                            (item, itemIdx) => (
-                                              <li key={itemIdx}>
-                                                <a
-                                                  href="#"
-                                                  className="text-xs text-gray-600 hover:text-gray-900"
-                                                >
-                                                  {item}
-                                                </a>
-                                              </li>
-                                            )
-                                          )}
-                                        </ul>
-                                      </div>
-                                    ))}
-                                </div>
-                              )}
-                            </div>
-
-                            {/* Product Images */}
-                            <div className="ml-4 flex space-x-4">
-                              <div className="w-24 h-32 bg-gray-100 rounded-lg overflow-hidden flex items-center justify-center">
-                                <span className="text-gray-400 text-xs">
-                                  Product 1
-                                </span>
+                                          <h3 className="text-sm font-semibold text-gray-900 mb-3">
+                                            {section.heading}
+                                          </h3>
+                                          <ul className="space-y-2">
+                                            {section.items.map(
+                                              (item, itemIdx) => (
+                                                <li key={itemIdx}>
+                                                  <a
+                                                    href="#"
+                                                    className="text-xs text-gray-600 hover:text-gray-900"
+                                                  >
+                                                    {item}
+                                                  </a>
+                                                </li>
+                                              )
+                                            )}
+                                          </ul>
+                                        </div>
+                                      ))}
+                                  </div>
+                                )}
                               </div>
-                              <div className="w-24 h-32 bg-gray-100 rounded-lg overflow-hidden flex items-center justify-center">
-                                <span className="text-gray-400 text-xs">
-                                  Product 2
-                                </span>
+
+                              {/* Product Images */}
+                              <div className="ml-4 flex space-x-4">
+                                <div className="w-24 h-32 bg-gray-100 rounded-lg overflow-hidden flex items-center justify-center">
+                                  <span className="text-gray-400 text-xs">
+                                    Product 1
+                                  </span>
+                                </div>
+                                <div className="w-24 h-32 bg-gray-100 rounded-lg overflow-hidden flex items-center justify-center">
+                                  <span className="text-gray-400 text-xs">
+                                    Product 2
+                                  </span>
+                                </div>
                               </div>
                             </div>
                           </div>
                         </div>
-                      </div>
-                    )}
-                  </div>
-                ))}
-
-                {/* Additional static menu items */}
-                <a
-                  href="#"
-                  className="text-[13px] text-[#808080] hover:text-gray-900"
-                >
-                  Most Popular
-                </a>
-                <Link
-                  href="/blogs"
-                  className="text-[13px] text-[#808080] hover:text-gray-900"
-                >
-                  Blogs
-                </Link>
-                <a
-                  href="#"
-                  className="text-[13px] text-[#808080] hover:text-gray-900"
-                >
-                  Track Order
-                </a>
+                      )}
+                    </div>
+                  );
+                })}
               </div>
 
               {/* Right Section - Icons */}
@@ -410,7 +375,6 @@ const Navbar = () => {
               <span className="text-xl">⚡</span>
               <span className="ml-1 font-medium">Quick</span>
             </div>
-
             {/* Menu Items */}
             <div className="space-y-4">
               {menuData.map((menu, index) => (
@@ -446,19 +410,7 @@ const Navbar = () => {
                   )}
                 </div>
               ))}
-
-              {/* Additional Menu Items */}
-              <a href="#" className="block text-sm text-gray-900">
-                Most Popular
-              </a>
-              <a href="#" className="block text-sm text-gray-900">
-                Blogs
-              </a>
-              <a href="#" className="block text-sm text-gray-900">
-                Track Order
-              </a>
-            </div>
-
+            </div>{" "}
             {/* Mobile Icons */}
             <div className="fixed bottom-0 left-0 w-full border-t bg-white p-4">
               <div className="flex justify-around">

@@ -27,4 +27,5 @@ export const endPoints = {
   getBrandsProducts: "/view-brand",
   logout: "/auth/sign-out",
   sortProduct: "/sort-products",
+  getCategoriesHierarchy: "/category-hierarchy",
 };
