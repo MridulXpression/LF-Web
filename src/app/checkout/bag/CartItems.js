@@ -281,8 +281,8 @@ const ShoppingCart = () => {
           <div className="text-center py-12">
             <p className="text-gray-600 text-lg">Your shopping bag is empty</p>
             <button
-              onClick={() => (window.location.href = "/shop")}
-              className="mt-4 bg-black text-white px-6 py-2 rounded hover:bg-gray-800"
+              onClick={() => (window.location.href = "/products")}
+              className="mt-4 bg-black text-white px-6 py-2 rounded hover:bg-gray-800 cursor-pointer"
             >
               Continue Shopping
             </button>

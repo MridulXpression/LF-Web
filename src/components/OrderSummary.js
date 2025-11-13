@@ -53,7 +53,7 @@ const OrderSummary = ({
   }, [totalPrice, onAmountChange]);
 
   return (
-    <div className="bg-white rounded-lg shadow-sm p-6 sticky top-4">
+    <div className="bg-white rounded-lg shadow-sm p-6  top-4">
       {/* Coupons Section — Hide on /checkout/address */}
       {!isAddressPage && (
         <div className="mb-6">

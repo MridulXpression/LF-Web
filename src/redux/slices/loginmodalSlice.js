@@ -4,7 +4,9 @@ const initialState = {
   phoneAuthModal: false,
   wishlistModal: false,
   productViewModal: false,
-  selectedProduct: null, // Add this line
+  openReturnModal: false,
+  cancelModal: false,
+  selectedProduct: null,
 };
 
 const modalSlice = createSlice({
@@ -33,11 +35,29 @@ const modalSlice = createSlice({
     // Product View Modal
     openProductViewModal: (state, action) => {
       state.productViewModal = true;
-      state.selectedProduct = action.payload; // Add this line
+      state.selectedProduct = action.payload;
     },
     closeProductViewModal: (state) => {
       state.productViewModal = false;
-      state.selectedProduct = null; // Add this line
+      state.selectedProduct = null;
+    },
+
+    openReturnModal: (state, action) => {
+      state.openReturnModal = true;
+      state.selectedProduct = action.payload;
+    },
+    closeReturnModal: (state) => {
+      state.openReturnModal = false;
+      state.selectedProduct = null;
+    },
+
+    openCancelModal: (state, action) => {
+      state.cancelModal = true;
+      state.selectedProduct = action.payload;
+    },
+    closeCancelModal: (state) => {
+      state.cancelModal = false;
+      state.selectedProduct = null;
     },
   },
 });
@@ -51,6 +71,12 @@ export const {
 
   openProductViewModal,
   closeProductViewModal,
+
+  openReturnModal,
+  closeReturnModal,
+
+  openCancelModal,
+  closeCancelModal,
 } = modalSlice.actions;
 
 export default modalSlice.reducer;

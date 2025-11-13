@@ -1,13 +1,24 @@
 "use client";
 import React from "react";
 
-const ReviewCard = ({ name, rating, timeAgo, comment }) => {
+const ReviewCard = ({ name, rating, timeAgo, comment, size }) => {
   return (
-    <div className="border-b border-gray-200 rounded-lg p-4 bg-white">
-      {/* Header with name and time */}
-      <div className="flex items-center gap-2 mb-2">
-        <h3 className="font-semibold text-gray-900">{name}</h3>
-        <span className="text-sm text-gray-500">{timeAgo}</span>
+    <div className=" border-b border-gray-300 p-4 bg-white   transition-all duration-200">
+      {/* Header Section */}
+      <div className="flex items-center justify-between mb-2">
+        <div className="flex items-center gap-2">
+          <h3 className="font-semibold text-gray-900 text-sm sm:text-base">
+            {name}
+          </h3>
+          <span className="text-xs text-gray-500">{timeAgo}</span>
+        </div>
+
+        {/* Size Display */}
+        {size && (
+          <span className="px-2 py-1 text-xs font-medium bg-gray-100 text-black rounded-md">
+            Size: {size}
+          </span>
+        )}
       </div>
 
       {/* Star Rating */}

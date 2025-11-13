@@ -6,6 +6,7 @@ import OrderSummary from "@/components/OrderSummary";
 import AddressCard from "@/components/AddressCard";
 import AddressModal from "@/components/AddressModal";
 import DeleteConfirmModal from "@/components/DeleteModal";
+import PaymentStatusModal from "@/components/ordersmodal/PayementConfirmationModal";
 import axiosHttp from "@/utils/axioshttp";
 import useGetCoupons from "@/hooks/useGetCoupons";
 import Link from "next/link";
@@ -22,19 +23,51 @@ const CheckOutAddress = () => {
   const [deletingAddressId, setDeletingAddressId] = useState(null);
   const [deleteLoading, setDeleteLoading] = useState(false);
   const [orderTotal, setOrderTotal] = useState(0);
+  const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
+  const [paymentModalData, setPaymentModalData] = useState({});
+  const [razorpayLoaded, setRazorpayLoaded] = useState(false);
 
   const getCoupons = useGetCoupons();
   const userInfo = useSelector((state) => state.user?.userInfo);
   const userId = userInfo?.id;
   const router = useRouter();
 
+  // Load Razorpay script
+  useEffect(() => {
+    const loadRazorpayScript = () => {
+      return new Promise((resolve) => {
+        // Check if already loaded
+        if (window.Razorpay) {
+          setRazorpayLoaded(true);
+          resolve(true);
+          return;
+        }
+
+        const script = document.createElement("script");
+        script.src = "https://checkout.razorpay.com/v1/checkout.js";
+        script.async = true;
+        script.onload = () => {
+          setRazorpayLoaded(true);
+          resolve(true);
+        };
+        script.onerror = () => {
+          console.error("Failed to load Razorpay script");
+          resolve(false);
+        };
+        document.body.appendChild(script);
+      });
+    };
+
+    loadRazorpayScript();
+  }, []);
+
   useEffect(() => {
     if (userId) {
       fetchCartItems();
       fetchAddresses();
-      // Load saved checkout from localStorage (if any)
+      // Load saved checkout from memory (using state instead of localStorage)
       try {
-        const saved = localStorage.getItem(`lafetch_checkout_${userId}`);
+        const saved = sessionStorage.getItem(`lafetch_checkout_${userId}`);
         if (saved) {
           const parsed = JSON.parse(saved);
           if (parsed.selectedAddressId)
@@ -150,129 +183,261 @@ const CheckOutAddress = () => {
     }
   };
 
-  const handleRazorpayPayment = () => {
+  const handleRazorpayPayment = async () => {
     if (!selectedAddressId) {
       alert("Please select an address to proceed.");
       return;
     }
-    // Re-fetch latest cart items to build a correct payload before payment
-    (async () => {
-      try {
-        const cartResp = await axiosHttp.get(`/cart-items/${userId}`);
-        const cartData = (cartResp.data && cartResp.data.data) || [];
 
-        // Build items array expected by backend (no discount/tax for now)
-        const items = cartData.map((item) => {
-          const unitPrice = item.product_variant?.price || 0;
-          const quantity = item.quantity || 1;
-          return {
-            productName: item.product?.title || "",
-            productId: item.productId,
-            variantId: item.variantId,
-            quantity,
-            unitPrice,
-            // explicitly set no discount/tax for now
-            discount: 0,
-            tax: 0,
-            total: +(unitPrice * quantity).toFixed(2),
-            sku: item.product?.sku || "",
-            hsn: item.product?.hsn || "",
-          };
-        });
+    // Check if Razorpay is loaded
+    if (!razorpayLoaded || !window.Razorpay) {
+      alert("Payment gateway is loading. Please try again in a moment.");
+      return;
+    }
 
-        const total = items.reduce(
-          (s, it) => s + (it.unitPrice || 0) * (it.quantity || 1),
-          0
-        );
-        const totalMRP = cartData.reduce(
-          (s, it) => s + (it.product?.mrp || it.product?.basePrice || 0),
-          0
-        );
+    try {
+      // Step 1: Fetch latest cart items
+      const cartResp = await axiosHttp.get(`/cart-items/${userId}`);
+      const cartData = (cartResp.data && cartResp.data.data) || [];
 
-        const amountInPaise = Math.round(total * 100);
-
-        const options = {
-          key: process.env.NEXT_PUBLIC_RAZOR_PAY_KEY_ID,
-          amount: amountInPaise,
-          currency: "INR",
-          name: "LaFetch",
-          description: "Order Payment",
-          image: "/logo.png",
-          prefill: {
-            name: userInfo?.fullName,
-            email: userInfo?.email,
-            contact: userInfo?.phone,
-          },
-          notes: {
-            address: "LaFetch order payment",
-          },
-          theme: { color: "#988BFF" },
-          // handler will be called on successful payment
-          handler: async function (response) {
-            try {
-              // Build final payload per spec
-              const payload = {
-                userId: userId,
-                shippingAddressId: selectedAddressId,
-                items,
-                totalMRP: +totalMRP.toFixed(2),
-                total: +total.toFixed(2),
-                paymentMethod: "prepaid",
-                paymentInfo: {
-                  provider: "razorpay",
-                  method: "card",
-                  amount: +total.toFixed(2),
-                  providerPaymentId: response.razorpay_payment_id,
-                  providerOrderId: response.razorpay_order_id || null,
-                  providerSignature: response.razorpay_signature || null,
-                },
-              };
-
-              // Call place-order endpoint only after payment success
-              const placeResp = await axiosHttp.post(`/place-order`, payload);
-              if (
-                placeResp.data &&
-                (placeResp.data.status === 200 || placeResp.data.status === 201)
-              ) {
-                // Clear saved checkout state for this user
-                try {
-                  localStorage.removeItem(`lafetch_checkout_${userId}`);
-                } catch (e) {}
-
-                // Redirect or show success
-                router.push("/");
-              } else {
-                console.error("Place order failed:", placeResp.data);
-                alert(
-                  "Payment succeeded but placing order failed. Please contact support."
-                );
-              }
-            } catch (err) {
-              console.error("Error placing order after payment:", err);
-              alert(
-                "Payment succeeded but placing order failed. Please try again."
-              );
-            }
-          },
-        };
-
-        // Save checkout state to localStorage before opening payment
-        try {
-          localStorage.setItem(
-            `lafetch_checkout_${userId}`,
-            JSON.stringify({ selectedAddressId, items, orderTotal: total })
-          );
-        } catch (e) {
-          console.warn("Could not persist checkout state:", e);
-        }
-
-        const rzp = new window.Razorpay(options);
-        rzp.open();
-      } catch (err) {
-        console.error("Error initiating payment:", err);
-        alert("Could not start payment. Please try again later.");
+      if (cartData.length === 0) {
+        alert("Your cart is empty. Please add items to proceed.");
+        return;
       }
-    })();
+
+      // Build items array for initiate-payment
+      const items = cartData.map((item) => {
+        const unitPrice = item.product_variant?.price || 0;
+        const quantity = item.quantity || 1;
+        return {
+          productName: item.product?.title || "",
+          productId: item.productId,
+          variantId: item.variantId,
+          quantity,
+          unitPrice,
+          total: +(unitPrice * quantity).toFixed(2),
+          sku: item.product?.sku || "",
+          hsn: item.product?.hsn || "",
+        };
+      });
+
+      const total = items.reduce(
+        (s, it) => s + (it.unitPrice || 0) * (it.quantity || 1),
+        0
+      );
+      const totalMRP = cartData.reduce(
+        (s, it) => s + (it.product?.mrp || it.product?.basePrice || 0),
+        0
+      );
+
+      // Step 2: Call /initiate-payment API
+      const initiatePayload = {
+        userId: userId,
+        shippingAddressId: selectedAddressId,
+        items: items,
+        totalMRP: +totalMRP.toFixed(2),
+        total: +total.toFixed(2),
+        paymentMethod: "prepaid",
+      };
+
+      console.log("Initiating payment with payload:", initiatePayload);
+
+      const initiateResp = await axiosHttp.post(
+        `/initiate-payment`,
+        initiatePayload
+      );
+
+      console.log("Initiate payment response:", initiateResp.data);
+
+      if (
+        !initiateResp.data ||
+        (initiateResp.data.status !== 200 && initiateResp.data.status !== 201)
+      ) {
+        throw new Error(
+          initiateResp.data?.message || "Failed to initiate payment"
+        );
+      }
+
+      const { orderId, paymentId, providerOrderId } = initiateResp.data.data;
+
+      if (!providerOrderId) {
+        throw new Error("Provider order ID not received from server");
+      }
+
+      // Step 3: Store payment details in sessionStorage
+      const paymentData = {
+        orderId,
+        paymentId,
+        providerOrderId,
+        selectedAddressId,
+        items,
+        total,
+        totalMRP,
+        userId,
+      };
+
+      try {
+        sessionStorage.setItem(
+          `lafetch_payment_${userId}`,
+          JSON.stringify(paymentData)
+        );
+      } catch (e) {
+        console.warn("Could not persist payment data:", e);
+      }
+
+      // Step 4: Open Razorpay payment gateway
+      const amountInPaise = Math.round(total * 100);
+
+      // Verify Razorpay key is available
+      const razorpayKey = process.env.NEXT_PUBLIC_RAZOR_PAY_KEY_ID;
+
+      if (!razorpayKey) {
+        console.error("Razorpay key is missing!");
+        alert("Payment configuration error. Please contact support.");
+        return;
+      }
+
+      console.log("Opening Razorpay with amount:", amountInPaise, "paise");
+
+      const options = {
+        key: razorpayKey,
+        amount: amountInPaise,
+        currency: "INR",
+        name: "LaFetch",
+        description: "Order Payment",
+        image: "/logo.png",
+        order_id: providerOrderId,
+        prefill: {
+          name: userInfo?.fullName || "",
+          email: userInfo?.email || "",
+          contact: userInfo?.phone || "",
+        },
+        notes: {
+          address: "LaFetch order payment",
+        },
+        theme: { color: "#988BFF" },
+        handler: async function (response) {
+          console.log("Payment successful, Razorpay response:", response);
+
+          try {
+            // Validate Razorpay response
+            if (!response.razorpay_payment_id) {
+              throw new Error("Payment ID is missing from Razorpay response");
+            }
+
+            // Retrieve payment data from sessionStorage
+            const storedData = sessionStorage.getItem(
+              `lafetch_payment_${userId}`
+            );
+            if (!storedData) {
+              throw new Error("Payment data not found in storage");
+            }
+
+            const paymentInfo = JSON.parse(storedData);
+
+            // Step 5: Call /place-order API with payment response
+            const placeOrderPayload = {
+              orderId: paymentInfo.orderId,
+              paymentInfo: {
+                providerOrderId:
+                  response.razorpay_order_id || paymentInfo.providerOrderId,
+                providerPaymentId: response.razorpay_payment_id,
+                providerSignature: response.razorpay_signature || "",
+              },
+            };
+
+            console.log("Placing order with payload:", placeOrderPayload);
+
+            const placeResp = await axiosHttp.post(
+              `/place-order`,
+              placeOrderPayload
+            );
+
+            console.log("Place order response:", placeResp.data);
+
+            // FIXED: Changed from placeResp.response.data to placeResp.data
+            if (
+              placeResp.data &&
+              (placeResp.data.status === 200 || placeResp.data.status === 201)
+            ) {
+              // Clear stored payment and checkout data
+              try {
+                sessionStorage.removeItem(`lafetch_payment_${userId}`);
+                sessionStorage.removeItem(`lafetch_checkout_${userId}`);
+              } catch (e) {
+                console.warn("Could not clear storage:", e);
+              }
+
+              // Open payment confirmation modal with success
+              setPaymentModalData({
+                status: "success",
+                transactionId: response.razorpay_payment_id,
+                paymentMethod: "Razorpay",
+                dateTime: new Date().toLocaleString(),
+                amountPaid: paymentInfo?.total || total || 0,
+              });
+              setIsPaymentModalOpen(true);
+            } else {
+              console.error("Place order failed:", placeResp.data);
+              // Open failure modal so user can retry or continue shopping
+              setPaymentModalData({
+                status: "failed",
+                transactionId: response.razorpay_payment_id || "N/A",
+                paymentMethod: "Razorpay",
+                dateTime: new Date().toLocaleString(),
+                amountPaid: paymentInfo?.total || total || 0,
+              });
+              setIsPaymentModalOpen(true);
+            }
+          } catch (err) {
+            console.error("Error placing order after payment:", err);
+            // Show failure modal if anything goes wrong while placing order
+            setPaymentModalData({
+              status: "failed",
+              transactionId: response?.razorpay_payment_id || "N/A",
+              paymentMethod: "Razorpay",
+              dateTime: new Date().toLocaleString(),
+              amountPaid: paymentInfo?.total || total || 0,
+            });
+            setIsPaymentModalOpen(true);
+          }
+        },
+        modal: {
+          ondismiss: function () {
+            console.log("Payment modal closed by user");
+            alert("Payment cancelled. You can try again when ready.");
+          },
+        },
+      };
+
+      console.log("Creating Razorpay instance with options:", {
+        ...options,
+        key: "***hidden***",
+      });
+
+      const rzp = new window.Razorpay(options);
+
+      rzp.on("payment.failed", function (response) {
+        console.error("Payment failed:", response.error);
+        // Open failure modal with available details
+        setPaymentModalData({
+          status: "failed",
+          transactionId: response.error?.code || "N/A",
+          paymentMethod: "Razorpay",
+          dateTime: new Date().toLocaleString(),
+          amountPaid: 0,
+        });
+        setIsPaymentModalOpen(true);
+      });
+
+      rzp.open();
+      console.log("Razorpay modal opened");
+    } catch (err) {
+      console.error("Error initiating payment:", err);
+      alert(
+        "Could not start payment: " + (err.message || "Please try again later.")
+      );
+    }
   };
 
   if (loading) {
@@ -392,9 +557,14 @@ const CheckOutAddress = () => {
             {/* Proceed to Pay Button */}
             <button
               onClick={handleRazorpayPayment}
-              className="mt-6 w-full px-4 py-3  bg-black text-white font-semibold rounded cursor-pointer"
+              disabled={!razorpayLoaded}
+              className={`mt-6 w-full px-4 py-3 font-semibold rounded ${
+                razorpayLoaded
+                  ? "bg-black text-white cursor-pointer hover:bg-gray-800"
+                  : "bg-gray-400 text-gray-200 cursor-not-allowed"
+              }`}
             >
-              Proceed to Pay
+              {razorpayLoaded ? "Proceed to Pay" : "Loading Payment Gateway..."}
             </button>
           </div>
         </div>
@@ -420,6 +590,25 @@ const CheckOutAddress = () => {
         }}
         onConfirm={handleConfirmDelete}
         loading={deleteLoading}
+      />
+
+      {/* Payment Confirmation Modal */}
+      <PaymentStatusModal
+        isOpen={isPaymentModalOpen}
+        onClose={() => setIsPaymentModalOpen(false)}
+        status={paymentModalData.status}
+        transactionId={paymentModalData.transactionId}
+        paymentMethod={paymentModalData.paymentMethod}
+        dateTime={paymentModalData.dateTime}
+        amountPaid={paymentModalData.amountPaid}
+        onTrackOrder={() => {
+          setIsPaymentModalOpen(false);
+          router.push("/account/orders");
+        }}
+        onContinueShopping={() => {
+          setIsPaymentModalOpen(false);
+          router.push("/products");
+        }}
       />
     </div>
   );

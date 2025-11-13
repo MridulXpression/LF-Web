@@ -43,14 +43,17 @@ const PhoneAuthModal = () => {
       const endpoint = authType === "login" ? signInEndPoint : signUpEndPoint;
 
       const response = await axiosHttp.post(endpoint, {
-        phone: phoneNumber,
+        phone: `+91${phoneNumber}`,
       });
 
       if (response.status === 200) {
         setCurrentStep("otp");
         const successMessage = response?.data?.message;
-
-        toast.success(successMessage || "OTP sent successfully");
+        toast.success(
+          typeof successMessage === "string"
+            ? successMessage
+            : "OTP sent successfully"
+        );
       }
     } catch (error) {
       const errorMessage =
@@ -84,7 +87,8 @@ const PhoneAuthModal = () => {
 
     setLoading(true);
     try {
-      const requestData = { phone: phoneNumber, otp: otpString };
+      const requestData = { phone: `+91${phoneNumber}`, otp: otpString };
+
       if (authType === "login") requestData.type = "login";
 
       const response = await axiosHttp.post(verifyOtpendPoint, requestData);
@@ -93,7 +97,7 @@ const PhoneAuthModal = () => {
       if (response.data?.status === 200) {
         toast.success(response.data.message || "OTP verified successfully!");
 
-        localStorage.setItem("userPhone", phoneNumber);
+        localStorage.setItem("userPhone", `+91${phoneNumber}`);
 
         if (authType === "login") {
           dispatch(setUser(response.data.data));
@@ -155,8 +159,9 @@ const PhoneAuthModal = () => {
     setLoading(true);
     try {
       const res = await axiosHttp.post(resendOtpendPoint, {
-        phone: phoneNumber,
+        phone: `+91${phoneNumber}`,
       });
+
       toast.success(res?.data?.message || "OTP resent successfully");
     } catch (error) {
       toast.error("Failed to resend OTP");

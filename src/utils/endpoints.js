@@ -28,4 +28,5 @@ export const endPoints = {
   logout: "/auth/sign-out",
   sortProduct: "/sort-products",
   getCategoriesHierarchy: "/category-hierarchy",
+  getFiltersData: "/filter-products",
 };

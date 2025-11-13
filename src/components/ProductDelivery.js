@@ -14,12 +14,15 @@ const DeliveryOptions = ({ pincode, deliveryInfo, onCheckPincode }) => {
     }
   };
 
-  // Handle Enter key
+  // ✅ Handle Enter key
   const handleKeyDown = async (e) => {
     if (e.key === "Enter" && pin.length === 6) {
       await handleCheck();
     }
   };
+
+  // ✅ Make sure deliveryInfo is always an array
+  const safeDeliveryInfo = Array.isArray(deliveryInfo) ? deliveryInfo : [];
 
   return (
     <div className="border-t pt-5 space-y-4">
@@ -27,13 +30,14 @@ const DeliveryOptions = ({ pincode, deliveryInfo, onCheckPincode }) => {
         Delivery Options
       </h3>
 
+      {/* Pincode input */}
       <div className="flex gap-2">
         <div className="flex-1 flex items-center gap-2 border rounded px-3 py-2.5">
           <MapPin className="w-4 h-4 text-gray-500" />
           <input
             type="text"
             value={pin}
-            onChange={(e) => setPin(e.target.value)}
+            onChange={(e) => setPin(e.target.value.replace(/\D/g, ""))}
             onKeyDown={handleKeyDown}
             placeholder="Enter pincode"
             className="flex-1 outline-none text-sm text-black"
@@ -42,16 +46,19 @@ const DeliveryOptions = ({ pincode, deliveryInfo, onCheckPincode }) => {
         </div>
         <button
           onClick={handleCheck}
-          className="px-5 py-2.5 text-pink-600 font-bold text-sm hover:bg-pink-50 transition-colors"
+          className={`px-5 py-2.5 text-pink-600 font-bold text-sm hover:bg-pink-50 transition-colors ${
+            pin.length !== 6 ? "opacity-50 cursor-not-allowed" : ""
+          }`}
           disabled={loading || pin.length !== 6}
         >
           {loading ? "Checking..." : "CHECK"}
         </button>
       </div>
 
-      {deliveryInfo && (
+      {/* ✅ Delivery Info */}
+      {safeDeliveryInfo.length > 0 ? (
         <div className="space-y-3 pt-2">
-          {deliveryInfo.map((info, idx) => (
+          {safeDeliveryInfo.map((info, idx) => (
             <div key={idx} className="flex items-start gap-3 text-sm">
               {info.icon === "truck" && (
                 <Truck className="w-4 h-4 text-gray-600 mt-0.5 flex-shrink-0" />
@@ -65,7 +72,7 @@ const DeliveryOptions = ({ pincode, deliveryInfo, onCheckPincode }) => {
               <div>
                 <p className="font-semibold text-gray-900">{info.title}</p>
                 {info.description && (
-                  <p className="text-gray-600 text-xs mt-0.5">
+                  <p className="text-gray-600 text-xs mt-0.5 whitespace-pre-line">
                     {info.description}
                   </p>
                 )}
@@ -73,8 +80,14 @@ const DeliveryOptions = ({ pincode, deliveryInfo, onCheckPincode }) => {
             </div>
           ))}
         </div>
+      ) : (
+        // ✅ Fallback when no delivery info
+        <p className="text-xs text-gray-500 italic">
+          Enter a valid pincode to check delivery details.
+        </p>
       )}
     </div>
   );
 };
+
 export default DeliveryOptions;

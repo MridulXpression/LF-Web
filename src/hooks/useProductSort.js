@@ -8,7 +8,7 @@ const useSortedProducts = (query) => {
   const fetchSortedProducts = async () => {
     try {
       const endPoint = query
-        ? `${endPoints.sortProduct}?${query}`
+        ? `${endPoints.sortProduct}?sort=${query}`
         : `${endPoints.sortProduct}`;
 
       const result = await axiosHttp.get(endPoint);
