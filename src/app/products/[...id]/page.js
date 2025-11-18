@@ -61,6 +61,38 @@ const extractSizesFromVariants = (variants) => {
   });
 };
 
+// ✅ Helper to extract unique colors from variants
+const extractColorsFromVariants = (variants) => {
+  if (!variants || !Array.isArray(variants)) return [];
+
+  const colorsMap = new Map();
+
+  variants.forEach((variant) => {
+    const colorOption = variant.selectedOptions?.find(
+      (option) => option.name === "Color"
+    );
+
+    if (colorOption && colorOption.value) {
+      const colorValue = colorOption.value;
+      const availableStock = variant.inventory?.availableStock ?? 0;
+
+      if (!colorsMap.has(colorValue)) {
+        colorsMap.set(colorValue, {
+          label: colorValue,
+          value: colorValue,
+          variantId: variant.id,
+          shopifyVariantId: variant.shopifyVariantId,
+          available: availableStock > 0,
+          price: variant.price,
+          compareAtPrice: variant.compareAtPrice,
+        });
+      }
+    }
+  });
+
+  return Array.from(colorsMap.values());
+};
+
 export default function ProductPage({ params }) {
   const unwrappedParams = React.use(params);
   const data = useProductsById(unwrappedParams.id);
@@ -71,6 +103,12 @@ export default function ProductPage({ params }) {
   const sizes = useMemo(() => {
     if (!data?.variants) return [];
     return extractSizesFromVariants(data.variants);
+  }, [data?.variants]);
+
+  // ✅ Extract colors
+  const colors = useMemo(() => {
+    if (!data?.variants) return [];
+    return extractColorsFromVariants(data.variants);
   }, [data?.variants]);
 
   // ✅ Get selected variant from localStorage
@@ -209,20 +247,38 @@ export default function ProductPage({ params }) {
           <div className="space-y-6">
             <ProductInfo
               title={data.title}
-              brand={data.brand?.name}
+              brand={data.brand?.name || data.brand?.businessName || ""}
               rating={4.5}
               reviews={data.variants?.length || 0}
               price={variantPrice}
               mrp={data.mrp}
               discount={discount}
               sizes={sizes}
+              colors={colors}
               variantId={selectedVariant?.id || sizes?.[0]?.variantId}
+              brandId={data.brandId}
+              superCatId={data.superCatId}
+              catId={data.catId}
+              subcatId={data.subCatId}
+              onVariantChange={setSelectedVariant}
             />
 
             <ProductActions
               onAddToBag={handleAddToBag}
               onAddToWishlist={handleAddToWishlist}
               productData={data}
+              isInStock={
+                selectedVariant
+                  ? Boolean(
+                      selectedVariant.available ??
+                        selectedVariant.inventory?.availableStock > 0
+                    )
+                  : Boolean(
+                      data?.variants?.some(
+                        (v) => v.inventory?.availableStock > 0
+                      )
+                    )
+              }
             />
 
             <ProductDelivery

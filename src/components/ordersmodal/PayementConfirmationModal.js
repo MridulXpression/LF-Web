@@ -1,20 +1,31 @@
 import React from "react";
-import { X } from "lucide-react";
+import { X, AlertTriangle } from "lucide-react";
 
 const PaymentStatusModal = ({
   isOpen,
   onClose,
-  status, // 'success' or 'failed'
+  status, // 'success', 'failed', or 'payment_success_order_failed'
   transactionId,
   paymentMethod,
   dateTime,
   amountPaid,
+  errorMessage,
   onTrackOrder,
   onContinueShopping,
 }) => {
   if (!isOpen) return null;
 
   const isSuccess = status === "success";
+  const isPaymentSuccessOrderFailed = status === "payment_success_order_failed";
+  const isFailed = status === "failed";
+
+  // Handler to copy transaction ID to clipboard
+  const handleCopyTransactionId = () => {
+    if (transactionId) {
+      navigator.clipboard.writeText(transactionId);
+      alert("Transaction ID copied to clipboard!");
+    }
+  };
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-sm bg-opacity-50">
@@ -29,15 +40,36 @@ const PaymentStatusModal = ({
 
         {/* Content */}
         <div className="p-6 pt-8">
+          {/* Warning Icon for Payment Success but Order Failed */}
+          {isPaymentSuccessOrderFailed && (
+            <div className="flex justify-center mb-4">
+              <div className="bg-yellow-100 rounded-full p-3">
+                <AlertTriangle className="text-yellow-600" size={32} />
+              </div>
+            </div>
+          )}
+
           {/* Title */}
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">
-            {isSuccess ? "Payment Completed" : "Payment Failed"}
+          <h2 className="text-2xl font-bold text-gray-900 mb-2 text-center">
+            {isSuccess && "Payment Completed"}
+            {isFailed && "Payment Failed"}
+            {isPaymentSuccessOrderFailed && "Payment Received"}
           </h2>
-          <p className="text-gray-600 text-sm mb-6">
-            {isSuccess
-              ? "Thank you for choosing our collection."
-              : "Unfortunately, your payment could not be processed."}
+          <p className="text-gray-600 text-sm mb-6 text-center">
+            {isSuccess && "Thank you for choosing our collection."}
+            {isFailed && "Unfortunately, your payment could not be processed."}
+            {isPaymentSuccessOrderFailed &&
+              "Your payment was successful, but we encountered an issue processing your order."}
           </p>
+
+          {/* Error Message for Payment Success but Order Failed */}
+          {isPaymentSuccessOrderFailed && errorMessage && (
+            <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-4">
+              <p className="text-sm text-yellow-800">
+                <strong>Important:</strong> {errorMessage}
+              </p>
+            </div>
+          )}
 
           {/* Transaction Details */}
           <div className="border-t border-gray-200 pt-4">
@@ -49,7 +81,7 @@ const PaymentStatusModal = ({
               {/* Transaction ID */}
               <div className="flex justify-between items-center">
                 <span className="text-gray-600 text-sm">Transaction ID</span>
-                <span className="text-gray-900 font-medium text-sm">
+                <span className="text-gray-900 font-medium text-sm font-mono">
                   #{transactionId || "N/A"}
                 </span>
               </div>
@@ -83,11 +115,15 @@ const PaymentStatusModal = ({
               {/* Amount */}
               <div className="flex justify-between items-center pt-3 border-t border-gray-200">
                 <span className="text-gray-900 font-semibold">
-                  {isSuccess ? "Amount Paid" : "Amount"}
+                  {isSuccess || isPaymentSuccessOrderFailed
+                    ? "Amount Paid"
+                    : "Amount"}
                 </span>
                 <span
                   className={`font-bold text-lg ${
-                    isSuccess ? "text-gray-900" : "text-red-600"
+                    isSuccess || isPaymentSuccessOrderFailed
+                      ? "text-gray-900"
+                      : "text-red-600"
                   }`}
                 >
                   Rs. {amountPaid || "0"}
@@ -98,34 +134,53 @@ const PaymentStatusModal = ({
 
           {/* Action Buttons */}
           <div className="mt-6 space-y-3">
-            {isSuccess ? (
+            {isSuccess && (
               <>
                 <button
                   onClick={onTrackOrder}
-                  className="w-full bg-black text-white py-3 rounded-lg font-semibold hover:bg-gray-800 transition-colors"
+                  className="w-full bg-black text-white py-3 rounded-lg font-semibold hover:bg-gray-800 transition-colors cursor-pointer"
                 >
                   Track Your Order
                 </button>
                 <button
                   onClick={onContinueShopping}
-                  className="w-full bg-white text-black py-3 rounded-lg font-semibold border border-gray-300 hover:bg-gray-50 transition-colors"
+                  className="w-full bg-white text-black py-3 rounded-lg font-semibold border border-gray-300 hover:bg-gray-50 transition-colors cursor-pointer"
                 >
                   Continue Shopping
                 </button>
               </>
-            ) : (
+            )}
+
+            {isFailed && (
               <>
                 <button
                   onClick={onClose}
-                  className="w-full bg-black text-white py-3 rounded-lg font-semibold hover:bg-gray-800 transition-colors"
+                  className="w-full bg-black text-white py-3 rounded-lg font-semibold hover:bg-gray-800 transition-colors cursor-pointer"
                 >
                   Try Again
                 </button>
                 <button
                   onClick={onContinueShopping}
-                  className="w-full bg-white text-black py-3 rounded-lg font-semibold border border-gray-300 hover:bg-gray-50 transition-colors"
+                  className="w-full bg-white text-black py-3 rounded-lg font-semibold border border-gray-300 hover:bg-gray-50 transition-colors cursor-pointer"
                 >
                   Continue Shopping
+                </button>
+              </>
+            )}
+
+            {isPaymentSuccessOrderFailed && (
+              <>
+                <button
+                  onClick={handleCopyTransactionId}
+                  className="w-full bg-black text-white py-3 rounded-lg font-semibold hover:bg-gray-800 transition-colors cursor-pointer"
+                >
+                  Copy Transaction ID
+                </button>
+                <button
+                  onClick={onContinueShopping}
+                  className="w-full bg-white text-black py-3 rounded-lg font-semibold border border-gray-300 hover:bg-gray-50 transition-colors cursor-pointer"
+                >
+                  Contact Support
                 </button>
               </>
             )}

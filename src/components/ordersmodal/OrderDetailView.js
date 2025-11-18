@@ -45,7 +45,31 @@ const OrderDetailView = ({ orderId, onBack, axiosHttp }) => {
   const getStatusSteps = (status) => {
     const lower = status?.toLowerCase() || "";
 
-    if (lower === "cancelled") {
+    // Normal flow (for most orders)
+    const steps = [
+      { key: "confirmed", labels: ["order confirmed", "confirmed"] },
+      {
+        key: "shipped",
+        labels: [
+          "shipped",
+          "in transit",
+          "handover to courier",
+          "shipment booked",
+        ],
+      },
+      { key: "out_for_delivery", labels: ["out for delivery"] },
+      { key: "delivered", labels: ["delivered", "partial_delivered"] },
+    ];
+
+    // Cancelled before dispatch
+    if (
+      [
+        "cancelled",
+        "canceled",
+        "cancellation requested",
+        "cancelled_before_dispatched",
+      ].includes(lower)
+    ) {
       return [
         {
           label: "Order Confirmed",
@@ -63,56 +87,59 @@ const OrderDetailView = ({ orderId, onBack, axiosHttp }) => {
       ];
     }
 
-    if (lower === "delivered") {
-      return [
-        {
-          label: "Order Confirmed",
-          date: orderData?.order?.orderedAt,
-          active: true,
-          completed: true,
-        },
-        { label: "Shipped", date: null, active: true, completed: true },
-        {
-          label: "Delivered",
-          date: orderData?.order?.deliveredAt,
-          active: true,
-          completed: true,
-        },
-      ];
-    }
-
+    // RTO Flow
     if (
-      lower === "shipped" ||
-      lower === "order confirmed" ||
-      lower === "confirmed"
+      [
+        "rto initiated",
+        "rto delivered",
+        "rto_ofd",
+        "rto_ndr",
+        "rto in intransit",
+      ].includes(lower)
     ) {
       return [
         {
-          label: "Order Confirmed",
-          date: orderData?.order?.orderedAt,
+          label: "Shipped",
           active: true,
           completed: true,
         },
         {
-          label: "Shipped",
-          date: null,
-          active: lower === "shipped",
-          completed: lower === "shipped",
+          label: "RTO Initiated",
+          active: true,
+          completed: ["rto delivered"].includes(lower),
         },
-        { label: "Delivered", date: null, active: false, completed: false },
+        {
+          label: "Returned to Seller",
+          active: ["rto delivered"].includes(lower),
+          completed: ["rto delivered"].includes(lower),
+        },
       ];
     }
 
-    return [
-      {
-        label: "Order Confirmed",
-        date: orderData?.order?.orderedAt,
-        active: true,
-        completed: false,
-      },
-      { label: "Shipped", date: null, active: false, completed: false },
-      { label: "Delivered", date: null, active: false, completed: false },
-    ];
+    let finalSteps = [];
+
+    steps.forEach((step, index) => {
+      let isCompleted = step.labels.includes(lower);
+      let isActive =
+        step.labels.includes(lower) ||
+        (index === 0 && !step.labels.includes(lower));
+
+      finalSteps.push({
+        label:
+          step.key === "confirmed"
+            ? "Order Confirmed"
+            : step.key === "shipped"
+            ? "Shipped"
+            : step.key === "out_for_delivery"
+            ? "Out For Delivery"
+            : "Delivered",
+        date: step.key === "delivered" ? orderData?.order?.deliveredAt : null,
+        active: isActive,
+        completed: isCompleted,
+      });
+    });
+
+    return finalSteps;
   };
 
   const getActionButtons = (status) => {
@@ -146,12 +173,11 @@ const OrderDetailView = ({ orderId, onBack, axiosHttp }) => {
     return [];
   };
 
+  // Loading spinner
   if (loading) {
     return (
-      <div className="min-w-5xl mx-auto p-6">
-        <div className="flex items-center justify-center h-64">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900"></div>
-        </div>
+      <div className="flex justify-center items-center min-h-[60vh]">
+        <div className="w-12 h-12 border-4 border-t-transparent border-blue-500 rounded-full animate-spin"></div>
       </div>
     );
   }
@@ -230,7 +256,7 @@ const OrderDetailView = ({ orderId, onBack, axiosHttp }) => {
       </div>
 
       {/* Order Progress */}
-      <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
+      <div className="bg-white rounded-lg  p-6 mb-6">
         {/* Progress Bar */}
         <div className="relative mb-8 px-4">
           <div className="relative">
@@ -249,14 +275,15 @@ const OrderDetailView = ({ orderId, onBack, axiosHttp }) => {
               }`}
               style={{
                 top: "16px",
-                width:
-                  status?.toLowerCase() === "delivered"
-                    ? "100%"
-                    : status?.toLowerCase() === "shipped"
-                    ? "50%"
-                    : status?.toLowerCase() === "cancelled"
-                    ? "50%"
-                    : "0%",
+                width: `${(() => {
+                  const activeIndex = statusSteps.findIndex(
+                    (s) => s.active || s.completed
+                  );
+                  const total = statusSteps.length - 1;
+                  if (activeIndex === -1) return 0;
+                  return (activeIndex / total) * 100;
+                })()}%`,
+
                 zIndex: 1,
               }}
             ></div>

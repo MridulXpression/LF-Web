@@ -99,10 +99,11 @@ const SavedAddresses = () => {
     }
   };
 
+  // Loading spinner
   if (loading) {
     return (
-      <div className="flex items-center justify-center py-20 text-lg text-black">
-        Loading addresses...
+      <div className="flex justify-center items-center min-h-[60vh]">
+        <div className="w-12 h-12 border-4 border-t-transparent border-blue-500 rounded-full animate-spin"></div>
       </div>
     );
   }

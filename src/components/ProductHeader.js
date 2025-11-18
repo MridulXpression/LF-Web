@@ -1,12 +1,32 @@
 "use client";
 import React, { useState, useEffect, useMemo } from "react";
 import { Share2, Star } from "lucide-react";
+import axiosHttp from "@/utils/axioshttp";
+import { endPoints } from "@/utils/endpoints";
+import SizeChartModal from "@/components/SizeChartModal";
 
-const ProductInfo = ({ title, brand, rating, reviews, mrp, sizes }) => {
+const ProductInfo = ({
+  title,
+  brand,
+  rating,
+  reviews,
+  mrp,
+  sizes,
+  colors,
+  brandId,
+  superCatId,
+  catId,
+  subcatId,
+  onVariantChange,
+}) => {
   const [selectedSize, setSelectedSize] = useState(null);
+  const [selectedColor, setSelectedColor] = useState(null);
   const [selectedVariant, setSelectedVariant] = useState(null);
+  const [sizeChartOpen, setSizeChartOpen] = useState(false);
+  const [sizeChartData, setSizeChartData] = useState(null);
+  const [sizeChartLoading, setSizeChartLoading] = useState(false);
 
-  // ✅ Initialize selected size and variant from localStorage or first available
+  // ✅ Initialize selected size, color and variant from localStorage or first available
   useEffect(() => {
     if (sizes && sizes.length > 0) {
       const storedVariantId = localStorage.getItem("selectedVariantId");
@@ -18,6 +38,7 @@ const ProductInfo = ({ title, brand, rating, reviews, mrp, sizes }) => {
         variantFromStorage || sizes.find((s) => s.available) || sizes[0];
 
       setSelectedSize(initialVariant.value);
+      setSelectedColor(initialVariant.color || null);
       setSelectedVariant(initialVariant);
 
       // Store variant in localStorage
@@ -30,12 +51,28 @@ const ProductInfo = ({ title, brand, rating, reviews, mrp, sizes }) => {
   // ✅ Handle size selection
   const handleSizeSelect = (size) => {
     setSelectedSize(size.value);
+    setSelectedColor(size.color || null);
     setSelectedVariant(size);
 
     if (size.variantId) {
       localStorage.setItem("selectedVariantId", size.variantId);
     }
   };
+
+  // ✅ Handle color selection
+  const handleColorSelect = (color) => {
+    setSelectedColor(color.value);
+    setSelectedVariant(color);
+
+    if (color.variantId) {
+      localStorage.setItem("selectedVariantId", color.variantId);
+    }
+  };
+
+  // notify parent when selectedVariant changes
+  useEffect(() => {
+    if (onVariantChange) onVariantChange(selectedVariant);
+  }, [selectedVariant, onVariantChange]);
 
   // ✅ Compute price based on selected variant
   const variantPrice = useMemo(() => {
@@ -54,6 +91,10 @@ const ProductInfo = ({ title, brand, rating, reviews, mrp, sizes }) => {
     }
     return 0;
   }, [mrp, variantPrice]);
+
+  // ✅ Check if we have sizes and/or colors to display
+  const hasSizes = sizes && sizes.length > 0;
+  const hasColors = colors && colors.length > 0;
 
   return (
     <div className="border-b pb-6">
@@ -95,45 +136,112 @@ const ProductInfo = ({ title, brand, rating, reviews, mrp, sizes }) => {
         inclusive of all taxes
       </div>
 
-      {/* Size Selection */}
-      <div className="mb-5">
-        <div className="flex items-center justify-between mb-3">
-          <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wide">
-            Select Size
-          </h3>
-          <button className="text-sm text-pink-600 font-bold hover:text-pink-700">
-            SIZE CHART &gt;
-          </button>
-        </div>
+      {/* Color Selection - Show only if colors exist */}
+      {hasColors && (
+        <div className="mb-5">
+          <div className="flex items-center justify-between mb-3">
+            <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wide">
+              Select Color
+            </h3>
+          </div>
 
-        <div className="flex flex-wrap gap-4">
-          {sizes.map((size) => (
-            <div key={size.value} className="flex flex-col items-center">
-              <button
-                onClick={() => handleSizeSelect(size)}
-                disabled={!size.available}
-                className={`min-w-[60px] px-4 py-3 border text-sm font-semibold transition-all rounded-md cursor-pointer
-          ${
-            !size.available
-              ? "bg-white text-gray-300 border-gray-200 line-through cursor-not-allowed"
-              : selectedSize === size.value
-              ? "border-pink-600 text-pink-600 bg-white"
-              : "border-gray-300 text-gray-700 bg-white hover:border-gray-400"
-          }`}
-              >
-                {size.label}
-              </button>
+          <div className="flex flex-wrap gap-4">
+            {colors.map((color) => (
+              <div key={color.value} className="flex flex-col items-center">
+                <button
+                  onClick={() => handleColorSelect(color)}
+                  disabled={!color.available}
+                  className={`min-w-[100px] px-4 py-3 border text-sm font-semibold transition-all rounded-md cursor-pointer
+            ${
+              !color.available
+                ? "bg-white text-gray-300 border-gray-200 line-through cursor-not-allowed"
+                : selectedColor === color.value
+                ? "border-pink-600 text-pink-600 bg-white"
+                : "border-gray-300 text-gray-700 bg-white hover:border-gray-400"
+            }`}
+                >
+                  {color.label}
+                </button>
 
-              {/* ✅ Show "Out of Stock" text below disabled button */}
-              {!size.available && (
-                <span className="text-[11px] text-red-500 mt-1 font-medium">
-                  Out of Stock
-                </span>
-              )}
-            </div>
-          ))}
+                {/* ✅ Show "Out of Stock" text below disabled button */}
+                {/* {!color.available && (
+                  <span className="text-[11px] text-red-500 mt-1 font-medium">
+                    Out of Stock
+                  </span>
+                )} */}
+              </div>
+            ))}
+          </div>
         </div>
-      </div>
+      )}
+
+      {/* Size Selection - Show only if sizes exist */}
+      {hasSizes && (
+        <div className="mb-5">
+          <div className="flex items-center justify-between mb-3">
+            <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wide">
+              Select Size
+            </h3>
+            <button
+              onClick={async () => {
+                // fetch size chart when clicked
+                try {
+                  setSizeChartLoading(true);
+                  const resp = await axiosHttp.get(
+                    `${endPoints.fetchSizeChart}?brandId=${brandId}&superCatId=${superCatId}&catId=${catId}&subCatId=${subcatId}`
+                  );
+                  setSizeChartData(resp?.data?.data ?? null);
+                  setSizeChartOpen(true);
+                } catch (err) {
+                  console.error("Error fetching size chart", err);
+                  setSizeChartData(null);
+                  setSizeChartOpen(true);
+                } finally {
+                  setSizeChartLoading(false);
+                }
+              }}
+              className="text-sm text-pink-600 font-bold hover:text-pink-700 cursor-pointer"
+            >
+              SIZE CHART &gt;
+            </button>
+          </div>
+
+          <div className="flex flex-wrap gap-4">
+            {sizes.map((size) => (
+              <div key={size.value} className="flex flex-col items-center">
+                <button
+                  onClick={() => handleSizeSelect(size)}
+                  disabled={!size.available}
+                  className={`min-w-[60px] px-4 py-3 border text-sm font-semibold transition-all rounded-md cursor-pointer
+            ${
+              !size.available
+                ? "bg-white text-gray-300 border-gray-200 line-through cursor-not-allowed"
+                : selectedSize === size.value
+                ? "border-pink-600 text-pink-600 bg-white"
+                : "border-gray-300 text-gray-700 bg-white hover:border-gray-400"
+            }`}
+                >
+                  {size.label}
+                </button>
+
+                {/* ✅ Show "Out of Stock" text below disabled button */}
+                {/* {!size.available && (
+                  <span className="text-[11px] text-red-500 mt-1 font-medium">
+                    Out of Stock
+                  </span>
+                )} */}
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      <SizeChartModal
+        open={sizeChartOpen}
+        onClose={() => setSizeChartOpen(false)}
+        data={sizeChartData}
+        loading={sizeChartLoading}
+      />
     </div>
   );
 };

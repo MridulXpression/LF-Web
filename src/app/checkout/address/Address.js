@@ -355,7 +355,6 @@ const CheckOutAddress = () => {
 
             console.log("Place order response:", placeResp.data);
 
-            // FIXED: Changed from placeResp.response.data to placeResp.data
             if (
               placeResp.data &&
               (placeResp.data.status === 200 || placeResp.data.status === 201)
@@ -379,25 +378,29 @@ const CheckOutAddress = () => {
               setIsPaymentModalOpen(true);
             } else {
               console.error("Place order failed:", placeResp.data);
-              // Open failure modal so user can retry or continue shopping
+              // Payment successful but order placement failed
               setPaymentModalData({
-                status: "failed",
+                status: "payment_success_order_failed",
                 transactionId: response.razorpay_payment_id || "N/A",
                 paymentMethod: "Razorpay",
                 dateTime: new Date().toLocaleString(),
                 amountPaid: paymentInfo?.total || total || 0,
+                errorMessage:
+                  "Payment completed successfully but order could not be placed. Please contact support with your transaction ID.",
               });
               setIsPaymentModalOpen(true);
             }
           } catch (err) {
             console.error("Error placing order after payment:", err);
-            // Show failure modal if anything goes wrong while placing order
+            // Payment successful but error occurred during order placement
             setPaymentModalData({
-              status: "failed",
+              status: "payment_success_order_failed",
               transactionId: response?.razorpay_payment_id || "N/A",
               paymentMethod: "Razorpay",
               dateTime: new Date().toLocaleString(),
-              amountPaid: paymentInfo?.total || total || 0,
+              amountPaid: total || 0,
+              errorMessage:
+                "Payment completed successfully but order could not be placed. Please contact support with your transaction ID.",
             });
             setIsPaymentModalOpen(true);
           }
@@ -601,6 +604,7 @@ const CheckOutAddress = () => {
         paymentMethod={paymentModalData.paymentMethod}
         dateTime={paymentModalData.dateTime}
         amountPaid={paymentModalData.amountPaid}
+        errorMessage={paymentModalData.errorMessage}
         onTrackOrder={() => {
           setIsPaymentModalOpen(false);
           router.push("/account/orders");

@@ -7,7 +7,7 @@ import useAddProductToCart from "@/hooks/useAddProductToCart";
 import toast, { Toaster } from "react-hot-toast";
 import { addToCart } from "@/redux/slices/cartSlice";
 
-const ProductActions = ({ onAddToWishlist, productData }) => {
+const ProductActions = ({ onAddToWishlist, productData, isInStock = true }) => {
   const [showModal, setShowModal] = useState(false);
   const dispatch = useDispatch();
   const { addProductToCart, loading } = useAddProductToCart();
@@ -18,6 +18,10 @@ const ProductActions = ({ onAddToWishlist, productData }) => {
   };
 
   const handleAddToBag = async () => {
+    if (!isInStock) {
+      toast.error("Out of Stock", { position: "top-center" });
+      return;
+    }
     const result = await addProductToCart();
     console.log(productData, "DASDASDSA");
     const variantId = localStorage.getItem("selectedVariantId");
@@ -39,10 +43,10 @@ const ProductActions = ({ onAddToWishlist, productData }) => {
       <div className="flex flex-col gap-3">
         <button
           onClick={handleAddToBag}
-          disabled={loading}
+          disabled={loading || !isInStock}
           className="w-full cursor-pointer bg-black text-white py-3.5 rounded font-bold text-sm   shadow-sm disabled:bg-gray-400 disabled:cursor-not-allowed"
         >
-          {loading ? "Adding..." : "Add to Bag"}
+          {loading ? "Adding..." : !isInStock ? "Out of Stock" : "Add to Bag"}
         </button>
 
         <button

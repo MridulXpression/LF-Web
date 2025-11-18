@@ -6,10 +6,14 @@ import useCreateBoard from "@/hooks/useCreateBoard"; // ✅ import the hook
 import axiosHttp from "@/utils/axioshttp";
 import { endPoints } from "@/utils/endpoints";
 import React, { useState } from "react";
+import { useSelector } from "react-redux";
 
 const WishlistBoards = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const query = "2";
+
+  const userInfo = useSelector((state) => state.user?.userInfo);
+  const userId = userInfo?.id;
+  const query = userId;
   const getBoards = useGetBoard(query);
 
   const { createBoard, loading: creating } = useCreateBoard();

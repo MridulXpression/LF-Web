@@ -7,7 +7,8 @@ import Image from "next/image";
 const NewInSection = () => {
   const query = "gender=2";
   const fetchproducts = useProducts(query);
-  const topProducts = fetchproducts?.slice(0, 8) || []; // Only 8 products
+  const { products = [] } = useProducts(query);
+  const topProducts = products.slice(0, 8);
 
   return (
     <section className="py-16 px-4 bg-white">

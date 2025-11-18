@@ -62,7 +62,7 @@ const ShopCategories = () => {
 
   return (
     <section className="w-full py-8 md:py-16 bg-white">
-      <div className="max-w-[1400px] mx-auto px-2 md:px-4">
+      <div className=" px-2 md:px-4">
         {/* Header */}
         <div className="text-center mb-8 md:mb-12">
           <h2 className="text-2xl md:text-4xl font-bold text-black tracking-wider">

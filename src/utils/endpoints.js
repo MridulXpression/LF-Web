@@ -29,4 +29,6 @@ export const endPoints = {
   sortProduct: "/sort-products",
   getCategoriesHierarchy: "/category-hierarchy",
   getFiltersData: "/filter-products",
+  getProductBySubCategroies: "/products?subCatId",
+  fetchSizeChart: "/fetch-size-chart",
 };

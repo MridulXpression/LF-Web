@@ -3,26 +3,37 @@ import { useState, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import axiosHttp from "@/utils/axioshttp";
-
 import ListingCard from "@/components/ListingCard";
 import useProducts from "@/hooks/useProducts";
 import useSortedProducts from "@/hooks/useProductSort";
 import usegetBrands from "@/hooks/useGetBrands";
-import useFilterProducts from "@/hooks/useFilters"; // ✅ using your hook
+import useFilterProducts from "@/hooks/useFilters";
+import useGetProductBySubCategories from "@/hooks/useGetSubCategories";
+import { Filter } from "lucide-react";
+import { useRef } from "react";
+// import useGetProductBySubCategories from "@/hooks/useGetSubCategories";
 
 const ShopByCategoriesPage = () => {
   const searchParams = useSearchParams();
   const genderValue = searchParams.get("gender");
   const query = genderValue ? `gender=${genderValue}` : "";
 
-  const allProducts = useProducts(query);
+  const { products: allProducts, loading: isProductsLoading } =
+    useProducts(query);
+
+  // If URL has ?subCategoryId=..., fetch products for that sub-category
+  const subCategoryId = searchParams.get("subCategoryId");
+  // Hook returns the raw response object (e.g. { status, message, data: [...] })
+  const subCategoryResponse = useGetProductBySubCategories(
+    subCategoryId ? Number(subCategoryId) : null
+  );
+  const subCategoryProducts = subCategoryResponse?.data || [];
+
   const [searchResults, setSearchResults] = useState(null);
   const [isSearching, setIsSearching] = useState(false);
   const [sortQuery, setSortQuery] = useState("");
 
   const sortedProducts = useSortedProducts(sortQuery);
-
-  // 🔹 Fetch brand list
   const getbrands = usegetBrands();
   const brands =
     getbrands?.map((brand) => ({
@@ -30,16 +41,16 @@ const ShopByCategoriesPage = () => {
       name: brand?.name || "",
     })) || [];
 
-  // 🔹 Filter states
   const [selectedBrands, setSelectedBrands] = useState([]);
   const [priceRange, setPriceRange] = useState({ min: "0", max: "10000" });
   const [filteredProducts, setFilteredProducts] = useState([]);
-  const [isFilterApplied, setIsFilterApplied] = useState(false); // ✅ track if filters applied
+  const [isFilterApplied, setIsFilterApplied] = useState(false);
 
-  // ✅ Hook instance
   const filterProducts = useFilterProducts();
+  const filterRef = useRef(null);
 
-  // Handle brand selection
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
+
   const toggleBrandSelection = (brandId) => {
     setSelectedBrands((prev) =>
       prev.includes(brandId)
@@ -48,7 +59,6 @@ const ShopByCategoriesPage = () => {
     );
   };
 
-  // 🔹 Fetch search results if query exists
   const searchQuery = searchParams.get("search");
   useEffect(() => {
     if (searchQuery) {
@@ -59,6 +69,21 @@ const ShopByCategoriesPage = () => {
     }
   }, [searchQuery]);
 
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (
+        isFilterOpen &&
+        filterRef.current &&
+        !filterRef.current.contains(event.target)
+      ) {
+        setIsFilterOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [isFilterOpen]);
+
   const fetchSearchResults = async (query) => {
     try {
       const response = await axiosHttp.post(
@@ -66,14 +91,12 @@ const ShopByCategoriesPage = () => {
       );
       setSearchResults(response.data.data || []);
     } catch (error) {
-      console.error("Error fetching search results:", error);
       setSearchResults([]);
     } finally {
       setIsSearching(false);
     }
   };
 
-  // ✅ Apply Filter button handler
   const handleApplyFilters = async () => {
     const payload = {
       brandIds: selectedBrands,
@@ -83,15 +106,14 @@ const ShopByCategoriesPage = () => {
 
     try {
       const result = await filterProducts(payload);
-      setIsFilterApplied(true); // ✅ mark filter applied
-      setFilteredProducts(result || []); // safely handle empty
+      setIsFilterApplied(true);
+      setFilteredProducts(result || []);
+      setIsFilterOpen(false); // ⭐ NEW close panel on mobile
     } catch (err) {
-      console.error("Error applying filters:", err);
       setFilteredProducts([]);
     }
   };
 
-  // ✅ Clear filters handler
   const handleClearFilters = () => {
     setSelectedBrands([]);
     setPriceRange({ min: "0", max: "10000" });
@@ -99,9 +121,14 @@ const ShopByCategoriesPage = () => {
     setIsFilterApplied(false);
   };
 
-  // 🔹 Determine which products to show
+  // Loading: hook doesn't provide loading for sub-category, so use products loading
+  const isLoading = isProductsLoading;
+
   let products = [];
-  if (isFilterApplied) {
+  if (subCategoryId) {
+    // Priority: when a subCategoryId is present, show its products
+    products = subCategoryProducts || [];
+  } else if (isFilterApplied) {
     products = filteredProducts;
   } else if (searchResults !== null) {
     products = searchResults;
@@ -111,7 +138,6 @@ const ShopByCategoriesPage = () => {
     products = allProducts;
   }
 
-  // 🔹 Sorting handler
   const handleSortChange = (e) => {
     const value = e.target.value;
     switch (value) {
@@ -136,15 +162,39 @@ const ShopByCategoriesPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-white relative">
+      {/* ⭐ NEW — MOBILE FILTER BUTTON */}
+      <button
+        className="lg:hidden fixed bottom-4 left-4 z-10 bg-black text-white px-4 py-2 rounded-full flex items-center gap-2 shadow-lg"
+        onClick={() => setIsFilterOpen(true)}
+      >
+        <Filter size={18} /> Filters
+      </button>
+
       <div className="max-w-[1400px] mx-auto flex">
-        {/* Sidebar Filters */}
-        <div className="w-64 bg-white p-6 border-r border-gray-200 h-screen overflow-y-auto">
+        {/* FILTER SIDEBAR - Desktop + Mobile Slide Panel */}
+        <div
+          ref={filterRef}
+          className={`
+    fixed lg:static top-0 left-0 h-full lg:h-auto 
+    w-72 bg-white p-6 border-r border-gray-400 overflow-y-auto z-30 
+    transform transition-transform duration-300
+    ${isFilterOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"}
+  `}
+        >
+          {/* Close button for mobile */}
+          <button
+            className="lg:hidden mb-4 text-black font-bold text-lg"
+            onClick={() => setIsFilterOpen(false)}
+          >
+            ✕ Close
+          </button>
+
           <h2 className="text-xl font-bold mb-6 uppercase tracking-wide text-black">
             Filters
           </h2>
 
-          {/* 🔹 Brand Filter */}
+          {/* Brand Filter */}
           <div className="mb-8">
             <h3 className="text-lg font-semibold text-gray-800 mb-2">Brand</h3>
             <div className="space-y-2">
@@ -165,7 +215,7 @@ const ShopByCategoriesPage = () => {
             </div>
           </div>
 
-          {/* 🔹 Price Filter */}
+          {/* Price Range */}
           <div className="mb-8">
             <h3 className="text-lg font-semibold text-gray-800 mb-2">
               Price Range
@@ -191,24 +241,23 @@ const ShopByCategoriesPage = () => {
             </div>
           </div>
 
-          {/* 🔹 Buttons */}
           <button
             onClick={handleApplyFilters}
-            className="w-full bg-black text-white py-2 rounded hover:bg-gray-800 transition"
+            className="w-full bg-black text-white py-2 rounded hover:bg-gray-800"
           >
             Apply Filters
           </button>
-
           <button
             onClick={handleClearFilters}
-            className="w-full mt-3 border border-gray-300 py-2 rounded hover:bg-gray-100 transition text-black"
+            className="w-full mt-3 border border-gray-300 py-2 rounded hover:bg-gray-100 text-black"
           >
             Clear Filters
           </button>
         </div>
 
-        {/* Main Content */}
+        {/* MAIN CONTENT */}
         <div className="flex-1 p-6">
+          {/* SORT */}
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center gap-4">
               {!searchQuery && (
@@ -239,18 +288,25 @@ const ShopByCategoriesPage = () => {
             )}
           </div>
 
-          {/* Loading / No Results / Product Grid */}
+          {/* LOADING */}
+          {isLoading && !isSearching && (
+            <div className="flex justify-center items-center h-64">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900"></div>
+            </div>
+          )}
+
           {isSearching && (
             <div className="flex justify-center items-center h-64 text-gray-600">
               Searching products...
             </div>
           )}
 
-          {!isSearching && products?.length === 0 && (
+          {/* NO PRODUCTS */}
+          {!isLoading && !isSearching && products?.length === 0 && (
             <div className="flex flex-col justify-center items-center h-64 text-center">
               <div className="text-gray-900 text-xl font-semibold mb-2">
                 {isFilterApplied
-                  ? "No products available according to the selected filters."
+                  ? "No products available according to selected filters."
                   : "No products found"}
               </div>
               <a
@@ -262,8 +318,19 @@ const ShopByCategoriesPage = () => {
             </div>
           )}
 
-          {!isSearching && products?.length > 0 && (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-10 justify-items-center">
+          {/* PRODUCT GRID */}
+          {!isLoading && !isSearching && products?.length > 0 && (
+            <div
+              className="
+                grid 
+                grid-cols-2            /* ⭐ NEW: 2 per row on mobile */
+                sm:grid-cols-2
+                md:grid-cols-3
+                lg:grid-cols-3
+                xl:grid-cols-4 
+                gap-6 sm:gap-8 lg:gap-10
+              "
+            >
               {products.map((product) => {
                 const mrp = Number(product.mrp);
                 const basePrice = Number(product.basePrice);

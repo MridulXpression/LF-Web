@@ -39,7 +39,7 @@ const ListingCard = ({
 
   return (
     <>
-      <div className="relative overflow-hidden w-[220px] h-[500px] flex flex-col">
+      <div className="relative overflow-hidden md:w-[220px] md:h-[500px] flex flex-col">
         {/* Product Image with Link */}
         <Link
           href={`/products/${id}`}
@@ -68,11 +68,6 @@ const ListingCard = ({
               size={16}
               className={`text-black transition-colors duration-200 cursor-pointer`}
             />
-          </button>
-
-          {/* Shopping Bag */}
-          <button className="w-8 h-8 rounded-full bg-white shadow-md flex items-center justify-center hover:bg-gray-50 transition-colors duration-200">
-            <ShoppingBag size={16} className="text-gray-600" />
           </button>
         </div>
 
