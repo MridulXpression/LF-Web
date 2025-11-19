@@ -1,6 +1,6 @@
 "use client";
-import { useState, useEffect } from "react";
-import { useSearchParams } from "next/navigation";
+import { useState, useEffect, useRef } from "react";
+import { useSearchParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import axiosHttp from "@/utils/axioshttp";
 import ListingCard from "@/components/ListingCard";
@@ -10,30 +10,36 @@ import usegetBrands from "@/hooks/useGetBrands";
 import useFilterProducts from "@/hooks/useFilters";
 import useGetProductBySubCategories from "@/hooks/useGetSubCategories";
 import { Filter } from "lucide-react";
-import { useRef } from "react";
-// import useGetProductBySubCategories from "@/hooks/useGetSubCategories";
 
 const ShopByCategoriesPage = () => {
   const searchParams = useSearchParams();
+  const router = useRouter();
+
   const genderValue = searchParams.get("gender");
   const query = genderValue ? `gender=${genderValue}` : "";
 
   const { products: allProducts, loading: isProductsLoading } =
     useProducts(query);
 
-  // If URL has ?subCategoryId=..., fetch products for that sub-category
+  // Subcategory
   const subCategoryId = searchParams.get("subCategoryId");
-  // Hook returns the raw response object (e.g. { status, message, data: [...] })
   const subCategoryResponse = useGetProductBySubCategories(
     subCategoryId ? Number(subCategoryId) : null
   );
-  const subCategoryProducts = subCategoryResponse?.data || [];
+  const subCategoryProducts = subCategoryResponse?.data?.products || [];
 
+  // Search
+  const searchQuery = searchParams.get("search");
   const [searchResults, setSearchResults] = useState(null);
   const [isSearching, setIsSearching] = useState(false);
-  const [sortQuery, setSortQuery] = useState("");
 
+  // Sorting
+  const sortQuery = searchParams.get("sort") || "";
   const sortedProducts = useSortedProducts(sortQuery);
+
+  // Brands
+  const brandParam = searchParams.get("brands");
+  const initialSelectedBrands = brandParam ? brandParam.split(",") : [];
   const getbrands = usegetBrands();
   const brands =
     getbrands?.map((brand) => ({
@@ -41,10 +47,21 @@ const ShopByCategoriesPage = () => {
       name: brand?.name || "",
     })) || [];
 
-  const [selectedBrands, setSelectedBrands] = useState([]);
-  const [priceRange, setPriceRange] = useState({ min: "0", max: "10000" });
+  const [selectedBrands, setSelectedBrands] = useState(initialSelectedBrands);
+
+  // Price filters
+  const minPriceParam = searchParams.get("minPrice") || "0";
+  const maxPriceParam = searchParams.get("maxPrice") || "10000";
+
+  const [priceRange, setPriceRange] = useState({
+    min: minPriceParam,
+    max: maxPriceParam,
+  });
+
   const [filteredProducts, setFilteredProducts] = useState([]);
-  const [isFilterApplied, setIsFilterApplied] = useState(false);
+  const [isFilterApplied, setIsFilterApplied] = useState(
+    brandParam || minPriceParam !== "0" || maxPriceParam !== "10000"
+  );
 
   const filterProducts = useFilterProducts();
   const filterRef = useRef(null);
@@ -59,7 +76,7 @@ const ShopByCategoriesPage = () => {
     );
   };
 
-  const searchQuery = searchParams.get("search");
+  // SEARCH
   useEffect(() => {
     if (searchQuery) {
       setIsSearching(true);
@@ -69,6 +86,20 @@ const ShopByCategoriesPage = () => {
     }
   }, [searchQuery]);
 
+  const fetchSearchResults = async (query) => {
+    try {
+      const response = await axiosHttp.post(
+        `product-search?key=${encodeURIComponent(query)}`
+      );
+      setSearchResults(response.data.data || []);
+    } catch (error) {
+      setSearchResults([]);
+    } finally {
+      setIsSearching(false);
+    }
+  };
+
+  // CLOSE FILTER PANEL
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (
@@ -84,86 +115,105 @@ const ShopByCategoriesPage = () => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [isFilterOpen]);
 
-  const fetchSearchResults = async (query) => {
-    try {
-      const response = await axiosHttp.post(
-        `product-search?key=${encodeURIComponent(query)}`
-      );
-      setSearchResults(response.data.data || []);
-    } catch (error) {
-      setSearchResults([]);
-    } finally {
-      setIsSearching(false);
-    }
-  };
-
+  // APPLY FILTERS AND KEEP SORT PARAM IF PRESENT
   const handleApplyFilters = async () => {
+    const params = new URLSearchParams(window.location.search);
+
+    // Brand
+    if (selectedBrands.length > 0) {
+      params.set("brands", selectedBrands.join(","));
+    } else {
+      params.delete("brands");
+    }
+
+    // Price
+    if (priceRange.min !== "0") params.set("minPrice", priceRange.min);
+    else params.delete("minPrice");
+
+    if (priceRange.max !== "10000") params.set("maxPrice", priceRange.max);
+    else params.delete("maxPrice");
+
+    // Remove subcategory explicitly
+    params.delete("subCategoryId");
+
+    router.push(`/products?${params.toString()}`);
+
+    // For UI results
     const payload = {
       brandIds: selectedBrands,
       minPrice: priceRange.min,
       maxPrice: priceRange.max,
     };
 
-    try {
-      const result = await filterProducts(payload);
-      setIsFilterApplied(true);
+    filterProducts(payload).then((result) => {
       setFilteredProducts(result || []);
-      setIsFilterOpen(false); // ⭐ NEW close panel on mobile
-    } catch (err) {
-      setFilteredProducts([]);
-    }
+      setIsFilterApplied(true);
+      setIsFilterOpen(false);
+    });
   };
 
+  // CLEAR FILTERS
   const handleClearFilters = () => {
+    router.push(`/products`);
+
     setSelectedBrands([]);
     setPriceRange({ min: "0", max: "10000" });
     setFilteredProducts([]);
     setIsFilterApplied(false);
   };
 
-  // Loading: hook doesn't provide loading for sub-category, so use products loading
-  const isLoading = isProductsLoading;
+  // SORT → UPDATE URL BUT KEEP BRAND + PRICE FILTER PARAMS
+  const handleSortChange = (e) => {
+    const value = e.target.value;
+    const params = new URLSearchParams(window.location.search);
 
+    // Remove subCategoryId (as you said)
+    params.delete("subCategoryId");
+
+    // Update sort value
+    switch (value) {
+      case "Price: Low to High":
+        params.set("sort", "price_asc");
+        break;
+      case "Price: High to Low":
+        params.set("sort", "price_desc");
+        break;
+      case "Customer Rating":
+        params.set("sort", "rating");
+        break;
+      case "Discount":
+        params.set("sort", "discount");
+        break;
+      case "Newest First":
+        params.set("sort", "whats_new");
+        break;
+      default:
+        params.delete("sort");
+    }
+
+    // Now push updated params to URL
+    router.push(`/products?${params.toString()}`);
+  };
+
+  // PRODUCT PRIORITY LOGIC
+  const isLoading = isProductsLoading;
   let products = [];
-  if (subCategoryId) {
-    // Priority: when a subCategoryId is present, show its products
-    products = subCategoryProducts || [];
-  } else if (isFilterApplied) {
+
+  if (isFilterApplied) {
     products = filteredProducts;
   } else if (searchResults !== null) {
     products = searchResults;
   } else if (sortQuery) {
     products = sortedProducts;
+  } else if (subCategoryId) {
+    products = subCategoryProducts;
   } else {
     products = allProducts;
   }
 
-  const handleSortChange = (e) => {
-    const value = e.target.value;
-    switch (value) {
-      case "Price: Low to High":
-        setSortQuery("price_asc");
-        break;
-      case "Price: High to Low":
-        setSortQuery("price_desc");
-        break;
-      case "Customer Rating":
-        setSortQuery("rating");
-        break;
-      case "Discount":
-        setSortQuery("discount");
-        break;
-      case "Newest First":
-        setSortQuery("whats_new");
-        break;
-      default:
-        setSortQuery("");
-    }
-  };
-
   return (
     <div className="min-h-screen bg-white relative">
-      {/* ⭐ NEW — MOBILE FILTER BUTTON */}
+      {/* MOBILE FILTER BUTTON */}
       <button
         className="lg:hidden fixed bottom-4 left-4 z-10 bg-black text-white px-4 py-2 rounded-full flex items-center gap-2 shadow-lg"
         onClick={() => setIsFilterOpen(true)}
@@ -172,17 +222,20 @@ const ShopByCategoriesPage = () => {
       </button>
 
       <div className="max-w-[1400px] mx-auto flex">
-        {/* FILTER SIDEBAR - Desktop + Mobile Slide Panel */}
+        {/* FILTER SIDEBAR */}
         <div
           ref={filterRef}
           className={`
-    fixed lg:static top-0 left-0 h-full lg:h-auto 
-    w-72 bg-white p-6 border-r border-gray-400 overflow-y-auto z-30 
-    transform transition-transform duration-300
-    ${isFilterOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"}
-  `}
+            fixed lg:static top-0 left-0 h-full lg:h-auto 
+            w-72 bg-white p-6 border-r border-gray-400 overflow-y-auto z-30 
+            transform transition-transform duration-300
+            ${
+              isFilterOpen
+                ? "translate-x-0"
+                : "-translate-x-full lg:translate-x-0"
+            }
+          `}
         >
-          {/* Close button for mobile */}
           <button
             className="lg:hidden mb-4 text-black font-bold text-lg"
             onClick={() => setIsFilterOpen(false)}
@@ -247,6 +300,7 @@ const ShopByCategoriesPage = () => {
           >
             Apply Filters
           </button>
+
           <button
             onClick={handleClearFilters}
             className="w-full mt-3 border border-gray-300 py-2 rounded hover:bg-gray-100 text-black"
@@ -309,12 +363,12 @@ const ShopByCategoriesPage = () => {
                   ? "No products available according to selected filters."
                   : "No products found"}
               </div>
-              <a
+              <Link
                 href="/products"
                 className="px-4 py-2 bg-gray-900 text-white rounded hover:bg-gray-800"
               >
                 Browse All Products
-              </a>
+              </Link>
             </div>
           )}
 
@@ -323,7 +377,7 @@ const ShopByCategoriesPage = () => {
             <div
               className="
                 grid 
-                grid-cols-2            /* ⭐ NEW: 2 per row on mobile */
+                grid-cols-2 
                 sm:grid-cols-2
                 md:grid-cols-3
                 lg:grid-cols-3

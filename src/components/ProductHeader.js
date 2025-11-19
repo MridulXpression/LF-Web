@@ -18,6 +18,8 @@ const ProductInfo = ({
   catId,
   subcatId,
   onVariantChange,
+  price,
+  variants,
 }) => {
   const [selectedSize, setSelectedSize] = useState(null);
   const [selectedColor, setSelectedColor] = useState(null);
@@ -74,21 +76,31 @@ const ProductInfo = ({
     if (onVariantChange) onVariantChange(selectedVariant);
   }, [selectedVariant, onVariantChange]);
 
-  // ✅ Compute price based on selected variant
+  // ✅ Compute price based on selected variant, with fallbacks
   const variantPrice = useMemo(() => {
     if (selectedVariant?.price) return selectedVariant.price;
+    // Prefer the first variant price from the full variants array if provided
+    if (variants && Array.isArray(variants) && variants.length > 0) {
+      const firstVariantPrice = variants[0]?.price;
+      if (
+        typeof firstVariantPrice !== "undefined" &&
+        firstVariantPrice !== null
+      )
+        return firstVariantPrice;
+    }
+    if (typeof price !== "undefined" && price !== null) return price;
     return sizes?.[0]?.price || 0;
-  }, [selectedVariant, sizes]);
+  }, [selectedVariant, sizes, price, variants]);
 
   // ✅ Compute discount
   const discount = useMemo(() => {
-    if (mrp && variantPrice) {
-      const mrpVal = parseFloat(mrp);
-      const priceVal = parseFloat(variantPrice);
-      if (mrpVal > priceVal) {
-        return Math.round(((mrpVal - priceVal) / mrpVal) * 100);
-      }
+    const mrpVal = Number(mrp);
+    const priceVal = Number(variantPrice);
+
+    if (mrpVal > 0 && priceVal > 0 && mrpVal > priceVal) {
+      return Math.round(((mrpVal - priceVal) / mrpVal) * 100);
     }
+
     return 0;
   }, [mrp, variantPrice]);
 
@@ -123,17 +135,27 @@ const ProductInfo = ({
 
       {/* Pricing */}
       <div className="flex items-baseline gap-2 mb-5">
+        {/* Always show variant price */}
         <span className="text-2xl font-bold text-gray-900">
           ₹{variantPrice}
         </span>
-        <span className="text-base text-gray-400 line-through">MRP ₹{mrp}</span>
-        <span className="text-base text-orange-500 font-semibold">
-          ({discount}% OFF)
-        </span>
+
+        {/* Show MRP + Discount ONLY if MRP > 0 AND MRP > Price */}
+        {mrp && Number(mrp) > 0 && Number(mrp) > Number(variantPrice) && (
+          <>
+            <span className="text-base text-gray-400 line-through">
+              MRP ₹{mrp}
+            </span>
+
+            <span className="text-base text-orange-500 font-semibold">
+              ({discount}% OFF)
+            </span>
+          </>
+        )}
       </div>
 
-      <div className="text-xs text-green-700 font-semibold mb-6">
-        inclusive of all taxes
+      <div className="text-xs text-red-500 font-semibold mb-6">
+        Exclusive of all taxes
       </div>
 
       {/* Color Selection - Show only if colors exist */}

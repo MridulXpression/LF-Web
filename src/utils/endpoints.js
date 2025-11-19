@@ -31,4 +31,5 @@ export const endPoints = {
   getFiltersData: "/filter-products",
   getProductBySubCategroies: "/products?subCatId",
   fetchSizeChart: "/fetch-size-chart",
+  getProductsByCategory: "/sub-category-products?catId",
 };

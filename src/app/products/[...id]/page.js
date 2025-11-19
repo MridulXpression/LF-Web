@@ -251,6 +251,7 @@ export default function ProductPage({ params }) {
               rating={4.5}
               reviews={data.variants?.length || 0}
               price={variantPrice}
+              variants={data.variants}
               mrp={data.mrp}
               discount={discount}
               sizes={sizes}

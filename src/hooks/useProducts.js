@@ -20,7 +20,7 @@ const useProducts = (query) => {
       const result = await axiosHttp.get(endPoint);
 
       if (result?.status === 200) {
-        setProducts(result?.data?.data || []);
+        setProducts(result?.data?.data?.products || []);
       } else {
         setProducts([]);
       }
