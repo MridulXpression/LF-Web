@@ -1,6 +1,7 @@
 "use client";
 import React from "react";
 import Image from "next/image";
+import Link from "next/link";
 
 const FashionGrid = ({ data, title = "TRENDING NOW" }) => {
   // Helper function to get container classes based on size
@@ -103,13 +104,19 @@ const FashionGrid = ({ data, title = "TRENDING NOW" }) => {
         {firstRowItems.map((item, index) => {
           const fixedSize = fixedSizes[index];
           return (
-            <div key={item.id} className={getContainerClasses(fixedSize.size)}>
+            <Link
+              key={item.id}
+              href={`/blogs/${item.id}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className={getContainerClasses(fixedSize.size)}
+            >
               <Image
                 src={item.image}
                 alt={item.title}
                 width={fixedSize.width}
                 height={fixedSize.height}
-                className="w-full h-full object-cover group-hover:scale-120 transition-transform duration-300"
+                className="w-full h-full object-fill group-hover:scale-120 transition-transform duration-300"
               />
               <div
                 className={getTextPositionClasses(
@@ -125,7 +132,7 @@ const FashionGrid = ({ data, title = "TRENDING NOW" }) => {
                   {item.description}
                 </p>
               </div>
-            </div>
+            </Link>
           );
         })}
       </div>
@@ -133,15 +140,21 @@ const FashionGrid = ({ data, title = "TRENDING NOW" }) => {
       {/* Second Row */}
       <div className="flex flex-col md:flex-row max-w-full">
         {secondRowItems.map((item, index) => {
-          const fixedSize = fixedSizes[index + 3]; // +3 for second row positions
+          const fixedSize = fixedSizes[index + 3];
           return (
-            <div key={item.id} className={getContainerClasses(fixedSize.size)}>
+            <Link
+              key={item.id}
+              href={`/blogs/${item.id}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className={getContainerClasses(fixedSize.size)}
+            >
               <Image
                 src={item.image}
                 alt={item.title}
                 width={fixedSize.width}
                 height={fixedSize.height}
-                className="w-full h-full object-cover group-hover:scale-120 transition-transform duration-300"
+                className="w-full h-full object-fill group-hover:scale-120 transition-transform duration-300"
               />
               <div
                 className={getTextPositionClasses(
@@ -157,7 +170,7 @@ const FashionGrid = ({ data, title = "TRENDING NOW" }) => {
                   {item.description}
                 </p>
               </div>
-            </div>
+            </Link>
           );
         })}
       </div>

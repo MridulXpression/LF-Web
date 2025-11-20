@@ -33,7 +33,6 @@ const SavedAddresses = () => {
       }
       setLoading(false);
     } catch (error) {
-      console.error("Error fetching addresses:", error);
       setLoading(false);
     }
   };
@@ -72,7 +71,6 @@ const SavedAddresses = () => {
         }
       }
     } catch (error) {
-      console.error("Error saving address:", error);
       alert("Failed to save address. Please try again.");
     }
   };
@@ -92,7 +90,6 @@ const SavedAddresses = () => {
         }
       }
     } catch (error) {
-      console.error("Error deleting address.", error);
       alert("Failed to delete address. Please try again.");
     } finally {
       setDeleteLoading(false);

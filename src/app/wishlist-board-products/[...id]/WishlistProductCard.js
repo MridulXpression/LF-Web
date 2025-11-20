@@ -56,9 +56,7 @@ const WishlistProductCard = () => {
       } else if (getBoards?.fetchData) {
         await getBoards.fetchData(); // In case your hook exposes fetchData
       }
-    } catch (error) {
-      console.error("Error deleting product:", error);
-    }
+    } catch (error) {}
   };
 
   return (

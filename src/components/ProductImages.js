@@ -20,24 +20,30 @@ const ProductImageGallery = ({ images }) => {
       </div>
 
       {/* Thumbnail Grid */}
-      <div className="grid grid-cols-4 gap-3">
-        {images.map((img, idx) => (
-          <button
-            key={idx}
-            onClick={() => setSelectedImage(idx)}
-            className={`relative bg-gray-50 rounded-lg overflow-hidden border-2 transition-all cursor-pointer ${
-              selectedImage === idx ? "border-black" : "border-transparent"
-            }`}
-          >
-            <Image
-              src={img}
-              alt={`Thumbnail ${idx + 1}`}
-              width={100}
-              height={100}
-              className="w-full  object-cover"
-            />
-          </button>
-        ))}
+      <div className={images.length > 4 ? "overflow-x-auto" : ""}>
+        <div
+          className={`${
+            images.length > 4 ? "flex gap-3" : "grid grid-cols-4 gap-3"
+          }`}
+        >
+          {images.map((img, idx) => (
+            <button
+              key={idx}
+              onClick={() => setSelectedImage(idx)}
+              className={`relative bg-gray-50 rounded-lg overflow-hidden border-2 transition-all cursor-pointer ${
+                selectedImage === idx ? "border-black" : "border-transparent"
+              } ${images.length > 4 ? "flex-shrink-0 w-24 h-24" : ""}`}
+            >
+              <Image
+                src={img}
+                alt={`Thumbnail ${idx + 1}`}
+                width={100}
+                height={100}
+                className="w-full object-cover"
+              />
+            </button>
+          ))}
+        </div>
       </div>
     </div>
   );

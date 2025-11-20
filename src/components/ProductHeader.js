@@ -30,33 +30,72 @@ const ProductInfo = ({
 
   // ✅ Initialize selected size, color and variant from localStorage or first available
   useEffect(() => {
+    const storedVariantId = localStorage.getItem("selectedVariantId");
+
+    // If sizes exist, pick first available size (and its first available color)
     if (sizes && sizes.length > 0) {
-      const storedVariantId = localStorage.getItem("selectedVariantId");
-      const variantFromStorage = sizes.find(
-        (s) => s.variantId === Number(storedVariantId)
-      );
+      let initialSize = sizes.find((s) => s.available) || sizes[0];
 
-      const initialVariant =
-        variantFromStorage || sizes.find((s) => s.available) || sizes[0];
-
-      setSelectedSize(initialVariant.value);
-      setSelectedColor(initialVariant.color || null);
-      setSelectedVariant(initialVariant);
-
-      // Store variant in localStorage
-      if (initialVariant.variantId) {
-        localStorage.setItem("selectedVariantId", initialVariant.variantId);
+      // If storedVariantId corresponds to a color variant inside any size, try to use that
+      if (storedVariantId) {
+        const fromSizes = sizes.find((s) =>
+          s.colors?.some((c) => c.variantId === Number(storedVariantId))
+        );
+        if (fromSizes) initialSize = fromSizes;
       }
+
+      setSelectedSize(initialSize.value);
+
+      // pick a color for the size if available
+      const colorForSize =
+        (initialSize.colors || []).find((c) => c.available) ||
+        (initialSize.colors || [])[0] ||
+        null;
+
+      setSelectedColor(colorForSize ? colorForSize.value : null);
+      setSelectedVariant(colorForSize || initialSize);
+
+      if (colorForSize?.variantId) {
+        localStorage.setItem("selectedVariantId", colorForSize.variantId);
+      } else if (initialSize.variantId) {
+        localStorage.setItem("selectedVariantId", initialSize.variantId);
+      }
+      return;
     }
-  }, [sizes]);
+
+    // If no sizes but colors exist, pick a color
+    if (colors && colors.length > 0) {
+      const initialColor = colors.find((c) => c.available) || colors[0];
+      setSelectedColor(initialColor.value);
+      setSelectedVariant(initialColor);
+      if (initialColor.variantId)
+        localStorage.setItem("selectedVariantId", initialColor.variantId);
+      return;
+    }
+
+    // fallback: if neither present, try stored variant from localStorage via variants prop
+    const stored = localStorage.getItem("selectedVariantId");
+    if (stored && variants) {
+      const v = variants.find((vt) => vt.id === Number(stored));
+      if (v) setSelectedVariant(v);
+    }
+  }, [sizes, colors, variants]);
 
   // ✅ Handle size selection
   const handleSizeSelect = (size) => {
     setSelectedSize(size.value);
-    setSelectedColor(size.color || null);
-    setSelectedVariant(size);
 
-    if (size.variantId) {
+    // pick first available color for this size if present
+    const colorForSize =
+      (size.colors || []).find((c) => c.available) ||
+      (size.colors || [])[0] ||
+      null;
+    setSelectedColor(colorForSize ? colorForSize.value : null);
+    setSelectedVariant(colorForSize || size);
+
+    if (colorForSize?.variantId) {
+      localStorage.setItem("selectedVariantId", colorForSize.variantId);
+    } else if (size.variantId) {
       localStorage.setItem("selectedVariantId", size.variantId);
     }
   };
@@ -108,6 +147,15 @@ const ProductInfo = ({
   const hasSizes = sizes && sizes.length > 0;
   const hasColors = colors && colors.length > 0;
 
+  // displayedColors: if both sizes & colors exist, show colors for selected size; otherwise show global colors
+  const displayedColors = (() => {
+    if (hasSizes) {
+      const chosen = sizes.find((s) => s.value === selectedSize) || sizes[0];
+      return (chosen?.colors || []).map((c) => ({ ...c }));
+    }
+    return (colors || []).map((c) => ({ ...c }));
+  })();
+
   return (
     <div className="border-b pb-6">
       {/* Header */}
@@ -158,45 +206,6 @@ const ProductInfo = ({
         Exclusive of all taxes
       </div>
 
-      {/* Color Selection - Show only if colors exist */}
-      {hasColors && (
-        <div className="mb-5">
-          <div className="flex items-center justify-between mb-3">
-            <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wide">
-              Select Color
-            </h3>
-          </div>
-
-          <div className="flex flex-wrap gap-4">
-            {colors.map((color) => (
-              <div key={color.value} className="flex flex-col items-center">
-                <button
-                  onClick={() => handleColorSelect(color)}
-                  disabled={!color.available}
-                  className={`min-w-[100px] px-4 py-3 border text-sm font-semibold transition-all rounded-md cursor-pointer
-            ${
-              !color.available
-                ? "bg-white text-gray-300 border-gray-200 line-through cursor-not-allowed"
-                : selectedColor === color.value
-                ? "border-pink-600 text-pink-600 bg-white"
-                : "border-gray-300 text-gray-700 bg-white hover:border-gray-400"
-            }`}
-                >
-                  {color.label}
-                </button>
-
-                {/* ✅ Show "Out of Stock" text below disabled button */}
-                {/* {!color.available && (
-                  <span className="text-[11px] text-red-500 mt-1 font-medium">
-                    Out of Stock
-                  </span>
-                )} */}
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-
       {/* Size Selection - Show only if sizes exist */}
       {hasSizes && (
         <div className="mb-5">
@@ -215,7 +224,6 @@ const ProductInfo = ({
                   setSizeChartData(resp?.data?.data ?? null);
                   setSizeChartOpen(true);
                 } catch (err) {
-                  console.error("Error fetching size chart", err);
                   setSizeChartData(null);
                   setSizeChartOpen(true);
                 } finally {
@@ -254,6 +262,45 @@ const ProductInfo = ({
                 )} */}
               </div>
             ))}
+          </div>
+        </div>
+      )}
+
+      {/* Color Selection - Show only if colors exist */}
+      {hasColors && (
+        <div className="mb-5">
+          <div className="flex items-center justify-between mb-3">
+            <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wide">
+              Select Color
+            </h3>
+          </div>
+
+          <div className="flex items-center gap-4">
+            {displayedColors && displayedColors.length > 0 ? (
+              displayedColors.map((color) => (
+                <div key={color.value} className="flex flex-col items-center">
+                  <button
+                    onClick={() => handleColorSelect(color)}
+                    disabled={!color.available}
+                    title={color.hex || color.label}
+                    className={`w-9 h-9 rounded-full border-2 transition-all flex items-center justify-center ${
+                      !color.available
+                        ? "opacity-30 cursor-not-allowed border-gray-200"
+                        : selectedColor === color.value
+                        ? "ring-2 ring-pink-500 border-white"
+                        : "border-gray-300"
+                    }`}
+                    style={{ backgroundColor: color.hex || undefined }}
+                  />
+
+                  {/* <div className="text-[11px] text-gray-600 mt-1">
+                    {color.hex}
+                  </div> */}
+                </div>
+              ))
+            ) : (
+              <div className="text-gray-500">No colors available</div>
+            )}
           </div>
         </div>
       )}

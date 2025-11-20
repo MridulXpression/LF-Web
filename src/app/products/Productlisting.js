@@ -14,6 +14,8 @@ import { Filter } from "lucide-react";
 const ShopByCategoriesPage = () => {
   const searchParams = useSearchParams();
   const router = useRouter();
+  const [isFilterLoading, setIsFilterLoading] = useState(false);
+  const [isSortLoading, setIsSortLoading] = useState(false);
 
   const genderValue = searchParams.get("gender");
   const query = genderValue ? `gender=${genderValue}` : "";
@@ -40,9 +42,9 @@ const ShopByCategoriesPage = () => {
   // Brands
   const brandParam = searchParams.get("brands");
   const initialSelectedBrands = brandParam ? brandParam.split(",") : [];
-  const getbrands = usegetBrands();
+  const { brands: rawBrands } = usegetBrands();
   const brands =
-    getbrands?.map((brand) => ({
+    rawBrands?.map((brand) => ({
       id: brand?.id || "",
       name: brand?.name || "",
     })) || [];
@@ -75,6 +77,29 @@ const ShopByCategoriesPage = () => {
         : [...prev, brandId]
     );
   };
+  // RUN FILTER AGAIN WHEN PAGE IS REFRESHED AND URL HAS FILTER PARAMS
+  useEffect(() => {
+    const hasBrand = brandParam && brandParam.length > 0;
+    const hasPrice = minPriceParam !== "0" || maxPriceParam !== "10000";
+
+    if (hasBrand || hasPrice) {
+      const payload = {
+        brandIds: initialSelectedBrands,
+        minPrice: minPriceParam,
+        maxPrice: maxPriceParam,
+      };
+
+      (async () => {
+        setIsFilterLoading(true);
+        try {
+          const result = await filterProducts(payload);
+          setFilteredProducts(result || []);
+        } finally {
+          setIsFilterLoading(false);
+        }
+      })();
+    }
+  }, [brandParam, minPriceParam, maxPriceParam]);
 
   // SEARCH
   useEffect(() => {
@@ -117,6 +142,8 @@ const ShopByCategoriesPage = () => {
 
   // APPLY FILTERS AND KEEP SORT PARAM IF PRESENT
   const handleApplyFilters = async () => {
+    setIsFilterLoading(true); // START LOADING
+
     const params = new URLSearchParams(window.location.search);
 
     // Brand
@@ -138,18 +165,20 @@ const ShopByCategoriesPage = () => {
 
     router.push(`/products?${params.toString()}`);
 
-    // For UI results
     const payload = {
       brandIds: selectedBrands,
       minPrice: priceRange.min,
       maxPrice: priceRange.max,
     };
 
-    filterProducts(payload).then((result) => {
+    try {
+      const result = await filterProducts(payload);
       setFilteredProducts(result || []);
       setIsFilterApplied(true);
       setIsFilterOpen(false);
-    });
+    } finally {
+      setIsFilterLoading(false); // STOP LOADING
+    }
   };
 
   // CLEAR FILTERS
@@ -165,12 +194,13 @@ const ShopByCategoriesPage = () => {
   // SORT → UPDATE URL BUT KEEP BRAND + PRICE FILTER PARAMS
   const handleSortChange = (e) => {
     const value = e.target.value;
+
     const params = new URLSearchParams(window.location.search);
 
-    // Remove subCategoryId (as you said)
+    setIsSortLoading(true);
+
     params.delete("subCategoryId");
 
-    // Update sort value
     switch (value) {
       case "Price: Low to High":
         params.set("sort", "price_asc");
@@ -191,7 +221,6 @@ const ShopByCategoriesPage = () => {
         params.delete("sort");
     }
 
-    // Now push updated params to URL
     router.push(`/products?${params.toString()}`);
   };
 
@@ -210,6 +239,12 @@ const ShopByCategoriesPage = () => {
   } else {
     products = allProducts;
   }
+  useEffect(() => {
+    if (sortQuery) {
+      // Sorting changed → when sortedProducts updates, stop loading
+      setIsSortLoading(false);
+    }
+  }, [sortedProducts]);
 
   return (
     <div className="min-h-screen bg-white relative">
@@ -296,14 +331,14 @@ const ShopByCategoriesPage = () => {
 
           <button
             onClick={handleApplyFilters}
-            className="w-full bg-black text-white py-2 rounded hover:bg-gray-800"
+            className="w-full bg-black text-white py-2 rounded  cursor-pointer"
           >
             Apply Filters
           </button>
 
           <button
             onClick={handleClearFilters}
-            className="w-full mt-3 border border-gray-300 py-2 rounded hover:bg-gray-100 text-black"
+            className="w-full mt-3 border border-gray-300 py-2 rounded  text-black cursor-pointer"
           >
             Clear Filters
           </button>
@@ -341,6 +376,12 @@ const ShopByCategoriesPage = () => {
               </Link>
             )}
           </div>
+          {/* FILTER LOADING */}
+          {isFilterLoading && (
+            <div className="flex justify-center items-center h-64">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900"></div>
+            </div>
+          )}
 
           {/* LOADING */}
           {isLoading && !isSearching && (
@@ -354,6 +395,12 @@ const ShopByCategoriesPage = () => {
               Searching products...
             </div>
           )}
+          {/* SORT LOADING */}
+          {isSortLoading && (
+            <div className="flex justify-center items-center h-64">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900"></div>
+            </div>
+          )}
 
           {/* NO PRODUCTS */}
           {!isLoading && !isSearching && products?.length === 0 && (
@@ -363,12 +410,17 @@ const ShopByCategoriesPage = () => {
                   ? "No products available according to selected filters."
                   : "No products found"}
               </div>
-              <Link
-                href="/products"
-                className="px-4 py-2 bg-gray-900 text-white rounded hover:bg-gray-800"
+              <button
+                onClick={() => {
+                  setIsFilterApplied(false);
+                  setFilteredProducts([]);
+                  setSearchResults(null);
+                  router.push("/products");
+                }}
+                className="px-4 py-2 bg-gray-900 text-white rounded hover:bg-gray-800 cursor-pointer"
               >
                 Browse All Products
-              </Link>
+              </button>
             </div>
           )}
 

@@ -1,6 +1,7 @@
 "use client";
 import React, { useMemo, useState, useEffect } from "react";
 import useProductsById from "@/hooks/useProductById";
+import chroma from "chroma-js";
 import ProductImageGallery from "@/components/ProductImages";
 import ProductInfo from "@/components/ProductHeader";
 import ProductActions from "@/components/ProductActions";
@@ -10,36 +11,69 @@ import ReviewCard from "@/components/ReviewCard";
 import ProductDelivery from "@/components/ProductDelivery";
 import axiosHttp from "@/utils/axioshttp";
 
-// Helper to extract unique sizes
+// Use chroma-js to convert a color name/string to HEX. Fallback to neutral gray.
+const colorNameToHex = (name) => {
+  try {
+    if (!name) return "#CCCCCC";
+    return chroma(name).hex();
+  } catch (e) {
+    return "#CCCCCC";
+  }
+};
+
+// Helper to extract sizes and attach available colors for each size
 const extractSizesFromVariants = (variants) => {
   if (!variants || !Array.isArray(variants)) return [];
 
   const sizesMap = new Map();
 
   variants.forEach((variant) => {
-    const sizeOption = variant.selectedOptions?.find(
-      (option) => option.name === "Size"
-    );
+    const sizeOption = variant.selectedOptions?.find((o) => o.name === "Size");
+    const colorOptions =
+      variant.selectedOptions?.filter((o) => o.name === "Color") || [];
+    const availableStock = variant.inventory?.availableStock ?? 0;
 
-    if (sizeOption && sizeOption.value) {
-      const sizeValue = sizeOption.value;
-      const availableStock = variant.inventory?.availableStock ?? 0;
+    const sizeValue = sizeOption?.value ?? "";
 
-      if (!sizesMap.has(sizeValue)) {
-        sizesMap.set(sizeValue, {
-          label: sizeValue,
-          value: sizeValue,
+    // If size doesn't exist, create an entry
+    if (!sizesMap.has(sizeValue)) {
+      sizesMap.set(sizeValue, {
+        label: sizeValue || "",
+        value: sizeValue || "",
+        variantId: variant.id,
+        shopifyVariantId: variant.shopifyVariantId,
+        available: availableStock > 0,
+        price: variant.price,
+        compareAtPrice: variant.compareAtPrice,
+        colors: [],
+      });
+    }
+
+    const sizeEntry = sizesMap.get(sizeValue);
+
+    // Attach all color options found on this variant to the size entry
+    colorOptions.forEach((c) => {
+      const colorVal = c.value;
+      if (!colorVal) return;
+      const existing = sizeEntry.colors.find((x) => x.value === colorVal);
+      if (!existing) {
+        sizeEntry.colors.push({
+          label: colorVal,
+          value: colorVal,
+          hex: colorNameToHex(colorVal),
           variantId: variant.id,
           shopifyVariantId: variant.shopifyVariantId,
-          available: availableStock > 0, // ✅ Disable if stock = 0
+          available: availableStock > 0,
           price: variant.price,
-          compareAtPrice: variant.compareAtPrice,
         });
+      } else {
+        // If any variant for this color/size has stock, mark available
+        existing.available = existing.available || availableStock > 0;
       }
-    }
+    });
   });
 
-  // Order sizes
+  // Convert map to array and sort sizes (preserve empty size last)
   const sizeOrder = [
     "XXS",
     "XS",
@@ -52,6 +86,7 @@ const extractSizesFromVariants = (variants) => {
     "2XL",
     "3XL",
   ];
+
   const sizesArray = Array.from(sizesMap.values());
 
   return sizesArray.sort((a, b) => {
@@ -61,33 +96,37 @@ const extractSizesFromVariants = (variants) => {
   });
 };
 
-// ✅ Helper to extract unique colors from variants
+// ✅ Helper to extract unique colors from variants (global fallback)
 const extractColorsFromVariants = (variants) => {
   if (!variants || !Array.isArray(variants)) return [];
 
   const colorsMap = new Map();
 
   variants.forEach((variant) => {
-    const colorOption = variant.selectedOptions?.find(
-      (option) => option.name === "Color"
-    );
+    const colorOptions =
+      variant.selectedOptions?.filter((o) => o.name === "Color") || [];
+    const availableStock = variant.inventory?.availableStock ?? 0;
 
-    if (colorOption && colorOption.value) {
-      const colorValue = colorOption.value;
-      const availableStock = variant.inventory?.availableStock ?? 0;
+    colorOptions.forEach((colorOption) => {
+      const colorValue = colorOption?.value;
+      if (!colorValue) return;
 
       if (!colorsMap.has(colorValue)) {
         colorsMap.set(colorValue, {
           label: colorValue,
           value: colorValue,
+          hex: colorNameToHex(colorValue),
           variantId: variant.id,
           shopifyVariantId: variant.shopifyVariantId,
           available: availableStock > 0,
           price: variant.price,
           compareAtPrice: variant.compareAtPrice,
         });
+      } else {
+        const existing = colorsMap.get(colorValue);
+        existing.available = existing.available || availableStock > 0;
       }
-    }
+    });
   });
 
   return Array.from(colorsMap.values());
@@ -209,12 +248,7 @@ export default function ProductPage({ params }) {
           setReviews(response.data.reviews);
         }
       }
-    } catch (error) {
-      console.error(
-        "Error fetching reviews:",
-        error?.response?.data?.message || error.message
-      );
-    }
+    } catch (error) {}
   };
 
   // Fetch reviews when product data becomes available
@@ -232,8 +266,8 @@ export default function ProductPage({ params }) {
       </div>
     );
 
-  const handleAddToBag = () => console.log("Add to bag clicked");
-  const handleAddToWishlist = () => console.log("Add to wishlist clicked");
+  const handleAddToBag = () => {};
+  const handleAddToWishlist = () => {};
 
   return (
     <div className="bg-white">

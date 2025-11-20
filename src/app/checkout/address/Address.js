@@ -51,7 +51,6 @@ const CheckOutAddress = () => {
           resolve(true);
         };
         script.onerror = () => {
-          console.error("Failed to load Razorpay script");
           resolve(false);
         };
         document.body.appendChild(script);
@@ -74,9 +73,7 @@ const CheckOutAddress = () => {
             setSelectedAddressId(parsed.selectedAddressId);
           if (parsed.orderTotal) setOrderTotal(parsed.orderTotal);
         }
-      } catch (e) {
-        console.warn("Failed to load checkout state:", e);
-      }
+      } catch (e) {}
     }
   }, [userId]);
 
@@ -89,14 +86,17 @@ const CheckOutAddress = () => {
           id: item.id,
           productId: item.productId,
           name: item.product.title,
-          price: item.product_variant.price,
-          quantity: 1,
+          price: item.product_variant.price, // Selling Price
+          originalPrice:
+            item.product.mrp ||
+            item.product.basePrice ||
+            item.product_variant.price, // MRP
+          quantity: item.quantity || 1,
         }));
         setProducts(transformedData);
       }
       setLoading(false);
     } catch (error) {
-      console.error("Error fetching cart items:", error);
       setLoading(false);
     }
   };
@@ -114,9 +114,7 @@ const CheckOutAddress = () => {
           setSelectedAddressId(defaultAddress.id);
         }
       }
-    } catch (error) {
-      console.error("Error fetching addresses:", error);
-    }
+    } catch (error) {}
   };
 
   const handleAddNewAddress = () => {
@@ -155,7 +153,6 @@ const CheckOutAddress = () => {
         }
       }
     } catch (error) {
-      console.error("Error saving address:", error);
       alert("Failed to save address. Please try again.");
     }
   };
@@ -176,7 +173,6 @@ const CheckOutAddress = () => {
         }
       }
     } catch (error) {
-      console.error("Error deleting address:", error);
       alert("Failed to delete address. Please try again.");
     } finally {
       setDeleteLoading(false);
@@ -221,9 +217,14 @@ const CheckOutAddress = () => {
         };
       });
 
-      const total = items.reduce(
+      const computedTotal = items.reduce(
         (s, it) => s + (it.unitPrice || 0) * (it.quantity || 1),
         0
+      );
+      // Use orderTotal from OrderSummary (includes GST) when available,
+      // otherwise fall back to computed cart total.
+      const paymentTotal = Number(
+        orderTotal && Number(orderTotal) > 0 ? orderTotal : computedTotal
       );
       const totalMRP = cartData.reduce(
         (s, it) => s + (it.product?.mrp || it.product?.basePrice || 0),
@@ -236,18 +237,14 @@ const CheckOutAddress = () => {
         shippingAddressId: selectedAddressId,
         items: items,
         totalMRP: +totalMRP.toFixed(2),
-        total: +total.toFixed(2),
+        total: +paymentTotal.toFixed(2),
         paymentMethod: "prepaid",
       };
-
-      console.log("Initiating payment with payload:", initiatePayload);
 
       const initiateResp = await axiosHttp.post(
         `/initiate-payment`,
         initiatePayload
       );
-
-      console.log("Initiate payment response:", initiateResp.data);
 
       if (
         !initiateResp.data ||
@@ -271,7 +268,7 @@ const CheckOutAddress = () => {
         providerOrderId,
         selectedAddressId,
         items,
-        total,
+        total: +paymentTotal.toFixed(2),
         totalMRP,
         userId,
       };
@@ -281,23 +278,18 @@ const CheckOutAddress = () => {
           `lafetch_payment_${userId}`,
           JSON.stringify(paymentData)
         );
-      } catch (e) {
-        console.warn("Could not persist payment data:", e);
-      }
+      } catch (e) {}
 
       // Step 4: Open Razorpay payment gateway
-      const amountInPaise = Math.round(total * 100);
+      const amountInPaise = Math.round(paymentTotal * 100);
 
       // Verify Razorpay key is available
       const razorpayKey = process.env.NEXT_PUBLIC_RAZOR_PAY_KEY_ID;
 
       if (!razorpayKey) {
-        console.error("Razorpay key is missing!");
         alert("Payment configuration error. Please contact support.");
         return;
       }
-
-      console.log("Opening Razorpay with amount:", amountInPaise, "paise");
 
       const options = {
         key: razorpayKey,
@@ -317,8 +309,6 @@ const CheckOutAddress = () => {
         },
         theme: { color: "#988BFF" },
         handler: async function (response) {
-          console.log("Payment successful, Razorpay response:", response);
-
           try {
             // Validate Razorpay response
             if (!response.razorpay_payment_id) {
@@ -346,14 +336,10 @@ const CheckOutAddress = () => {
               },
             };
 
-            console.log("Placing order with payload:", placeOrderPayload);
-
             const placeResp = await axiosHttp.post(
               `/place-order`,
               placeOrderPayload
             );
-
-            console.log("Place order response:", placeResp.data);
 
             if (
               placeResp.data &&
@@ -363,9 +349,7 @@ const CheckOutAddress = () => {
               try {
                 sessionStorage.removeItem(`lafetch_payment_${userId}`);
                 sessionStorage.removeItem(`lafetch_checkout_${userId}`);
-              } catch (e) {
-                console.warn("Could not clear storage:", e);
-              }
+              } catch (e) {}
 
               // Open payment confirmation modal with success
               setPaymentModalData({
@@ -373,32 +357,30 @@ const CheckOutAddress = () => {
                 transactionId: response.razorpay_payment_id,
                 paymentMethod: "Razorpay",
                 dateTime: new Date().toLocaleString(),
-                amountPaid: paymentInfo?.total || total || 0,
+                amountPaid: paymentInfo?.total || paymentTotal || 0,
               });
               setIsPaymentModalOpen(true);
             } else {
-              console.error("Place order failed:", placeResp.data);
               // Payment successful but order placement failed
               setPaymentModalData({
                 status: "payment_success_order_failed",
                 transactionId: response.razorpay_payment_id || "N/A",
                 paymentMethod: "Razorpay",
                 dateTime: new Date().toLocaleString(),
-                amountPaid: paymentInfo?.total || total || 0,
+                amountPaid: paymentInfo?.total || paymentTotal || 0,
                 errorMessage:
                   "Payment completed successfully but order could not be placed. Please contact support with your transaction ID.",
               });
               setIsPaymentModalOpen(true);
             }
           } catch (err) {
-            console.error("Error placing order after payment:", err);
             // Payment successful but error occurred during order placement
             setPaymentModalData({
               status: "payment_success_order_failed",
               transactionId: response?.razorpay_payment_id || "N/A",
               paymentMethod: "Razorpay",
               dateTime: new Date().toLocaleString(),
-              amountPaid: total || 0,
+              amountPaid: paymentTotal || 0,
               errorMessage:
                 "Payment completed successfully but order could not be placed. Please contact support with your transaction ID.",
             });
@@ -407,21 +389,14 @@ const CheckOutAddress = () => {
         },
         modal: {
           ondismiss: function () {
-            console.log("Payment modal closed by user");
             alert("Payment cancelled. You can try again when ready.");
           },
         },
       };
 
-      console.log("Creating Razorpay instance with options:", {
-        ...options,
-        key: "***hidden***",
-      });
-
       const rzp = new window.Razorpay(options);
 
       rzp.on("payment.failed", function (response) {
-        console.error("Payment failed:", response.error);
         // Open failure modal with available details
         setPaymentModalData({
           status: "failed",
@@ -434,9 +409,7 @@ const CheckOutAddress = () => {
       });
 
       rzp.open();
-      console.log("Razorpay modal opened");
     } catch (err) {
-      console.error("Error initiating payment:", err);
       alert(
         "Could not start payment: " + (err.message || "Please try again later.")
       );

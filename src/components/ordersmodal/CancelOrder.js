@@ -5,6 +5,7 @@ import { X } from "lucide-react";
 import axiosHttp from "@/utils/axioshttp";
 import { toast } from "react-hot-toast";
 import SuccessCancelModal from "./SuccessCancelModal";
+import Image from "next/image";
 
 const CANCELLATION_REASONS = {
   25: "Other",
@@ -55,8 +56,6 @@ const CancelOrderModal = ({
         shipRocketId: orderDetails.shiprocketOrderId || "",
       };
 
-      console.log("Submitting cancellation payload:", payload);
-
       const response = await axiosHttp.post(`/request-cancel`, payload);
 
       if (response.data.status === 200) {
@@ -88,9 +87,11 @@ const CancelOrderModal = ({
         <div className="p-4 border-b border-gray-200">
           <div className="flex gap-4">
             {product.imageUrls?.[0] && (
-              <img
+              <Image
                 src={product.imageUrls[0]}
                 alt={product.title}
+                width={80}
+                height={80}
                 className="w-20 h-20 object-cover rounded-md"
               />
             )}

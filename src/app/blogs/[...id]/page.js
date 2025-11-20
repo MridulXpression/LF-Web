@@ -23,7 +23,6 @@ export default function BlogDetailsPage() {
       const data = res?.data?.data;
       setBlogData(data);
     } catch (error) {
-      console.error("Error fetching blog:", error);
     } finally {
       setLoading(false);
     }
@@ -35,7 +34,9 @@ export default function BlogDetailsPage() {
 
   if (loading) {
     return (
-      <div className="text-center py-10 text-gray-500">Loading blog...</div>
+      <div className="flex justify-center bg-white items-center min-h-[100vh]">
+        <div className="w-12 h-12 border-4 border-t-transparent border-blue-500 rounded-full animate-spin"></div>
+      </div>
     );
   }
 

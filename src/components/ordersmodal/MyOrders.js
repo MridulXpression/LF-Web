@@ -7,6 +7,7 @@ import {
   RefreshCw,
   Star,
 } from "lucide-react";
+import Image from "next/image";
 
 const OrderCard = ({ order, onAction, onClick }) => {
   const { id, product, order: orderDetails, quantity, total } = order;
@@ -107,9 +108,11 @@ const OrderCard = ({ order, onAction, onClick }) => {
       <div className="flex gap-4">
         {/* Product Image */}
         <div className="flex-shrink-0">
-          <img
+          <Image
             src={productImage}
             alt={product?.title || "Product"}
+            width={80}
+            height={80}
             className="w-20 h-20 object-cover rounded-md border border-gray-200"
           />
         </div>

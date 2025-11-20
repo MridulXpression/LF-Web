@@ -12,9 +12,7 @@ const useGetCategoriesHierarchy = () => {
       if (result?.status === 200) {
         setCategories(result?.data?.data);
       }
-    } catch (err) {
-      console.error("Error fetching categories hierarchy:", err);
-    }
+    } catch (err) {}
   };
 
   useEffect(() => {

@@ -1,5 +1,6 @@
 "use client";
 import { X } from "lucide-react";
+import Image from "next/image";
 import React from "react";
 
 const SuccessCancelModal = ({ product, orderItem, onClose }) => {
@@ -26,9 +27,11 @@ const SuccessCancelModal = ({ product, orderItem, onClose }) => {
 
           <div className="flex gap-4">
             {product?.imageUrls?.[0] && (
-              <img
+              <Image
                 src={product.imageUrls[0]}
                 alt={product.title}
+                width={80}
+                height={80}
                 className="w-20 h-20 rounded-md object-cover"
               />
             )}

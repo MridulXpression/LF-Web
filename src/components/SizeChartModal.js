@@ -1,4 +1,5 @@
 "use client";
+import Image from "next/image";
 import React from "react";
 
 const SizeChartModal = ({ open, onClose, data, loading }) => {
@@ -69,10 +70,12 @@ const SizeChartModal = ({ open, onClose, data, loading }) => {
           </div>
         ) : data.sizeGuideImage ? (
           <div className="flex justify-center">
-            <img
+            <Image
               src={data.sizeGuideImage}
               alt={data.title || "size guide"}
-              className="max-h-[60vh] object-contain"
+              width={500}
+              height={500}
+              className="max-h-[60vh] object-contain w-auto h-auto"
             />
           </div>
         ) : data.sizeChartData ? (

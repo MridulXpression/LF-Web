@@ -51,7 +51,6 @@ const MyOrders = () => {
         setOrders(response.data.data);
       }
     } catch (error) {
-      console.error("Error fetching orders:", error);
     } finally {
       setLoading(false);
     }

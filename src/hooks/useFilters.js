@@ -13,7 +13,6 @@ const useFilterProducts = () => {
         return [];
       }
     } catch (err) {
-      console.error("Error filtering products:", err);
       return [];
     }
   };

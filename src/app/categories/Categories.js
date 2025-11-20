@@ -14,8 +14,8 @@ const CategoryPage = () => {
 
   if (isCategoryLoading || !categoryProducts) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="text-lg">Loading...</div>
+      <div className="flex bg-white  justify-center items-center min-h-[100vh]">
+        <div className="w-12 h-12 border-4 border-t-transparent border-blue-500 rounded-full animate-spin"></div>
       </div>
     );
   }
@@ -49,7 +49,7 @@ const CategoryPage = () => {
                   {/* Desktop View All */}
                   {subcategory.products?.length > 5 && (
                     <Link
-                      href={`/subcategory/${subcategory.id}`}
+                      href={`/products?subCategoryId=${subcategory.id}`}
                       className="hidden lg:block text-[#808080] border-b border-[#808080] text-sm "
                     >
                       View All →

@@ -23,7 +23,7 @@ const ProductActions = ({ onAddToWishlist, productData, isInStock = true }) => {
       return;
     }
     const result = await addProductToCart();
-    console.log(productData, "DASDASDSA");
+
     const variantId = localStorage.getItem("selectedVariantId");
     dispatch(addToCart({ product: productData, variantId }));
 

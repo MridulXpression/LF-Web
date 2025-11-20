@@ -14,9 +14,7 @@ const useProductById = (id) => {
       if (result?.status === 200) {
         setProduct(result?.data?.data);
       }
-    } catch (err) {
-      console.error("Error fetching product details:", err);
-    }
+    } catch (err) {}
   };
 
   useEffect(() => {

@@ -90,13 +90,10 @@ const ShoppingCart = () => {
               if (savedCartItemIds.size > 0) setSelectedItems(savedCartItemIds);
             }
           }
-        } catch (e) {
-          console.warn("Failed to restore checkout state:", e);
-        }
+        } catch (e) {}
       }
       setLoading(false);
     } catch (error) {
-      console.error("Error fetching cart items:", error);
       setLoading(false);
     }
   };
@@ -131,9 +128,7 @@ const ShoppingCart = () => {
         items: itemsToSave,
       };
       localStorage.setItem(key, JSON.stringify(merged));
-    } catch (e) {
-      console.warn("Failed to persist checkout state:", e);
-    }
+    } catch (e) {}
   }, [products, selectedItems, userId]);
 
   const handleRemove = async (productId) => {
@@ -156,9 +151,7 @@ const ShoppingCart = () => {
         }
         fetchCartItems();
       }
-    } catch (error) {
-      console.error("Error removing cart item:", error);
-    }
+    } catch (error) {}
   };
 
   const handleQuantityChange = async (cartItemId, quantity) => {
@@ -170,9 +163,7 @@ const ShoppingCart = () => {
 
         return updatedProducts;
       });
-    } catch (error) {
-      console.error("Error updating quantity:", error);
-    }
+    } catch (error) {}
   };
 
   const handleSizeChange = async (cartItemId, size) => {
@@ -182,9 +173,7 @@ const ShoppingCart = () => {
           p.cartItemId === cartItemId ? { ...p, size } : p
         )
       );
-    } catch (error) {
-      console.error("Error updating size:", error);
-    }
+    } catch (error) {}
   };
 
   // Handle individual item selection

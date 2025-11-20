@@ -1,9 +1,7 @@
 import React from "react";
 
 const HeroBanner = ({ videoURL, brandName, description }) => {
-  const handleVideoError = (e) => {
-    console.error("Video failed to load:", e);
-  };
+  const handleVideoError = (e) => {};
 
   return (
     <div className="relative">

@@ -60,8 +60,6 @@ const ReviewOrderModal = ({
         comment,
       };
 
-      console.log("Submitting review payload:", payload);
-
       const response = await axiosHttp.post(`/review`, payload);
 
       if (response.data.status === 201) {

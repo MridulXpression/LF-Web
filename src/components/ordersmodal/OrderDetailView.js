@@ -21,7 +21,6 @@ const OrderDetailView = ({ orderId, onBack, axiosHttp }) => {
           setOrderData(response.data.data);
         }
       } catch (error) {
-        console.error("Error fetching order details:", error);
       } finally {
         setLoading(false);
       }

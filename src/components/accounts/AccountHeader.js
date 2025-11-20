@@ -32,7 +32,6 @@ const AccountHeader = () => {
         phone: data.phone,
       });
     } catch (error) {
-      console.error("❌ Error fetching user profile:", error);
     } finally {
       setLoading(false);
     }
@@ -69,9 +68,7 @@ const AccountHeader = () => {
         })
       );
       await fetchUserData();
-    } catch (error) {
-      console.error("❌ Error updating profile:", error);
-    }
+    } catch (error) {}
   };
 
   return (

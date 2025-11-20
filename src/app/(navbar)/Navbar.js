@@ -14,6 +14,7 @@ import useGetCategoriesHierarchy from "@/hooks/useCategoriesHirerarchy";
 import UserDropdown from "@/components/UserDrpdown";
 import NavbarSearch from "@/components/NavbarSearch";
 import useGetProductBySubCategories from "@/hooks/useGetSubCategories";
+import useBlog from "@/hooks/useBlog";
 
 // Generate menu data dynamically
 const getMenuData = (categories) => {
@@ -59,7 +60,10 @@ const Navbar = () => {
   const categoriesHierarchy = useGetCategoriesHierarchy();
   const menuData = getMenuData(categoriesHierarchy);
 
-  const subCategoriesProducts = useGetProductBySubCategories(77);
+  const blogs = useBlog();
+  const latestBlogs = blogs
+    ?.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+    ?.slice(0, 2);
 
   const getMenuHref = (title) => {
     const t = (title || "").toString().toLowerCase().trim();
@@ -117,7 +121,7 @@ const Navbar = () => {
   return (
     <>
       {/* Header Container */}
-      <div className="sticky top-0 bg-white z-50 shadow-sm">
+      <div className=" bg-white z-50 shadow-sm">
         <div className="">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex justify-between items-center py-4 md:justify-center">
@@ -186,14 +190,14 @@ const Navbar = () => {
 
                       {/* Dropdown Menu */}
                       {hasDropdown && activeDropdown === index && (
-                        <div className="absolute -left-5 top-full w-[700px] bg-white shadow-lg border border-gray-100 z-50">
+                        <div className="absolute -left-5 top-full w-[900px] bg-white shadow-lg border border-gray-100 z-50">
                           <div className="p-6">
                             <div className="flex justify-between">
                               {/* Sections */}
-                              <div className="flex-1 flex flex-wrap gap-x-8 gap-y-6">
+                              <div className="flex-1 flex flex-wrap gap-x-4 gap-y-2">
                                 {menu.sections.map((section, idx) => (
                                   <div key={idx}>
-                                    <h3 className="text-sm font-semibold text-gray-900 mb-3">
+                                    <h3 className="text-sm font-semibold text-gray-900 ">
                                       {section.heading}
                                     </h3>
                                     <ul className="space-y-2">
@@ -212,18 +216,23 @@ const Navbar = () => {
                                 ))}
                               </div>
 
-                              {/* Images */}
+                              {/* Latest Blog Images */}
                               <div className="flex space-x-4">
-                                <div className="w-24 h-32 bg-gray-100 rounded-lg flex items-center justify-center">
-                                  <span className="text-xs text-gray-400">
-                                    Product 1
-                                  </span>
-                                </div>
-                                <div className="w-24 h-32 bg-gray-100 rounded-lg flex items-center justify-center">
-                                  <span className="text-xs text-gray-400">
-                                    Product 2
-                                  </span>
-                                </div>
+                                {latestBlogs?.map((blog) => (
+                                  <Link
+                                    key={blog.id}
+                                    href={`/blogs/${blog.id}`}
+                                    target="_blank"
+                                    className="w-24 h-32 relative rounded-lg overflow-hidden"
+                                  >
+                                    <Image
+                                      src={blog.image_url}
+                                      alt={blog.title}
+                                      fill
+                                      className="object-cover"
+                                    />
+                                  </Link>
+                                ))}
                               </div>
                             </div>
                           </div>
@@ -289,6 +298,67 @@ const Navbar = () => {
           handleSuggestionClick={handleSuggestionClick}
           setShowSearchDropdown={setShowSearchDropdown}
         />
+      )}
+
+      {/* Mobile Sidebar */}
+      <div
+        className={`fixed top-0 left-0 h-full w-64 bg-white shadow-lg z-[9999] transform ${
+          isMobileMenuOpen ? "translate-x-0" : "-translate-x-full"
+        } transition-transform duration-300`}
+      >
+        <div className="flex justify-between items-center p-4 border-b">
+          <h2 className="text-lg font-semibold">Menu</h2>
+
+          {/* Close Button */}
+          <button onClick={() => setIsMobileMenuOpen(false)}>
+            <X className="w-6 h-6 text-gray-600" />
+          </button>
+        </div>
+
+        <div className="p-4 space-y-4">
+          {menuData.map((menu, index) => (
+            <div key={index}>
+              <Link
+                href={getMenuHref(menu.title)}
+                className="block py-2 text-gray-700 font-medium"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                {menu.title}
+              </Link>
+
+              {/* Sub-menu items (if needed) */}
+              {menu.sections.length > 0 && (
+                <div className="pl-4">
+                  {menu.sections.map((section, idx) => (
+                    <div key={idx} className="mt-2">
+                      <p className="text-sm font-semibold text-gray-500">
+                        {section.heading}
+                      </p>
+                      {section.items.map((item) => (
+                        <Link
+                          key={item.id}
+                          href={`/products?subCategoryId=${item.id}`}
+                          className="block py-1 text-sm text-gray-600"
+                          onClick={() => setIsMobileMenuOpen(false)}
+                        >
+                          {item.name}
+                        </Link>
+                      ))}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Backdrop */}
+      {isMobileMenuOpen && (
+        <div
+          className="fixed inset-0 bg-black/40 z-[9998]"
+          onClick={() => setIsMobileMenuOpen(false)}
+        ></div>
       )}
 
       <PhoneAuthModal />

@@ -86,7 +86,7 @@ const ShopCategories = () => {
                 viewBox="0 0 24 24"
                 strokeWidth={2}
                 stroke="currentColor"
-                className="w-5 h-5 md:w-6 md:h-6"
+                className="w-5 h-5 md:w-6 md:h-6 text-black cursor-pointer"
               >
                 <path
                   strokeLinecap="round"
@@ -150,7 +150,7 @@ const ShopCategories = () => {
                 viewBox="0 0 24 24"
                 strokeWidth={2}
                 stroke="currentColor"
-                className="w-5 h-5 md:w-6 md:h-6"
+                className="w-5 h-5 md:w-6 md:h-6 text-black cursor-pointer"
               >
                 <path
                   strokeLinecap="round"

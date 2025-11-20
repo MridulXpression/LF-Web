@@ -4,6 +4,7 @@ import { useSelector } from "react-redux";
 import axiosHttp from "@/utils/axioshttp";
 import { toast } from "react-hot-toast";
 import { X, ChevronDown } from "lucide-react";
+import Image from "next/image";
 
 const ReturnModal = ({ order, onClose = () => {}, onSuccess = () => {} }) => {
   const [selectedReason, setSelectedReason] = useState("");
@@ -49,9 +50,7 @@ const ReturnModal = ({ order, onClose = () => {}, onSuccess = () => {} }) => {
           setSelectedAddressId(defaultAddress.id);
         }
       }
-    } catch (error) {
-      console.error("Error fetching addresses:", error);
-    }
+    } catch (error) {}
   };
 
   const handleReturnItem = async () => {
@@ -113,9 +112,11 @@ const ReturnModal = ({ order, onClose = () => {}, onSuccess = () => {} }) => {
         <div className="p-4 space-y-6">
           {/* Product Info */}
           <div className="flex gap-4">
-            <img
+            <Image
               src={order?.product?.imageUrls?.[0] || "/api/placeholder/80/120"}
               alt={order?.product?.title}
+              width={80}
+              height={112}
               className="w-20 h-28 object-cover rounded"
             />
             <div className="flex-1">

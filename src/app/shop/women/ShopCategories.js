@@ -2,6 +2,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import useCategories from "@/hooks/useCategories";
 import Image from "next/image";
+import Link from "next/link";
 
 const ShopCategories = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -85,7 +86,7 @@ const ShopCategories = () => {
                 viewBox="0 0 24 24"
                 strokeWidth={2}
                 stroke="black"
-                className="w-5 h-5 md:w-6 md:h-6 cursor-pointer"
+                className="w-5 h-5 md:w-6 md:h-6 cursor-pointer text-black"
               >
                 <path
                   strokeLinecap="round"
@@ -111,7 +112,8 @@ const ShopCategories = () => {
                   <CategorySkeleton key={index} />
                 ))
               : fetchCategories.map((category) => (
-                  <div
+                  <Link
+                    href={`/categories?categoryId=${category.id}`}
                     key={category.id}
                     className="flex flex-col items-center min-w-[140px] md:min-w-[215px]"
                   >
@@ -131,7 +133,7 @@ const ShopCategories = () => {
                     <h3 className="text-black text-center font-semibold text-sm md:text-base lg:text-lg mt-4 px-4 leading-tight">
                       {category.name}
                     </h3>
-                  </div>
+                  </Link>
                 ))}
           </div>
 
@@ -148,7 +150,7 @@ const ShopCategories = () => {
                 viewBox="0 0 24 24"
                 strokeWidth={2}
                 stroke="black"
-                className="w-5 h-5 md:w-6 md:h-6 cursor-pointer"
+                className="w-5 h-5 md:w-6 md:h-6 cursor-pointer text-black"
               >
                 <path
                   strokeLinecap="round"

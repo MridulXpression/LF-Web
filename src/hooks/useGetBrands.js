@@ -4,23 +4,24 @@ import { useEffect, useState } from "react";
 
 const usegetBrands = () => {
   const [brands, setBrands] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   const getBrands = async () => {
     try {
-      const endPoint = `${endPoints.getBrands}`;
-      const result = await axiosHttp.get(endPoint);
+      const result = await axiosHttp.get(endPoints.getBrands);
       if (result?.status === 200) {
         setBrands(result?.data?.data);
       }
-    } catch (err) {
-      //error.resposne.data.message
+    } finally {
+      setLoading(false);
     }
   };
 
   useEffect(() => {
     getBrands();
   }, []);
-  return brands;
+
+  return { brands, loading };
 };
 
 export default usegetBrands;

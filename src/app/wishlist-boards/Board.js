@@ -27,9 +27,7 @@ const WishlistBoards = () => {
       await createBoard({ userId: query, name: boardName });
       getBoards?.refetch(); // refresh list
       setIsModalOpen(false); // close modal
-    } catch (error) {
-      console.error("Error creating board:", error);
-    }
+    } catch (error) {}
   };
 
   const handleUpdateBoard = async (newName) => {
@@ -41,9 +39,7 @@ const WishlistBoards = () => {
         name: newName,
       });
       getBoards?.refetch();
-    } catch (error) {
-      console.error("Error updating board:", error);
-    }
+    } catch (error) {}
   };
 
   const handleDeleteBoard = async () => {
@@ -53,9 +49,7 @@ const WishlistBoards = () => {
 
       await axiosHttp.delete(`${endPoints.deleteBoard}/${selectedBoardId}`);
       getBoards?.refetch();
-    } catch (error) {
-      console.error("Error deleting board:", error);
-    }
+    } catch (error) {}
   };
 
   return (

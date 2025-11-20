@@ -10,33 +10,46 @@ const OrderSummary = ({
   coupons = [],
   onAmountChange,
 }) => {
-  const pathname = usePathname(); // ✅ get current route
+  const pathname = usePathname();
   const [selectedCoupon, setSelectedCoupon] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [appliedDiscount, setAppliedDiscount] = useState(0);
 
-  // Calculate subtotal
-  const subtotal = products.reduce(
-    (sum, product) => sum + product.price * product.quantity,
+  const totalMrp = products.reduce(
+    (sum, p) => sum + (p.originalPrice || 0) * p.quantity,
     0
   );
+
+  // Total Variant Price
+  const totalVariantPrice = products.reduce(
+    (sum, p) => sum + (p.price || 0) * p.quantity,
+    0
+  );
+
+  // Subtotal = (MRP - Selling Price)
+  const subtotal = totalVariantPrice;
+
+  // GST 18% ON SUBTOTAL
+  const gst = subtotal * 0.18;
+
   const deliveryCharges = 0;
   const convenienceFee = 0;
 
-  // Apply coupon logic
+  // Coupon Calculation
   const calculateDiscount = (coupon) => {
     if (!coupon || !coupon.discountType) return 0;
 
     const discountPercent = parseFloat(coupon.discountType.replace("%", ""));
     const discountAmount = (subtotal * discountPercent) / 100;
 
-    // Respect max discount cap
     return Math.min(discountAmount, coupon.maxDiscountCap || discountAmount);
   };
 
-  const totalDiscount = appliedDiscount || 0;
+  const totalDiscount = appliedDiscount;
+
+  // Final Total
   const totalPrice =
-    subtotal + deliveryCharges + convenienceFee - totalDiscount;
+    subtotal + gst + deliveryCharges + convenienceFee - totalDiscount;
 
   const handleApplyCoupon = (coupon) => {
     const discountValue = calculateDiscount(coupon);
@@ -45,7 +58,8 @@ const OrderSummary = ({
     setShowModal(false);
   };
 
-  const isAddressPage = pathname === "/checkout/address"; // ✅ check route
+  const isAddressPage = pathname === "/checkout/address";
+
   useEffect(() => {
     if (onAmountChange) {
       onAmountChange(totalPrice);
@@ -53,15 +67,15 @@ const OrderSummary = ({
   }, [totalPrice, onAmountChange]);
 
   return (
-    <div className="bg-white rounded-lg shadow-sm p-6  top-4">
-      {/* Coupons Section — Hide on /checkout/address */}
+    <div className="bg-white rounded-lg shadow-sm p-6 top-4">
+      {/* COUPON SECTION */}
       {!isAddressPage && (
         <div className="mb-6">
           <div className="flex items-center justify-between mb-3">
             <span className="font-semibold text-black">COUPONS</span>
             <button
               onClick={() => setShowModal(true)}
-              className="text-sm text-blue-600 hover:underline"
+              className="text-sm text-blue-600 hover:underline cursor-pointer"
             >
               VIEW MORE
             </button>
@@ -98,11 +112,18 @@ const OrderSummary = ({
         </div>
       )}
 
-      {/* Order Details */}
+      {/* ORDER DETAILS */}
       <div className="border-t pt-4">
         <h3 className="font-semibold mb-4 text-black">ORDER DETAILS</h3>
 
         <div className="space-y-3 text-sm">
+          <div className="flex justify-between">
+            <span className="text-black">Total MRP</span>
+            <span className="font-semibold text-black">
+              ₹{totalMrp.toFixed(2)}
+            </span>
+          </div>
+
           <div className="flex justify-between">
             <span className="text-black">Subtotal</span>
             <span className="font-semibold text-black">
@@ -111,28 +132,33 @@ const OrderSummary = ({
           </div>
 
           <div className="flex justify-between">
+            <span className="text-black">GST (18%)</span>
+            <span className="font-semibold text-black">₹{gst.toFixed(2)}</span>
+          </div>
+
+          {totalDiscount > 0 && (
+            <div className="flex justify-between text-black">
+              <span>Coupon Discount</span>
+              <span>- ₹{totalDiscount.toFixed(2)}</span>
+            </div>
+          )}
+
+          <div className="flex justify-between">
             <span className="text-black">Delivery Charges</span>
             <span className="text-green-600">
               {deliveryCharges === 0 ? "Free" : `₹${deliveryCharges}`}
             </span>
           </div>
 
-          <div className="flex justify-between">
+          {/* <div className="flex justify-between">
             <span className="text-black">Convenience Fee</span>
             <span className="text-black">
               {convenienceFee === 0 ? "₹0" : `₹${convenienceFee}`}
             </span>
-          </div>
-
-          {totalDiscount > 0 && (
-            <div className="flex justify-between text-black">
-              <span>Discount Applied</span>
-              <span>- ₹{totalDiscount.toFixed(2)}</span>
-            </div>
-          )}
+          </div> */}
         </div>
 
-        {/* Total Price */}
+        {/* TOTAL */}
         <div className="flex justify-between items-center mt-4 pt-4 border-t">
           <span className="font-semibold text-black">Total Price</span>
           <span className="font-bold text-lg text-black">
@@ -141,7 +167,7 @@ const OrderSummary = ({
         </div>
       </div>
 
-      {/* Proceed Button — Hide on /checkout/address */}
+      {/* PROCEED */}
       {!isAddressPage && (
         <Link
           href="/checkout/address"
@@ -151,7 +177,7 @@ const OrderSummary = ({
         </Link>
       )}
 
-      {/* Coupon Modal */}
+      {/* COUPON MODAL */}
       {showModal && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm bg-opacity-40 flex items-center justify-center z-50">
           <div className="bg-white w-96 max-h-[80vh] overflow-y-auto shadow-lg relative p-6">

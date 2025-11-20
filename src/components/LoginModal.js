@@ -148,7 +148,6 @@ const PhoneAuthModal = () => {
         alert(`Signup failed: ${res.data?.message || "Please try again"}`);
       }
     } catch (error) {
-      console.error("Error during signup:", error);
       alert("Network error. Please check your connection and try again.");
     } finally {
       setLoading(false);

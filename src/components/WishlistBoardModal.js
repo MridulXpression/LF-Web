@@ -84,7 +84,6 @@ const CreateBoardModal = ({ productData, onClose }) => {
         }, 2000);
       }
     } catch (error) {
-      console.error("Error adding product to board:", error);
       toast.error(error?.message || "Failed to add product to board");
       setTimeout(() => {
         handleClose();
