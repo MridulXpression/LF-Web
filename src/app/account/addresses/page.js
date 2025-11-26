@@ -4,6 +4,7 @@ import { useSelector } from "react-redux";
 import AddressModal from "@/components/AddressModal";
 import DeleteConfirmModal from "@/components/DeleteModal";
 import axiosHttp from "@/utils/axioshttp";
+import toast from "react-hot-toast";
 
 const SavedAddresses = () => {
   const [addresses, setAddresses] = useState([]);
@@ -71,7 +72,7 @@ const SavedAddresses = () => {
         }
       }
     } catch (error) {
-      alert("Failed to save address. Please try again.");
+      toast.error("Failed to save address. Please try again.");
     }
   };
 
@@ -90,7 +91,7 @@ const SavedAddresses = () => {
         }
       }
     } catch (error) {
-      alert("Failed to delete address. Please try again.");
+      toast.error("Failed to delete address. Please try again.");
     } finally {
       setDeleteLoading(false);
     }

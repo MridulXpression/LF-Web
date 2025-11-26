@@ -98,7 +98,7 @@ const EditProfileModal = ({ isOpen, onClose, userData, onSave }) => {
 
               {/* Email */}
               <div className="mb-6">
-                <label className="block text-sm  text-black mb-2">Email</label>
+                <label className="block text-sm  text-black mb-2">Email </label>
                 <input
                   type="email"
                   name="email"
@@ -106,6 +106,9 @@ const EditProfileModal = ({ isOpen, onClose, userData, onSave }) => {
                   onChange={handleInputChange}
                   className="w-full px-3 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-black outline-none  text-black"
                 />
+                <span className="text-green-500 text-xs">
+                  You will receive updates at the email address listed above.
+                </span>
               </div>
 
               {/* Gender */}
@@ -139,14 +142,14 @@ const EditProfileModal = ({ isOpen, onClose, userData, onSave }) => {
               <div className="flex gap-3">
                 <button
                   onClick={onClose}
-                  className="flex-1 px-4 py-3 border border-gray-300 rounded hover:bg-gray-50 transition-colors text-black"
+                  className="flex-1 px-4 py-3 border border-gray-300 rounded hover:bg-gray-50 transition-colors text-black cursor-pointer"
                 >
                   Back
                 </button>
                 <button
                   onClick={handleSubmit}
                   disabled={loading}
-                  className="flex-1 px-4 py-3 bg-black text-white rounded hover:bg-gray-800 transition-colors disabled:opacity-50"
+                  className="flex-1 px-4 py-3 bg-black text-white rounded hover:bg-gray-800 transition-colors disabled:opacity-50 cursor-pointer"
                 >
                   Save Profile
                 </button>

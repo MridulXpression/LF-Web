@@ -5,7 +5,9 @@ import { useDispatch } from "react-redux";
 import {
   openReturnModal,
   openCancelModal,
+  openExchangeModal,
 } from "@/redux/slices/loginmodalSlice";
+import Link from "next/link";
 
 const OrderDetailView = ({ orderId, onBack, axiosHttp }) => {
   const [orderData, setOrderData] = useState(null);
@@ -211,7 +213,7 @@ const OrderDetailView = ({ orderId, onBack, axiosHttp }) => {
       </div>
 
       {/* Product Card */}
-      <div className="bg-white  p-4 mb-6">
+      <Link href={`/products/${product.id}`} className="bg-white  p-4 mb-6">
         <div className="flex gap-4">
           <Image
             src={product?.imageUrls?.[0] || "/placeholder.jpg"}
@@ -235,7 +237,7 @@ const OrderDetailView = ({ orderId, onBack, axiosHttp }) => {
             </div>
           </div>
         </div>
-      </div>
+      </Link>
 
       {/* Delivery Estimate */}
       <div className="bg-white  p-4 mb-6">
@@ -365,7 +367,9 @@ const OrderDetailView = ({ orderId, onBack, axiosHttp }) => {
                     if (button.action === "return") {
                       dispatch(openReturnModal(orderData));
                     }
-                    // Exchange & Review are handled in parent (optional)
+                    if (button.action === "exchange") {
+                      dispatch(openExchangeModal(orderData));
+                    }
                   }}
                   className="flex-1 py-3 text-sm font-medium transition-colors border border-gray-300 text-gray-700 hover:bg-gray-50"
                 >
@@ -389,45 +393,77 @@ const OrderDetailView = ({ orderId, onBack, axiosHttp }) => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Delivery Details - Empty for now */}
           <div>
-            <h4 className="font-medium text-gray-900 mb-3">DELIVERY DETAILS</h4>
-            <div className="space-y-2 text-sm">
-              <p className="text-gray-500 italic">
-                Address details will be displayed here
-              </p>
-            </div>
+            <h4 className="font-medium text-gray-900  mb-3">
+              DELIVERY DETAILS
+            </h4>
+
+            {order?.user_address ? (
+              <div className="space-y-1 text-sm text-gray-700">
+                <p className="font-medium text-gray-900">
+                  {order.user_address.contactName}
+                </p>
+                <p>
+                  {order.user_address.line1}
+                  {order.user_address.line2 && `, ${order.user_address.line2}`}
+                </p>
+                <p>
+                  {order.user_address.city}, {order.user_address.state} -{" "}
+                  {order.user_address.postalCode}
+                </p>
+                <p>{order.user_address.country}</p>
+                <p className="mt-2">
+                  Phone:{" "}
+                  <span className="font-medium">
+                    {order.user_address.contactPhone}
+                  </span>
+                </p>
+                <p className="text-xs text-gray-500 capitalize">
+                  Address Type: {order.user_address.type}
+                </p>
+              </div>
+            ) : (
+              <p className="text-gray-500 italic">No address found</p>
+            )}
           </div>
 
           {/* Price Details */}
           <div>
             <h4 className="font-medium text-gray-900 mb-3">PRICE DETAILS</h4>
+
             <div className="space-y-2 text-sm">
               <div className="flex justify-between">
-                <span className="text-gray-600">Total MRP</span>
+                <span className="text-gray-600">Item Total</span>
                 <span className="font-medium text-gray-900">
-                  ₹{order?.totalMRP || "0.00"}
+                  ₹{orderData?.unitPrice || "0.00"}
                 </span>
               </div>
+
               <div className="flex justify-between">
-                <span className="text-gray-600">Delivery Charges</span>
-                <span className="font-medium text-gray-900">
-                  ₹{order?.shippingCost || "0.00"}
+                <span className="text-gray-600">Discount</span>
+                <span className="font-medium text-green-600">
+                  - ₹{orderData?.discount || "0.00"}
                 </span>
               </div>
+
               <div className="flex justify-between">
-                <span className="text-gray-600">Discount on MRP</span>
+                <span className="text-gray-600">Tax</span>
                 <span className="font-medium text-gray-900">
-                  -₹{order?.couponDiscount || "0.00"}
+                  ₹{orderData?.tax || "0.00"}
                 </span>
               </div>
+
               <div className="flex justify-between">
-                <span className="text-gray-600">Tax & Charges</span>
+                <span className="text-gray-600">Shipping</span>
                 <span className="font-medium text-gray-900">
-                  ₹{order?.tax || "0.00"}
+                  ₹{orderData?.shippingCost || "0.00"}
                 </span>
               </div>
-              <div className="flex justify-between pt-2 border-t border-gray-200 font-semibold">
-                <span className="text-gray-900">BILL TOTAL</span>
-                <span className="text-gray-900">₹{order?.total || total}</span>
+
+              <div className="flex justify-between pt-3 mt-2 border-t border-gray-200 font-semibold text-base">
+                <span className="text-gray-900">TOTAL PAYABLE</span>
+                <span className="text-gray-900">
+                  ₹{orderData?.total || "0.00"}
+                </span>
               </div>
             </div>
           </div>

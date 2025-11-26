@@ -46,7 +46,7 @@ const ReviewOrderModal = ({
   // Submit review API
   const handleSubmit = async () => {
     if (rating === 0) {
-      alert("Please select a rating");
+      toast.error("Please select a rating");
       return;
     }
 

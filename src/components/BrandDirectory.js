@@ -66,7 +66,7 @@ const BrandDirectory = ({ brands }) => {
           {/* Left side - Letter */}
           <div className="flex-shrink-0 flex justify-center sm:justify-start">
             <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-full border-2 border-[#988BFF] flex items-center justify-center bg-white">
-              <span className="text-xl sm:text-2xl font-semibold text-gray-700">
+              <span className="text-xl sm:text-2xl font-semibold text-gray-700 ">
                 {letter}
               </span>
             </div>
@@ -84,7 +84,7 @@ const BrandDirectory = ({ brands }) => {
                       localStorage.setItem("brandId", brand.id); // ✅ save brandId locally
                     }
                   }}
-                  className="relative bg-[#F6F6F8] flex flex-col items-center cursor-pointer overflow-hidden group"
+                  className="relative bg-[#ECECF0] flex flex-col items-center cursor-pointer overflow-hidden group"
                 >
                   {/* Padding wrapper for the circular image */}
                   <div className="w-full p-6 flex items-center justify-center">
@@ -142,12 +142,12 @@ const BrandDirectory = ({ brands }) => {
       {/* Top Section - Alphabet Navigation and Search */}
       <div className="mb-8">
         {/* Alphabet Navigation */}
-        <div className="flex items-center gap-2 sm:gap-3 flex-wrap mb-4">
+        <div className="flex items-center md:gap-4 sm:gap-3 flex-wrap mb-4">
           {alphabets.map((letter) => (
             <button
               key={letter}
               onClick={() => scrollToLetter(letter)}
-              className="text-gray-600 hover:text-gray-900 font-medium text-xs sm:text-sm transition-colors"
+              className="text-black hover:text-gray-900  md:text-[15px] sm:text-sm transition-colors cursor-pointer"
             >
               {letter}
             </button>

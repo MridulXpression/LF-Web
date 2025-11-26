@@ -6,6 +6,7 @@ const initialState = {
   productViewModal: false,
   openReturnModal: false,
   cancelModal: false,
+  exchangeModal: false,
   selectedProduct: null,
 };
 
@@ -42,6 +43,7 @@ const modalSlice = createSlice({
       state.selectedProduct = null;
     },
 
+    // Return Modal
     openReturnModal: (state, action) => {
       state.openReturnModal = true;
       state.selectedProduct = action.payload;
@@ -51,12 +53,23 @@ const modalSlice = createSlice({
       state.selectedProduct = null;
     },
 
+    // Cancel Modal
     openCancelModal: (state, action) => {
       state.cancelModal = true;
       state.selectedProduct = action.payload;
     },
     closeCancelModal: (state) => {
       state.cancelModal = false;
+      state.selectedProduct = null;
+    },
+
+    // Exchange Modal
+    openExchangeModal: (state, action) => {
+      state.exchangeModal = true;
+      state.selectedProduct = action.payload;
+    },
+    closeExchangeModal: (state) => {
+      state.exchangeModal = false;
       state.selectedProduct = null;
     },
   },
@@ -68,15 +81,14 @@ export const {
   togglePhoneAuthModal,
   openWishlistModal,
   closeWishlistModal,
-
   openProductViewModal,
   closeProductViewModal,
-
   openReturnModal,
   closeReturnModal,
-
   openCancelModal,
   closeCancelModal,
+  openExchangeModal,
+  closeExchangeModal,
 } = modalSlice.actions;
 
 export default modalSlice.reducer;

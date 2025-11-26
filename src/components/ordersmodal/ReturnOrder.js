@@ -13,6 +13,7 @@ const ReturnModal = ({ order, onClose = () => {}, onSuccess = () => {} }) => {
   const [isReasonDropdownOpen, setIsReasonDropdownOpen] = useState(false);
   const [isAddressDropdownOpen, setIsAddressDropdownOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [customReason, setCustomReason] = useState("");
 
   const userInfo = useSelector((state) => state.user?.userInfo);
   const userId = userInfo?.id;
@@ -59,12 +60,18 @@ const ReturnModal = ({ order, onClose = () => {}, onSuccess = () => {} }) => {
       return;
     }
 
+    // ✅ Validation for "Other" reason
+    if (selectedReason === "Other" && !customReason.trim()) {
+      toast.error("Please enter your reason");
+      return;
+    }
+
     setIsSubmitting(true);
     try {
       const payload = {
         orderItemId: order.id,
         userId: userId,
-        reason: selectedReason,
+        reason: selectedReason === "Other" ? customReason : selectedReason,
         addressId: selectedAddressId,
         shipRocketId: order.order?.shiprocketOrderId || "",
       };
@@ -163,7 +170,10 @@ const ReturnModal = ({ order, onClose = () => {}, onSuccess = () => {} }) => {
                     <button
                       key={key}
                       onClick={() => {
-                        setSelectedReason(value); // store reason text
+                        setSelectedReason(value);
+                        if (value !== "Other") {
+                          setCustomReason("");
+                        }
                         setIsReasonDropdownOpen(false);
                       }}
                       className="w-full px-4 py-3 text-left hover:bg-gray-50 border-b border-gray-100 last:border-b-0 text-black"
@@ -171,6 +181,21 @@ const ReturnModal = ({ order, onClose = () => {}, onSuccess = () => {} }) => {
                       {value}
                     </button>
                   ))}
+                </div>
+              )}
+
+              {selectedReason === "Other" && (
+                <div className="mt-3">
+                  <label className="block text-sm font-medium mb-1 text-black">
+                    Please specify your reason
+                  </label>
+                  <textarea
+                    value={customReason}
+                    onChange={(e) => setCustomReason(e.target.value)}
+                    placeholder="Write your reason here..."
+                    className="w-full border border-gray-300 rounded px-3 py-2 text-sm text-black focus:outline-none focus:border-black"
+                    rows={3}
+                  />
                 </div>
               )}
             </div>

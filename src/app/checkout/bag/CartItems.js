@@ -9,7 +9,13 @@ import CartProductCard from "@/components/CartProductCard";
 import useGetCoupons from "@/hooks/useGetCoupons";
 import Link from "next/link";
 import DeleteConfirmModal from "@/components/DeleteModal";
-import { removeFromCart, setCartItems } from "@/redux/slices/cartSlice";
+import {
+  removeFromCart,
+  setCartItems,
+  updateQuantity,
+  setItemSelected,
+  setSelectedCartItems,
+} from "@/redux/slices/cartSlice";
 
 const ShoppingCart = () => {
   const dispatch = useDispatch();
@@ -21,6 +27,8 @@ const ShoppingCart = () => {
   const [deleteTargetId, setDeleteTargetId] = useState(null);
 
   const getCoupons = useGetCoupons();
+
+  const cartItemsFromRedux = useSelector((state) => state.cart?.items || []);
 
   // Get userId from Redux
   const userInfo = useSelector((state) => state.user?.userInfo);
@@ -37,6 +45,8 @@ const ShoppingCart = () => {
   useEffect(() => {
     if (products.length > 0 && isInitialMount.current) {
       setSelectedItems(new Set(products.map((p) => p.cartItemId)));
+      // keep redux selection in sync
+      dispatch(setSelectedCartItems(products.map((p) => p.cartItemId)));
       isInitialMount.current = false;
     }
   }, [products]);
@@ -56,12 +66,14 @@ const ShoppingCart = () => {
           name: item.product.title,
           description:
             item.product.shortDescription || item.product.description,
-          image: item.product.imageUrls[0],
+          image:
+            item.product_variant.imageSrc || item.product.imageUrls[0] || "",
           imageUrls: item.product.imageUrls,
           price: item.product_variant.price,
           originalPrice: item.product.mrp || item.product.basePrice,
           size: item.product_variant.title,
-          quantity: 1,
+          // Default quantity from API (if provided) — we'll merge Redux/local values below
+          quantity: item.quantity || 1,
           availableSizes: [item.product_variant.title],
           type: item.product.type,
           tags: item.product.tags,
@@ -70,8 +82,53 @@ const ShoppingCart = () => {
           exchangeDays: item.product.exchangeDays,
         }));
 
-        setProducts(transformedData);
-        dispatch(setCartItems(transformedData)); // ✅ keep Redux count in sync
+        // Try to restore saved checkout (localStorage) quantities if Redux doesn't have them
+        let savedCheckout = null;
+        try {
+          const raw = localStorage.getItem(`lafetch_checkout_${userId}`);
+          if (raw) savedCheckout = JSON.parse(raw);
+        } catch (e) {}
+
+        const merged = transformedData.map((t) => {
+          // Prefer Redux quantity
+          const reduxMatch = cartItemsFromRedux.find(
+            (ci) => ci.cartItemId === t.cartItemId
+          );
+          if (reduxMatch && typeof reduxMatch.quantity === "number") {
+            return { ...t, quantity: reduxMatch.quantity };
+          }
+
+          // Next prefer saved checkout (localStorage)
+          if (savedCheckout && Array.isArray(savedCheckout.items)) {
+            const savedMatch = savedCheckout.items.find(
+              (s) =>
+                (s.cartItemId && s.cartItemId === t.cartItemId) ||
+                (s.productId === t.productId && s.variantId === t.variantId)
+            );
+            if (savedMatch && typeof savedMatch.quantity === "number") {
+              return { ...t, quantity: savedMatch.quantity };
+            }
+          }
+
+          // Fallback to API quantity already present on t
+          return t;
+        });
+
+        setProducts(merged);
+
+        // Keep Redux cart items in sync but preserve existing selected flags
+        const payload = merged.map((m) => ({
+          ...m,
+          cartItemId: m.cartItemId,
+          variantId: m.variantId || null,
+          selected:
+            (
+              cartItemsFromRedux.find((ci) => ci.cartItemId === m.cartItemId) ||
+              {}
+            ).selected ?? true,
+        }));
+
+        dispatch(setCartItems(payload)); // keep Redux in sync with merged quantities
 
         // Try to restore saved checkout selection (match by productId+variantId)
         try {
@@ -87,7 +144,11 @@ const ShoppingCart = () => {
                 );
                 if (match) savedCartItemIds.add(match.cartItemId);
               });
-              if (savedCartItemIds.size > 0) setSelectedItems(savedCartItemIds);
+              if (savedCartItemIds.size > 0) {
+                setSelectedItems(savedCartItemIds);
+                // mirror selection into redux
+                dispatch(setSelectedCartItems(Array.from(savedCartItemIds)));
+              }
             }
           }
         } catch (e) {}
@@ -163,6 +224,8 @@ const ShoppingCart = () => {
 
         return updatedProducts;
       });
+      // persist quantity in redux as well
+      dispatch(updateQuantity({ cartItemId, quantity }));
     } catch (error) {}
   };
 
@@ -182,8 +245,11 @@ const ShoppingCart = () => {
       const newSet = new Set(prev);
       if (newSet.has(cartItemId)) {
         newSet.delete(cartItemId);
+        // update redux
+        dispatch(setItemSelected({ cartItemId, selected: false }));
       } else {
         newSet.add(cartItemId);
+        dispatch(setItemSelected({ cartItemId, selected: true }));
       }
       return newSet;
     });
@@ -193,8 +259,10 @@ const ShoppingCart = () => {
   const handleSelectAll = () => {
     if (selectedItems.size === products.length) {
       setSelectedItems(new Set());
+      dispatch(setSelectedCartItems([]));
     } else {
       setSelectedItems(new Set(products.map((p) => p.cartItemId)));
+      dispatch(setSelectedCartItems(products.map((p) => p.cartItemId)));
     }
   };
 

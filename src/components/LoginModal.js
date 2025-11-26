@@ -120,7 +120,7 @@ const PhoneAuthModal = () => {
   // Updated function to handle step 3 form submission with API call (only for signup)
   const handleDetailsSubmit = async () => {
     if (!userDetails.name || !userDetails.email || !userDetails.gender) {
-      alert("Please fill all required fields");
+      toast.error("Please fill all required fields");
       return;
     }
 
@@ -145,10 +145,12 @@ const PhoneAuthModal = () => {
         dispatch(setUser(res.data.data));
         setCurrentStep("welcome");
       } else {
-        alert(`Signup failed: ${res.data?.message || "Please try again"}`);
+        toast.error(
+          `Signup failed: ${res.data?.message || "Please try again"}`
+        );
       }
     } catch (error) {
-      alert("Network error. Please check your connection and try again.");
+      toast.error("Network error. Please check your connection and try again.");
     } finally {
       setLoading(false);
     }

@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import { Search } from "lucide-react";
+import { useSelector } from "react-redux";
 
 const NavbarSearch = ({
   searchQuery,
@@ -13,6 +14,7 @@ const NavbarSearch = ({
   setShowSearchDropdown,
 }) => {
   const searchDropdownRef = useRef(null);
+  const recentSearches = useSelector((state) => state.search.recentSearches);
 
   // Close when clicked outside
   useEffect(() => {
@@ -27,7 +29,7 @@ const NavbarSearch = ({
 
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
+  }, [setShowSearchDropdown]);
 
   return (
     <div
@@ -57,25 +59,35 @@ const NavbarSearch = ({
                 ? "Loading..."
                 : suggestions.length > 0
                 ? "Suggestions"
+                : recentSearches.length > 0
+                ? "Recent Searches"
                 : "Searches"}
             </h3>
 
             <div className="grid grid-cols-1 gap-3">
-              {suggestions.length > 0
-                ? suggestions.map((suggestion, idx) => (
-                    <button
-                      key={idx}
-                      onClick={() => handleSuggestionClick(suggestion)}
-                      className="text-gray-600 hover:text-gray-900 text-left hover:bg-gray-50 px-2 py-1 rounded transition-colors"
-                    >
-                      {suggestion}
-                    </button>
-                  ))
-                : !isLoadingSuggestions && (
-                    <p className="text-gray-500 text-sm">
-                      No suggestions found
-                    </p>
-                  )}
+              {suggestions.length > 0 ? (
+                suggestions.map((suggestion, idx) => (
+                  <button
+                    key={idx}
+                    onClick={() => handleSuggestionClick(suggestion)}
+                    className="text-gray-600 hover:text-gray-900 text-left hover:bg-gray-50 px-2 py-1 rounded transition-colors"
+                  >
+                    {suggestion}
+                  </button>
+                ))
+              ) : !isLoadingSuggestions && recentSearches.length > 0 ? (
+                recentSearches.map((search, idx) => (
+                  <button
+                    key={idx}
+                    onClick={() => handleSuggestionClick(search)}
+                    className="text-gray-600 hover:text-gray-900 text-left hover:bg-gray-50 px-2 py-1 rounded transition-colors"
+                  >
+                    {search}
+                  </button>
+                ))
+              ) : (
+                <p className="text-gray-500 text-sm">No suggestions found</p>
+              )}
             </div>
           </div>
         </div>

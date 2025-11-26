@@ -3,6 +3,7 @@
 import HeroBanner from "@/components/BrandBanner";
 import BrandProductCard from "@/components/BrandProductCard";
 import SearchFilterBar from "@/components/BrandSearch";
+import Footer from "@/components/footer";
 import useGetBrandsProducts from "@/hooks/useViewBrandsProduct";
 import { useParams } from "next/navigation";
 
@@ -56,7 +57,7 @@ const BrandProduct = () => {
         videoURL={brandVideo}
       />
 
-      <SearchFilterBar
+      {/* <SearchFilterBar
         searchQuery={searchQuery}
         setSearchQuery={setSearchQuery}
         selectedCategory={selectedCategory}
@@ -66,9 +67,9 @@ const BrandProduct = () => {
         showFilters={showFilters}
         setShowFilters={setShowFilters}
         categories={categories}
-      />
+      /> */}
 
-      <div className="max-w-7xl mx-auto px-4 pb-12">
+      <div className="max-w-7xl mx-auto px-4 p-12">
         {products.length > 0 ? (
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
             {products.map((product) => (
@@ -86,11 +87,12 @@ const BrandProduct = () => {
             ))}
           </div>
         ) : (
-          <div className="text-center py-12">
-            <p className="text-gray-500">No products available</p>
+          <div className="flex items-center justify-center min-h-screen">
+            <p className="text-gray-500 text-center">No products available</p>
           </div>
         )}
       </div>
+      <Footer />
     </div>
   );
 };

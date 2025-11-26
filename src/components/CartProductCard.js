@@ -1,6 +1,7 @@
 import React from "react";
 import { X } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 
 const CartProductCard = ({
   product,
@@ -46,7 +47,10 @@ const CartProductCard = ({
         </div>
 
         {/* Product Image */}
-        <div className="w-[80px] h-[80px] md:w-[150px] md:h-[150px] flex-shrink-0">
+        <Link
+          href={`/products/${product.productId}`}
+          className="w-[80px] h-[80px] md:w-[150px] md:h-[150px] flex-shrink-0"
+        >
           <Image
             src={product.image}
             alt={product.name}
@@ -54,7 +58,7 @@ const CartProductCard = ({
             height={150}
             className="w-full h-full object-fill rounded"
           />
-        </div>
+        </Link>
 
         {/* Product Details */}
         <div className="flex-1">
@@ -79,7 +83,7 @@ const CartProductCard = ({
           <div className="flex gap-6 mt-3">
             {/* Size */}
             <div className="flex items-center gap-2">
-              <span className="text-sm text-black">Size:</span>
+              <span className="text-sm text-black">Size / Color:</span>
               <span className="text-black text-sm">{product.size}</span>
             </div>
 

@@ -23,12 +23,12 @@ const AccountSidebar = () => {
 
   const menuItems = [
     { id: "orders", label: "My Orders", icon: Package, section: "account" },
-    {
-      id: "care",
-      label: "Customer Care",
-      icon: Headphones,
-      section: "account",
-    },
+    // {
+    //   id: "care",
+    //   label: "Customer Care",
+    //   icon: Headphones,
+    //   section: "account",
+    // },
     {
       id: "addresses",
       label: "Saved Addresses",
@@ -62,8 +62,20 @@ const AccountSidebar = () => {
     },
   ];
 
+  const externalUrls = {
+    about: "https://www.la-fetch.com/about",
+    terms: "https://www.la-fetch.com/terms-and-conditions",
+    privacy: "https://www.la-fetch.com/privacy-policy",
+    cancellations: "https://www.la-fetch.com/cancellation-policy",
+    shipping: "https://www.la-fetch.com/shipping-policy",
+  };
+
   const handleNavigation = (id) => {
-    router.push(`/account/${id}`);
+    if (externalUrls[id]) {
+      window.open(externalUrls[id], "_blank");
+    } else {
+      router.push(`/account/${id}`);
+    }
     setIsMobileSidebarOpen(false); // auto-close sidebar on navigation (mobile)
   };
 

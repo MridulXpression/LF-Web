@@ -2,6 +2,7 @@
 import React, { useState } from "react";
 import { Instagram, Twitter, Facebook, MessageCircle } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 
 const Footer = () => {
   const [email, setEmail] = useState("");
@@ -74,16 +75,18 @@ const Footer = () => {
           <div className="space-y-3">
             <ul className="space-y-3">
               <li>
-                <a
-                  href="#"
+                <Link
+                  href="/"
                   className="text-gray-300 hover:text-white transition-colors text-sm"
                 >
                   Home
-                </a>
+                </Link>
               </li>
               <li>
                 <a
-                  href="#"
+                  href="https://www.la-fetch.com/about"
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="text-gray-300 hover:text-white transition-colors text-sm"
                 >
                   About us
@@ -113,31 +116,42 @@ const Footer = () => {
             <ul className="space-y-3">
               <li>
                 <a
-                  href="#"
+                  href="https://www.la-fetch.com/privacy-policy"
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="text-gray-300 hover:text-white transition-colors text-sm"
                 >
                   Privacy policy
                 </a>
               </li>
+
               <li>
                 <a
-                  href="#"
+                  href="https://www.la-fetch.com/terms-and-conditions"
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="text-gray-300 hover:text-white transition-colors text-sm"
                 >
                   Terms & conditions
                 </a>
               </li>
+
               <li>
                 <a
-                  href="#"
+                  href="https://www.la-fetch.com/shipping-policy"
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="text-gray-300 hover:text-white transition-colors text-sm"
                 >
                   Shipping policy
                 </a>
               </li>
+
               <li>
                 <a
-                  href="#"
+                  href="https://www.la-fetch.com/cancellation-policy"
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="text-gray-300 hover:text-white transition-colors text-sm"
                 >
                   Cancellation policy

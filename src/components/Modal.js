@@ -31,14 +31,14 @@ const ProductModal = () => {
   return (
     <div className="fixed inset-0  bg-black/10 backdrop-blur-xs bg-opacity-50 flex items-center justify-center z-50 p-4 overflow-auto">
       <div className="bg-white w-full max-w-3xl  overflow-hidden">
-        <div className="flex flex-col md:flex-row overflow-y-auto  max-h-[500px]">
+        <div className="flex flex-col md:flex-row overflow-y-auto  max-h-[400px]">
           {/* Product Image */}
           <div className="md:w-1/2 w-full relative bg-gray-50 flex items-center justify-center ">
             {/* <button className="absolute top-4 right-4 w-8 h-8 bg-white rounded-full flex items-center justify-center shadow-md z-10">
               <Heart className="w-5 h-5 text-gray-400 hover:text-red-500 transition-colors" />
             </button> */}
 
-            <div className="relative w-full h-70 md:h-[500px]">
+            <div className="relative w-full h-70 md:h-[400px]">
               <Image
                 src={
                   product?.imageUrls
@@ -73,11 +73,9 @@ const ProductModal = () => {
             {/* Description */}
             <div className="mb-4">
               <p className="text-gray-600 mb-1 text-sm leading-snug">
-                {product.description}
+                {product.description?.split(" ").slice(0, 25).join(" ") +
+                  (product.description?.split(" ").length > 25 ? "..." : "")}
               </p>
-              {/* <button className="text-black font-medium underline text-sm">
-                View More
-              </button> */}
             </div>
 
             {/* Size Selection */}

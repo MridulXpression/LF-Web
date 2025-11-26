@@ -1,4 +1,5 @@
-import React from "react";
+"use client";
+import React, { useState } from "react";
 import { User } from "lucide-react";
 import Link from "next/link";
 import useLogout from "@/hooks/useLogout";
@@ -9,8 +10,15 @@ const UserDropdown = ({ user }) => {
   const userId = userInfo?.id;
   const { onLogout } = useLogout();
 
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
+
   const handleLogoutClick = () => {
+    setShowLogoutModal(true);
+  };
+
+  const confirmLogout = () => {
     if (userId) onLogout(userId);
+    setShowLogoutModal(false);
   };
 
   return (
@@ -41,12 +49,12 @@ const UserDropdown = ({ user }) => {
             >
               Wishlist
             </Link>
-            <Link
+            {/* <Link
               href="/contact"
               className="block px-3 py-2 text-sm text-gray-700 hover:bg-gray-50"
             >
               Contact Us
-            </Link>
+            </Link> */}
             <Link
               href="/account/addresses"
               className="block px-3 py-2 text-sm text-gray-700 hover:bg-gray-50"
@@ -59,12 +67,41 @@ const UserDropdown = ({ user }) => {
 
           <button
             onClick={handleLogoutClick}
-            className="w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-gray-50"
+            className="w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 cursor-pointer"
           >
             Logout
           </button>
         </div>
       </div>
+
+      {/* LOGOUT CONFIRM MODAL */}
+      {showLogoutModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-[100]">
+          <div className="bg-white p-6 rounded-lg w-96 shadow-lg">
+            <h2 className="text-lg font-semibold mb-2 text-black">
+              Confirm Logout
+            </h2>
+            <p className="text-gray-600 mb-6">
+              Are you sure you want to logout?
+            </p>
+
+            <div className="flex justify-end gap-3">
+              <button
+                onClick={() => setShowLogoutModal(false)}
+                className="px-4 py-2 rounded border text-gray-700 hover:bg-gray-100 cursor-pointer"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={confirmLogout}
+                className="px-4 py-2 rounded bg-red-600 text-white hover:bg-red-700 cursor-pointer"
+              >
+                Logout
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

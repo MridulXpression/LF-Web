@@ -6,6 +6,7 @@ import Image from "next/image";
 import PhoneAuthModal from "@/components/LoginModal";
 import { useDispatch, useSelector } from "react-redux";
 import { openPhoneAuthModal } from "@/redux/slices/loginmodalSlice";
+import { addSearch } from "@/redux/slices/searchSlice";
 import { useRouter, usePathname } from "next/navigation";
 import axiosHttp from "@/utils/axioshttp";
 import Link from "next/link";
@@ -18,7 +19,7 @@ import useBlog from "@/hooks/useBlog";
 
 // Generate menu data dynamically
 const getMenuData = (categories) => {
-  const allBrandsMenu = { title: "All Brands", sections: [] };
+  const allBrandsMenu = { title: "ALL BRANDS", sections: [] };
 
   const dynamicMenus =
     categories?.map((category) => ({
@@ -33,9 +34,9 @@ const getMenuData = (categories) => {
     })) || [];
 
   const endStaticMenus = [
-    { title: "MostPopular", sections: [] },
-    { title: "Blogs", sections: [] },
-    { title: "Track Order", sections: [] },
+    // { title: "MostPopular", sections: [] },
+    { title: "BLOGS", sections: [] },
+    // { title: "Track Order", sections: [] },
   ];
 
   return [allBrandsMenu, ...dynamicMenus, ...endStaticMenus];
@@ -44,6 +45,7 @@ const getMenuData = (categories) => {
 const Navbar = () => {
   const user = useSelector((state) => state.user.userInfo);
   const cartTotal = useSelector((state) => state.cart.totalItems);
+  const recentSearches = useSelector((state) => state.search.recentSearches);
 
   const [showSearchDropdown, setShowSearchDropdown] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState(null);
@@ -106,6 +108,7 @@ const Navbar = () => {
   // Search on Enter
   const handleSearch = (e) => {
     if (e.key === "Enter" && searchQuery.trim()) {
+      dispatch(addSearch(searchQuery.trim()));
       setShowSearchDropdown(false);
       router.push(`/products?search=${encodeURIComponent(searchQuery.trim())}`);
     }
@@ -113,6 +116,7 @@ const Navbar = () => {
 
   // Click suggestion
   const handleSuggestionClick = (suggestion) => {
+    dispatch(addSearch(suggestion));
     setSearchQuery(suggestion);
     setShowSearchDropdown(false);
     router.push(`/products?search=${encodeURIComponent(suggestion)}`);
@@ -276,7 +280,7 @@ const Navbar = () => {
                 ) : (
                   <button
                     onClick={() => dispatch(openPhoneAuthModal())}
-                    className="p-2 text-[#808080]"
+                    className="p-2 text-[#808080] cursor-pointer"
                   >
                     <User className="w-5 h-5" />
                   </button>

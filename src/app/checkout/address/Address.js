@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { useRouter } from "next/navigation";
 import OrderSummary from "@/components/OrderSummary";
 import AddressCard from "@/components/AddressCard";
@@ -11,6 +11,8 @@ import axiosHttp from "@/utils/axioshttp";
 import useGetCoupons from "@/hooks/useGetCoupons";
 import Link from "next/link";
 import Footer from "@/components/footer";
+import { setCartItems } from "@/redux/slices/cartSlice";
+import toast from "react-hot-toast";
 
 const CheckOutAddress = () => {
   const [products, setProducts] = useState([]);
@@ -29,7 +31,9 @@ const CheckOutAddress = () => {
 
   const getCoupons = useGetCoupons();
   const userInfo = useSelector((state) => state.user?.userInfo);
+  const cartItemsFromRedux = useSelector((state) => state.cart?.items || []);
   const userId = userInfo?.id;
+  const dispatch = useDispatch();
   const router = useRouter();
 
   // Load Razorpay script
@@ -84,7 +88,9 @@ const CheckOutAddress = () => {
       if (response.data.status === 200 && response.data.data) {
         const transformedData = response.data.data.map((item) => ({
           id: item.id,
+          cartItemId: item.id,
           productId: item.productId,
+          variantId: item.variantId,
           name: item.product.title,
           price: item.product_variant.price, // Selling Price
           originalPrice:
@@ -93,7 +99,36 @@ const CheckOutAddress = () => {
             item.product_variant.price, // MRP
           quantity: item.quantity || 1,
         }));
-        setProducts(transformedData);
+
+        // Prefer quantity stored in Redux (if available) so quantity persists
+        // across pages and refreshes. Fall back to API quantity when absent.
+        const merged = transformedData.map((td) => {
+          const reduxMatch = cartItemsFromRedux.find(
+            (ci) => ci.cartItemId === td.cartItemId
+          );
+          if (reduxMatch && typeof reduxMatch.quantity === "number") {
+            return { ...td, quantity: reduxMatch.quantity };
+          }
+          return td;
+        });
+
+        setProducts(merged);
+
+        // Keep Redux cart items in sync with fetched data (preserve selected flag and quantity)
+        try {
+          const payload = merged.map((m) => ({
+            ...m,
+            cartItemId: m.cartItemId,
+            variantId: m.variantId || null,
+            selected:
+              (
+                cartItemsFromRedux.find(
+                  (ci) => ci.cartItemId === m.cartItemId
+                ) || {}
+              ).selected ?? true,
+          }));
+          dispatch(setCartItems(payload));
+        } catch (e) {}
       }
       setLoading(false);
     } catch (error) {
@@ -153,7 +188,7 @@ const CheckOutAddress = () => {
         }
       }
     } catch (error) {
-      alert("Failed to save address. Please try again.");
+      toast.error("Failed to save address. Please try again.");
     }
   };
 
@@ -173,7 +208,7 @@ const CheckOutAddress = () => {
         }
       }
     } catch (error) {
-      alert("Failed to delete address. Please try again.");
+      toast.error("Failed to delete address. Please try again.");
     } finally {
       setDeleteLoading(false);
     }
@@ -181,13 +216,13 @@ const CheckOutAddress = () => {
 
   const handleRazorpayPayment = async () => {
     if (!selectedAddressId) {
-      alert("Please select an address to proceed.");
+      toast.error("Please select an address to proceed.");
       return;
     }
 
     // Check if Razorpay is loaded
     if (!razorpayLoaded || !window.Razorpay) {
-      alert("Payment gateway is loading. Please try again in a moment.");
+      toast.error("Payment gateway is loading. Please try again in a moment.");
       return;
     }
 
@@ -197,21 +232,44 @@ const CheckOutAddress = () => {
       const cartData = (cartResp.data && cartResp.data.data) || [];
 
       if (cartData.length === 0) {
-        alert("Your cart is empty. Please add items to proceed.");
+        toast.error("Your cart is empty. Please add items to proceed.");
         return;
       }
 
       // Build items array for initiate-payment
+      // Prefer quantity and price from Redux (frontend) when available so user selection
+      // is respected. Fall back to API quantity/price otherwise.
       const items = cartData.map((item) => {
-        const unitPrice = item.product_variant?.price || 0;
-        const quantity = item.quantity || 1;
+        // Try to find matching redux item by cartItemId, then by variantId/productId
+        const reduxMatch = cartItemsFromRedux.find(
+          (ci) =>
+            ci.cartItemId === item.id ||
+            (ci.variantId && ci.variantId === item.variantId) ||
+            (ci.productId &&
+              ci.productId === item.productId &&
+              ci.variantId === item.variantId)
+        );
+
+        const quantity =
+          reduxMatch && typeof reduxMatch.quantity === "number"
+            ? reduxMatch.quantity
+            : item.quantity || 1;
+
+        // Prefer price from redux (keeps frontend edits authoritative), else fallback to API price
+        const rawUnitPrice =
+          reduxMatch && (reduxMatch.price || reduxMatch.unitPrice) != null
+            ? reduxMatch.price || reduxMatch.unitPrice
+            : item.product_variant?.price || 0;
+
+        const unitPrice = Number(parseFloat(rawUnitPrice) || 0);
+
         return {
           productName: item.product?.title || "",
           productId: item.productId,
           variantId: item.variantId,
           quantity,
           unitPrice,
-          total: +(unitPrice * quantity).toFixed(2),
+          total: Number((unitPrice * quantity).toFixed(2)),
           sku: item.product?.sku || "",
           hsn: item.product?.hsn || "",
         };
@@ -226,10 +284,22 @@ const CheckOutAddress = () => {
       const paymentTotal = Number(
         orderTotal && Number(orderTotal) > 0 ? orderTotal : computedTotal
       );
-      const totalMRP = cartData.reduce(
-        (s, it) => s + (it.product?.mrp || it.product?.basePrice || 0),
-        0
-      );
+      // totalMRP should consider quantity per item (prefer redux quantity if available)
+      const totalMRP = cartData.reduce((s, it) => {
+        const reduxMatch = cartItemsFromRedux.find(
+          (ci) =>
+            ci.cartItemId === it.id ||
+            (ci.variantId && ci.variantId === it.variantId)
+        );
+        const qty =
+          reduxMatch && typeof reduxMatch.quantity === "number"
+            ? reduxMatch.quantity
+            : it.quantity || 1;
+        const mrpPerUnit = Number(
+          parseFloat(it.product?.mrp || it.product?.basePrice || 0) || 0
+        );
+        return s + mrpPerUnit * qty;
+      }, 0);
 
       // Step 2: Call /initiate-payment API
       const initiatePayload = {
@@ -287,7 +357,7 @@ const CheckOutAddress = () => {
       const razorpayKey = process.env.NEXT_PUBLIC_RAZOR_PAY_KEY_ID;
 
       if (!razorpayKey) {
-        alert("Payment configuration error. Please contact support.");
+        toast.error("Payment configuration error. Please contact support.");
         return;
       }
 
@@ -389,7 +459,7 @@ const CheckOutAddress = () => {
         },
         modal: {
           ondismiss: function () {
-            alert("Payment cancelled. You can try again when ready.");
+            toast.error("Payment cancelled. You can try again when ready.");
           },
         },
       };
@@ -410,7 +480,7 @@ const CheckOutAddress = () => {
 
       rzp.open();
     } catch (err) {
-      alert(
+      toast.error(
         "Could not start payment: " + (err.message || "Please try again later.")
       );
     }

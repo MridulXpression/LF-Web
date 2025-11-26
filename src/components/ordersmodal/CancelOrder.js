@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { useSelector } from "react-redux";
 import { X } from "lucide-react";
 import axiosHttp from "@/utils/axioshttp";
-import { toast } from "react-hot-toast";
+import { toast, Toaster } from "react-hot-toast";
 import SuccessCancelModal from "./SuccessCancelModal";
 import Image from "next/image";
 
@@ -53,7 +53,7 @@ const CancelOrderModal = ({
         userId: userId,
         orderItemId: orderItem.id,
         reason: selectedReason,
-        shipRocketId: orderDetails.shiprocketOrderId || "",
+        shipRocketId: orderItem.shiprocketOrderId || "",
       };
 
       const response = await axiosHttp.post(`/request-cancel`, payload);

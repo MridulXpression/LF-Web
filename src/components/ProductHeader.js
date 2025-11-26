@@ -53,13 +53,32 @@ const ProductInfo = ({
         null;
 
       setSelectedColor(colorForSize ? colorForSize.value : null);
-      setSelectedVariant(colorForSize || initialSize);
 
-      if (colorForSize?.variantId) {
-        localStorage.setItem("selectedVariantId", colorForSize.variantId);
-      } else if (initialSize.variantId) {
-        localStorage.setItem("selectedVariantId", initialSize.variantId);
+      // Resolve full variant object from provided `variants` prop when possible
+      let resolvedVariant = null;
+      if (colorForSize?.variantId && Array.isArray(variants)) {
+        resolvedVariant = variants.find(
+          (v) => v.id === Number(colorForSize.variantId)
+        );
       }
+      if (
+        !resolvedVariant &&
+        initialSize?.variantId &&
+        Array.isArray(variants)
+      ) {
+        resolvedVariant = variants.find(
+          (v) => v.id === Number(initialSize.variantId)
+        );
+      }
+
+      // fallback to the lightweight color/size object if full variant not found
+      setSelectedVariant(resolvedVariant || colorForSize || initialSize);
+
+      const storeId =
+        resolvedVariant?.id ??
+        colorForSize?.variantId ??
+        initialSize?.variantId;
+      if (storeId) localStorage.setItem("selectedVariantId", storeId);
       return;
     }
 
@@ -67,7 +86,16 @@ const ProductInfo = ({
     if (colors && colors.length > 0) {
       const initialColor = colors.find((c) => c.available) || colors[0];
       setSelectedColor(initialColor.value);
-      setSelectedVariant(initialColor);
+
+      // resolve full variant for the initial color
+      let resolved = null;
+      if (initialColor?.variantId && Array.isArray(variants)) {
+        resolved = variants.find(
+          (v) => v.id === Number(initialColor.variantId)
+        );
+      }
+
+      setSelectedVariant(resolved || initialColor);
       if (initialColor.variantId)
         localStorage.setItem("selectedVariantId", initialColor.variantId);
       return;
@@ -91,23 +119,34 @@ const ProductInfo = ({
       (size.colors || [])[0] ||
       null;
     setSelectedColor(colorForSize ? colorForSize.value : null);
-    setSelectedVariant(colorForSize || size);
-
-    if (colorForSize?.variantId) {
-      localStorage.setItem("selectedVariantId", colorForSize.variantId);
-    } else if (size.variantId) {
-      localStorage.setItem("selectedVariantId", size.variantId);
+    // Prefer full variant object from `variants` prop
+    let resolved = null;
+    if (colorForSize?.variantId && Array.isArray(variants)) {
+      resolved = variants.find((v) => v.id === Number(colorForSize.variantId));
     }
+    if (!resolved && size?.variantId && Array.isArray(variants)) {
+      resolved = variants.find((v) => v.id === Number(size.variantId));
+    }
+
+    setSelectedVariant(resolved || colorForSize || size);
+
+    const storeId = resolved?.id ?? colorForSize?.variantId ?? size?.variantId;
+    if (storeId) localStorage.setItem("selectedVariantId", storeId);
   };
 
   // ✅ Handle color selection
   const handleColorSelect = (color) => {
     setSelectedColor(color.value);
-    setSelectedVariant(color);
-
-    if (color.variantId) {
-      localStorage.setItem("selectedVariantId", color.variantId);
+    // resolve full variant for this color when possible
+    let resolved = null;
+    if (color?.variantId && Array.isArray(variants)) {
+      resolved = variants.find((v) => v.id === Number(color.variantId));
     }
+
+    setSelectedVariant(resolved || color);
+
+    const storeId = resolved?.id ?? color?.variantId;
+    if (storeId) localStorage.setItem("selectedVariantId", storeId);
   };
 
   // notify parent when selectedVariant changes
@@ -167,9 +206,6 @@ const ProductInfo = ({
               {brand}
             </h2>
           </div>
-          <button className="p-2 hover:bg-gray-100 rounded-full">
-            <Share2 className="w-5 h-5" />
-          </button>
         </div>
 
         <div className="flex items-center gap-2">
@@ -282,16 +318,17 @@ const ProductInfo = ({
                   <button
                     onClick={() => handleColorSelect(color)}
                     disabled={!color.available}
-                    title={color.hex || color.label}
-                    className={`w-9 h-9 rounded-full border-2 transition-all flex items-center justify-center ${
+                    title={color.label}
+                    className={`min-w-[56px] px-2 h-9 rounded-full border-2 transition-all flex items-center justify-center text-xs font-semibold ${
                       !color.available
-                        ? "opacity-30 cursor-not-allowed border-gray-200"
+                        ? "opacity-40 cursor-not-allowed border-gray-200 text-gray-300"
                         : selectedColor === color.value
-                        ? "ring-2 ring-pink-500 border-white"
-                        : "border-gray-300"
+                        ? "ring-2 ring-pink-500 border-white text-pink-600"
+                        : "border-gray-300 text-gray-700 hover:border-gray-400"
                     }`}
-                    style={{ backgroundColor: color.hex || undefined }}
-                  />
+                  >
+                    {color.label}
+                  </button>
 
                   {/* <div className="text-[11px] text-gray-600 mt-1">
                     {color.hex}

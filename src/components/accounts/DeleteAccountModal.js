@@ -78,14 +78,14 @@ const DeleteAccountModal = ({ isOpen, onClose }) => {
             <button
               onClick={onClose}
               disabled={isDeleting}
-              className="w-full sm:flex-1 px-4 py-3 border border-gray-300 text-gray-700 font-medium rounded-md hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full sm:flex-1 px-4 py-3 border border-gray-300 text-gray-700 font-medium rounded-md hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
             >
               Cancel
             </button>
             <button
               onClick={handleDeleteAccount}
               disabled={isDeleting}
-              className="w-full sm:flex-1 px-4 py-3 bg-black text-white font-medium rounded-md hover:bg-gray-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full sm:flex-1 px-4 py-3 bg-black text-white font-medium rounded-md hover:bg-gray-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
             >
               {isDeleting ? "Deleting..." : "Confirm Deletion"}
             </button>

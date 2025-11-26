@@ -1,7 +1,6 @@
 "use client";
 import React, { useMemo, useState, useEffect } from "react";
 import useProductsById from "@/hooks/useProductById";
-import chroma from "chroma-js";
 import ProductImageGallery from "@/components/ProductImages";
 import ProductInfo from "@/components/ProductHeader";
 import ProductActions from "@/components/ProductActions";
@@ -10,18 +9,8 @@ import ProductDetails from "@/components/ProductDetails";
 import ReviewCard from "@/components/ReviewCard";
 import ProductDelivery from "@/components/ProductDelivery";
 import axiosHttp from "@/utils/axioshttp";
+import Footer from "@/components/footer";
 
-// Use chroma-js to convert a color name/string to HEX. Fallback to neutral gray.
-const colorNameToHex = (name) => {
-  try {
-    if (!name) return "#CCCCCC";
-    return chroma(name).hex();
-  } catch (e) {
-    return "#CCCCCC";
-  }
-};
-
-// Helper to extract sizes and attach available colors for each size
 const extractSizesFromVariants = (variants) => {
   if (!variants || !Array.isArray(variants)) return [];
 
@@ -60,7 +49,7 @@ const extractSizesFromVariants = (variants) => {
         sizeEntry.colors.push({
           label: colorVal,
           value: colorVal,
-          hex: colorNameToHex(colorVal),
+          // color hex removed; show label instead
           variantId: variant.id,
           shopifyVariantId: variant.shopifyVariantId,
           available: availableStock > 0,
@@ -115,7 +104,7 @@ const extractColorsFromVariants = (variants) => {
         colorsMap.set(colorValue, {
           label: colorValue,
           value: colorValue,
-          hex: colorNameToHex(colorValue),
+          // no hex mapping; we'll display the name directly
           variantId: variant.id,
           shopifyVariantId: variant.shopifyVariantId,
           available: availableStock > 0,
@@ -168,6 +157,19 @@ export default function ProductPage({ params }) {
   // ✅ Use variant price dynamically (fallback to first variant)
   const variantPrice =
     selectedVariant?.price ?? data?.variants?.[0]?.price ?? 0;
+
+  // Bind gallery images to the selected variant's image if available
+  const galleryImages = useMemo(() => {
+    const base = Array.isArray(data?.imageUrls) ? data.imageUrls : [];
+    const variantImg =
+      selectedVariant?.imageSrc || selectedVariant?.image || null;
+    if (variantImg) {
+      // put selected variant image first, then the rest (remove duplicates)
+      const rest = base.filter((u) => u !== variantImg);
+      return [variantImg, ...rest];
+    }
+    return base;
+  }, [selectedVariant, data?.imageUrls]);
 
   // ✅ Calculate discount
   const discount = useMemo(() => {
@@ -251,6 +253,16 @@ export default function ProductPage({ params }) {
     } catch (error) {}
   };
 
+  // ✅ Check if variants have both size AND color
+  const hasColorVariants = useMemo(() => {
+    if (!data?.variants || !Array.isArray(data.variants)) return false;
+    return data.variants.some((variant) => {
+      const hasSize = variant.selectedOptions?.some((o) => o.name === "Size");
+      const hasColor = variant.selectedOptions?.some((o) => o.name === "Color");
+      return hasSize && hasColor;
+    });
+  }, [data?.variants]);
+
   // Fetch reviews when product data becomes available
   useEffect(() => {
     if (data?.id) {
@@ -275,7 +287,10 @@ export default function ProductPage({ params }) {
       <div className="max-w-7xl mx-auto px-4 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {/* Left - Images */}
-          <ProductImageGallery images={data.imageUrls} />
+          <ProductImageGallery
+            images={galleryImages}
+            hasColorVariants={hasColorVariants}
+          />
 
           {/* Right - Product Details */}
           <div className="space-y-6">
@@ -366,6 +381,7 @@ export default function ProductPage({ params }) {
           )}
         </div>
       </div>
+      <Footer />
     </div>
   );
 }

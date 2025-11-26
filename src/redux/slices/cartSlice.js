@@ -28,8 +28,36 @@ const cartSlice = createSlice({
       state.totalItems = state.items.length;
     },
     setCartItems: (state, action) => {
-      state.items = action.payload;
-      state.totalItems = action.payload.length;
+      // Ensure each item has a quantity and selected flag
+      state.items = (action.payload || []).map((it) => ({
+        ...it,
+        quantity: it.quantity || 1,
+        selected: typeof it.selected === "boolean" ? it.selected : true,
+      }));
+      state.totalItems = state.items.length;
+    },
+
+    // Update the quantity for a specific cart item by cartItemId
+    updateQuantity: (state, action) => {
+      const { cartItemId, quantity } = action.payload;
+      const item = state.items.find((i) => i.cartItemId === cartItemId);
+      if (item) item.quantity = quantity;
+    },
+
+    // Set selected flag for a single cart item
+    setItemSelected: (state, action) => {
+      const { cartItemId, selected } = action.payload;
+      const item = state.items.find((i) => i.cartItemId === cartItemId);
+      if (item) item.selected = !!selected;
+    },
+
+    // Set selected cart items from an array of cartItemIds (others become unselected)
+    setSelectedCartItems: (state, action) => {
+      const selectedArray = action.payload || [];
+      state.items = state.items.map((i) => ({
+        ...i,
+        selected: selectedArray.includes(i.cartItemId),
+      }));
     },
 
     clearCart: (state) => {
@@ -39,6 +67,13 @@ const cartSlice = createSlice({
   },
 });
 
-export const { addToCart, removeFromCart, clearCart, setCartItems } =
-  cartSlice.actions;
+export const {
+  addToCart,
+  removeFromCart,
+  clearCart,
+  setCartItems,
+  updateQuantity,
+  setItemSelected,
+  setSelectedCartItems,
+} = cartSlice.actions;
 export default cartSlice.reducer;

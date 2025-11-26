@@ -72,9 +72,13 @@ const DeliveryOptions = ({ pincode, deliveryInfo, onCheckPincode }) => {
               <div>
                 <p className="font-semibold text-gray-900">{info.title}</p>
                 {info.description && (
-                  <p className="text-gray-600 text-xs mt-0.5 whitespace-pre-line">
-                    {info.description}
-                  </p>
+                  <div className="text-gray-600 mt-1 text-sm">
+                    {info.description.split("\n").map((line, index) => (
+                      <p key={index} className="mb-1">
+                        {line}
+                      </p>
+                    ))}
+                  </div>
                 )}
               </div>
             </div>

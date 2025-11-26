@@ -50,9 +50,8 @@ const BoardCard = ({ board, onUpdate, onDelete }) => {
                 "https://cdn.shopify.com/s/files/1/0553/6186/3863/products/0I1A7431copy-pichi.jpg?v=1617715629"
               }
               alt={board.name}
-              width={500}
-              height={500}
-              className="w-full h-full object-cover cursor-pointer"
+              fill
+              className="w-full h-full object-fill cursor-pointer"
             />
           </Link>
 
