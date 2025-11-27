@@ -450,9 +450,9 @@ const ShopByCategoriesPage = () => {
                     key={product.id}
                     imageUrls={product.imageUrls || []}
                     title={product.title}
-                    brand={product.brandId || "Brand"}
+                    brand={product.brand?.name || ""}
                     rating={product.rating || 0}
-                    reviewCount={product.numReviews?.toString() || "0"}
+                    reviewCount={product.numReviews?.toString() || ""}
                     basePrice={basePrice}
                     mrp={mrp}
                     discountPercentage={`${discountPercentage}`}

@@ -5,6 +5,7 @@ import AddressModal from "@/components/AddressModal";
 import DeleteConfirmModal from "@/components/DeleteModal";
 import axiosHttp from "@/utils/axioshttp";
 import toast from "react-hot-toast";
+import { Edit2, Trash2 } from "lucide-react";
 
 const SavedAddresses = () => {
   const [addresses, setAddresses] = useState([]);
@@ -156,15 +157,18 @@ const SavedAddresses = () => {
                   <div className="flex gap-4">
                     <button
                       onClick={() => handleEditAddress(address)}
-                      className="text-black hover:text-gray-600 flex items-center gap-1"
+                      className="text-black hover:text-gray-600 flex items-center gap-1 cursor-pointer"
                     >
+                      <Edit2 size={16} />
                       <span className="text-sm">Edit</span>
                     </button>
+
                     <button
                       onClick={() => handleDeleteAddress(address.id)}
-                      className="text-red-600 hover:text-red-700 flex items-center gap-1"
+                      className="text-red-600 hover:text-red-700 flex items-center gap-1 cursor-pointer"
                     >
-                      <span className="text-sm">Remove</span>
+                      <Trash2 size={16} />
+                      <span className="text-sm">Delete</span>
                     </button>
                   </div>
                 </div>
@@ -211,15 +215,18 @@ const SavedAddresses = () => {
                   <div className="flex gap-4">
                     <button
                       onClick={() => handleEditAddress(address)}
-                      className="text-black hover:text-gray-600 flex items-center gap-1"
+                      className="text-black hover:text-gray-600 flex items-center gap-1 cursor-pointer"
                     >
+                      <Edit2 size={16} />
                       <span className="text-sm">Edit</span>
                     </button>
+
                     <button
                       onClick={() => handleDeleteAddress(address.id)}
-                      className="text-red-600 hover:text-red-700 flex items-center gap-1"
+                      className="text-red-600 hover:text-red-700 flex items-center gap-1 cursor-pointer"
                     >
-                      <span className="text-sm">Remove</span>
+                      <Trash2 size={16} />
+                      <span className="text-sm">Delete</span>
                     </button>
                   </div>
                 </div>
@@ -234,7 +241,7 @@ const SavedAddresses = () => {
           <p className="text-gray-600 mb-6 text-lg">No saved addresses found</p>
           <button
             onClick={handleAddNewAddress}
-            className="px-8 py-3 bg-black text-white rounded hover:bg-gray-800"
+            className="px-8 py-3 bg-black text-white rounded hover:bg-gray-800 cursor-pointer"
           >
             + Add New Address
           </button>
@@ -245,7 +252,7 @@ const SavedAddresses = () => {
       {addresses.length > 0 && (
         <button
           onClick={handleAddNewAddress}
-          className="w-full py-4 border-2 border-dashed border-gray-300 text-gray-600    hover:border-gray-400 hover:text-gray-800 font-medium"
+          className="w-full py-4 border-2 border-dashed border-gray-300 text-gray-600    hover:border-gray-400 hover:text-gray-800 font-medium cursor-pointer"
         >
           + Add New Address
         </button>

@@ -16,6 +16,7 @@ import UserDropdown from "@/components/UserDrpdown";
 import NavbarSearch from "@/components/NavbarSearch";
 import useGetProductBySubCategories from "@/hooks/useGetSubCategories";
 import useBlog from "@/hooks/useBlog";
+import QuickModal from "@/components/QuickModal";
 
 // Generate menu data dynamically
 const getMenuData = (categories) => {
@@ -61,6 +62,8 @@ const Navbar = () => {
 
   const categoriesHierarchy = useGetCategoriesHierarchy();
   const menuData = getMenuData(categoriesHierarchy);
+
+  const [isQuickModalOpen, setIsQuickModalOpen] = useState(false);
 
   const blogs = useBlog();
   const latestBlogs = blogs
@@ -154,14 +157,17 @@ const Navbar = () => {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex items-center justify-between h-10">
               {/* Quick */}
-              <div className="flex items-center text-purple-600">
+              <button
+                onClick={() => setIsQuickModalOpen(true)}
+                className="flex items-center text-purple-600 cursor-pointer hover:opacity-80 transition-opacity"
+              >
                 <Image
                   src="/images/quick.png"
                   alt="Quick Icon"
                   width={100}
                   height={100}
                 />
-              </div>
+              </button>
 
               {/* Menu Items */}
               <div className="flex items-center space-x-6">
@@ -364,7 +370,10 @@ const Navbar = () => {
           onClick={() => setIsMobileMenuOpen(false)}
         ></div>
       )}
-
+      <QuickModal
+        isOpen={isQuickModalOpen}
+        onClose={() => setIsQuickModalOpen(false)}
+      />
       <PhoneAuthModal />
     </>
   );

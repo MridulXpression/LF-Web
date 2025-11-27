@@ -15,6 +15,18 @@ const extractSizesFromVariants = (variants) => {
   if (!variants || !Array.isArray(variants)) return [];
 
   const sizesMap = new Map();
+  const normalizeSize = (size = "") => {
+    const map = {
+      Small: "S",
+      Medium: "M",
+      Large: "L",
+      "X-Large": "XL",
+      "XX-Large": "XXL",
+      "XXX-Large": "3XL",
+    };
+
+    return map[size] || size; // fallback if already S, M, L, XL etc.
+  };
 
   variants.forEach((variant) => {
     const sizeOption = variant.selectedOptions?.find((o) => o.name === "Size");
@@ -22,7 +34,8 @@ const extractSizesFromVariants = (variants) => {
       variant.selectedOptions?.filter((o) => o.name === "Color") || [];
     const availableStock = variant.inventory?.availableStock ?? 0;
 
-    const sizeValue = sizeOption?.value ?? "";
+    const rawSize = sizeOption?.value ?? "";
+    const sizeValue = normalizeSize(rawSize);
 
     // If size doesn't exist, create an entry
     if (!sizesMap.has(sizeValue)) {
@@ -347,38 +360,43 @@ export default function ProductPage({ params }) {
 
         {/* Reviews */}
         <div className="pt-[50px]">
-          {reviews && reviews.length > 0 ? (
-            reviews.map((r) => {
-              const created = r.createdAt ? new Date(r.createdAt) : null;
-              // simple relative time formatter
-              const timeAgo = (() => {
-                if (!created) return "just now";
-                const diff = Date.now() - created.getTime();
-                const mins = Math.floor(diff / 60000);
-                if (mins < 1) return "just now";
-                if (mins < 60)
-                  return `${mins} minute${mins > 1 ? "s" : ""} ago`;
-                const hours = Math.floor(mins / 60);
-                if (hours < 24)
-                  return `${hours} hour${hours > 1 ? "s" : ""} ago`;
-                const days = Math.floor(hours / 24);
-                return `${days} day${days > 1 ? "s" : ""} ago`;
-              })();
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            {/* LEFT - empty or additional content if needed */}
+            <div></div>
 
-              return (
-                <ReviewCard
-                  key={r.id || `${r.userId}-${r.createdAt}`}
-                  name={r.user.fullName}
-                  rating={r.rating}
-                  timeAgo={timeAgo}
-                  comment={r.comment}
-                  size={r.product_variant.title}
-                />
-              );
-            })
-          ) : (
-            <div className="text-gray-500">No reviews yet.</div>
-          )}
+            {/* RIGHT - Reviews */}
+            <div className="space-y-4 max-h-[420px] overflow-y-auto pr-2">
+              {reviews && reviews.length > 0 ? (
+                reviews.slice(0, 5).map((r) => {
+                  const created = r.createdAt ? new Date(r.createdAt) : null;
+                  const timeAgo = (() => {
+                    if (!created) return "just now";
+                    const diff = Date.now() - created.getTime();
+                    const mins = Math.floor(diff / 60000);
+                    if (mins < 1) return "just now";
+                    if (mins < 60) return `${mins} min ago`;
+                    const hours = Math.floor(mins / 60);
+                    if (hours < 24) return `${hours} hr ago`;
+                    const days = Math.floor(hours / 24);
+                    return `${days} day ago`;
+                  })();
+
+                  return (
+                    <ReviewCard
+                      key={r.id || `${r.userId}-${r.createdAt}`}
+                      name={r.user.fullName}
+                      rating={r.rating}
+                      timeAgo={timeAgo}
+                      comment={r.comment}
+                      size={r.product_variant.title}
+                    />
+                  );
+                })
+              ) : (
+                <div className="text-gray-500  p-[50px]">No reviews yet.</div>
+              )}
+            </div>
+          </div>
         </div>
       </div>
       <Footer />

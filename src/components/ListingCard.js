@@ -74,7 +74,7 @@ const ListingCard = ({
         {/* Product Info */}
         <div className="p-3 justify-between">
           {/* Rating */}
-          {rating && (
+          {rating && Number(rating) > 0 ? (
             <div className="flex items-center gap-1 mb-2">
               <div className="flex items-center gap-1">
                 <span className="text-sm font-medium text-gray-900">
@@ -95,10 +95,13 @@ const ListingCard = ({
                   ))}
                 </div>
               </div>
-              {reviewCount && (
+
+              {reviewCount && Number(reviewCount) > 0 && (
                 <span className="text-xs text-gray-500">| {reviewCount}</span>
               )}
             </div>
+          ) : (
+            <p className="text-xs text-gray-400 mb-1">No ratings yet</p>
           )}
 
           {/* Brand */}
@@ -124,18 +127,22 @@ const ListingCard = ({
           {/* Price Section */}
           <div className="mt-auto">
             <div className="flex items-baseline gap-1 flex-wrap">
-              <span className="text-base font-bold text-gray-900 ">
+              <span className="text-base font-bold text-gray-900">
                 Rs. {basePrice}
               </span>
-              {mrp && (
-                <span className="text-sm text-gray-500 line-through">
-                  Rs. {mrp}
-                </span>
-              )}
-              {discountPercentage && (
-                <span className="text-xs text-green-600 font-medium">
-                  ({discountPercentage}% OFF)
-                </span>
+
+              {mrp > 0 && (
+                <>
+                  <span className="text-sm text-gray-500 line-through">
+                    Rs. {mrp}
+                  </span>
+
+                  {discountPercentage > 0 && (
+                    <span className="text-xs text-green-600 font-medium">
+                      ({discountPercentage}% OFF)
+                    </span>
+                  )}
+                </>
               )}
             </div>
           </div>

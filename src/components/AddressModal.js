@@ -64,7 +64,7 @@ const AddressModal = ({ isOpen, onClose, onSave, editAddress = null }) => {
             </h2>
             <button
               onClick={onClose}
-              className="text-gray-400 hover:text-gray-600"
+              className="text-gray-400 hover:text-gray-600 cursor-pointer"
             >
               <svg
                 className="w-6 h-6"
@@ -115,18 +115,28 @@ const AddressModal = ({ isOpen, onClose, onSave, editAddress = null }) => {
                   <label className="block text-sm text-gray-700 mb-1">
                     Phone*
                   </label>
+
                   <input
                     type="tel"
-                    placeholder="Enter mobile number"
+                    placeholder="Enter 10 digit mobile number"
+                    maxLength={10}
                     {...register("contactPhone", {
                       required: "Phone is required",
+                      pattern: {
+                        value: /^[6-9]\d{9}$/,
+                        message: "Enter a valid 10 digit mobile number",
+                      },
                     })}
+                    onInput={(e) => {
+                      e.target.value = e.target.value.replace(/[^0-9]/g, "");
+                    }}
                     className={`w-full px-3 py-2 border rounded focus:outline-none ${
                       errors.contactPhone
                         ? "border-red-500"
                         : "border-gray-300 focus:border-gray-400"
                     } text-black`}
                   />
+
                   {errors.contactPhone && (
                     <span className="text-red-500 text-sm">
                       {errors.contactPhone.message}
@@ -281,13 +291,13 @@ const AddressModal = ({ isOpen, onClose, onSave, editAddress = null }) => {
               <button
                 type="button"
                 onClick={onClose}
-                className="px-6 py-2 border border-gray-300 text-gray-700 rounded hover:bg-gray-50"
+                className="px-6 py-2 border border-gray-300 text-gray-700 rounded hover:bg-gray-50 cursor-pointer"
               >
                 Back
               </button>
               <button
                 type="submit"
-                className="px-6 py-2 bg-gray-200 text-black rounded hover:bg-gray-300"
+                className="px-6 py-2 bg-gray-200 text-black rounded hover:bg-gray-300 cursor-pointer"
               >
                 Save Address
               </button>

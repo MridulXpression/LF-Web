@@ -3,7 +3,10 @@ import React from "react";
 
 const ReviewCard = ({ name, rating, timeAgo, comment, size }) => {
   return (
-    <div className=" border-b border-gray-300 p-4 bg-white   transition-all duration-200">
+    <div className="  border-b border-gray-300 p-4 bg-white   transition-all duration-200">
+      <h1 className="text-[15px] text-black mb-[10px] font-bold">
+        RATING AND REVIEWS
+      </h1>
       {/* Header Section */}
       <div className="flex items-center justify-between mb-2">
         <div className="flex items-center gap-2">
