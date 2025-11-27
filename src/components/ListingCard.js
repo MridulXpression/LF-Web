@@ -101,7 +101,7 @@ const ListingCard = ({
               )}
             </div>
           ) : (
-            <p className="text-xs text-gray-400 mb-1">No ratings yet</p>
+            <p className="text-xs text-gray-400 mb-1"></p>
           )}
 
           {/* Brand */}
@@ -131,7 +131,7 @@ const ListingCard = ({
                 Rs. {basePrice}
               </span>
 
-              {mrp > 0 && (
+              {mrp > basePrice && mrp > 0 && (
                 <>
                   <span className="text-sm text-gray-500 line-through">
                     Rs. {mrp}

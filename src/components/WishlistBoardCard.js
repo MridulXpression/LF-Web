@@ -46,7 +46,7 @@ const BoardCard = ({ board, onUpdate, onDelete }) => {
           <Link href={`/wishlist-board-products/${board.id}`}>
             <Image
               src={
-                board.image ||
+                board.thumbnail ||
                 "https://cdn.shopify.com/s/files/1/0553/6186/3863/products/0I1A7431copy-pichi.jpg?v=1617715629"
               }
               alt={board.name}

@@ -142,7 +142,7 @@ const BrandDirectory = ({ brands }) => {
       {/* Top Section - Alphabet Navigation and Search */}
       <div className="mb-8">
         {/* Alphabet Navigation */}
-        <div className="flex items-center md:gap-4 sm:gap-3 flex-wrap mb-4">
+        <div className="flex items-center md:gap-4 gap-3 flex-wrap mb-4">
           {alphabets.map((letter) => (
             <button
               key={letter}

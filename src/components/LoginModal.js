@@ -150,7 +150,7 @@ const PhoneAuthModal = () => {
         );
       }
     } catch (error) {
-      toast.error("Network error. Please check your connection and try again.");
+      toast.error(error.response?.data?.message);
     } finally {
       setLoading(false);
     }
@@ -196,9 +196,16 @@ const PhoneAuthModal = () => {
       {/* Modal Overlay */}
       {isOpen && (
         <div className="fixed inset-0 bg-black/10 backdrop-blur-xs bg-opacity-50 flex items-center justify-center z-80">
-          <div className="bg-white shadow-xl max-w-4xl w-full max-h-[600px] flex overflow-hidden">
+          <div
+            className="bg-white shadow-xl w-full max-w-4xl 
+                h-[80vh] md:h-auto md:max-h-[600px]
+                flex flex-col md:flex-row overflow-hidden rounded-lg"
+          >
             {/* Left Side - Image */}
-            <div className="w-1/2 bg-black flex items-center justify-center relative">
+            <div
+              className="w-full md:w-1/2 bg-black flex items-center justify-center relative 
+                h-48 md:h-auto"
+            >
               {/* LaFetch Logo - Only show on steps 1-3 */}
               {currentStep !== "welcome" && (
                 <div className="absolute top-0 left-8 pt-[10px]">
@@ -240,9 +247,8 @@ const PhoneAuthModal = () => {
 
             {/* Right Side - Form */}
             <div
-              className={`w-1/2 p-8 flex flex-col justify-center relative ${
-                currentStep === "welcome" ? "bg-black" : "bg-white"
-              }`}
+              className={`w-full md:w-1/2 p-6 md:p-8 flex flex-col justify-center relative 
+  overflow-y-auto ${currentStep === "welcome" ? "bg-black" : "bg-white"}`}
             >
               {/* Close Button inside right side */}
               <button

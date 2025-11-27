@@ -30,6 +30,13 @@ const BrandProduct = () => {
 
   const categories = ["All", "Men", "Women", "Accessories", "Sale"];
 
+  // Filter products by search query (case-insensitive substring match on title)
+  const filteredProducts = products.filter((product) => {
+    const q = searchQuery?.toString().trim().toLowerCase();
+    if (!q) return true;
+    return (product.title || "").toString().toLowerCase().includes(q);
+  });
+
   // Show loading state
   if (getBrandsProducts?.loading) {
     return (
@@ -57,7 +64,7 @@ const BrandProduct = () => {
         videoURL={brandVideo}
       />
 
-      {/* <SearchFilterBar
+      <SearchFilterBar
         searchQuery={searchQuery}
         setSearchQuery={setSearchQuery}
         selectedCategory={selectedCategory}
@@ -67,12 +74,12 @@ const BrandProduct = () => {
         showFilters={showFilters}
         setShowFilters={setShowFilters}
         categories={categories}
-      /> */}
+      />
 
       <div className="max-w-7xl mx-auto px-4 p-12">
-        {products.length > 0 ? (
+        {filteredProducts.length > 0 ? (
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
-            {products.map((product) => (
+            {filteredProducts.map((product) => (
               <BrandProductCard
                 key={product.id}
                 image={

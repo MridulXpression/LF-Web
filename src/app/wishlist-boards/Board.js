@@ -7,6 +7,7 @@ import axiosHttp from "@/utils/axioshttp";
 import { endPoints } from "@/utils/endpoints";
 import React, { useState } from "react";
 import { useSelector } from "react-redux";
+import toast from "react-hot-toast";
 
 const WishlistBoards = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -27,7 +28,15 @@ const WishlistBoards = () => {
       await createBoard({ userId: query, name: boardName });
       getBoards?.refetch(); // refresh list
       setIsModalOpen(false); // close modal
-    } catch (error) {}
+    } catch (error) {
+      const apiMessage = error?.response?.data?.message;
+
+      if (apiMessage === "Unauthorized!") {
+        toast.error("Please login to create a board");
+      } else {
+        toast.error(apiMessage || "Something went wrong. Please try again.");
+      }
+    }
   };
 
   const handleUpdateBoard = async (newName) => {

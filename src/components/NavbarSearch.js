@@ -34,7 +34,7 @@ const NavbarSearch = ({
   return (
     <div
       ref={searchDropdownRef}
-      className="absolute left-0 top-26 w-screen max-w-full bg-white border border-gray-200 shadow-lg z-40"
+      className="absolute left-0 md:top-26 w-screen max-w-full bg-white border border-gray-200 shadow-lg z-40"
     >
       <div className="px-4 sm:px-6 lg:px-12 py-6">
         {/* Search Input */}

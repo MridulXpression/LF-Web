@@ -23,6 +23,18 @@ const ProductCard = ({ images, title, price, id, product }) => {
     dispatch(openWishlistModal()); // update redux for global modal state
   };
 
+  const productData = {
+    id,
+    imageUrls: images,
+    title,
+    brand: product?.brand?.name || "",
+    rating: product?.rating || 0,
+    reviewCount: product?.reviewCount || 0,
+    basePrice: price,
+    mrp: product?.mrp || 0,
+    discountPercentage: product?.discountPercentage || 0,
+  };
+
   return (
     <>
       <div className="relative bg-white overflow-hidden w-[160px] h-[400px] md:w-[300px] md:h-[480px]">
@@ -79,7 +91,7 @@ const ProductCard = ({ images, title, price, id, product }) => {
 
       {showWishlistModal && (
         <WishlistBoardModal
-          productData={product}
+          productData={productData}
           onClose={() => setShowWishlistModal(false)}
         />
       )}

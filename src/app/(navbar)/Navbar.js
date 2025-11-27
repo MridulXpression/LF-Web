@@ -131,23 +131,56 @@ const Navbar = () => {
       <div className=" bg-white z-50 shadow-sm">
         <div className="">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex justify-between items-center py-4 md:justify-center">
-              {/* Mobile Menu */}
-              <button
-                className="md:hidden text-[#808080]"
-                onClick={() => setIsMobileMenuOpen(true)}
-              >
-                <Menu className="w-6 h-6" />
-              </button>
+            <div className="flex items-center justify-between py-4 md:justify-center">
+              {/* LEFT : Logo + Menu */}
+              <div className="flex items-center gap-3">
+                <button
+                  className="md:hidden text-[#808080]"
+                  onClick={() => setIsMobileMenuOpen(true)}
+                >
+                  <Menu className="w-6 h-6" />
+                </button>
 
-              <Link href="/" className="flex items-center">
-                <Image
-                  src="/images/logo.png"
-                  alt="LaFetch Logo"
-                  width={80}
-                  height={80}
-                />
-              </Link>
+                <Link href="/" className="flex items-center">
+                  <Image
+                    src="/images/logo.png"
+                    alt="LaFetch Logo"
+                    width={80}
+                    height={80}
+                  />
+                </Link>
+              </div>
+
+              {/* RIGHT : Icons always visible */}
+              <div className="flex items-center gap-3 md:hidden">
+                <button
+                  onClick={() => setShowSearchDropdown(!showSearchDropdown)}
+                  className="text-[#808080]"
+                >
+                  <Search className="w-5 h-5" />
+                </button>
+
+                <Link href="/wishlist-boards">
+                  <Heart className="w-5 h-5 text-[#808080]" />
+                </Link>
+
+                <Link href="/checkout/bag" className="relative">
+                  <ShoppingBag className="w-5 h-5 text-[#808080]" />
+                  {cartTotal > 0 && (
+                    <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] rounded-full h-4 w-4 flex items-center justify-center">
+                      {cartTotal}
+                    </span>
+                  )}
+                </Link>
+
+                {user ? (
+                  <UserDropdown user={user} />
+                ) : (
+                  <button onClick={() => dispatch(openPhoneAuthModal())}>
+                    <User className="w-5 h-5 text-[#808080]" />
+                  </button>
+                )}
+              </div>
             </div>
           </div>
         </div>
@@ -200,7 +233,13 @@ const Navbar = () => {
 
                       {/* Dropdown Menu */}
                       {hasDropdown && activeDropdown === index && (
-                        <div className="absolute -left-5 top-full w-[900px] bg-white shadow-lg border border-gray-100 z-50">
+                        <div
+                          className="
+  absolute -left-5 top-full w-[700px] 
+  bg-white shadow-lg border border-gray-100 z-50
+  max-h-[80vh] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100
+"
+                        >
                           <div className="p-6">
                             <div className="flex justify-between">
                               {/* Sections */}
@@ -312,25 +351,24 @@ const Navbar = () => {
 
       {/* Mobile Sidebar */}
       <div
-        className={`fixed top-0 left-0 h-full w-64 bg-white shadow-lg z-[9999] transform ${
+        className={`fixed top-0 left-0 h-full w-64 bg-white   shadow-lg z-[9999] transform ${
           isMobileMenuOpen ? "translate-x-0" : "-translate-x-full"
-        } transition-transform duration-300`}
+        } transition-transform duration-300 flex flex-col`}
       >
-        <div className="flex justify-between items-center p-4 border-b">
-          <h2 className="text-lg font-semibold">Menu</h2>
+        <div className="flex items-center justify-between p-4 border-b">
+          <h2 className="text-lg font-semibold text-black">Menu</h2>
 
-          {/* Close Button */}
           <button onClick={() => setIsMobileMenuOpen(false)}>
             <X className="w-6 h-6 text-gray-600" />
           </button>
         </div>
 
-        <div className="p-4 space-y-4">
+        <div className="p-4 space-y-4 overflow-y-auto flex-1">
           {menuData.map((menu, index) => (
             <div key={index}>
               <Link
                 href={getMenuHref(menu.title)}
-                className="block py-2 text-gray-700 font-medium"
+                className="block py-2 text-black font-bold"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
                 {menu.title}
@@ -341,7 +379,7 @@ const Navbar = () => {
                 <div className="pl-4">
                   {menu.sections.map((section, idx) => (
                     <div key={idx} className="mt-2">
-                      <p className="text-sm font-semibold text-gray-500">
+                      <p className="text-sm font-semibold text-black">
                         {section.heading}
                       </p>
                       {section.items.map((item) => (
@@ -366,7 +404,7 @@ const Navbar = () => {
       {/* Backdrop */}
       {isMobileMenuOpen && (
         <div
-          className="fixed inset-0 bg-black/40 z-[9998]"
+          className="fixed inset-0 bg-black/40 z-[9998] backdrop-blur-sm"
           onClick={() => setIsMobileMenuOpen(false)}
         ></div>
       )}

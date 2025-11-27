@@ -6,6 +6,7 @@ import axiosHttp from "@/utils/axioshttp";
 import { toast } from "react-hot-toast";
 import SuccessExchangeModal from "./SuccessExchangeModal";
 import Image from "next/image";
+import { getParsedSelectedOptions } from "@/utils/variantUtils";
 
 const EXCHANGE_REASONS = {
   25: "Other",
@@ -89,12 +90,13 @@ const ExchangeOrderModal = ({
 
         // Map variants with proper structure including stock status
         const mappedVariants = rawVariants.map((variant) => {
-          const sizeOption = variant.selectedOptions?.find(
-            (o) => o.name === "Size"
+          const selectedOptions = getParsedSelectedOptions(
+            variant.selectedOptions
           );
-          const colorOption = variant.selectedOptions?.find(
-            (o) => o.name === "Color"
-          );
+
+          const sizeOption = selectedOptions.find((o) => o.name === "Size");
+          const colorOption = selectedOptions.find((o) => o.name === "Color");
+
           const stock = variant.inventory?.availableStock ?? 0;
 
           return {

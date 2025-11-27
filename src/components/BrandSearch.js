@@ -22,7 +22,7 @@ const SearchFilterBar = ({
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
               <input
                 type="text"
-                placeholder="Search For Product For Akinna"
+                placeholder="Search For Product "
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-full pl-10 pr-4 py-2 border-b  border-black  focus:outline-none focus:border-gray-400 placeholder-gray-600 text-black"
@@ -30,7 +30,7 @@ const SearchFilterBar = ({
             </div>
           </div>
 
-          <div className="flex gap-3 flex-wrap">
+          {/* <div className="flex gap-3 flex-wrap">
             <button
               onClick={() => setShowFilters(!showFilters)}
               className="flex items-center gap-2 px-4 py-2 border-r border-black hover:bg-gray-50"
@@ -67,7 +67,7 @@ const SearchFilterBar = ({
               </select>
               <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-500 pointer-events-none" />
             </div>
-          </div>
+          </div> */}
         </div>
       </div>
     </div>

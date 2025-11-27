@@ -27,7 +27,7 @@ const NewBoardModal = ({ isOpen, onClose, onCreateBoard, loading }) => {
         <div className="flex gap-3 justify-end">
           <button
             onClick={onClose}
-            className="px-4 py-2 text-gray-700 hover:text-black"
+            className="px-4 py-2 text-gray-700 hover:text-black cursor-pointer"
             disabled={loading}
           >
             Cancel
@@ -35,7 +35,7 @@ const NewBoardModal = ({ isOpen, onClose, onCreateBoard, loading }) => {
           <button
             onClick={handleCreate}
             disabled={loading || !boardName.trim()}
-            className="px-6 py-2 bg-black text-white rounded-md hover:bg-gray-800 disabled:bg-gray-400"
+            className="px-6 py-2 bg-black text-black rounded-md hover:bg-gray-800 disabled:bg-gray-400 cursor-pointer"
           >
             {loading ? "Creating..." : "Create"}
           </button>

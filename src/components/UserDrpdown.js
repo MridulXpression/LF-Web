@@ -10,10 +10,12 @@ const UserDropdown = ({ user }) => {
   const userId = userInfo?.id;
   const { onLogout } = useLogout();
 
+  const [open, setOpen] = useState(false);
   const [showLogoutModal, setShowLogoutModal] = useState(false);
 
   const handleLogoutClick = () => {
     setShowLogoutModal(true);
+    setOpen(false);
   };
 
   const confirmLogout = () => {
@@ -21,58 +23,70 @@ const UserDropdown = ({ user }) => {
     setShowLogoutModal(false);
   };
 
+  const isDesktop = typeof window !== "undefined" && window.innerWidth >= 768;
+
   return (
-    <div className="relative group">
-      <button className="p-2 text-[#808080] hover:text-gray-900 cursor-pointer">
+    <div
+      className="relative"
+      onMouseEnter={() => isDesktop && setOpen(true)}
+      onMouseLeave={() => isDesktop && setOpen(false)}
+    >
+      {/* Profile Icon */}
+      <button
+        onClick={() => setOpen((prev) => !prev)}
+        className="p-2 text-[#808080] hover:text-gray-900 cursor-pointer"
+      >
         <User className="w-5 h-5" />
       </button>
 
-      <div className="absolute right-0 top-full mt-2 w-56 bg-white shadow-lg border border-gray-100 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
-        <div className="p-4">
-          {user && (
-            <div className="border-b border-gray-200 pb-3 mb-3">
-              <p className="font-semibold text-gray-900">{user.fullName}</p>
-              <p className="text-sm text-gray-600">{user.phone}</p>
+      {/* DROPDOWN */}
+      {open && (
+        <div className="absolute -right-5 md:right-0 top-full mt-2 w-56 bg-white shadow-lg border border-gray-100 z-50">
+          <div className="p-4">
+            {user && (
+              <div className="border-b border-gray-200 pb-3 mb-3">
+                <p className="font-semibold text-gray-900">{user.fullName}</p>
+                <p className="text-sm text-gray-600">{user.phone}</p>
+              </div>
+            )}
+
+            <div className="space-y-1">
+              <Link
+                href="/account/orders"
+                className="block px-3 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                onClick={() => setOpen(false)}
+              >
+                Orders
+              </Link>
+
+              <Link
+                href="/wishlist-boards"
+                className="block px-3 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                onClick={() => setOpen(false)}
+              >
+                Wishlist
+              </Link>
+
+              <Link
+                href="/account/addresses"
+                className="block px-3 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                onClick={() => setOpen(false)}
+              >
+                Saved Addresses
+              </Link>
             </div>
-          )}
 
-          <div className="space-y-1">
-            <Link
-              href="/account/orders"
-              className="block px-3 py-2 text-sm text-gray-700 hover:bg-gray-50"
+            <div className="border-t border-gray-200 my-3"></div>
+
+            <button
+              onClick={handleLogoutClick}
+              className="w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 cursor-pointer"
             >
-              Orders
-            </Link>
-            <Link
-              href="/wishlist-boards"
-              className="block px-3 py-2 text-sm text-gray-700 hover:bg-gray-50"
-            >
-              Wishlist
-            </Link>
-            {/* <Link
-              href="/contact"
-              className="block px-3 py-2 text-sm text-gray-700 hover:bg-gray-50"
-            >
-              Contact Us
-            </Link> */}
-            <Link
-              href="/account/addresses"
-              className="block px-3 py-2 text-sm text-gray-700 hover:bg-gray-50"
-            >
-              Saved Addresses
-            </Link>
+              Logout
+            </button>
           </div>
-
-          <div className="border-t border-gray-200 my-3"></div>
-
-          <button
-            onClick={handleLogoutClick}
-            className="w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 cursor-pointer"
-          >
-            Logout
-          </button>
         </div>
-      </div>
+      )}
 
       {/* LOGOUT CONFIRM MODAL */}
       {showLogoutModal && (

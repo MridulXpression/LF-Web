@@ -5,7 +5,7 @@ const HeroBanner = ({ videoURL, brandName, description }) => {
 
   return (
     <div className="relative">
-      <div className="aspect-[21/9] overflow-hidden bg-gray-200">
+      <div className="aspect-[17/9] overflow-hidden bg-gray-200">
         {videoURL ? (
           <video
             className="w-full h-full object-cover"

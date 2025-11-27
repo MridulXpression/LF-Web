@@ -10,6 +10,7 @@ import ReviewCard from "@/components/ReviewCard";
 import ProductDelivery from "@/components/ProductDelivery";
 import axiosHttp from "@/utils/axioshttp";
 import Footer from "@/components/footer";
+import { getParsedSelectedOptions } from "@/utils/variantUtils";
 
 const extractSizesFromVariants = (variants) => {
   if (!variants || !Array.isArray(variants)) return [];
@@ -29,9 +30,10 @@ const extractSizesFromVariants = (variants) => {
   };
 
   variants.forEach((variant) => {
-    const sizeOption = variant.selectedOptions?.find((o) => o.name === "Size");
-    const colorOptions =
-      variant.selectedOptions?.filter((o) => o.name === "Color") || [];
+    const selectedOptions = getParsedSelectedOptions(variant.selectedOptions);
+
+    const sizeOption = selectedOptions.find((o) => o.name === "Size");
+    const colorOptions = selectedOptions.filter((o) => o.name === "Color");
     const availableStock = variant.inventory?.availableStock ?? 0;
 
     const rawSize = sizeOption?.value ?? "";
@@ -105,8 +107,8 @@ const extractColorsFromVariants = (variants) => {
   const colorsMap = new Map();
 
   variants.forEach((variant) => {
-    const colorOptions =
-      variant.selectedOptions?.filter((o) => o.name === "Color") || [];
+    const selectedOptions = getParsedSelectedOptions(variant.selectedOptions);
+    const colorOptions = selectedOptions.filter((o) => o.name === "Color");
     const availableStock = variant.inventory?.availableStock ?? 0;
 
     colorOptions.forEach((colorOption) => {
@@ -270,8 +272,9 @@ export default function ProductPage({ params }) {
   const hasColorVariants = useMemo(() => {
     if (!data?.variants || !Array.isArray(data.variants)) return false;
     return data.variants.some((variant) => {
-      const hasSize = variant.selectedOptions?.some((o) => o.name === "Size");
-      const hasColor = variant.selectedOptions?.some((o) => o.name === "Color");
+      const selectedOptions = getParsedSelectedOptions(variant.selectedOptions);
+      const hasSize = selectedOptions.some((o) => o.name === "Size");
+      const hasColor = selectedOptions.some((o) => o.name === "Color");
       return hasSize && hasColor;
     });
   }, [data?.variants]);

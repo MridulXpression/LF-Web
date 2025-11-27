@@ -52,14 +52,18 @@ const CreateBoardModal = ({ productData, onClose }) => {
 
       const response = await createBoard(payload);
       setNewBoardName("");
-      toast.success(response?.message || "Board created successfully!");
+      toast.success(response?.data?.message || "Board created successfully!");
 
       // refresh list
       fetchBoards();
     } catch (error) {
-      const errorMessage = error?.response?.data?.message;
+      const apiMessage = error?.response?.data?.message;
 
-      toast.error(errorMessage);
+      if (apiMessage === "Unauthorized!") {
+        toast.error("Please login to create a board");
+      } else {
+        toast.error(apiMessage || "Something went wrong. Please try again.");
+      }
     } finally {
       setIsCreating(false);
     }
@@ -122,7 +126,7 @@ const CreateBoardModal = ({ productData, onClose }) => {
             </div>
             <button
               onClick={handleClose}
-              className="text-gray-400 hover:text-gray-600"
+              className="text-gray-400 hover:text-gray-600 cursor-pointer"
             >
               <X size={20} />
             </button>
@@ -145,7 +149,7 @@ const CreateBoardModal = ({ productData, onClose }) => {
               <button
                 onClick={handleCreateBoard}
                 disabled={!newBoardName.trim() || isCreating}
-                className="px-4 py-2 bg-gray-900 text-white text-sm font-medium hover:bg-gray-800 disabled:bg-gray-400 flex items-center gap-1"
+                className="px-4 py-2 bg-gray-900 text-white text-sm font-medium hover:bg-gray-800 disabled:bg-gray-400 flex items-center gap-1 cursor-pointer"
               >
                 <Plus size={16} />
                 {isCreating ? "Creating..." : "Create"}
@@ -225,7 +229,7 @@ const CreateBoardModal = ({ productData, onClose }) => {
               </div>
 
               <div className="flex-1 flex flex-col">
-                {productData.rating && (
+                {productData.rating > 0 && (
                   <div className="flex items-center gap-2 mb-2">
                     <div className="flex items-center gap-1">
                       <span className="text-sm font-medium text-black">
@@ -246,16 +250,17 @@ const CreateBoardModal = ({ productData, onClose }) => {
                         ))}
                       </div>
                     </div>
-                    {productData.reviewCount && (
+
+                    {productData.reviewCount > 0 && (
                       <span className="text-xs text-gray-500">
-                        {/* | {productData.reviewCount} */}
+                        | {productData.reviewCount}
                       </span>
                     )}
                   </div>
                 )}
 
                 <h3 className="text-lg font-bold text-gray-900 mb-1">
-                  {productData.brand || "BRAND"}
+                  {productData.brand?.name}
                 </h3>
                 <p className="text-sm text-gray-600 mb-4 line-clamp-2">
                   {productData.title}
@@ -266,17 +271,28 @@ const CreateBoardModal = ({ productData, onClose }) => {
                     <span className="text-lg font-bold text-gray-900">
                       Rs. {productData.basePrice}
                     </span>
-                    {productData.originalPrice && (
-                      <span className="text-sm text-gray-500 line-through">
-                        Rs. {productData.originalPrice}
-                      </span>
-                    )}
+                    {(() => {
+                      const basePrice = Number(productData.basePrice);
+                      const mrp = Number(productData.mrp);
+
+                      const showDiscount = mrp > 0 && basePrice < mrp;
+
+                      const discountPercentage = showDiscount
+                        ? Math.round(((mrp - basePrice) / mrp) * 100)
+                        : 0;
+
+                      return showDiscount ? (
+                        <>
+                          <span className="text-sm text-gray-500 line-through">
+                            Rs. {mrp}
+                          </span>
+                          <span className="text-sm text-green-600 font-medium">
+                            ({discountPercentage}% OFF)
+                          </span>
+                        </>
+                      ) : null;
+                    })()}
                   </div>
-                  {productData.discountPercentage && (
-                    <span className="text-sm text-green-600 font-medium">
-                      ({productData.discountPercentage}% OFF)
-                    </span>
-                  )}
                 </div>
               </div>
             </div>

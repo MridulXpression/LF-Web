@@ -32,7 +32,7 @@ const WishlistCard = ({
   };
 
   return (
-    <div className="relative overflow-hidden w-[250px] h-[500px] bg-white flex flex-col">
+    <div className="relative overflow-hidden  md:w-[250px] md:max-h-[500px] bg-white flex flex-col">
       {/* Product Image */}
       <div className="relative h-[300px] bg-gray-100">
         <Image
@@ -66,16 +66,18 @@ const WishlistCard = ({
       {/* Product Details */}
       <div className="p-4 flex-1 flex flex-col">
         {/* Rating */}
-        <div className="flex gap-2 mb-1">
-          <span className="text-sm font-semibold">{rating}</span>
-          <svg
-            className="w-4 h-4 text-yellow-400 fill-current"
-            viewBox="0 0 20 20"
-          >
-            <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z" />
-          </svg>
-          <span className="text-sm text-gray-500">| {reviewCount}</span>
-        </div>
+        {Number(rating) > 0 && Number(reviewCount) > 0 && (
+          <div className="flex gap-2 mb-1">
+            <span className="text-sm font-semibold">{rating}</span>
+            <svg
+              className="w-4 h-4 text-yellow-400 fill-current"
+              viewBox="0 0 20 20"
+            >
+              <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z" />
+            </svg>
+            <span className="text-sm text-gray-500">| {reviewCount}</span>
+          </div>
+        )}
 
         <h3 className="text-sm font-bold text-gray-900 mb-1">{brandName}</h3>
         <p className="text-sm text-gray-600 mb-2">{productName}</p>

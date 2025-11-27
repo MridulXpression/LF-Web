@@ -60,7 +60,7 @@ const WishlistProductCard = () => {
   };
 
   return (
-    <div className="bg-white p-6 min-h-screen flex items-center justify-center">
+    <div className="bg-white p-6 min-h-screen flex md:items-center md:justify-center">
       <div className="max-w-[1400px] w-full px-4">
         {products.length === 0 ? (
           <div className="flex flex-col items-center justify-center min-h-[60vh]">
@@ -89,10 +89,10 @@ const WishlistProductCard = () => {
                   id={product?.id}
                   imageSrc={product?.imageUrls?.[0] || fallbackImage}
                   imageAlt={product?.title || "Product Image"}
-                  rating={product?.rating || 0}
-                  reviewCount={product?.numReviews || 0}
-                  brandName={product?.brand || "Unknown Brand"}
-                  productName={product?.title || "Unknown Product"}
+                  rating={product?.rating}
+                  reviewCount={product?.numReviews}
+                  brandName={product?.brand}
+                  productName={product?.title}
                   currentPrice={product?.basePrice || 0}
                   originalPrice={product?.mrp || 0}
                   discount={
