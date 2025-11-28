@@ -240,122 +240,47 @@ const OrderDetailView = ({ orderId, onBack, axiosHttp }) => {
       </Link>
 
       {/* Delivery Estimate */}
-      <div className="bg-white  p-4 mb-6">
+      {/* Order Info */}
+      <div className="bg-white p-4 mb-6">
         <p className="text-gray-900 font-medium mb-1">
-          {order?.deliveredAt
-            ? `Delivered on ${formatDate(order.deliveredAt)}`
-            : `Arriving By ${formatDate(
-                order?.deliveredAt ||
-                  new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
-              )}`}
-        </p>
-        <p className="text-sm text-gray-500">
-          {status?.toLowerCase() === "delivered"
-            ? "Your order has been delivered"
-            : "Your item has been packed"}
+          Ordered At {formatDate(orderData?.createdAt)}
         </p>
       </div>
 
       {/* Order Progress */}
-      <div className="bg-white rounded-lg  p-6 mb-6">
-        {/* Progress Bar */}
-        <div className="relative mb-8 px-4">
-          <div className="relative">
-            {/* Background Line */}
-            <div
-              className="absolute left-0 right-0 h-0.5 bg-gray-200"
-              style={{ top: "16px", zIndex: 0 }}
-            ></div>
+      {/* Order Status & Tracking */}
+      <div className="bg-white rounded-lg p-6 mb-6">
+        <h3 className="font-semibold text-gray-900 mb-4">Order Status</h3>
 
-            {/* Active Progress Line */}
-            <div
-              className={`absolute left-0 h-0.5 ${
-                status?.toLowerCase() === "cancelled"
-                  ? "bg-red-500"
-                  : "bg-green-500"
-              }`}
-              style={{
-                top: "16px",
-                width: `${(() => {
-                  const activeIndex = statusSteps.findIndex(
-                    (s) => s.active || s.completed
-                  );
-                  const total = statusSteps.length - 1;
-                  if (activeIndex === -1) return 0;
-                  return (activeIndex / total) * 100;
-                })()}%`,
-
-                zIndex: 1,
-              }}
-            ></div>
-
-            {statusSteps.map((step, index) => {
-              const totalSteps = statusSteps.length;
-              const leftPosition =
-                totalSteps === 1
-                  ? "50%"
-                  : `${(index / (totalSteps - 1)) * 100}%`;
-
-              return (
-                <div
-                  key={index}
-                  className="absolute flex flex-col items-center"
-                  style={{
-                    left: leftPosition,
-                    transform: "translateX(-50%)",
-                    zIndex: 2,
-                  }}
-                >
-                  <div
-                    className={`w-8 h-8 rounded-full flex items-center justify-center mb-2 ${
-                      step.isCancelled
-                        ? "bg-white border-2 border-red-500"
-                        : step.completed
-                        ? "bg-green-500"
-                        : step.active
-                        ? "bg-white border-2 border-green-500"
-                        : "bg-white border-2 border-gray-300"
-                    }`}
-                  >
-                    {step.isCancelled ? (
-                      <XCircle className="w-4 h-4 text-red-500" />
-                    ) : step.completed ? (
-                      <CheckCircle className="w-4 h-4 text-white" />
-                    ) : (
-                      <div
-                        className={`w-2 h-2 rounded-full ${
-                          step.active ? "bg-green-500" : "bg-gray-300"
-                        }`}
-                      ></div>
-                    )}
-                  </div>
-                  <p
-                    className={`text-xs font-medium text-center whitespace-nowrap ${
-                      step.isCancelled
-                        ? "text-red-600"
-                        : step.active || step.completed
-                        ? "text-gray-900"
-                        : "text-gray-400"
-                    }`}
-                  >
-                    {step.label}
-                  </p>
-                  {step.date && (
-                    <p className="text-xs text-gray-500 mt-1">
-                      {formatDate(step.date)}
-                    </p>
-                  )}
-                </div>
-              );
-            })}
+        <div className="flex items-center justify-between flex-wrap gap-3 mb-4">
+          {/* Status */}
+          <div className="flex items-center gap-2">
+            <Package className="w-5 h-5 text-gray-600" />
+            <span className="text-sm font-medium capitalize text-gray-800">
+              {status}
+            </span>
           </div>
-          {/* Spacer for absolute positioned content */}
-          <div style={{ height: "80px" }}></div>
+
+          {/* Tracking */}
+          {orderData?.trackURL && orderData.trackURL.trim() !== "" ? (
+            <a
+              href={orderData.trackURL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="px-4 py-2 text-sm font-medium bg-black text-white rounded hover:bg-gray-800 transition"
+            >
+              Track Order
+            </a>
+          ) : (
+            <span className="text-sm text-orange-600 font-medium">
+              Waiting to ship
+            </span>
+          )}
         </div>
 
-        {/* Action Buttons */}
+        {/* ✅ ACTION BUTTONS KEPT */}
         {actionButtons.length > 0 && (
-          <div className="mt-6">
+          <div className="mt-4">
             <div className="flex gap-3">
               {actionButtons.map((button, index) => (
                 <button
@@ -371,7 +296,7 @@ const OrderDetailView = ({ orderId, onBack, axiosHttp }) => {
                       dispatch(openExchangeModal(orderData));
                     }
                   }}
-                  className="flex-1 py-3 text-sm font-medium transition-colors border border-gray-300 text-gray-700 hover:bg-gray-50"
+                  className="flex-1 py-3 text-sm font-medium transition-colors border border-gray-300 text-gray-700 hover:bg-gray-50 cursor-pointer"
                 >
                   {button.label}
                   {button.info && (

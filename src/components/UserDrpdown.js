@@ -41,7 +41,7 @@ const UserDropdown = ({ user }) => {
 
       {/* DROPDOWN */}
       {open && (
-        <div className="absolute -right-5 md:right-0 top-full mt-2 w-56 bg-white shadow-lg border border-gray-100 z-50">
+        <div className="absolute -right-5 -md:right-10 top-[20px] mt-2 w-56 bg-white shadow-lg border border-gray-100 z-50">
           <div className="p-4">
             {user && (
               <div className="border-b border-gray-200 pb-3 mb-3">

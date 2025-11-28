@@ -51,8 +51,7 @@ const ProductCard = ({ images, title, price, id, product }) => {
                   : "https://cdn.shopify.com/s/files/1/0553/6186/3863/products/0I1A6958copy-pichi.jpg?v=1617717071"
               }
               alt={title || "product-img"}
-              width={500}
-              height={500}
+              fill
               className="object-cover transition-transform duration-500 group-hover:scale-105"
             />
           </Link>
