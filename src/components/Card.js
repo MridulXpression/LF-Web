@@ -52,7 +52,7 @@ const ProductCard = ({ images, title, price, id, product }) => {
               }
               alt={title || "product-img"}
               fill
-              className="object-cover transition-transform duration-500 group-hover:scale-105"
+              className="object-fill transition-transform duration-500 group-hover:scale-105"
             />
           </Link>
 

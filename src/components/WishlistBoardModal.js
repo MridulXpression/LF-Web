@@ -109,7 +109,6 @@ const CreateBoardModal = ({ productData, onClose }) => {
         className="absolute inset-0  backdrop-blur-sm bg-opacity-50"
         onClick={handleClose}
       />
-      <Toaster position="top-right" reverseOrder={false} />
 
       <div className="relative bg-white w-full max-w-3xl mx-4 flex overflow-hidden max-h-[400px]">
         {/* Left Panel */}

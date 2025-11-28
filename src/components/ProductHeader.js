@@ -208,13 +208,13 @@ const ProductInfo = ({
           </div>
         </div>
 
-        <div className="flex items-center gap-2">
+        {/* <div className="flex items-center gap-2">
           <div className="flex items-center gap-1 px-2 py-0.5 bg-teal-700 text-white rounded text-xs font-semibold">
             <span>{rating}</span>
             <Star className="w-3 h-3 fill-current" />
           </div>
           <span className="text-sm text-gray-500">{reviews} Ratings</span>
-        </div>
+        </div> */}
       </div>
 
       {/* Pricing */}
@@ -287,7 +287,7 @@ const ProductInfo = ({
                 : "border-gray-300 text-gray-700 bg-white hover:border-gray-400"
             }`}
                 >
-                  {size.label}
+                  {size.label ? size.label : "ONE SIZE"}
                 </button>
 
                 {/* ✅ Show "Out of Stock" text below disabled button */}

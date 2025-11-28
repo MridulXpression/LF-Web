@@ -51,7 +51,7 @@ const ListingCard = ({
                 src={imageUrls[0]}
                 alt={title || "Product"}
                 fill
-                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                className="w-full h-full object-fill transition-transform duration-500 group-hover:scale-105"
               />
             )}
           </div>

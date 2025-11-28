@@ -78,15 +78,15 @@ const BrandDirectory = ({ brands }) => {
               {displayBrands.map((brand, idx) => (
                 <Link
                   key={idx}
-                  href={`/brands/${brand.id}`} // ✅ navigate to dynamic route
+                  href={`/brands/${brand.id}`}
                   onClick={() => {
                     if (brand?.id) {
-                      localStorage.setItem("brandId", brand.id); // ✅ save brandId locally
+                      localStorage.setItem("brandId", brand.id);
                     }
                   }}
-                  className="relative bg-[#ECECF0] flex flex-col items-center cursor-pointer overflow-hidden group"
+                  className="relative bg-[#ECECF0] flex flex-col items-center cursor-pointer overflow-hidden group h-full"
                 >
-                  {/* Padding wrapper for the circular image */}
+                  {/* Image */}
                   <div className="w-full p-6 flex items-center justify-center">
                     <div className="aspect-square w-32 bg-white rounded-full flex items-center justify-center overflow-hidden transition-all duration-300 group-hover:scale-110">
                       {brand.logo ? (
@@ -107,9 +107,12 @@ const BrandDirectory = ({ brands }) => {
                     </div>
                   </div>
 
-                  {/* Brand Name */}
-                  <p className="text-sm text-center text-gray-900 font-normal w-full p-2 px-4 transition-colors duration-300 group-hover:bg-[#E0E0E3]">
-                    <span className="mt-[50px]">{brand.name}</span>
+                  {/* Spacer pushes name to bottom */}
+                  <div className="flex-grow" />
+
+                  {/* Brand Name - always at bottom */}
+                  <p className="text-sm text-center text-gray-900 font-normal w-full px-4 py-2 min-h-[40px] flex items-center justify-center transition-colors duration-300 group-hover:bg-[#E0E0E3]">
+                    {brand.name}
                   </p>
                 </Link>
               ))}
