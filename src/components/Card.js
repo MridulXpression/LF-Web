@@ -83,7 +83,7 @@ const ProductCard = ({ images, title, price, id, product, brand }) => {
               (title.split(" ").length > 5 ? "..." : "")}
           </h3>
 
-          <p className="text-sm font-medium text-gray-900 mb-1 font-myfont">
+          <p className="text-sm font-bold text-gray-900 mb-1 font-myfont">
             {brand}
           </p>
           <p className="text-gray-600 text-sm">Rs. {price}</p>
