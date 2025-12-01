@@ -66,7 +66,7 @@ const CategoryPage = () => {
                         id={product.id}
                         imageUrls={product.imageUrls}
                         title={product.title}
-                        brand={product.brand?.name}
+                        brand={product.brand?.name || ""}
                         rating={product.rating}
                         reviewCount={product.numReviews}
                         basePrice={product.basePrice}
