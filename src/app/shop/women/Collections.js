@@ -46,6 +46,7 @@ const CollectionSection = () => {
                       title={title}
                       price={price}
                       id={id}
+                      brand={product?.brand?.name}
                       // Pass the full product object if needed for modal
                       product={product}
                     />

@@ -44,6 +44,7 @@ const TrendingNowSection = () => {
                       images={images}
                       title={title}
                       price={price}
+                      brand={product?.brand?.name}
                       id={id}
                       // Pass the full product object if needed for modal
                       product={product}

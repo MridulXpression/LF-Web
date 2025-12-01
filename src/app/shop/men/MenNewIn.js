@@ -58,6 +58,7 @@ const NewInSection = () => {
                 key={product.id}
                 images={product.imageUrls}
                 title={product.title}
+                brand={product?.brand?.name}
                 price={product.basePrice}
                 id={product.id}
                 product={product}

@@ -44,6 +44,7 @@ const MenCollectionSection = () => {
                       key={id}
                       images={images}
                       title={title}
+                      brand={product?.brand?.name}
                       price={price}
                       id={id}
                       // Pass the full product object if needed for modal

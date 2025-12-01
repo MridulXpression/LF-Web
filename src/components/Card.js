@@ -10,7 +10,7 @@ import {
 import WishlistBoardModal from "./WishlistBoardModal";
 import Link from "next/link";
 
-const ProductCard = ({ images, title, price, id, product }) => {
+const ProductCard = ({ images, title, price, id, product, brand }) => {
   const dispatch = useDispatch();
   const [showWishlistModal, setShowWishlistModal] = useState(false);
 
@@ -78,9 +78,14 @@ const ProductCard = ({ images, title, price, id, product }) => {
 
         {/* Product Info */}
         <div className="px-6 py-4 text-center" style={{ height: "80px" }}>
-          <h3 className="text-sm md:text-lg font-medium text-gray-900 mb-1 font-myfont">
-            {title}
+          <h3 className="text-sm md:text-md font-medium text-gray-900 mb-1 font-myfont">
+            {title.split(" ").slice(0, 5).join(" ") +
+              (title.split(" ").length > 5 ? "..." : "")}
           </h3>
+
+          <p className="text-sm font-medium text-gray-900 mb-1 font-myfont">
+            {brand}
+          </p>
           <p className="text-gray-600 text-sm">Rs. {price}</p>
         </div>
       </div>
