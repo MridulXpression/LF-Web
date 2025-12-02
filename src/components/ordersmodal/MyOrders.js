@@ -6,11 +6,19 @@ import {
   RotateCcw,
   RefreshCw,
   Star,
+  Download,
 } from "lucide-react";
 import Image from "next/image";
 
 const OrderCard = ({ order, onAction, onClick }) => {
-  const { id, product, order: orderDetails, quantity, total } = order;
+  const {
+    id,
+    product,
+    order: orderDetails,
+    quantity,
+    total,
+    invoiceUrl,
+  } = order;
   const productImage = product?.imageUrls?.[0];
   const status = order.status;
 
@@ -87,15 +95,30 @@ const OrderCard = ({ order, onAction, onClick }) => {
         {/* Right side */}
         <div className="text-right">
           {isDelivered && (
-            <div
-              onClick={(e) => {
-                e.stopPropagation(); // prevent card click
-                onAction(order, "review");
-              }}
-              className="flex items-center gap-1 text-sm text-[#988BFF] hover:text-blue-700 mb-2 ml-auto cursor-pointer"
-            >
-              <Star className="w-4 h-4" />
-              <span>Rate & Review Product</span>
+            <div className="flex flex-col items-end">
+              <div
+                onClick={(e) => {
+                  e.stopPropagation(); // prevent card click
+                  onAction(order, "review");
+                }}
+                className="flex items-center gap-1 text-sm text-[#988BFF] hover:text-blue-700 mb-2 ml-auto cursor-pointer"
+              >
+                <Star className="w-4 h-4" />
+                <span>Rate & Review Product</span>
+              </div>
+
+              {invoiceUrl && (
+                <a
+                  onClick={(e) => e.stopPropagation()}
+                  href={invoiceUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-1 text-sm text-[#988BFF] hover:text-blue-700 mb-2 ml-auto cursor-pointer"
+                >
+                  <Download className="w-4 h-4" />
+                  <span>Download Invoice</span>
+                </a>
+              )}
             </div>
           )}
           <p className="text-sm text-gray-500">
