@@ -24,7 +24,7 @@ const Footer = () => {
           <div className="lg:col-span-1 md:col-span-2">
             <div className="flex items-center">
               <Image
-                src="/images/lafetch.png"
+                src="/images/Lafetch Logo.svg"
                 alt="LAFETCH Logo"
                 width={120}
                 height={40}
@@ -165,18 +165,10 @@ const Footer = () => {
             <ul className="space-y-3">
               <li>
                 <a
-                  href="#"
+                  href="/blogs"
                   className="text-gray-300 hover:text-white transition-colors text-sm"
                 >
-                  Product Blog
-                </a>
-              </li>
-              <li>
-                <a
-                  href="#"
-                  className="text-gray-300 hover:text-white transition-colors text-sm"
-                >
-                  Brand Blog
+                  Blogs
                 </a>
               </li>
               <li>
@@ -283,7 +275,7 @@ const Footer = () => {
             {/* Logo (Right) */}
             <div className="">
               <Image
-                src="/images/lafetch.png"
+                src="/images/Lafetch Logo.svg"
                 alt="LAFETCH Logo"
                 width={120} // adjust size
                 height={40}

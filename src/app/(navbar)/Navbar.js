@@ -144,7 +144,7 @@ const Navbar = () => {
 
                 <Link href="/" className="flex items-center">
                   <Image
-                    src="/images/logo.png"
+                    src="/images/Lafetch Logo.svg"
                     alt="LaFetch Logo"
                     width={80}
                     height={80}
