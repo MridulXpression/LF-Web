@@ -3,7 +3,7 @@ import FashionVideoBackground from "@/components/Banner";
 export default function MenBanner() {
   // Mock data inside the page
   const mockData = {
-    videoUrl: "/videos/men-banner.mp4", // keep the video in public folder
+    videoUrl: "/videos/Lafetch-Men's.mp4", // keep the video in public folder
     heading1: "Fetch your fashion in a flash",
     heading2: "Premium Jackets at 60 min",
   };
