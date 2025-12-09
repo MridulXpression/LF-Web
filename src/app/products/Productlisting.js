@@ -17,18 +17,19 @@ const ShopByCategoriesPage = () => {
   const [isFilterLoading, setIsFilterLoading] = useState(false);
   const [isSortLoading, setIsSortLoading] = useState(false);
 
+  // Subcategory
+  const subCategoryId = searchParams.get("subCategoryId");
+
   const genderValue = searchParams.get("gender");
-  const query = genderValue ? `gender=${genderValue}` : "";
+  // Only fetch general products if subCategoryId is not present
+  const query = !subCategoryId && genderValue ? `gender=${genderValue}` : "";
 
   const {
     products: allProducts,
     loading: isProductsLoading,
     hasMore,
     loadMore,
-  } = useProducts(query);
-
-  // Subcategory
-  const subCategoryId = searchParams.get("subCategoryId");
+  } = useProducts(!subCategoryId ? query : "");
   const subCategoryResponse = useGetProductBySubCategories(
     subCategoryId ? Number(subCategoryId) : null
   );
@@ -159,7 +160,8 @@ const ShopByCategoriesPage = () => {
           !isProductsLoading &&
           !isFilterApplied &&
           !searchQuery &&
-          !sortQuery
+          !sortQuery &&
+          !subCategoryId
         ) {
           loadMore();
         }
@@ -178,6 +180,7 @@ const ShopByCategoriesPage = () => {
     isFilterApplied,
     searchQuery,
     sortQuery,
+    subCategoryId,
     loadMore,
   ]);
 
@@ -519,7 +522,7 @@ const ShopByCategoriesPage = () => {
 
               {/* Infinite Scroll Observer Target */}
               <div ref={observerTarget} className="py-8 flex justify-center">
-                {hasMore && (
+                {hasMore && !subCategoryId && (
                   <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900"></div>
                 )}
               </div>
