@@ -26,6 +26,7 @@ const getMenuData = (categories) => {
     categories?.map((category) => ({
       title: category.name,
       sections: category.children.map((child) => ({
+        id: child.id,
         heading: child.name,
         items: child.children.map((subChild) => ({
           id: subChild.id,
@@ -246,9 +247,13 @@ const Navbar = () => {
                               <div className="flex-1 flex flex-wrap gap-x-4 gap-y-2">
                                 {menu.sections.map((section, idx) => (
                                   <div key={idx}>
-                                    <h3 className="text-sm font-semibold text-gray-900 ">
-                                      {section.heading}
-                                    </h3>
+                                    <Link
+                                      href={`/categories?categoryId=${section.id}`}
+                                    >
+                                      <h3 className="text-sm font-semibold text-gray-900 ">
+                                        {section.heading}
+                                      </h3>
+                                    </Link>
                                     <ul className="space-y-2">
                                       {section.items.map((item, i) => (
                                         <li key={i}>
@@ -379,9 +384,11 @@ const Navbar = () => {
                 <div className="pl-4">
                   {menu.sections.map((section, idx) => (
                     <div key={idx} className="mt-2">
-                      <p className="text-sm font-semibold text-black">
-                        {section.heading}
-                      </p>
+                      <Link href={`/categories?categoryId=${section.id}`}>
+                        <p className="text-sm font-semibold text-black">
+                          {section.heading}
+                        </p>
+                      </Link>
                       {section.items.map((item) => (
                         <Link
                           key={item.id}

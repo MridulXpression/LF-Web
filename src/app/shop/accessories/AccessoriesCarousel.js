@@ -14,13 +14,8 @@ const AccessoriesCarousel = () => {
     })) || [];
 
   if (!fetchBanners || fetchBanners.length === 0) {
-    return (
-      <div className="w-full bg-white relative min-h-[50vh] md:min-h-[60vh] lg:min-h-screen flex items-center justify-center">
-        <p className="text-center text-gray-600">Loading banners...</p>
-      </div>
-    );
+    return null;
   }
-
   return (
     <div>
       <BannerCarousel slides={slides} />

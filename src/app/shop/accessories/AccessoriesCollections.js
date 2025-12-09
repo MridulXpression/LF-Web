@@ -23,6 +23,11 @@ const AccessoriesCollectionSection = () => {
           const visibleProducts = collection.products?.slice(0, productsToShow);
           const hasMoreProducts = collection.products?.length > productsToShow;
 
+          // Don't show section if no products
+          if (!collection.products || collection.products.length === 0) {
+            return null;
+          }
+
           return (
             <section key={collection.id} className="mb-16">
               {/* Section Title */}

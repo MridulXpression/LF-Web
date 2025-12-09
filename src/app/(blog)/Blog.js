@@ -23,12 +23,8 @@ const TrendingBlog = () => {
       position: "bottom-left",
     })) || [];
 
-  if (loading) {
-    return (
-      <div className="flex justify-center bg-white items-center min-h-[100vh]">
-        <div className="w-12 h-12 border-4 border-t-transparent border-blue-500 rounded-full animate-spin"></div>
-      </div>
-    );
+  if (loading || !fetchBlogs || fetchBlogs.length === 0) {
+    return null;
   }
 
   return <FashionGrid data={data} title="TRENDING NOW " />;

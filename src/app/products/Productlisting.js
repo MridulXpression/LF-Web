@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import axiosHttp from "@/utils/axioshttp";
@@ -20,8 +20,12 @@ const ShopByCategoriesPage = () => {
   const genderValue = searchParams.get("gender");
   const query = genderValue ? `gender=${genderValue}` : "";
 
-  const { products: allProducts, loading: isProductsLoading } =
-    useProducts(query);
+  const {
+    products: allProducts,
+    loading: isProductsLoading,
+    hasMore,
+    loadMore,
+  } = useProducts(query);
 
   // Subcategory
   const subCategoryId = searchParams.get("subCategoryId");
@@ -50,6 +54,7 @@ const ShopByCategoriesPage = () => {
     })) || [];
 
   const [selectedBrands, setSelectedBrands] = useState(initialSelectedBrands);
+  const [expandedBrands, setExpandedBrands] = useState(false);
 
   // Price filters
   const minPriceParam = searchParams.get("minPrice") || "0";
@@ -67,8 +72,12 @@ const ShopByCategoriesPage = () => {
 
   const filterProducts = useFilterProducts();
   const filterRef = useRef(null);
+  const observerTarget = useRef(null);
 
   const [isFilterOpen, setIsFilterOpen] = useState(false);
+
+  // PRODUCT PRIORITY LOGIC - Define isLoading early
+  const isLoading = isProductsLoading;
 
   const toggleBrandSelection = (brandId) => {
     setSelectedBrands((prev) =>
@@ -140,6 +149,38 @@ const ShopByCategoriesPage = () => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [isFilterOpen]);
 
+  // INFINITE SCROLL - Intersection Observer
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (
+          entries[0].isIntersecting &&
+          hasMore &&
+          !isProductsLoading &&
+          !isFilterApplied &&
+          !searchQuery &&
+          !sortQuery
+        ) {
+          loadMore();
+        }
+      },
+      { threshold: 0.1 }
+    );
+
+    if (observerTarget.current) {
+      observer.observe(observerTarget.current);
+    }
+
+    return () => observer.disconnect();
+  }, [
+    hasMore,
+    isProductsLoading,
+    isFilterApplied,
+    searchQuery,
+    sortQuery,
+    loadMore,
+  ]);
+
   // APPLY FILTERS AND KEEP SORT PARAM IF PRESENT
   const handleApplyFilters = async () => {
     setIsFilterLoading(true); // START LOADING
@@ -160,7 +201,7 @@ const ShopByCategoriesPage = () => {
     if (priceRange.max !== "10000") params.set("maxPrice", priceRange.max);
     else params.delete("maxPrice");
 
-    // Remove subcategory explicitly
+    // Remove subcategory explicitly but KEEP sort param
     params.delete("subCategoryId");
 
     router.push(`/products?${params.toString()}`);
@@ -199,6 +240,7 @@ const ShopByCategoriesPage = () => {
 
     setIsSortLoading(true);
 
+    // Remove subcategory but KEEP brands, minPrice, maxPrice params
     params.delete("subCategoryId");
 
     switch (value) {
@@ -225,7 +267,6 @@ const ShopByCategoriesPage = () => {
   };
 
   // PRODUCT PRIORITY LOGIC
-  const isLoading = isProductsLoading;
   let products = [];
 
   if (isFilterApplied) {
@@ -286,21 +327,31 @@ const ShopByCategoriesPage = () => {
           <div className="mb-8">
             <h3 className="text-lg font-semibold text-gray-800 mb-2">Brand</h3>
             <div className="space-y-2">
-              {brands.map((brand) => (
-                <label
-                  key={brand.id}
-                  className="flex items-center space-x-2 text-sm text-gray-700"
-                >
-                  <input
-                    type="checkbox"
-                    checked={selectedBrands.includes(brand.id)}
-                    onChange={() => toggleBrandSelection(brand.id)}
-                    className="w-4 h-4 accent-black"
-                  />
-                  <span>{brand.name}</span>
-                </label>
-              ))}
+              {brands
+                .slice(0, expandedBrands ? brands.length : 5)
+                .map((brand) => (
+                  <label
+                    key={brand.id}
+                    className="flex items-center space-x-2 text-sm text-gray-700"
+                  >
+                    <input
+                      type="checkbox"
+                      checked={selectedBrands.includes(brand.id)}
+                      onChange={() => toggleBrandSelection(brand.id)}
+                      className="w-4 h-4 accent-black"
+                    />
+                    <span>{brand.name}</span>
+                  </label>
+                ))}
             </div>
+            {brands.length > 5 && (
+              <button
+                onClick={() => setExpandedBrands(!expandedBrands)}
+                className="mt-3 text-sm text-blue-600 hover:text-blue-800 font-semibold cursor-pointer"
+              >
+                {expandedBrands ? "View Less" : "View More"}
+              </button>
+            )}
           </div>
 
           {/* Price Range */}
@@ -384,7 +435,7 @@ const ShopByCategoriesPage = () => {
           )}
 
           {/* LOADING */}
-          {isLoading && !isSearching && (
+          {isLoading && !isSearching && !isFilterLoading && (
             <div className="flex justify-center items-center h-64">
               <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900"></div>
             </div>
@@ -403,64 +454,76 @@ const ShopByCategoriesPage = () => {
           )}
 
           {/* NO PRODUCTS */}
-          {!isLoading && !isSearching && products?.length === 0 && (
-            <div className="flex flex-col justify-center items-center h-64 text-center">
-              <div className="text-gray-900 text-xl font-semibold mb-2">
-                {isFilterApplied
-                  ? "No products available according to selected filters."
-                  : "No products found"}
+          {!isLoading &&
+            !isSearching &&
+            !isFilterLoading &&
+            products?.length === 0 && (
+              <div className="flex flex-col justify-center items-center h-64 text-center">
+                <div className="text-gray-900 text-xl font-semibold mb-2">
+                  {isFilterApplied
+                    ? "No products available according to selected filters."
+                    : "No products found"}
+                </div>
+                <button
+                  onClick={() => {
+                    setIsFilterApplied(false);
+                    setFilteredProducts([]);
+                    setSearchResults(null);
+                    router.push("/products");
+                  }}
+                  className="px-4 py-2 bg-gray-900 text-white rounded hover:bg-gray-800 cursor-pointer"
+                >
+                  Browse All Products
+                </button>
               </div>
-              <button
-                onClick={() => {
-                  setIsFilterApplied(false);
-                  setFilteredProducts([]);
-                  setSearchResults(null);
-                  router.push("/products");
-                }}
-                className="px-4 py-2 bg-gray-900 text-white rounded hover:bg-gray-800 cursor-pointer"
-              >
-                Browse All Products
-              </button>
-            </div>
-          )}
+            )}
 
           {/* PRODUCT GRID */}
           {!isLoading && !isSearching && products?.length > 0 && (
-            <div
-              className="
-                grid 
-                grid-cols-2 
-                sm:grid-cols-2
-                md:grid-cols-3
-                lg:grid-cols-3
-                xl:grid-cols-4 
-                gap-6 sm:gap-8 lg:gap-10
-              "
-            >
-              {products.map((product) => {
-                const mrp = Number(product.mrp);
-                const basePrice = Number(product.basePrice);
-                const discountPercentage =
-                  !isNaN(mrp) && !isNaN(basePrice) && mrp > 0
-                    ? Math.round(((mrp - basePrice) / mrp) * 100)
-                    : 0;
+            <>
+              <div
+                className="
+                  grid 
+                  grid-cols-2 
+                  sm:grid-cols-2
+                  md:grid-cols-3
+                  lg:grid-cols-3
+                  xl:grid-cols-4 
+                  gap-6 sm:gap-8 lg:gap-10
+                "
+              >
+                {products.map((product, index) => {
+                  const mrp = Number(product.mrp);
+                  const basePrice = Number(product.basePrice);
+                  const discountPercentage =
+                    !isNaN(mrp) && !isNaN(basePrice) && mrp > 0
+                      ? Math.round(((mrp - basePrice) / mrp) * 100)
+                      : 0;
 
-                return (
-                  <ListingCard
-                    key={product.id}
-                    imageUrls={product.imageUrls || []}
-                    title={product.title}
-                    brand={product.brand?.name || ""}
-                    rating={product.rating || 0}
-                    reviewCount={product.numReviews?.toString() || ""}
-                    basePrice={basePrice}
-                    mrp={mrp}
-                    discountPercentage={`${discountPercentage}`}
-                    id={product.id}
-                  />
-                );
-              })}
-            </div>
+                  return (
+                    <ListingCard
+                      key={`${product.id}-${index}`}
+                      imageUrls={product.imageUrls || []}
+                      title={product.title}
+                      brand={product.brand?.name || ""}
+                      rating={product.rating || 0}
+                      reviewCount={product.numReviews?.toString() || ""}
+                      basePrice={basePrice}
+                      mrp={mrp}
+                      discountPercentage={`${discountPercentage}`}
+                      id={product.id}
+                    />
+                  );
+                })}
+              </div>
+
+              {/* Infinite Scroll Observer Target */}
+              <div ref={observerTarget} className="py-8 flex justify-center">
+                {hasMore && (
+                  <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900"></div>
+                )}
+              </div>
+            </>
           )}
         </div>
       </div>
