@@ -31,8 +31,8 @@ const QuickModal = ({ isOpen, onClose }) => {
             <Image
               src="/images/quick.png"
               alt="Quick Icon"
-              width={80}
-              height={80}
+              width={120}
+              height={120}
               className="object-contain"
             />
             {/* <Image

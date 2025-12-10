@@ -43,6 +43,8 @@ const ListingCard = ({
         {/* Product Image with Link */}
         <Link
           href={`/products/${id}`}
+          target="_blank"
+          rel="noopener noreferrer"
           onClick={() => localStorage.setItem("ProductId", id)}
         >
           <div className="relative bg-gray-50 overflow-hidden group flex-shrink-0 h-[300px] cursor-pointer">

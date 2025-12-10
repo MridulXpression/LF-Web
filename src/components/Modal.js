@@ -141,6 +141,8 @@ const ProductModal = () => {
             <div>
               <Link
                 href={`/products/${product.id} `}
+                target="_blank"
+                rel="noopener noreferrer"
                 onClick={() => localStorage.setItem("ProductId", id)}
                 className="w-full sm:w-[120px] bg-black text-white py-2 px-4 rounded-md transition-colors font-medium text-sm"
               >
