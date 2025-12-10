@@ -1,6 +1,12 @@
 "use client";
 import React, { useState } from "react";
-import { Instagram, Twitter, Facebook, MessageCircle } from "lucide-react";
+import {
+  Instagram,
+  Twitter,
+  Facebook,
+  MessageCircle,
+  Youtube,
+} from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -204,7 +210,9 @@ const Footer = () => {
 
               <div className="flex space-x-4 mt-14 justify-end">
                 <a
-                  href="#"
+                  href="https://www.instagram.com/stylewithlafetch/"
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="hover:opacity-80 transition-opacity"
                   aria-label="Instagram"
                 >
@@ -218,21 +226,9 @@ const Footer = () => {
                 </a>
 
                 <a
-                  href="#"
-                  className="hover:opacity-80 transition-opacity"
-                  aria-label="Twitter"
-                >
-                  <Image
-                    src="/icons/twitter.png"
-                    alt="Twitter"
-                    width={15}
-                    height={15}
-                    className="mt-[3px]"
-                  />
-                </a>
-
-                <a
-                  href="#"
+                  href="https://www.facebook.com/p/LaFetch-61555807824172/"
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="hover:opacity-80 transition-opacity"
                   aria-label="Facebook"
                 >
@@ -246,17 +242,13 @@ const Footer = () => {
                 </a>
 
                 <a
-                  href="#"
+                  href="https://www.youtube.com/@LaFetch"
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="hover:opacity-80 transition-opacity"
-                  aria-label="WhatsApp"
+                  aria-label="YouTube"
                 >
-                  <Image
-                    src="/icons/whatsapp.png"
-                    alt="WhatsApp"
-                    width={20}
-                    height={20}
-                    className="w-5 h-5"
-                  />
+                  <Youtube className="w-5 h-5 text-white" />
                 </a>
               </div>
             </div>

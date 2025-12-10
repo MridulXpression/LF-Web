@@ -103,6 +103,16 @@ const FashionGrid = ({ data, title = "TRENDING NOW" }) => {
       <div className="flex flex-col md:flex-row max-w-full">
         {firstRowItems.map((item, index) => {
           const fixedSize = fixedSizes[index];
+          let position = item.position || "bottom-left";
+          let titleColor = item.titleColor;
+          let textColor = item.textColor;
+
+          // Row 1, Item 1: text at top
+          if (index === 0) {
+            position = "top-left";
+          }
+          // Row 1, Item 2 & 3: text at bottom (default)
+
           return (
             <Link
               key={item.id}
@@ -118,18 +128,13 @@ const FashionGrid = ({ data, title = "TRENDING NOW" }) => {
                 height={fixedSize.height}
                 className="w-full h-full object-fill group-hover:scale-120 transition-transform duration-300"
               />
-              <div
-                className={getTextPositionClasses(
-                  item.position || "bottom-left"
-                )}
-              >
-                <h2
-                  className={getTitleClasses(fixedSize.size, item.titleColor)}
-                >
+              <div className={getTextPositionClasses(position)}>
+                <h2 className={getTitleClasses(fixedSize.size, titleColor)}>
                   {item.title}
                 </h2>
-                <p className={getDescriptionClasses(item.textColor)}>
-                  {item.description}
+                <p className={getDescriptionClasses(textColor)}>
+                  {item.description ||
+                    "Read More hxjhd jcjdjc hkdjkjc kjkdj jkjckj "}
                 </p>
               </div>
             </Link>
@@ -141,6 +146,19 @@ const FashionGrid = ({ data, title = "TRENDING NOW" }) => {
       <div className="flex flex-col md:flex-row max-w-full">
         {secondRowItems.map((item, index) => {
           const fixedSize = fixedSizes[index + 3];
+          let position = item.position || "bottom-left";
+          let titleColor = item.titleColor;
+          let textColor = item.textColor;
+
+          // Item 4: text at bottom (default)
+          // Item 5: text at top with red title
+          if (index === 1) {
+            position = "top-left";
+            titleColor = "text-[#773726]";
+            textColor = "text-[#0F0F0F]";
+          }
+          // Item 6: text at bottom (default)
+
           return (
             <Link
               key={item.id}
@@ -156,18 +174,12 @@ const FashionGrid = ({ data, title = "TRENDING NOW" }) => {
                 height={fixedSize.height}
                 className="w-full h-full object-fill group-hover:scale-120 transition-transform duration-300"
               />
-              <div
-                className={getTextPositionClasses(
-                  item.position || "bottom-left"
-                )}
-              >
-                <h2
-                  className={getTitleClasses(fixedSize.size, item.titleColor)}
-                >
+              <div className={getTextPositionClasses(position)}>
+                <h2 className={getTitleClasses(fixedSize.size, titleColor)}>
                   {item.title}
                 </h2>
-                <p className={getDescriptionClasses(item.textColor)}>
-                  {item.description}
+                <p className={getDescriptionClasses(textColor)}>
+                  {item.description || "hshdihiceidiiiicjsidje idijiweodoei "}
                 </p>
               </div>
             </Link>

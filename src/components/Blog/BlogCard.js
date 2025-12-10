@@ -3,19 +3,8 @@ import Image from "next/image";
 import Link from "next/link";
 
 const BlogCard = ({ blog }) => {
-  const handleClick = () => {
-    if (blog?.id) {
-      localStorage.setItem("selectedBlogId", blog.id);
-    }
-  };
-
   return (
-    <Link
-      href={`/blogs/${blog.id}`}
-      onClick={handleClick}
-      className="block"
-      target="_blank"
-    >
+    <Link href={`/blogs/${blog.id}`} className="block">
       <div className="bg-white overflow-hidden group cursor-pointer hover:shadow-lg transition-shadow duration-300">
         {/* Blog Image */}
         <div className="relative w-full h-[350px] overflow-hidden">

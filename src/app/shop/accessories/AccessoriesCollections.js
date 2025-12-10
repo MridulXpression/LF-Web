@@ -31,7 +31,7 @@ const AccessoriesCollectionSection = () => {
           return (
             <section key={collection.id} className="mb-16">
               {/* Section Title */}
-              <h2 className="text-3xl md:text-4xl font-bold text-center text-black mb-12 tracking-wide">
+              <h2 className="text-[20px] md:text-4xl font-bold text-center text-black mb-12 tracking-wide">
                 {collection.name} {/* dynamic title */}
               </h2>
 

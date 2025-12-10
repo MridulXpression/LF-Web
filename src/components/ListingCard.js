@@ -39,7 +39,7 @@ const ListingCard = ({
 
   return (
     <>
-      <div className="relative overflow-hidden md:w-[220px] md:h-[500px] flex flex-col">
+      <div className="relative overflow-hidden md:w-[220px] md:h-[430px] flex flex-col">
         {/* Product Image with Link */}
         <Link
           href={`/products/${id}`}

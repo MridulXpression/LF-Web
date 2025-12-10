@@ -1,5 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
+import { useParams } from "next/navigation";
 import axiosHttp from "@/utils/axioshttp";
 import { endPoints } from "@/utils/endpoints"; // adjust import path as needed
 import BlogPostComponent from "@/components/Blog/BlogPost";
@@ -7,15 +8,9 @@ import Navbar from "@/app/(navbar)/Navbar";
 import Footer from "@/components/footer";
 
 export default function BlogDetailsPage() {
+  const params = useParams();
   const [blogData, setBlogData] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [blogId, setBlogId] = useState(null);
-
-  useEffect(() => {
-    // Access localStorage inside useEffect to avoid hydration errors
-    const storedBlogId = localStorage.getItem("selectedBlogId");
-    setBlogId(storedBlogId);
-  }, []);
 
   const getBlogDetails = async (id) => {
     try {
@@ -23,14 +18,20 @@ export default function BlogDetailsPage() {
       const data = res?.data?.data;
       setBlogData(data);
     } catch (error) {
+      console.error("Error fetching blog:", error);
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    if (blogId) getBlogDetails(blogId);
-  }, [blogId]);
+    if (params?.id && params.id[0]) {
+      setLoading(true);
+      setBlogData(null);
+      const blogId = params.id[0];
+      getBlogDetails(blogId);
+    }
+  }, [params?.id]);
 
   if (loading) {
     return (

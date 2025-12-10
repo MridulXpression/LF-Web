@@ -3,12 +3,6 @@ import React from "react";
 import Link from "next/link";
 
 const FashionBlogHero = ({ blogPost, loading }) => {
-  const handleBlogClick = () => {
-    if (blogPost?.id) {
-      localStorage.setItem("selectedBlogId", blogPost.id);
-    }
-  };
-
   return (
     <div className="relative w-full bg-white">
       {/* Top Banner */}
@@ -21,12 +15,7 @@ const FashionBlogHero = ({ blogPost, loading }) => {
       ></div>
 
       {blogPost && (
-        <Link
-          href={`/blogs/${blogPost.id}`}
-          target="_blank"
-          className="block"
-          onClick={handleBlogClick} // ✅ Save ID to localStorage when clicked
-        >
+        <Link href={`/blogs/${blogPost.id}`} className="block">
           <div
             className="relative max-w-[1400px] mx-auto cursor-pointer"
             style={{

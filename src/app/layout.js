@@ -15,7 +15,7 @@ const geistMono = Geist_Mono({
 
 export const metadata = {
   title: "LaFetch",
-  description: "Built with Next.js, Redux, Tailwind",
+  description: "LaFetch - Your one-stop online shopping destination",
 };
 
 export default function RootLayout({ children }) {

@@ -292,6 +292,14 @@ const ShopByCategoriesPage = () => {
 
   return (
     <div className="min-h-screen bg-white relative">
+      {/* BACKDROP BLUR */}
+      {isFilterOpen && (
+        <div
+          className="fixed inset-0 bg-black/10  bg-opacity-50 backdrop-blur-sm z-20 lg:hidden"
+          onClick={() => setIsFilterOpen(false)}
+        ></div>
+      )}
+
       {/* MOBILE FILTER BUTTON */}
       <button
         className="lg:hidden fixed bottom-4 left-4 z-10 bg-black text-white px-4 py-2 rounded-full flex items-center gap-2 shadow-lg"
@@ -301,6 +309,7 @@ const ShopByCategoriesPage = () => {
       </button>
 
       <div className="max-w-[1400px] mx-auto flex">
+        {/* FILTER SIDEBAR */}
         {/* FILTER SIDEBAR */}
         <div
           ref={filterRef}
