@@ -1,5 +1,6 @@
 "use client";
 import React, { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { useSelector } from "react-redux";
 import AddressModal from "@/components/AddressModal";
 import DeleteConfirmModal from "@/components/DeleteModal";
@@ -19,6 +20,23 @@ const SavedAddresses = () => {
 
   const userInfo = useSelector((state) => state.user?.userInfo);
   const userId = userInfo?.id;
+  const router = useRouter();
+
+  // Redirect if user is not authenticated
+  useEffect(() => {
+    if (!userId) {
+      router.push("/"); // Redirect to home or login page
+    }
+  }, [userId, router]);
+
+  // Show loading while checking authentication
+  if (!userId) {
+    return (
+      <div className="flex justify-center items-center min-h-[60vh]">
+        <div className="w-12 h-12 border-4 border-t-transparent border-blue-500 rounded-full animate-spin"></div>
+      </div>
+    );
+  }
 
   useEffect(() => {
     if (userId) {

@@ -1,5 +1,6 @@
 "use client";
 import React, { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import OrderCard from "@/components/ordersmodal/MyOrders";
 import axiosHttp from "@/utils/axioshttp";
 import { useSelector, useDispatch } from "react-redux";
@@ -30,8 +31,24 @@ const MyOrders = () => {
 
   const userInfo = useSelector((state) => state.user?.userInfo);
   const userId = userInfo?.id;
+  const router = useRouter();
 
-  // Redux modal state
+  // Redirect if user is not authenticated
+  useEffect(() => {
+    if (!userId) {
+      router.push("/"); // Redirect to home or login page
+    }
+  }, [userId, router]);
+
+  // Show loading while checking authentication
+  if (!userId) {
+    return (
+      <div className="flex justify-center items-center min-h-[60vh]">
+        <div className="w-12 h-12 border-4 border-t-transparent border-blue-500 rounded-full animate-spin"></div>
+      </div>
+    );
+  }
+
   const {
     openReturnModal: isReturnOpen,
     cancelModal: isCancelOpen,
