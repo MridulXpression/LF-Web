@@ -122,7 +122,7 @@ const Footer = () => {
             <ul className="space-y-3">
               <li>
                 <a
-                  href="https://www.la-fetch.com/privacy-policy"
+                  href="/privacy-policy"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-gray-300 hover:text-white transition-colors text-sm"

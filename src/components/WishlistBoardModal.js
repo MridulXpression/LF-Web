@@ -208,17 +208,17 @@ const CreateBoardModal = ({ productData, onClose }) => {
         </div>
 
         {/* Right Panel - Product Preview */}
-        <div className="w-80 bg-gray-50 p-6 flex flex-col">
+        <div className="w-80 bg-gray-50 p-4 flex flex-col">
           {productData ? (
             <div className="flex flex-col max-h-full">
-              <div className="max-h-[300px] overflow-hidden mb-4">
+              <div className="flex-shrink-0 mb-4 flex items-center justify-center ">
                 {productData.imageUrls?.[0] ? (
                   <Image
                     src={productData.imageUrls[0]}
                     alt={productData.title || "Product Image"}
                     width={250}
                     height={250}
-                    className="object-cover"
+                    className="object-contain max-w-full max-h-[250px]"
                   />
                 ) : (
                   <div className="w-full h-64 bg-gray-200 flex items-center justify-center text-gray-500">
