@@ -10,7 +10,7 @@ import {
 import WishlistBoardModal from "./WishlistBoardModal";
 import Link from "next/link";
 
-const ProductCard = ({ images, title, price, id, product, brand }) => {
+const ProductCard = ({ images, title, price, id, product, brand, mrp }) => {
   const dispatch = useDispatch();
   const [showWishlistModal, setShowWishlistModal] = useState(false);
 
@@ -80,15 +80,25 @@ const ProductCard = ({ images, title, price, id, product, brand }) => {
 
         {/* Product Info */}
         <div className="px-6 py-4 text-center" style={{ height: "80px" }}>
-          <h3 className="text-sm md:text-md font-medium text-gray-900 mb-1 font-myfont">
+          <h3 className="text-sm md:text-md  text-black mb-1 font-bold">
             {title.split(" ").slice(0, 5).join(" ") +
               (title.split(" ").length > 5 ? "..." : "")}
           </h3>
+          <p className="text-sm  text-gray-900 mb-1 font-myfont">{brand}</p>
 
-          <p className="text-sm font-bold text-gray-900 mb-1 font-myfont">
-            {brand}
-          </p>
-          <p className="text-gray-600 text-sm">Rs. {price}</p>
+          <div className="flex flex-col items-center gap-1">
+            <p className="text-black text-sm font-bold">Rs. {price}</p>
+            {mrp && mrp > price && (
+              <>
+                <span className="text-gray-600 text-sm line-through">
+                  Rs. {mrp}
+                </span>
+                <span className="text-red-600 text-xs font-bold">
+                  {Math.round(((mrp - price) / mrp) * 100)}% off
+                </span>
+              </>
+            )}
+          </div>
         </div>
       </div>
 

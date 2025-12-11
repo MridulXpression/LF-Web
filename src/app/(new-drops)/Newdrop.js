@@ -45,13 +45,13 @@ const NewInSection = () => {
                       Explore All →
                     </Link>
                   </div>
-
+                  {/* 
                   <h3 className="mt-2 text-sm md:text-lg text-black text-center">
                     {product.title}
                   </h3>
                   <p className="text-gray-600 text-center text-sm">
                     Rs. {product.basePrice}
-                  </p>
+                  </p> */}
                 </div>
               );
             }
@@ -63,6 +63,7 @@ const NewInSection = () => {
                 title={product.title}
                 brand={product?.brand?.name}
                 price={product.basePrice}
+                mrp={product.mrp}
                 id={product.id}
                 product={product}
               />
