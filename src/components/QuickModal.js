@@ -2,8 +2,30 @@
 
 import { X } from "lucide-react";
 import Image from "next/image";
+import { useEffect, useState } from "react";
 
 const QuickModal = ({ isOpen, onClose }) => {
+  const [locationStatus, setLocationStatus] = useState("loading");
+  // loading → asking browser
+  // success → got location
+  // error → user denied or failed
+
+  useEffect(() => {
+    if (!isOpen) return;
+
+    // Ask browser for location
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        console.log("User Location:", pos.coords);
+        setLocationStatus("success");
+      },
+      (err) => {
+        console.log("Location Error:", err);
+        setLocationStatus("error");
+      }
+    );
+  }, [isOpen]);
+
   if (!isOpen) return null;
 
   return (
@@ -24,9 +46,9 @@ const QuickModal = ({ isOpen, onClose }) => {
           <X className="w-6 h-6" />
         </button>
 
-        {/* Modal Content */}
+        {/* Content */}
         <div className="p-8 text-center">
-          {/* Icons Container */}
+          {/* Icon */}
           <div className="flex items-center justify-center gap-4 mb-6">
             <Image
               src="/images/quick.png"
@@ -35,23 +57,40 @@ const QuickModal = ({ isOpen, onClose }) => {
               height={120}
               className="object-contain"
             />
-            {/* <Image
-              src="/images/logo.png"
-              alt="LaFetch Logo"
-              width={80}
-              height={80}
-              className="object-contain"
-            /> */}
           </div>
 
-          {/* Message */}
-          <p className="text-gray-700 text-lg leading-relaxed">
-            Currently out of your area's league.
-            <br />
-            <span className="font-semibold text-purple-600">
-              Manifest LaFetch harder.
-            </span>
-          </p>
+          {/* STEP 1 — Asking for location */}
+          {locationStatus === "loading" && (
+            <p className="text-gray-700 text-lg">
+              Asking browser for your location…
+              <br />
+              <span className="text-sm text-gray-500">
+                Please click **Allow** to continue.
+              </span>
+            </p>
+          )}
+
+          {/* STEP 2 — After we get location */}
+          {locationStatus === "success" && (
+            <p className="text-gray-700 text-lg leading-relaxed">
+              Currently out of your area's league.
+              <br />
+              <span className="font-semibold text-purple-600">
+                Manifest LaFetch harder.
+              </span>
+            </p>
+          )}
+
+          {/* STEP 3 — If user denies location */}
+          {locationStatus === "error" && (
+            <p className="text-red-600 text-lg leading-relaxed">
+              Location access denied.
+              <br />
+              <span className="text-gray-600 text-sm">
+                Please allow location to check your area.
+              </span>
+            </p>
+          )}
         </div>
       </div>
     </>
