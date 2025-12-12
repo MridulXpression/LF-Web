@@ -22,7 +22,6 @@ import {
 
 const MyOrders = () => {
   const [orders, setOrders] = useState([]);
-  const [loading, setLoading] = useState(true);
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [selectedOrderId, setSelectedOrderId] = useState(null);
   const [activeModal, setActiveModal] = useState(null); // for review only
@@ -40,15 +39,6 @@ const MyOrders = () => {
     }
   }, [userId, router]);
 
-  // Show loading while checking authentication
-  if (!userId) {
-    return (
-      <div className="flex justify-center items-center min-h-[60vh]">
-        <div className="w-12 h-12 border-4 border-t-transparent border-blue-500 rounded-full animate-spin"></div>
-      </div>
-    );
-  }
-
   const {
     openReturnModal: isReturnOpen,
     cancelModal: isCancelOpen,
@@ -61,15 +51,12 @@ const MyOrders = () => {
   // Fetch orders
   const fetchOrders = async () => {
     try {
-      setLoading(true);
       const response = await axiosHttp.get(`/order-history/${userId}`);
       if (response.data.status === 200) {
         setOrders(response.data.data);
       }
     } catch (error) {
       console.error("Failed to fetch orders:", error);
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -108,15 +95,6 @@ const MyOrders = () => {
     setSelectedOrderId(null);
     setViewMode("list");
   };
-
-  // Loading spinner
-  if (loading) {
-    return (
-      <div className="flex justify-center items-center min-h-[60vh]">
-        <div className="w-12 h-12 border-4 border-t-transparent border-blue-500 rounded-full animate-spin"></div>
-      </div>
-    );
-  }
 
   if (viewMode === "detail" && selectedOrderId) {
     return (

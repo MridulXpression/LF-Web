@@ -23,7 +23,6 @@ const WishlistProductCard = () => {
     }
   }, [getBoards?.data]);
 
-  if (getBoards?.isLoading) return <div>Loading...</div>;
   if (getBoards?.error) return <div>Error loading products</div>;
 
   const handleDelete = async (productId) => {

@@ -37,15 +37,6 @@ const BrandProduct = () => {
     return (product.title || "").toString().toLowerCase().includes(q);
   });
 
-  // Show loading state
-  if (getBrandsProducts?.loading) {
-    return (
-      <div className="min-h-screen bg-white flex items-center justify-center">
-        <p className="text-lg">Loading...</p>
-      </div>
-    );
-  }
-
   // Show error state
   if (getBrandsProducts?.error) {
     return (

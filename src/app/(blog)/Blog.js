@@ -1,17 +1,10 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React from "react";
 import useBlog from "@/hooks/useBlog";
 import FashionGrid from "@/components/Blog";
 
 const TrendingBlog = () => {
-  const [loading, setLoading] = useState(true);
   const fetchBlogs = useBlog();
-
-  useEffect(() => {
-    if (fetchBlogs && fetchBlogs.length > 0) {
-      setLoading(false);
-    }
-  }, [fetchBlogs]);
 
   const data =
     fetchBlogs?.map((blog, index) => ({
@@ -23,11 +16,11 @@ const TrendingBlog = () => {
       position: "bottom-left",
     })) || [];
 
-  if (loading || !fetchBlogs || fetchBlogs.length === 0) {
-    return null;
+  if (!fetchBlogs || fetchBlogs.length === 0) {
+    return null; // no content
   }
 
-  return <FashionGrid data={data} title="TRENDING NOW " />;
+  return <FashionGrid data={data} title="TRENDING NOW" />;
 };
 
 export default TrendingBlog;

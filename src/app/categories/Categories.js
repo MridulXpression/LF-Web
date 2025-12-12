@@ -12,12 +12,8 @@ const CategoryPage = () => {
   const { categoryProducts, isCategoryLoading } =
     useCategoryProducts(categoryId);
 
-  if (isCategoryLoading || !categoryProducts) {
-    return (
-      <div className="flex bg-white  justify-center items-center min-h-[100vh]">
-        <div className="w-12 h-12 border-4 border-t-transparent border-blue-500 rounded-full animate-spin"></div>
-      </div>
-    );
+  if (!categoryProducts) {
+    return null;
   }
 
   return (

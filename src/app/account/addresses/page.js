@@ -11,7 +11,6 @@ import { Edit2, Trash2 } from "lucide-react";
 const SavedAddresses = () => {
   const [addresses, setAddresses] = useState([]);
   const [selectedAddressId, setSelectedAddressId] = useState(null);
-  const [loading, setLoading] = useState(true);
   const [isAddressModalOpen, setIsAddressModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [editingAddress, setEditingAddress] = useState(null);
@@ -29,15 +28,6 @@ const SavedAddresses = () => {
     }
   }, [userId, router]);
 
-  // Show loading while checking authentication
-  if (!userId) {
-    return (
-      <div className="flex justify-center items-center min-h-[60vh]">
-        <div className="w-12 h-12 border-4 border-t-transparent border-blue-500 rounded-full animate-spin"></div>
-      </div>
-    );
-  }
-
   useEffect(() => {
     if (userId) {
       fetchAddresses();
@@ -46,14 +36,12 @@ const SavedAddresses = () => {
 
   const fetchAddresses = async () => {
     try {
-      setLoading(true);
       const response = await axiosHttp.get(`/profile/addresses/${userId}`);
       if (response.data.status === 200 && response.data.data) {
         setAddresses(response.data.data);
       }
-      setLoading(false);
     } catch (error) {
-      setLoading(false);
+      console.error("Failed to fetch addresses:", error);
     }
   };
 
@@ -115,15 +103,6 @@ const SavedAddresses = () => {
       setDeleteLoading(false);
     }
   };
-
-  // Loading spinner
-  if (loading) {
-    return (
-      <div className="flex justify-center items-center min-h-[60vh]">
-        <div className="w-12 h-12 border-4 border-t-transparent border-blue-500 rounded-full animate-spin"></div>
-      </div>
-    );
-  }
 
   return (
     <div className="bg-white    p-8">
