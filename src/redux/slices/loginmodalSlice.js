@@ -2,6 +2,8 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
   phoneAuthModal: false,
+  phoneAuthSource: null, // Track where the modal was opened from
+  phoneAuthModalClosing: false, // Track if modal is closing to prevent re-opening
   wishlistModal: false,
   productViewModal: false,
   openReturnModal: false,
@@ -15,14 +17,25 @@ const modalSlice = createSlice({
   initialState,
   reducers: {
     // Phone Auth Modal
-    openPhoneAuthModal: (state) => {
-      state.phoneAuthModal = true;
+    openPhoneAuthModal: (state, action) => {
+      // Only open if not currently closing
+      if (!state.phoneAuthModalClosing) {
+        state.phoneAuthModal = true;
+        state.phoneAuthSource = action.payload || "unknown"; // Track source
+      }
     },
     closePhoneAuthModal: (state) => {
       state.phoneAuthModal = false;
+      state.phoneAuthSource = null;
+      state.phoneAuthModalClosing = false;
+    },
+    setPhoneAuthModalClosing: (state, action) => {
+      state.phoneAuthModalClosing = action.payload;
     },
     togglePhoneAuthModal: (state) => {
-      state.phoneAuthModal = !state.phoneAuthModal;
+      if (!state.phoneAuthModalClosing) {
+        state.phoneAuthModal = !state.phoneAuthModal;
+      }
     },
 
     // Wishlist Modal
@@ -79,6 +92,7 @@ export const {
   openPhoneAuthModal,
   closePhoneAuthModal,
   togglePhoneAuthModal,
+  setPhoneAuthModalClosing,
   openWishlistModal,
   closeWishlistModal,
   openProductViewModal,

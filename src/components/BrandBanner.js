@@ -33,14 +33,7 @@ const HeroBanner = ({ videoURL, brandName, description }) => {
           </h1>
 
           {/* Right: Description */}
-          <p className="text-gray-600 w-[70%]">
-            Our brand blends creativity and craftsmanship to deliver
-            premium-quality products that redefine style and comfort. With
-            attention to detail and a focus on sustainability, we aim to inspire
-            confidence through every piece we create. From design to delivery,
-            our commitment to excellence ensures a seamless experience that
-            reflects authenticity and innovation. {/* {Description}   */}
-          </p>
+          <p className="text-gray-600 w-[70%]">{description}</p>
         </div>
       </div>
     </div>

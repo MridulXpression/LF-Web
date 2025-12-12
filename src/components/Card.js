@@ -37,7 +37,7 @@ const ProductCard = ({ images, title, price, id, product, brand, mrp }) => {
 
   return (
     <>
-      <div className="relative bg-white overflow-hidden w-[160px] h-[400px] md:w-[300px] md:h-[480px]">
+      <div className="relative bg-white overflow-hidden w-[160px] h-[400px] md:w-[300px] md:h-[500px]">
         {/* Product Image */}
         <div className="relative bg-gray-50 overflow-hidden group w-[160px] h-[240px] md:w-[300px] md:h-[380px]">
           <Link
@@ -89,14 +89,14 @@ const ProductCard = ({ images, title, price, id, product, brand, mrp }) => {
           <div className="flex flex-col items-center gap-1">
             <p className="text-black text-sm font-bold">Rs. {price}</p>
             {mrp && mrp > price && (
-              <>
+              <div className="flex items-center gap-1">
                 <span className="text-gray-600 text-sm line-through">
                   Rs. {mrp}
                 </span>
-                <span className="text-red-600 text-xs font-bold">
+                <span className="text-green-600 text-xs font-bold">
                   {Math.round(((mrp - price) / mrp) * 100)}% off
                 </span>
-              </>
+              </div>
             )}
           </div>
         </div>
