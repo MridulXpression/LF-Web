@@ -8,7 +8,10 @@ import { Toaster, toast } from "react-hot-toast";
 
 import { useDispatch, useSelector } from "react-redux";
 import { setUser } from "@/redux/slices/userSlice";
-import { closePhoneAuthModal } from "@/redux/slices/loginmodalSlice";
+import {
+  closePhoneAuthModal,
+  setPhoneAuthModalClosing,
+} from "@/redux/slices/loginmodalSlice";
 
 const PhoneAuthModal = () => {
   const dispatch = useDispatch(); // ✅ Initialize dispatch
@@ -172,12 +175,23 @@ const PhoneAuthModal = () => {
   };
 
   const closeModal = () => {
+    // Set closing flag to prevent re-opening during cleanup
+    dispatch(setPhoneAuthModalClosing(true));
+
+    // Dispatch close action
     dispatch(closePhoneAuthModal());
+
+    // Reset form states
     setCurrentStep("phone");
     setAuthType("login");
     setPhoneNumber("");
     setOtp(["", "", "", ""]);
     setUserDetails({ name: "", email: "", gender: "" });
+
+    // Reset closing flag after modal animation completes
+    setTimeout(() => {
+      dispatch(setPhoneAuthModalClosing(false));
+    }, 300);
   };
 
   const handleAuthTypeChange = (type) => {

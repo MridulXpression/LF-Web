@@ -9,6 +9,8 @@ const OrderSummary = ({
   onProceed,
   coupons = [],
   onAmountChange,
+  isUserLoggedIn = true,
+  onProceedWithoutLogin = null,
 }) => {
   const pathname = usePathname();
   const [selectedCoupon, setSelectedCoupon] = useState(null);
@@ -168,14 +170,22 @@ const OrderSummary = ({
       </div>
 
       {/* PROCEED */}
-      {!isAddressPage && (
-        <Link
-          href="/checkout/address"
-          className="w-full bg-black text-white py-3 rounded hover:bg-gray-800 transition-colors font-medium mt-4 inline-block text-center"
-        >
-          Proceed to Checkout
-        </Link>
-      )}
+      {!isAddressPage &&
+        (isUserLoggedIn ? (
+          <Link
+            href="/checkout/address"
+            className="w-full bg-black text-white py-3 rounded hover:bg-gray-800 transition-colors font-medium mt-4 inline-block text-center"
+          >
+            Proceed to Checkout
+          </Link>
+        ) : (
+          <button
+            onClick={onProceedWithoutLogin}
+            className="w-full bg-black text-white py-3 rounded hover:bg-gray-800 transition-colors font-medium mt-4 cursor-pointer"
+          >
+            Proceed to Checkout
+          </button>
+        ))}
 
       {/* COUPON MODAL */}
       {showModal && (

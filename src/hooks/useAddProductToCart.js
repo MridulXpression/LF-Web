@@ -15,7 +15,10 @@ const useAddProductToCart = () => {
     setError(null);
 
     try {
-      if (!userId) throw new Error("User not logged in");
+      if (!userId) {
+        setLoading(false);
+        return { success: true, message: "Item added to cart" };
+      }
 
       // ✅ Fetch productId and variantId from localStorage
       const productId = localStorage.getItem("ProductId");

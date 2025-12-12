@@ -3,7 +3,6 @@
 import { useState, useRef, useEffect } from "react";
 import { Search, Heart, ShoppingBag, User, Menu, X } from "lucide-react";
 import Image from "next/image";
-import PhoneAuthModal from "@/components/LoginModal";
 import { useDispatch, useSelector } from "react-redux";
 import { openPhoneAuthModal } from "@/redux/slices/loginmodalSlice";
 import { addSearch } from "@/redux/slices/searchSlice";
@@ -18,6 +17,7 @@ import useGetProductBySubCategories from "@/hooks/useGetSubCategories";
 import useBlog from "@/hooks/useBlog";
 import QuickModal from "@/components/QuickModal";
 
+// PhoneAuthModal is now rendered globally in Providers.js
 // Generate menu data dynamically
 const getMenuData = (categories) => {
   const allBrandsMenu = { title: "ALL BRANDS", sections: [] };
@@ -129,7 +129,7 @@ const Navbar = () => {
   return (
     <>
       {/* Header Container */}
-      <div className=" bg-white z-50 shadow-sm">
+      <div className="fixed top-0 left-0 right-0 bg-white z-50 shadow-sm">
         <div className="">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex items-center justify-between py-4 md:justify-center">
@@ -177,7 +177,9 @@ const Navbar = () => {
                 {user ? (
                   <UserDropdown user={user} />
                 ) : (
-                  <button onClick={() => dispatch(openPhoneAuthModal())}>
+                  <button
+                    onClick={() => dispatch(openPhoneAuthModal("navbar"))}
+                  >
                     <User className="w-5 h-5 text-[#808080]" />
                   </button>
                 )}
@@ -329,7 +331,7 @@ const Navbar = () => {
                   <UserDropdown user={user} />
                 ) : (
                   <button
-                    onClick={() => dispatch(openPhoneAuthModal())}
+                    onClick={() => dispatch(openPhoneAuthModal("navbar"))}
                     className="p-2 text-[#808080] cursor-pointer"
                   >
                     <User className="w-5 h-5" />
@@ -419,7 +421,6 @@ const Navbar = () => {
         isOpen={isQuickModalOpen}
         onClose={() => setIsQuickModalOpen(false)}
       />
-      <PhoneAuthModal />
     </>
   );
 };

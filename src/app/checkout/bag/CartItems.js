@@ -9,6 +9,8 @@ import CartProductCard from "@/components/CartProductCard";
 import useGetCoupons from "@/hooks/useGetCoupons";
 import Link from "next/link";
 import DeleteConfirmModal from "@/components/DeleteModal";
+import { openPhoneAuthModal } from "@/redux/slices/loginmodalSlice";
+// PhoneAuthModal is now rendered globally in Providers.js
 import {
   removeFromCart,
   setCartItems,
@@ -290,15 +292,78 @@ const ShoppingCart = () => {
     setIsDeleteModalOpen(false);
   };
 
-  if (!userId) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-lg text-black font-medium">
-          Please log in to see your cart.
-        </div>
-      </div>
-    );
-  }
+  // Load cart from Redux or localStorage if user is not logged in
+  useEffect(() => {
+    if (!userId) {
+      try {
+        // First priority: Use Redux cart items if they exist
+        if (cartItemsFromRedux && cartItemsFromRedux.length > 0) {
+          // Transform Redux items to component format
+          const transformedReduxItems = cartItemsFromRedux.map((item) => {
+            // Find the selected variant
+            const selectedVariant =
+              item.variants?.find(
+                (v) => v.id?.toString() === item.variantId?.toString()
+              ) || item.variants?.[0];
+
+            return {
+              id: item.id,
+              cartItemId: item.variantId || item.id,
+              productId: item.id,
+              variantId: item.variantId || selectedVariant?.id,
+              name: item.title,
+              description: item.shortDescription || item.description,
+              image: item.imageUrls?.[0] || selectedVariant?.imageSrc || "",
+              imageUrls: item.imageUrls || [],
+              price: selectedVariant?.price || item.basePrice || 0,
+              originalPrice: item.mrp || item.basePrice || 0,
+              size: selectedVariant?.title || "One Size",
+              quantity: item.quantity || 1,
+              availableSizes: item.variants?.map((v) => v.title) || [
+                selectedVariant?.title,
+              ],
+              type: item.type || "",
+              tags: item.tags || [],
+              hasCOD: item.hasCOD,
+              hasExchange: item.hasExchange,
+              exchangeDays: item.exchangeDays,
+              selected: item.selected !== false,
+            };
+          });
+
+          setProducts(transformedReduxItems);
+          setSelectedItems(
+            new Set(transformedReduxItems.map((p) => p.cartItemId))
+          );
+          setLoading(false);
+          return;
+        }
+
+        // Fallback: Try to get any saved checkout data from localStorage
+        const savedKeys = Object.keys(localStorage).filter((key) =>
+          key.startsWith("lafetch_checkout_")
+        );
+
+        if (savedKeys.length > 0) {
+          // Get the most recent saved checkout
+          const lastKey = savedKeys[savedKeys.length - 1];
+          const raw = localStorage.getItem(lastKey);
+          if (raw) {
+            const saved = JSON.parse(raw);
+            if (saved.items && Array.isArray(saved.items)) {
+              setProducts(saved.items);
+              setSelectedItems(new Set(saved.items.map((p) => p.cartItemId)));
+              setLoading(false);
+            }
+          }
+        } else {
+          setLoading(false);
+        }
+      } catch (e) {
+        setLoading(false);
+      }
+    }
+  }, [userId, cartItemsFromRedux]);
 
   if (loading) {
     return (
@@ -309,100 +374,108 @@ const ShoppingCart = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
-      <div className="max-w-7xl mx-auto px-4">
-        {/* Progress Steps */}
-        <div className="mb-8 flex items-center justify-center gap-2 text-sm">
-          <Link
-            href="/checkout/bag"
-            className="text-black underline decoration-[#988BFF] decoration-[2px] font-bold"
-          >
-            BAG
-          </Link>
-          <span className="text-black">--------</span>
-          <Link href="/checkout/address" className="text-black ">
-            ADDRESS
-          </Link>
-          <span className="text-black">--------</span>
-          <span className="text-black">PAYMENT</span>
-        </div>
-
-        {/* Header */}
-        <div className="mb-6">
-          <h1 className="text-2xl font-bold text-black">SHOPPING BAG</h1>
-          <p className="text-gray-600">{products.length} Products</p>
-        </div>
-
-        {/* Main Content */}
-        {products.length === 0 ? (
-          <div className="text-center py-12">
-            <p className="text-gray-600 text-lg">Your shopping bag is empty</p>
-            <button
-              onClick={() => (window.location.href = "/products")}
-              className="mt-4 bg-black text-white px-6 py-2 rounded hover:bg-gray-800 cursor-pointer"
+    <>
+      <div className="min-h-screen bg-gray-50 py-8">
+        <div className="max-w-7xl mx-auto px-4">
+          {/* Progress Steps */}
+          <div className="mb-8 flex items-center justify-center gap-2 text-sm">
+            <Link
+              href="/checkout/bag"
+              className="text-black underline decoration-[#988BFF] decoration-[2px] font-bold"
             >
-              Continue Shopping
-            </button>
+              BAG
+            </Link>
+            <span className="text-black">--------</span>
+            <Link href="/checkout/address" className="text-black ">
+              ADDRESS
+            </Link>
+            <span className="text-black">--------</span>
+            <span className="text-black">PAYMENT</span>
           </div>
-        ) : (
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            {/* Left Side - Product Cards */}
-            <div className="lg:col-span-2">
-              {/* Select All Checkbox */}
-              <div className="mb-4 flex items-center gap-2  p-4 rounded-lg ">
-                <input
-                  type="checkbox"
-                  checked={
-                    selectedItems.size === products.length &&
-                    products.length > 0
-                  }
-                  onChange={handleSelectAll}
-                  className="w-5 h-5 cursor-pointer accent-black"
-                />
-                <span className="text-sm font-medium text-black">
-                  Select All ({selectedItems.size}/{products.length})
-                </span>
-              </div>
 
-              {/* Product Cards */}
-              <div className="">
-                {products.map((product) => (
-                  <CartProductCard
-                    key={product.cartItemId}
-                    product={product}
-                    onRemove={() => openDeleteModal(product.productId)} // 👈 change here
-                    onQuantityChange={handleQuantityChange}
-                    onSizeChange={handleSizeChange}
-                    isSelected={selectedItems.has(product.cartItemId)}
-                    onToggleSelect={handleToggleSelect}
+          {/* Header */}
+          <div className="mb-6">
+            <h1 className="text-2xl font-bold text-black">SHOPPING BAG</h1>
+            <p className="text-gray-600">{products.length} Products</p>
+          </div>
+
+          {/* Main Content */}
+          {products.length === 0 ? (
+            <div className="text-center py-12">
+              <p className="text-gray-600 text-lg">Your cart is waiting</p>
+              <button
+                onClick={() => (window.location.href = "/products")}
+                className="mt-4 bg-black text-white px-6 py-2 rounded hover:bg-gray-800 cursor-pointer"
+              >
+                Continue Shopping
+              </button>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              {/* Left Side - Product Cards */}
+              <div className="lg:col-span-2">
+                {/* Select All Checkbox */}
+                <div className="mb-4 flex items-center gap-2  p-4 rounded-lg ">
+                  <input
+                    type="checkbox"
+                    checked={
+                      selectedItems.size === products.length &&
+                      products.length > 0
+                    }
+                    onChange={handleSelectAll}
+                    className="w-5 h-5 cursor-pointer accent-black"
                   />
-                ))}
+                  <span className="text-sm font-medium text-black">
+                    Select All ({selectedItems.size}/{products.length})
+                  </span>
+                </div>
 
-                <DeleteConfirmModal
-                  isOpen={isDeleteModalOpen}
-                  onClose={() => setIsDeleteModalOpen(false)}
-                  onConfirm={handleConfirmDelete}
-                  title="Remove Item"
-                  message="Are you sure you want to remove this item from your cart?"
-                  confirmText="Remove"
+                {/* Product Cards */}
+                <div className="">
+                  {products.map((product) => (
+                    <CartProductCard
+                      key={product.cartItemId}
+                      product={product}
+                      onRemove={() => openDeleteModal(product.productId)}
+                      onQuantityChange={handleQuantityChange}
+                      onSizeChange={handleSizeChange}
+                      isSelected={selectedItems.has(product.cartItemId)}
+                      onToggleSelect={handleToggleSelect}
+                    />
+                  ))}
+
+                  <DeleteConfirmModal
+                    isOpen={isDeleteModalOpen}
+                    onClose={() => setIsDeleteModalOpen(false)}
+                    onConfirm={handleConfirmDelete}
+                    title="Remove Item"
+                    message="Are you sure you want to remove this item from your cart?"
+                    confirmText="Remove"
+                  />
+                </div>
+              </div>
+
+              {/* Right Side - Order Summary */}
+              <div className="lg:col-span-1">
+                <OrderSummary
+                  key={`order-summary-${selectedProducts
+                    .map((p) => `${p.cartItemId}-${p.quantity}`)
+                    .join("-")}`}
+                  products={selectedProducts}
+                  coupons={getCoupons}
+                  isUserLoggedIn={!!userId}
+                  onProceedWithoutLogin={() => {
+                    if (!userId) {
+                      dispatch(openPhoneAuthModal("checkout"));
+                    }
+                  }}
                 />
               </div>
             </div>
-
-            {/* Right Side - Order Summary */}
-            <div className="lg:col-span-1">
-              <OrderSummary
-                key={`order-summary-${selectedProducts
-                  .map((p) => `${p.cartItemId}-${p.quantity}`)
-                  .join("-")}`}
-                products={selectedProducts}
-                coupons={getCoupons}
-              />
-            </div>
-          </div>
-        )}
+          )}
+        </div>
       </div>
-    </div>
+    </>
   );
 };
 
