@@ -10,7 +10,7 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        myfont: ["var(--font-MyFont)", "sans-serif"],
+        "clash-display": "var(--font-clash-display)",
       },
     },
   },

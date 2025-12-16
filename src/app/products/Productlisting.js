@@ -126,7 +126,7 @@ const ShopByCategoriesPage = () => {
         <Filter size={18} /> Filters
       </button>
 
-      <div className="max-w-[1400px] mx-auto flex md:mt-[100px]">
+      <div className="max-w-[1400px] mx-auto flex  ">
         {/* FILTER SIDEBAR */}
         <FilterSidebar
           isFilterOpen={isFilterOpen}

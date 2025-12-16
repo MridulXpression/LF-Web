@@ -1,7 +1,7 @@
 import React from "react";
 import Navbar from "./(navbar)/Navbar";
 import HomePage from "./(banner)/Banner";
-import NewInSection from "./(new-drops)/Newdrop";
+import NewestAtLafetch from "./(new-drops)/Newdrop";
 import CategorySection from "./(categorycard)/Categorycard";
 import TrendingNowSection from "./(trendingnow)/Trendingnow";
 import HomeCarousel from "./(carousel)/Carousel";
@@ -14,7 +14,7 @@ const page = () => {
     <div>
       <Navbar />
       <HomePage />
-      <NewInSection />
+      <NewestAtLafetch />
       <CategorySection />
       <TrendingNowSection />
       <HomeCarousel />

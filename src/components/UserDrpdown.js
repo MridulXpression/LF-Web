@@ -36,7 +36,7 @@ const UserDropdown = ({ user }) => {
         onClick={() => setOpen((prev) => !prev)}
         className="p-2 text-[#808080] hover:text-gray-900 cursor-pointer"
       >
-        <User className="w-5 h-5" />
+        <User className="w-6 h-6 text-black" />
       </button>
 
       {/* DROPDOWN */}
