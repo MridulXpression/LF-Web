@@ -21,13 +21,17 @@ const ShopByCategoriesPage = () => {
   const genderValue = searchParams.get("gender");
   const query = !subCategoryId && genderValue ? `gender=${genderValue}` : "";
 
+  // ===== SEARCH =====
+  const searchQuery = searchParams.get("search");
+
   // ===== PRODUCTS HOOK =====
+  // Disable pagination products when search or subCategory is active
   const {
     products: allProducts,
     loading: isProductsLoading,
     hasMore,
     loadMore,
-  } = useProducts(!subCategoryId ? query : "");
+  } = useProducts(searchQuery || subCategoryId ? null : query);
 
   // ===== SUBCATEGORY PRODUCTS =====
   const subCategoryResponse = useGetProductBySubCategories(
@@ -62,8 +66,7 @@ const ShopByCategoriesPage = () => {
   const { sortQuery, isSortLoading, sortedProducts, handleSortChange } =
     useSortLogic();
 
-  // ===== SEARCH =====
-  const searchQuery = searchParams.get("search");
+  // ===== STATE =====
   const [searchResults, setSearchResults] = useState(null);
   const [isSearching, setIsSearching] = useState(false);
 
@@ -123,7 +126,7 @@ const ShopByCategoriesPage = () => {
         <Filter size={18} /> Filters
       </button>
 
-      <div className="max-w-[1400px] mx-auto flex">
+      <div className="max-w-[1400px] mx-auto flex md:mt-[100px]">
         {/* FILTER SIDEBAR */}
         <FilterSidebar
           isFilterOpen={isFilterOpen}

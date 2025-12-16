@@ -300,7 +300,7 @@ export default function ProductPage({ params }) {
   return (
     <div className="bg-white">
       <Navbar />
-      <div className="max-w-7xl mx-auto px-4 py-8">
+      <div className="max-w-7xl mx-auto px-4 py-8 md:mt-[100px]">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {/* Left - Images */}
           <ProductImageGallery

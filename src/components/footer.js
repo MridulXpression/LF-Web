@@ -193,7 +193,7 @@ const Footer = () => {
             <h3 className="text-white text-lg font-medium mb-4">
               Subscribe to our newsletter
             </h3>
-            <div className="flex flex-col gap-4 max-w-md">
+            <div className="flex flex-col gap-4 md:max-w-md">
               <div className="flex flex-col sm:flex-row gap-3">
                 <div className="flex-1">
                   <input
@@ -201,7 +201,7 @@ const Footer = () => {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="Write your email here"
-                    className="w-[250px] px-4 py-3 bg-[#333333] rounded-full text-white placeholder-[#B3B3B3] focus:outline-none focus:border-gray-400 text-sm"
+                    className=" w-[180px]  md:w-[190px] px-4 py-3 bg-[#333333] rounded-full text-white placeholder-[#B3B3B3] focus:outline-none focus:border-gray-400 text-sm"
                   />
                 </div>
               </div>

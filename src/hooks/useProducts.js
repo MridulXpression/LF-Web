@@ -10,6 +10,14 @@ const useProducts = (query) => {
 
   const getProducts = useCallback(
     async (pageNumber = 1, isLoadMore = false) => {
+      // Skip if query is null (search or subCategory is active)
+      if (query === null) {
+        setLoading(false);
+        setHasMore(false);
+        setProducts([]);
+        return;
+      }
+
       try {
         if (pageNumber === 1) {
           setLoading(true);

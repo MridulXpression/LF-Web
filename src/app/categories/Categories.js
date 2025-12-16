@@ -18,7 +18,7 @@ const CategoryPage = () => {
 
   return (
     <div className="bg-white">
-      <div className="max-w-7xl mx-auto px-4 py-8">
+      <div className="max-w-7xl mx-auto px-4 py-8 mt-[50px] md:mt-[100px]">
         {/* Category Header */}
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900 mb-2">
@@ -93,7 +93,7 @@ const CategoryPage = () => {
                   {subcategory.products?.length > 5 && (
                     <div className="mt-4 text-center lg:hidden">
                       <Link
-                        href={`/subcategory/${subcategory.id}`}
+                        href={`/products?subCategoryId=${subcategory.id}`}
                         className="text-blue-600 font-medium hover:underline"
                       >
                         View All Products
