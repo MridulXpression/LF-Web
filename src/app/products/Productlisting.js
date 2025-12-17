@@ -22,7 +22,9 @@ const ShopByCategoriesPage = () => {
   const query = !subCategoryId && genderValue ? `gender=${genderValue}` : "";
 
   // ===== SEARCH =====
-  const searchQuery = searchParams.get("search");
+  const searchQuery = searchParams.get("search")
+    ? decodeURIComponent(searchParams.get("search"))
+    : null;
 
   // ===== PRODUCTS HOOK =====
   // Disable pagination products when search or subCategory is active
@@ -117,7 +119,7 @@ const ShopByCategoriesPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-white relative">
+    <div className="min-h-screen bg-white relative mt-[80px]">
       {/* MOBILE FILTER BUTTON */}
       <button
         className="lg:hidden fixed bottom-4 left-4 z-10 bg-black text-white px-4 py-2 rounded-full flex items-center gap-2 shadow-lg"

@@ -4,6 +4,7 @@ import "./globals.css";
 import { Providers } from "./providers";
 import RazorpayScriptLoader from "@/components/razorpay";
 import GlobalLoader from "@/components/GlobalLoader";
+import AnnouncementBar from "@/components/AnnouncementBar";
 
 const clashDisplay = localFont({
   src: [
@@ -51,6 +52,8 @@ export default function RootLayout({ children }) {
     <html lang="en" className={clashDisplay.variable}>
       <body className={`${clashDisplay.className} antialiased`}>
         <Providers>
+          {/* ✅ Announcement Bar at top */}
+          <AnnouncementBar />
           {/* ✅ Global Loading Indicator */}
           <GlobalLoader />
           {/* ✅ Load Razorpay script globally */}

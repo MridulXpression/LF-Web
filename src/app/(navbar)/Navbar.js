@@ -12,7 +12,7 @@ import axiosHttp from "@/utils/axioshttp";
 
 import NavbarDropdown from "@/components/navbar/NavbarDropdown";
 import MobileNavbar from "@/components/navbar/MobileNavbar";
-import NavbarSearch from "@/components/NavbarSearch";
+import NavbarSearchComponent from "@/components/homepage/NavbarSearchComponent";
 import UserDropdown from "@/components/UserDrpdown";
 import QuickModal from "@/components/QuickModal";
 
@@ -63,7 +63,6 @@ const Navbar = () => {
   const [dropdownTimeout, setDropdownTimeout] = useState(null);
 
   const [searchQuery, setSearchQuery] = useState("");
-  const [suggestions, setSuggestions] = useState([]);
 
   const getMenuHref = (title = "") => {
     const t = title.toLowerCase().trim();
@@ -84,21 +83,10 @@ const Navbar = () => {
     return "#";
   };
 
-  useEffect(() => {
-    if (!searchQuery.trim()) return setSuggestions([]);
-
-    const timer = setTimeout(async () => {
-      const res = await axiosHttp.post(`product-suggestion?key=${searchQuery}`);
-      setSuggestions(res.data.data || []);
-    }, 300);
-
-    return () => clearTimeout(timer);
-  }, [searchQuery]);
-
   return (
     <>
       {/* HEADER */}
-      <div className="fixed top-0 inset-x-0 bg-white z-50 shadow-sm">
+      <div className="fixed top-15 inset-x-0 bg-white z-40 shadow-sm">
         <div className="max-w-full mx-auto px-16 py-7 h-24 flex items-center justify-between">
           {/* LEFT */}
           <div className="flex items-center gap-4">
@@ -202,14 +190,12 @@ const Navbar = () => {
       </div>
 
       {/* SEARCH */}
-      {showSearchDropdown && (
-        <NavbarSearch
-          searchQuery={searchQuery}
-          setSearchQuery={setSearchQuery}
-          suggestions={suggestions}
-          setShowSearchDropdown={setShowSearchDropdown}
-        />
-      )}
+      <NavbarSearchComponent
+        searchQuery={searchQuery}
+        setSearchQuery={setSearchQuery}
+        isOpen={showSearchDropdown}
+        setIsOpen={setShowSearchDropdown}
+      />
 
       {/* MOBILE NAVBAR */}
       <MobileNavbar
