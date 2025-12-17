@@ -63,59 +63,60 @@ const NewInCard = ({
         href={`/products/${id}`}
         onClick={() => localStorage.setItem("ProductId", id)}
       >
-        <div className="w-96 rounded-xl inline-flex flex-col gap-2.5 overflow-hidden cursor-pointer">
+        <div className="w-full sm:w-72 md:w-80 lg:w-96 rounded-xl inline-flex flex-col gap-2.5 overflow-hidden cursor-pointer">
           {/* Image */}
-          <div className="relative h-[250px] p-6 bg-stone-100 rounded-xl overflow-hidden">
+          <div className="relative h-40 sm:h-48 md:h-56 lg:h-[250px] p-3 sm:p-4 md:p-6 bg-stone-100 rounded-xl overflow-hidden">
             <Image src={image} alt={title} fill className="object-fill" />
 
             {/* Hover Preview */}
             <button
               onClick={handlePreviewClick}
-              className="absolute left-[15px] bottom-3 w-80 h-12 py-2 bg-stone-50 rounded-lg outline outline-[0.5px] outline-offset-[-0.5px] flex justify-center items-center opacity-0 hover:opacity-100 transition-opacity cursor-pointer hover:bg-stone-100"
+              className="absolute left-2 sm:left-3 md:left-[15px] bottom-2 sm:bottom-3 w-[calc(100%-16px)] sm:w-64 md:w-72 lg:w-80 h-10 sm:h-11 md:h-12 py-2 bg-stone-50 rounded-lg outline outline-[0.5px] outline-offset-[-0.5px] flex justify-center items-center opacity-0 hover:opacity-100 transition-opacity cursor-pointer hover:bg-stone-100"
             >
-              <span className="text-stone-950 text-sm font-medium">
+              <span className="text-stone-950 text-xs sm:text-sm font-medium">
                 Product Preview
               </span>
             </button>
           </div>
 
           {/* Details */}
-          <div className="px-3 pb-3 flex flex-col gap-1">
+          <div className="px-2 sm:px-3 pb-2 sm:pb-3 flex flex-col gap-1">
             <div className="py-2 flex flex-col gap-2">
-              <div className="flex gap-2.5">
+              <div className="flex gap-2 sm:gap-2.5">
                 <div className="flex-1 flex flex-col gap-1">
-                  <h3 className="text-[16px] font-[600] uppercase text-[#0F0F0F] ">
+                  <h3 className="text-xs sm:text-sm md:text-base font-[600] uppercase text-[#0F0F0F]">
                     {title}
                   </h3>
-                  <p className="text-[14px] uppercase font-[400] text-[#0F0F0F]">
+                  <p className="text-xs sm:text-xs md:text-sm uppercase font-[400] text-[#0F0F0F]">
                     {brand}
                   </p>
                 </div>
 
                 <button
                   onClick={handleLikeClick}
-                  className="w-6 h-6 transition-transform cursor-pointer"
+                  className="w-5 h-5 sm:w-6 sm:h-6 transition-transform cursor-pointer flex-shrink-0"
                 >
-                  <Heart size={18} className="text-black" />
+                  <Heart size={16} className="sm:block hidden text-black" />
+                  <Heart size={14} className="sm:hidden text-black" />
                 </button>
               </div>
 
-              <div className="flex items-center gap-1">
+              <div className="flex flex-wrap items-center gap-1">
                 {/* Selling Price */}
-                <span className="text-[14px] font-[500] text-[#292929] uppercase">
+                <span className="text-xs sm:text-sm md:text-base font-[500] text-[#292929] uppercase">
                   ₹{sellingPrice}
                 </span>
 
                 {/* Original Price (ONLY if mrp valid) */}
                 {showOriginalPrice && (
-                  <span className="text-[14px] text-black font-[500] opacity-60 line-through uppercase">
+                  <span className="text-xs sm:text-sm md:text-base text-black font-[500] opacity-60 line-through uppercase">
                     ₹{mrpValue}
                   </span>
                 )}
 
                 {/* Discount */}
                 {showOriginalPrice && (
-                  <span className="text-sm font-medium text-emerald-600 uppercase">
+                  <span className="text-xs sm:text-sm font-medium text-emerald-600 uppercase">
                     ({discountPercentage}% OFF)
                   </span>
                 )}
