@@ -4,27 +4,36 @@ import { useEffect, useState } from "react";
 
 const useCollection = (query) => {
   const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   const getCollection = async () => {
     try {
+      setLoading(true);
+      setError(null);
       let endPoint;
       if (query) {
-        endPoint = `${endPoints.getCollection}?${query}`;
+        endPoint = `${endPoints.getCollection}?${query}&limit=true`;
       } else {
-        endPoint = `${endPoints.getCollection}`;
+        endPoint = `${endPoints.getCollection}?limit=true`;
       }
       const result = await axiosHttp.get(endPoint);
 
       if (result?.status === 200) {
         setProducts(result?.data?.data);
       }
-    } catch (err) {}
+    } catch (err) {
+      setError(err);
+      console.error("Error fetching collections:", err);
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
     getCollection();
   }, []);
-  return products;
+  return { data: products, loading, error };
 };
 
 export default useCollection;

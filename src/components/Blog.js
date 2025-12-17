@@ -1,12 +1,15 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { ArrowRight } from "lucide-react";
 
 const FashionGrid = ({ data, title = "TRENDING NOW" }) => {
+  const [hoveredCardId, setHoveredCardId] = useState(null);
+  const [hoveredButtonId, setHoveredButtonId] = useState(null);
   // Helper function to get container classes based on size
   const getContainerClasses = (size) => {
-    const baseClasses = "relative overflow-hidden group cursor-pointer";
+    const baseClasses = "relative overflow-hidden group ";
 
     switch (size) {
       case "large": // 720x519
@@ -28,9 +31,9 @@ const FashionGrid = ({ data, title = "TRENDING NOW" }) => {
   const getTextPositionClasses = (position) => {
     switch (position) {
       case "top-left":
-        return "absolute top-6 left-6 text-white";
+        return "absolute top-8 left-8 w-full text-white";
       case "bottom-left":
-        return "absolute bottom-6 left-6 text-white";
+        return "absolute bottom-6 left-6 w-full  text-white";
       case "center-left":
         return "absolute top-[20%] left-8 transform -translate-y-1/2 text-white max-w-md";
       default:
@@ -40,23 +43,24 @@ const FashionGrid = ({ data, title = "TRENDING NOW" }) => {
 
   // Helper function to get title classes
   const getTitleClasses = (size, titleColor = "text-white") => {
-    const baseClasses = "font-bold mb-2";
+    const baseClasses =
+      "font-bold mb-2 bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent";
     const colorClass = titleColor || "text-white";
 
     switch (size) {
       case "large":
-        return `text-xl md:text-3xl ${baseClasses} ${colorClass}`;
+        return `text-xl md:text-3xl ${baseClasses}`;
       case "extra-large":
-        return `text-xl md:text-4xl ${baseClasses} ${colorClass}`;
+        return `text-xl md:text-4xl ${baseClasses}`;
       default:
-        return `text-lg md:text-2xl ${baseClasses} ${colorClass}`;
+        return `text-lg md:text-2xl ${baseClasses}`;
     }
   };
 
   // Helper function to get description classes
   const getDescriptionClasses = (textColor = "text-white") => {
     const colorClass = textColor || "text-white";
-    return `text-xs md:text-sm opacity-90 ${colorClass}`;
+    return `text-xs md:text-sm opacity-90 bg-gradient-to-r from-white to-gray-200 bg-clip-text text-transparent`;
   };
 
   // Helper function to get dimensions for each item
@@ -94,9 +98,14 @@ const FashionGrid = ({ data, title = "TRENDING NOW" }) => {
   const secondRowItems = data.slice(3, 6);
 
   return (
-    <div className="min-h-screen bg-white">
-      <div className="text-center text-[40px] text-black font-[500] mb-[20px]">
-        <h2>{title}</h2>
+    <div className="min-h-[80vh] bg-white">
+      <div className="md:max-w-[1400px] mx-auto">
+        <div className="flex items-center mb-[40px] gap-8">
+          <div className="flex-1 h-[2px] bg-stone-950" />
+          <div className="text-stone-950 text-[32px] md:text-[44px] font-bold uppercase tracking-wider whitespace-nowrap">
+            {title}
+          </div>
+        </div>
       </div>
 
       {/* First Row */}
@@ -106,6 +115,7 @@ const FashionGrid = ({ data, title = "TRENDING NOW" }) => {
           let position = item.position || "bottom-left";
           let titleColor = item.titleColor;
           let textColor = item.textColor;
+          const isHovered = hoveredCardId === `first-${index}`;
 
           // Row 1, Item 1: text at top
           if (index === 0) {
@@ -114,30 +124,81 @@ const FashionGrid = ({ data, title = "TRENDING NOW" }) => {
           // Row 1, Item 2 & 3: text at bottom (default)
 
           return (
-            <Link
+            <div
               key={item.id}
-              href={`/blogs/${item.id}`}
               target="_blank"
               rel="noopener noreferrer"
               className={getContainerClasses(fixedSize.size)}
+              onMouseEnter={() => setHoveredCardId(`first-${index}`)}
+              onMouseLeave={() => setHoveredCardId(null)}
             >
+              {/* Image (bottom) */}
               <Image
                 src={item.image}
                 alt={item.title}
                 width={fixedSize.width}
                 height={fixedSize.height}
-                className="w-full h-full object-fill group-hover:scale-120 transition-transform duration-300"
+                className="w-full h-full object-cover z-0"
               />
-              <div className={getTextPositionClasses(position)}>
-                <h2 className={getTitleClasses(fixedSize.size, titleColor)}>
+
+              {/* Overlay (middle) */}
+              <div
+                className="absolute inset-0 bg-gradient-to-b from-black/20 via-black/50 to-black/80 
+                  opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10"
+              />
+
+              {/* Text (top/middle position) - moves up on hover if at bottom */}
+              <div
+                className={`${getTextPositionClasses(
+                  position
+                )} z-20 transition-all duration-300 ${
+                  position === "bottom-left" && isHovered ? "bottom-32" : ""
+                }`}
+              >
+                <h2 className={getTitleClasses(fixedSize.size)}>
                   {item.title}
                 </h2>
-                <p className={getDescriptionClasses(textColor)}>
-                  {item.description ||
-                    "Read More hxjhd jcjdjc hkdjkjc kjkdj jkjckj "}
-                </p>
+                <p className={getDescriptionClasses()}>{item.description}</p>
               </div>
-            </Link>
+
+              {/* CTA Button (bottom only on hover) */}
+              {isHovered && (
+                <Link href={`/blogs/${item.id}`}>
+                  <div
+                    className="absolute bottom-6 left-6 z-20 transition-all duration-300"
+                    onMouseEnter={() => setHoveredButtonId(`first-${index}`)}
+                    onMouseLeave={() => setHoveredButtonId(null)}
+                  >
+                    <div
+                      className={`w-50 px-8 py-4 rounded-[46px] outline outline-2 outline-offset-[-2px] inline-flex justify-between items-center transition-colors duration-300 ${
+                        hoveredButtonId === `first-${index}`
+                          ? "bg-black outline-white"
+                          : "outline-black"
+                      }`}
+                    >
+                      <div
+                        className={`justify-start text-[16px] font-semibold font-['Clash_Display'] uppercase transition-colors duration-300 ${
+                          hoveredButtonId === `first-${index}`
+                            ? "text-white"
+                            : "text-white"
+                        }`}
+                      >
+                        Read more
+                      </div>
+                      <div className="w-8 h-8 p-1.5 rounded-[20px] flex justify-start items-center gap-1.5">
+                        <ArrowRight
+                          className={`rotate-[-45deg] transition-colors duration-300 ${
+                            hoveredButtonId === `first-${index}`
+                              ? "text-white"
+                              : "text-black"
+                          }`}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </Link>
+              )}
+            </div>
           );
         })}
       </div>
@@ -149,6 +210,7 @@ const FashionGrid = ({ data, title = "TRENDING NOW" }) => {
           let position = item.position || "bottom-left";
           let titleColor = item.titleColor;
           let textColor = item.textColor;
+          const isHovered = hoveredCardId === `second-${index}`;
 
           // Item 4: text at bottom (default)
           // Item 5: text at top with red title
@@ -166,6 +228,8 @@ const FashionGrid = ({ data, title = "TRENDING NOW" }) => {
               target="_blank"
               rel="noopener noreferrer"
               className={getContainerClasses(fixedSize.size)}
+              onMouseEnter={() => setHoveredCardId(`second-${index}`)}
+              onMouseLeave={() => setHoveredCardId(null)}
             >
               <Image
                 src={item.image}
@@ -174,7 +238,13 @@ const FashionGrid = ({ data, title = "TRENDING NOW" }) => {
                 height={fixedSize.height}
                 className="w-full h-full object-fill group-hover:scale-120 transition-transform duration-300"
               />
-              <div className={getTextPositionClasses(position)}>
+              <div
+                className={`${getTextPositionClasses(
+                  position
+                )} z-20 transition-all duration-300 ${
+                  position === "bottom-left" && isHovered ? "bottom-32" : ""
+                }`}
+              >
                 <h2 className={getTitleClasses(fixedSize.size, titleColor)}>
                   {item.title}
                 </h2>
@@ -182,6 +252,44 @@ const FashionGrid = ({ data, title = "TRENDING NOW" }) => {
                   {item.description || "hshdihiceidiiiicjsidje idijiweodoei "}
                 </p>
               </div>
+
+              {/* Button positioned at bottom only on hover */}
+              {isHovered && (
+                <Link href={`/blogs/${item.id}`}>
+                  <div
+                    className="absolute bottom-6 left-6 z-20 transition-all duration-300"
+                    onMouseEnter={() => setHoveredButtonId(`second-${index}`)}
+                    onMouseLeave={() => setHoveredButtonId(null)}
+                  >
+                    <div
+                      className={`w-50 px-8 py-4 rounded-[46px] outline outline-2 outline-offset-[-2px] inline-flex justify-between items-center transition-colors duration-300 ${
+                        hoveredButtonId === `second-${index}`
+                          ? "bg-black outline-white"
+                          : "outline-black"
+                      }`}
+                    >
+                      <div
+                        className={`justify-start text-[16px] font-semibold font-['Clash_Display'] uppercase transition-colors duration-300 ${
+                          hoveredButtonId === `second-${index}`
+                            ? "text-white"
+                            : "text-white"
+                        }`}
+                      >
+                        Read more
+                      </div>
+                      <div className="w-8 h-8 p-1.5 rounded-[20px] flex justify-start items-center gap-1.5">
+                        <ArrowRight
+                          className={`rotate-[-45deg] transition-colors duration-300 ${
+                            hoveredButtonId === `second-${index}`
+                              ? "text-white"
+                              : "text-black"
+                          }`}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </Link>
+              )}
             </Link>
           );
         })}
