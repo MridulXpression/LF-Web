@@ -5,10 +5,18 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import ProductCollectionCard from "@/components/homepage/CollectionCard";
 import ViewAllCard from "@/components/homepage/ViewAllCard";
 import useCollection from "@/hooks/useCollection";
+import BannerGrid from "@/components/collections/BannerGrid";
 
 const TrendingNowSection = () => {
   const { data: collections, loading, error } = useCollection();
   const [currentPages, setCurrentPages] = useState({});
+
+  // Banner configuration: specify how many banners to show below each collection
+  const bannerConfig = {
+    0: 2, // First collection: 2 banners
+    1: 1, // Second collection: 1 banner
+    2: 3, // Third collection: 3 banners
+  };
 
   // Pagination: 4 products, then 4, then 3 (total 11)
   const pageItemCounts = [4, 4, 3];
@@ -51,7 +59,7 @@ const TrendingNowSection = () => {
 
   return (
     <div className="bg-white">
-      {collections?.map((collection) => {
+      {collections?.map((collection, collectionIndex) => {
         // Don't show section if no products
         if (!collection.products || collection.products.length === 0) {
           return null;
@@ -71,6 +79,12 @@ const TrendingNowSection = () => {
           startIndex,
           endIndex
         );
+
+        // Get banner count for this collection
+        const bannerCount = bannerConfig[collectionIndex] || 0;
+        const banners = Array.from({ length: bannerCount }, (_, i) => ({
+          id: i + 1,
+        }));
 
         return (
           <section
@@ -166,6 +180,13 @@ const TrendingNowSection = () => {
                 </div>
               )}
             </div>
+
+            {/* Banners Section */}
+            {bannerCount > 0 && (
+              <div className="mt-8 sm:mt-10 md:mt-12">
+                <BannerGrid banners={banners} />
+              </div>
+            )}
           </section>
         );
       })}
