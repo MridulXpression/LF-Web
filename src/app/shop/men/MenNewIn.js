@@ -41,13 +41,6 @@ const NewInSection = () => {
                       Explore All →
                     </Link>
                   </div>
-                  {/* Keep title and price as normal below image */}
-                  <h3 className="mt-2 text-sm md:text-lg  text-black text-center">
-                    {product.title}
-                  </h3>
-                  <p className="text-gray-600 text-center text-sm">
-                    Rs. {product.basePrice}
-                  </p>
                 </div>
               );
             }

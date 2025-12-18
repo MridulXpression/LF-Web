@@ -45,14 +45,18 @@ const ProductCollectionCard = ({ product, onLike }) => {
         >
           {/* Image */}
           <div className="relative h-[400px] p-9 bg-stone-200 rounded-xl overflow-hidden">
-            <Image
-              src={product.image}
-              alt={product.name}
-              fill
-              className="absolute inset-0 object-fill"
-            />
+            {product?.image ? (
+              <Image
+                src={product.image}
+                alt={product.name}
+                fill
+                className="absolute inset-0 object-fill"
+              />
+            ) : (
+              <div className="absolute inset-0 bg-gray-300" />
+            )}
 
-            {product.hasOverlay && (
+            {product?.hasOverlay && (
               <div className="absolute inset-0 bg-gradient-to-b from-black/0 to-black/30" />
             )}
           </div>

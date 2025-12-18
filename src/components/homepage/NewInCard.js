@@ -66,7 +66,11 @@ const NewInCard = ({
         <div className="w-full sm:w-72 md:w-80 lg:w-96 rounded-xl inline-flex flex-col gap-2.5 overflow-hidden cursor-pointer">
           {/* Image */}
           <div className="relative h-40 sm:h-48 md:h-56 lg:h-[250px] p-3 sm:p-4 md:p-6 bg-stone-100 rounded-xl overflow-hidden">
-            <Image src={image} alt={title} fill className="object-fill" />
+            {image ? (
+              <Image src={image} alt={title} fill className="object-fill" />
+            ) : (
+              <div className="absolute inset-0 bg-gray-300" />
+            )}
 
             {/* Hover Preview */}
             <button

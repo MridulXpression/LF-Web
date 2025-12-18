@@ -28,12 +28,16 @@ const NewInSection = () => {
                 <div key={product.id} className="w-full">
                   <div className="relative w-[160px] h-[240px] md:w-[300px] md:h-[380px]">
                     {/* Product Image + Overlay */}
-                    <Image
-                      src={product.imageUrls?.[0] || "/placeholder.png"} // fallback image
-                      alt={product.title || "Product Image"}
-                      fill
-                      className="object-cover"
-                    />
+                    {product?.imageUrls?.[0] ? (
+                      <Image
+                        src={product.imageUrls[0]}
+                        alt={product.title || "Product Image"}
+                        fill
+                        className="object-cover"
+                      />
+                    ) : (
+                      <div className="absolute inset-0 bg-gray-300" />
+                    )}
 
                     <Link
                       href="/products?gender=3" // explore page
@@ -42,13 +46,6 @@ const NewInSection = () => {
                       Explore All →
                     </Link>
                   </div>
-                  {/* Keep title and price as normal below image */}
-                  <h3 className="mt-2 text-sm md:text-lg  text-black text-center">
-                    {product.title}
-                  </h3>
-                  <p className="text-gray-600 text-center text-sm">
-                    Rs. {product.basePrice}
-                  </p>
                 </div>
               );
             }

@@ -29,7 +29,7 @@ const ProductModal = () => {
   };
 
   return (
-    <div className="fixed inset-0   backdrop-blur-sm bg-opacity-50 flex items-center justify-center z-50 p-4 overflow-auto">
+    <div className="fixed inset-0  bg-black/10 backdrop-blur-[3px] flex items-center justify-center z-50 p-4 overflow-auto">
       <div className="bg-white w-full max-w-3xl  overflow-hidden">
         <div className="flex flex-col md:flex-row overflow-y-auto  max-h-[400px]">
           {/* Product Image */}

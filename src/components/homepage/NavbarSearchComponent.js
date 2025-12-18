@@ -97,7 +97,7 @@ export default function NavbarSearchComponent({
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 onKeyDown={handleSearch}
-                placeholder="What are you looking for?"
+                placeholder="Searh To Explore More"
                 className="text-center justify-start text-stone-950 text-sm font-medium uppercase leading-4 border-none outline-none bg-transparent flex-1"
                 autoFocus
               />

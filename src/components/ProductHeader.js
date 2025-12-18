@@ -238,8 +238,8 @@ const ProductInfo = ({
         )}
       </div>
 
-      <div className="text-xs text-green-500 font-semibold mb-6">
-        Inclusive of all taxes
+      <div className="text-sm text-red-500 font-semibold mb-6">
+        Exclusive of all taxes
       </div>
 
       {/* Size Selection - Show only if sizes exist */}
