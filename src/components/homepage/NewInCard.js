@@ -49,7 +49,7 @@ const NewInCard = ({
     id,
     imageUrls: [image],
     title,
-    brand: product?.brand?.name || brand,
+    brand: product?.brand?.name,
     rating: product?.rating || 0,
     reviewCount: product?.reviewCount || 0,
     basePrice: sellingPrice,

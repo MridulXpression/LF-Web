@@ -1,5 +1,6 @@
 "use client";
 import React, { useState, useEffect, useMemo } from "react";
+import { useSelector } from "react-redux";
 import NewInCard from "@/components/homepage/NewInCard";
 import useProducts from "@/hooks/useProducts";
 import Image from "next/image";
@@ -12,20 +13,22 @@ const ITEMS_PER_ROW = 2;
 const NewestAtLafetch = () => {
   const { products = [] } = useProducts();
   const [currentPage, setCurrentPage] = useState(0);
+  const isModalOpen = useSelector((state) => state.modal.productViewModal);
+  const isWishlistModalOpen = useSelector((state) => state.modal.wishlistModal);
 
   const topProducts = products.slice(0, 12);
   const totalPages = Math.ceil(topProducts.length / ITEMS_PER_PAGE);
 
-  // Auto-rotate products every 3 seconds
+  // Auto-rotate products every 5 seconds (only when modals are NOT open)
   useEffect(() => {
-    if (!totalPages) return;
+    if (!totalPages || isModalOpen || isWishlistModalOpen) return;
 
     const interval = setInterval(() => {
       setCurrentPage((prev) => (prev + 1) % totalPages);
     }, 5000);
 
     return () => clearInterval(interval);
-  }, [totalPages]);
+  }, [totalPages, isModalOpen, isWishlistModalOpen]);
 
   // Products for current page
   const currentProducts = useMemo(() => {

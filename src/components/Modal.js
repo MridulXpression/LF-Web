@@ -1,17 +1,171 @@
-import { useState } from "react";
-import { X, Heart, Minus, Plus } from "lucide-react";
+import { useState, useMemo } from "react";
+import { X, Heart } from "lucide-react";
 import Image from "next/image";
 import { useSelector, useDispatch } from "react-redux";
 import { closeProductViewModal } from "@/redux/slices/loginmodalSlice";
 import Link from "next/link";
+import axiosHttp from "@/utils/axioshttp";
+import { endPoints } from "@/utils/endpoints";
+import toast, { Toaster } from "react-hot-toast";
+import { addToCart } from "@/redux/slices/cartSlice";
+import { getParsedSelectedOptions } from "@/utils/variantUtils";
 
 const ProductModal = () => {
   const dispatch = useDispatch();
   const isOpen = useSelector((state) => state.modal.productViewModal);
   const product = useSelector((state) => state.modal.selectedProduct);
+  const user = useSelector((state) => state.user.userInfo);
 
-  const [selectedSize, setSelectedSize] = useState("S");
-  const [quantity, setQuantity] = useState(1);
+  const [selectedSize, setSelectedSize] = useState(null);
+  const [selectedColor, setSelectedColor] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [showSizeColorOptions, setShowSizeColorOptions] = useState(false);
+
+  // Helper function to extract sizes from variants
+  const extractSizesFromVariants = (variants) => {
+    if (!variants || !Array.isArray(variants)) return [];
+
+    const sizesMap = new Map();
+    const normalizeSize = (size = "") => {
+      const map = {
+        Small: "S",
+        Medium: "M",
+        Large: "L",
+        "X-Large": "XL",
+        "XX-Large": "XXL",
+        "XXX-Large": "3XL",
+      };
+
+      return map[size] || size;
+    };
+
+    variants.forEach((variant) => {
+      const selectedOptions = getParsedSelectedOptions(variant.selectedOptions);
+      const sizeOption = selectedOptions.find((o) => o.name === "Size");
+      const colorOptions = selectedOptions.filter((o) => o.name === "Color");
+      const availableStock = variant.inventory?.availableStock ?? 0;
+
+      const rawSize = sizeOption?.value ?? "";
+      const sizeValue = normalizeSize(rawSize);
+
+      if (!sizesMap.has(sizeValue)) {
+        sizesMap.set(sizeValue, {
+          label: sizeValue || "",
+          value: sizeValue || "",
+          variantId: variant.id,
+          available: availableStock > 0,
+          price: variant.price,
+          colors: [],
+        });
+      }
+
+      const sizeEntry = sizesMap.get(sizeValue);
+
+      colorOptions.forEach((c) => {
+        const colorVal = c.value;
+        if (!colorVal) return;
+        const existing = sizeEntry.colors.find((x) => x.value === colorVal);
+        if (!existing) {
+          sizeEntry.colors.push({
+            label: colorVal,
+            value: colorVal,
+            variantId: variant.id,
+            available: availableStock > 0,
+            price: variant.price,
+          });
+        } else {
+          existing.available = existing.available || availableStock > 0;
+        }
+      });
+    });
+
+    const sizeOrder = [
+      "XXS",
+      "XS",
+      "S",
+      "M",
+      "M/L",
+      "L",
+      "XL",
+      "XXL",
+      "2XL",
+      "3XL",
+    ];
+
+    const sizesArray = Array.from(sizesMap.values());
+
+    return sizesArray.sort((a, b) => {
+      const indexA = sizeOrder.indexOf(a.value);
+      const indexB = sizeOrder.indexOf(b.value);
+      return (indexA === -1 ? 999 : indexA) - (indexB === -1 ? 999 : indexB);
+    });
+  };
+
+  // Helper function to extract colors from variants
+  const extractColorsFromVariants = (variants) => {
+    if (!variants || !Array.isArray(variants)) return [];
+
+    const colorsMap = new Map();
+
+    variants.forEach((variant) => {
+      const selectedOptions = getParsedSelectedOptions(variant.selectedOptions);
+      const colorOptions = selectedOptions.filter((o) => o.name === "Color");
+      const availableStock = variant.inventory?.availableStock ?? 0;
+
+      colorOptions.forEach((colorOption) => {
+        const colorValue = colorOption?.value;
+        if (!colorValue) return;
+
+        if (!colorsMap.has(colorValue)) {
+          colorsMap.set(colorValue, {
+            label: colorValue,
+            value: colorValue,
+            variantId: variant.id,
+            available: availableStock > 0,
+            price: variant.price,
+          });
+        } else {
+          const existing = colorsMap.get(colorValue);
+          existing.available = existing.available || availableStock > 0;
+        }
+      });
+    });
+
+    return Array.from(colorsMap.values());
+  };
+
+  // Memoized sizes and colors
+  const sizes = useMemo(() => {
+    if (!product?.variants) return [];
+    return extractSizesFromVariants(product.variants);
+  }, [product?.variants]);
+
+  const colors = useMemo(() => {
+    if (!product?.variants) return [];
+    return extractColorsFromVariants(product.variants);
+  }, [product?.variants]);
+
+  // Get colors for selected size
+  const colorsForSelectedSize = useMemo(() => {
+    if (!selectedSize) return colors;
+    const sizeEntry = sizes.find((s) => s.value === selectedSize);
+    return sizeEntry?.colors || [];
+  }, [selectedSize, sizes, colors]);
+
+  // Determine selected variant ID
+  const getSelectedVariantId = () => {
+    if (selectedColor && selectedSize) {
+      const sizeEntry = sizes.find((s) => s.value === selectedSize);
+      const colorEntry = sizeEntry?.colors.find(
+        (c) => c.value === selectedColor
+      );
+      return colorEntry?.variantId;
+    } else if (selectedSize) {
+      const sizeEntry = sizes.find((s) => s.value === selectedSize);
+      return sizeEntry?.variantId;
+    }
+    return null;
+  };
 
   // Replace onClose prop with dispatch
   const handleClose = () => {
@@ -20,11 +174,86 @@ const ProductModal = () => {
 
   if (!isOpen || !product) return null;
 
-  const handleQuantityChange = (type) => {
-    if (type === "increment") {
-      setQuantity((prev) => prev + 1);
-    } else if (type === "decrement" && quantity > 1) {
-      setQuantity((prev) => prev - 1);
+  const handleAddToCart = async () => {
+    // If size/color options are not shown yet, show them
+    if (!showSizeColorOptions) {
+      setShowSizeColorOptions(true);
+      return;
+    }
+
+    if (!selectedSize) {
+      toast.error("Please select a size", { position: "top-center" });
+      return;
+    }
+
+    if (colorsForSelectedSize.length > 0 && !selectedColor) {
+      toast.error("Please select a color", { position: "top-center" });
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      const variantId = getSelectedVariantId();
+
+      if (!variantId) {
+        toast.error("Unable to select variant", { position: "top-center" });
+        setLoading(false);
+        return;
+      }
+
+      // Get the available stock from the selected variant
+      const selectedVariant = product.variants.find((v) => v.id === variantId);
+      const availableQuantity = selectedVariant?.inventory?.availableStock ?? 1;
+
+      // If user is not logged in, store in localStorage and show message
+      if (!user?.id) {
+        localStorage.setItem("ProductId", product.id);
+        localStorage.setItem("selectedVariantId", variantId);
+        toast.success("Item added to cart", { position: "top-center" });
+        // Keep modal open for 4 seconds to show toast, then close
+        setTimeout(() => {
+          handleClose();
+        }, 4000);
+        setLoading(false);
+        return;
+      }
+
+      // API call for logged-in users
+      const payload = {
+        userId: parseInt(user.id, 10),
+        productId: parseInt(product.id, 10),
+        variantId: parseInt(variantId, 10),
+        quantity: availableQuantity,
+      };
+
+      const result = await axiosHttp.post(endPoints.addProductToCart, payload);
+
+      if (result.status === 200 || result.status === 201) {
+        // Add to Redux cart state
+        dispatch(addToCart({ product, variantId }));
+
+        toast.success(result.data?.message || "Added to bag successfully", {
+          position: "top-center",
+        });
+
+        // Keep modal open for 4 seconds to show toast, then close
+        setTimeout(() => {
+          handleClose();
+        }, 4000);
+      } else {
+        toast.error(result.data?.message || "Something went wrong", {
+          position: "top-center",
+        });
+      }
+    } catch (error) {
+      const errorMessage =
+        error.response?.data?.message ||
+        error.message ||
+        "Something went wrong";
+      toast.error(errorMessage, { position: "top-center" });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -79,79 +308,92 @@ const ProductModal = () => {
             </div>
 
             {/* Size Selection */}
-            <div className="mb-4">
-              <label className="block text-black font-medium mb-2 text-sm">
-                Size: {selectedSize}
-              </label>
-              <div className="relative w-24">
-                <select
-                  value={selectedSize}
-                  onChange={(e) => setSelectedSize(e.target.value)}
-                  className="w-full border border-gray-300 rounded-md px-2 py-1 appearance-none bg-white focus:outline-none focus:border-black text-sm text-black"
-                >
-                  <option value="S">S</option>
-                  <option value="M">M</option>
-                  <option value="L">L</option>
-                  <option value="XL">XL</option>
-                </select>
-                <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
-                  <svg
-                    className="w-3 h-3 text-gray-400"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M19 9l-7 7-7-7"
-                    />
-                  </svg>
+            {showSizeColorOptions && sizes.length > 0 && (
+              <div className="mb-4">
+                <label className="block text-black font-medium mb-2 text-sm">
+                  Size: {selectedSize || "Select a size"}
+                </label>
+                <div className="flex flex-wrap gap-2">
+                  {sizes.map((size) => (
+                    <button
+                      key={size.value}
+                      onClick={() => {
+                        setSelectedSize(size.value);
+                        setSelectedColor(null); // Reset color when size changes
+                      }}
+                      disabled={!size.available}
+                      className={`px-3 py-2 border rounded-md text-sm font-medium transition-all ${
+                        selectedSize === size.value
+                          ? "bg-black text-white border-black"
+                          : size.available
+                          ? "bg-white text-black border-gray-300 hover:border-black"
+                          : "bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed"
+                      }`}
+                    >
+                      {size.label}
+                    </button>
+                  ))}
                 </div>
               </div>
-            </div>
+            )}
 
-            {/* Quantity and Add to Cart */}
-            <div className="mb-4 flex flex-col sm:flex-row sm:items-center gap-3">
-              {/* <div className="flex items-center border border-gray-300 rounded-md w-24 text-black">
-                <button
-                  onClick={() => handleQuantityChange("decrement")}
-                  className="p-1 hover:bg-gray-50"
-                  disabled={quantity <= 1}
-                >
-                  <Minus className="w-4 h-4 text-gray-600" />
-                </button>
-                <span className="flex-1 text-center py-1 border-x border-gray-300 text-sm">
-                  {quantity}
-                </span>
-                <button
-                  onClick={() => handleQuantityChange("increment")}
-                  className="p-1 hover:bg-gray-50"
-                >
-                  <Plus className="w-4 h-4 text-gray-600" />
-                </button>
-              </div> */}
-              <button className="bg-white border border-black text-black py-2 px-5 rounded-md hover:bg-gray-50 transition-colors font-medium text-sm w-full sm:w-auto">
-                Add to cart
+            {/* Color Selection */}
+            {showSizeColorOptions && colorsForSelectedSize.length > 0 && (
+              <div className="mb-4">
+                <label className="block text-black font-medium mb-2 text-sm">
+                  Color: {selectedColor || "Select a color"}
+                </label>
+                <div className="flex flex-wrap gap-2">
+                  {colorsForSelectedSize.map((color) => (
+                    <button
+                      key={color.value}
+                      onClick={() => setSelectedColor(color.value)}
+                      disabled={!color.available}
+                      className={`px-3 py-2 border rounded-md text-sm font-medium transition-all ${
+                        selectedColor === color.value
+                          ? "bg-black text-white border-black"
+                          : color.available
+                          ? "bg-white text-black border-gray-300 hover:border-black"
+                          : "bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed"
+                      }`}
+                    >
+                      {color.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Buttons in one row */}
+            <div className="mb-4 flex gap-3">
+              <button
+                onClick={handleAddToCart}
+                disabled={loading}
+                className="flex-1 bg-black border border-black text-white py-2 px-5 rounded-md hover:bg-gray-800 transition-colors font-medium text-sm disabled:bg-gray-400 disabled:cursor-not-allowed"
+              >
+                {loading
+                  ? "Adding..."
+                  : showSizeColorOptions
+                  ? "Add to Bag"
+                  : "Add to Cart"}
               </button>
-            </div>
 
-            {/* View Product Details Button */}
-            <div>
               <Link
-                href={`/products/${product.id} `}
+                href={`/products/${product.id}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                onClick={() => localStorage.setItem("ProductId", id)}
-                className="w-full sm:w-[120px] bg-black text-white py-2 px-4 rounded-md transition-colors font-medium text-sm"
+                onClick={() => localStorage.setItem("ProductId", product.id)}
+                className="flex-1 bg-white border border-black text-black py-2 px-4 rounded-md hover:bg-gray-50 transition-colors font-medium text-sm inline-flex items-center justify-center text-center"
               >
-                View Product Details
+                View Details
               </Link>
             </div>
           </div>
         </div>
       </div>
+
+      {/* Toaster Component */}
+      <Toaster />
     </div>
   );
 };
