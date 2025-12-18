@@ -23,7 +23,7 @@ export const endPoints = {
   productSearch: "/product-search",
   deleteCartItem: "/cart-item",
   getCoupons: "/coupons",
-  getBrands: "/brands",
+  getBrands: "/brands?status=true",
   getBrandsProducts: "/view-brand",
   logout: "/auth/sign-out",
   sortProduct: "/sort-products",
