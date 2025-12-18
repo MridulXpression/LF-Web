@@ -39,6 +39,7 @@ const getMenuData = (categories) => {
     ...dynamicMenus,
     { title: "BLOGS", sections: [] },
     { title: "TRACK ORDER", sections: [] },
+    { title: "NEWSLETTERS", sections: [] },
   ];
 };
 
@@ -148,8 +149,11 @@ const Navbar = () => {
 
           {/* RIGHT */}
           <div className="flex items-center gap-4">
-            <div className="border-r border-black/50 w-28 h-8 flex items-center justify-center">
-              <button onClick={() => setIsQuickModalOpen(true)}>
+            <div className="border-r border-black/50 w-28 h-8 flex items-center justify-center ">
+              <button
+                onClick={() => setIsQuickModalOpen(true)}
+                className="cursor-pointer"
+              >
                 <Image
                   src="/images/quick.png"
                   alt="Quick"

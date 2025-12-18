@@ -53,6 +53,7 @@ const NewInSection = () => {
                 title={product.title}
                 brand={product?.brand?.name}
                 price={product.basePrice}
+                mrp={product.mrp}
                 id={product.id}
                 product={product}
               />

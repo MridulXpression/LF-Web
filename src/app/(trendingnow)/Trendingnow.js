@@ -155,6 +155,7 @@ const TrendingNowSection = () => {
                   brand: product.brand?.name || product.brand,
                   price: product.basePrice || product.price,
                   originalPrice: product.mrp,
+                  description: product.description || "",
                   image: product.imageUrls?.[0] || product.image,
                   hasOverlay: product.hasOverlay || false,
                 };

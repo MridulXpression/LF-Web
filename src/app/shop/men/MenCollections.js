@@ -43,6 +43,7 @@ const MenCollectionSection = () => {
                   const title = product.title;
                   const price = product.basePrice;
                   const id = product.id;
+                  const mrp = product.mrp;
 
                   return (
                     <ProductCard
@@ -52,6 +53,7 @@ const MenCollectionSection = () => {
                       brand={product?.brand?.name}
                       price={price}
                       id={id}
+                      mrp={mrp}
                       // Pass the full product object if needed for modal
                       product={product}
                     />

@@ -495,7 +495,7 @@ const CheckOutAddress = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
+    <div className="min-h-screen bg-gray-50 mt-[150px] py-8">
       <div className="max-w-7xl mx-auto px-4">
         {/* Progress Steps */}
         <div className="mb-8 flex items-center justify-center gap-2 text-sm">

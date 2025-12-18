@@ -29,7 +29,7 @@ const ProductModal = () => {
   };
 
   return (
-    <div className="fixed inset-0  bg-black/10 backdrop-blur-[3px] flex items-center justify-center z-50 p-4 overflow-auto">
+    <div className="fixed inset-0  bg-black/10 backdrop-blur-[4px]  flex items-center justify-center z-50 p-4 overflow-auto">
       <div className="bg-white w-full max-w-3xl  overflow-hidden">
         <div className="flex flex-col md:flex-row overflow-y-auto  max-h-[400px]">
           {/* Product Image */}
@@ -79,7 +79,7 @@ const ProductModal = () => {
             </div>
 
             {/* Size Selection */}
-            {/* <div className="mb-4">
+            <div className="mb-4">
               <label className="block text-black font-medium mb-2 text-sm">
                 Size: {selectedSize}
               </label>
@@ -110,11 +110,11 @@ const ProductModal = () => {
                   </svg>
                 </div>
               </div>
-            </div> */}
+            </div>
 
             {/* Quantity and Add to Cart */}
-            {/* <div className="mb-4 flex flex-col sm:flex-row sm:items-center gap-3">
-              <div className="flex items-center border border-gray-300 rounded-md w-24 text-black">
+            <div className="mb-4 flex flex-col sm:flex-row sm:items-center gap-3">
+              {/* <div className="flex items-center border border-gray-300 rounded-md w-24 text-black">
                 <button
                   onClick={() => handleQuantityChange("decrement")}
                   className="p-1 hover:bg-gray-50"
@@ -131,11 +131,11 @@ const ProductModal = () => {
                 >
                   <Plus className="w-4 h-4 text-gray-600" />
                 </button>
-              </div>
+              </div> */}
               <button className="bg-white border border-black text-black py-2 px-5 rounded-md hover:bg-gray-50 transition-colors font-medium text-sm w-full sm:w-auto">
                 Add to cart
               </button>
-            </div> */}
+            </div>
 
             {/* View Product Details Button */}
             <div>

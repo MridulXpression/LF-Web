@@ -81,8 +81,7 @@ const ProductCard = ({ images, title, price, id, product, brand, mrp }) => {
         {/* Product Info */}
         <div className="px-6 py-4 text-center" style={{ height: "80px" }}>
           <h3 className="text-sm md:text-md  text-black mb-1 font-bold">
-            {title.split(" ").slice(0, 5).join(" ") +
-              (title.split(" ").length > 5 ? "..." : "")}
+            {title.length > 20 ? title.substring(0, 20) + "..." : title}
           </h3>
           <p className="text-sm  text-gray-900 mb-1 font-myfont">{brand}</p>
 

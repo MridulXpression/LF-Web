@@ -3,13 +3,31 @@ import { Heart } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useDispatch } from "react-redux";
-import { openWishlistModal } from "@/redux/slices/loginmodalSlice";
+import {
+  openWishlistModal,
+  openProductViewModal,
+} from "@/redux/slices/loginmodalSlice";
 import WishlistBoardModal from "../WishlistBoardModal";
+import ProductModal from "../Modal";
 
 const ProductCollectionCard = ({ product, onLike }) => {
   const dispatch = useDispatch();
   const [isLiked, setIsLiked] = useState(false);
   const [showWishlistModal, setShowWishlistModal] = useState(false);
+
+  const handlePreviewClick = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    const modalProduct = {
+      id: product.id,
+      title: product.name,
+      imageUrls: [product.image],
+      basePrice: price,
+      description: product.description || "",
+      brand: product.brand,
+    };
+    dispatch(openProductViewModal(modalProduct));
+  };
 
   const handleLike = (e) => {
     e.preventDefault();
@@ -59,6 +77,16 @@ const ProductCollectionCard = ({ product, onLike }) => {
             {product?.hasOverlay && (
               <div className="absolute inset-0 bg-gradient-to-b from-black/0 to-black/30" />
             )}
+
+            {/* Hover Preview */}
+            <button
+              onClick={handlePreviewClick}
+              className="absolute left-2 bottom-2 w-[calc(100%-16px)] h-10 py-2 bg-stone-50 rounded-lg outline outline-[0.5px] outline-offset-[-0.5px] flex justify-center items-center opacity-0 hover:opacity-100 transition-opacity cursor-pointer hover:bg-stone-100"
+            >
+              <span className="text-stone-950 text-sm font-medium">
+                Product Preview
+              </span>
+            </button>
           </div>
         </Link>
         {/* Content */}
