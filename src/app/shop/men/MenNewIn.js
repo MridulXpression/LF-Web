@@ -3,6 +3,7 @@ import Link from "next/link";
 import ProductCard from "@/components/Card";
 import useProducts from "@/hooks/useProducts";
 import Image from "next/image";
+import { Toaster } from "react-hot-toast";
 
 const NewInSection = () => {
   const query = "gender=1";
@@ -61,6 +62,8 @@ const NewInSection = () => {
           })}
         </div>
       </div>
+      {/* Toaster Component */}
+      <Toaster />
     </section>
   );
 };

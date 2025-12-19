@@ -7,7 +7,6 @@ import {
 } from "@/redux/slices/loginmodalSlice";
 import WishlistBoardModal from "../WishlistBoardModal";
 import Link from "next/link";
-import ProductModal from "../Modal";
 import { Heart } from "lucide-react";
 
 const NewInCard = ({
@@ -61,6 +60,8 @@ const NewInCard = ({
     <>
       <Link
         href={`/products/${id}`}
+        target="_blank"
+        rel="noopener noreferrer"
         onClick={() => localStorage.setItem("ProductId", id)}
       >
         <div className="w-full sm:w-72 md:w-80 lg:w-96 rounded-xl inline-flex flex-col gap-2.5 overflow-hidden cursor-pointer">
@@ -130,9 +131,7 @@ const NewInCard = ({
         </div>
       </Link>
 
-      {/* Modals */}
-      <ProductModal />
-
+      {/* Wishlist Modal */}
       {showWishlistModal && (
         <WishlistBoardModal
           productData={productData}

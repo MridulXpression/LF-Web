@@ -152,7 +152,7 @@ const Navbar = () => {
             <div className="border-r border-black/50 w-28 h-8 flex items-center justify-center ">
               <button
                 onClick={() => setIsQuickModalOpen(true)}
-                className="cursor-pointer"
+                className="relative overflow-hidden cursor-pointer"
               >
                 <Image
                   src="/images/quick.png"
@@ -160,6 +160,7 @@ const Navbar = () => {
                   width={100}
                   height={30}
                 />
+                <div className="absolute inset-0 shine-overlay"></div>
               </button>
             </div>
 

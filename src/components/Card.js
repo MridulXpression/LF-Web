@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { Eye, ShoppingBag, Heart } from "lucide-react";
-import ProductModal from "./Modal";
 import Image from "next/image";
 import { useDispatch } from "react-redux";
 import {
@@ -101,9 +100,7 @@ const ProductCard = ({ images, title, price, id, product, brand, mrp }) => {
         </div>
       </div>
 
-      {/* Modals */}
-      <ProductModal />
-
+      {/* Wishlist Modal */}
       {showWishlistModal && (
         <WishlistBoardModal
           productData={productData}

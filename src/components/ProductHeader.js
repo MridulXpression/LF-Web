@@ -196,7 +196,7 @@ const ProductInfo = ({
   })();
 
   return (
-    <div className="border-b pb-6">
+    <div className=" pb-6">
       {/* Header */}
       <div className="space-y-3 mb-5">
         <div className="flex items-start justify-between">

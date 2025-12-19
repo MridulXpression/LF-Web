@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { X, Heart } from "lucide-react";
 import Image from "next/image";
 import { useSelector, useDispatch } from "react-redux";
@@ -47,11 +47,15 @@ const ProductModal = () => {
 
       const rawSize = sizeOption?.value ?? "";
       const sizeValue = normalizeSize(rawSize);
+      
+      // If no size option or "Default Title", treat as ONE SIZE
+      const finalSizeValue = sizeValue || "ONE SIZE";
+      const finalSizeLabel = sizeValue || "ONE SIZE";
 
-      if (!sizesMap.has(sizeValue)) {
-        sizesMap.set(sizeValue, {
-          label: sizeValue || "",
-          value: sizeValue || "",
+      if (!sizesMap.has(finalSizeValue)) {
+        sizesMap.set(finalSizeValue, {
+          label: finalSizeLabel,
+          value: finalSizeValue,
           variantId: variant.id,
           available: availableStock > 0,
           price: variant.price,
@@ -59,7 +63,7 @@ const ProductModal = () => {
         });
       }
 
-      const sizeEntry = sizesMap.get(sizeValue);
+      const sizeEntry = sizesMap.get(finalSizeValue);
 
       colorOptions.forEach((c) => {
         const colorVal = c.value;
@@ -90,6 +94,7 @@ const ProductModal = () => {
       "XXL",
       "2XL",
       "3XL",
+      "ONE SIZE",
     ];
 
     const sizesArray = Array.from(sizesMap.values());
@@ -152,17 +157,31 @@ const ProductModal = () => {
     return sizeEntry?.colors || [];
   }, [selectedSize, sizes, colors]);
 
+  // Auto-select size when there's only one size or if no sizes available (ONE SIZE)
+  useEffect(() => {
+    if (isOpen && product) {
+      if (sizes.length > 0) {
+        // Auto-select the first size (could be ONE SIZE or a regular size)
+        setSelectedSize(sizes[0].value);
+        setSelectedColor(null);
+      }
+    }
+  }, [sizes, isOpen, product]);
+
   // Determine selected variant ID
   const getSelectedVariantId = () => {
-    if (selectedColor && selectedSize) {
+    if (selectedColor && selectedSize && selectedSize !== "ONE SIZE") {
       const sizeEntry = sizes.find((s) => s.value === selectedSize);
       const colorEntry = sizeEntry?.colors.find(
         (c) => c.value === selectedColor
       );
       return colorEntry?.variantId;
-    } else if (selectedSize) {
+    } else if (selectedSize && selectedSize !== "ONE SIZE") {
       const sizeEntry = sizes.find((s) => s.value === selectedSize);
       return sizeEntry?.variantId;
+    } else if (selectedSize === "ONE SIZE" && product?.variants?.[0]) {
+      // If ONE SIZE, use the first variant
+      return product.variants[0].id;
     }
     return null;
   };
@@ -175,6 +194,75 @@ const ProductModal = () => {
   if (!isOpen || !product) return null;
 
   const handleAddToCart = async () => {
+    // If ONE SIZE product, add to cart directly
+    if (selectedSize === "ONE SIZE") {
+      setLoading(true);
+
+      try {
+        const variantId = getSelectedVariantId();
+
+        if (!variantId) {
+          toast.error("Unable to select variant", { position: "top-center" });
+          setLoading(false);
+          return;
+        }
+
+        // Get the available stock from the selected variant
+        const selectedVariant = product.variants.find((v) => v.id === variantId);
+        const availableQuantity = selectedVariant?.inventory?.availableStock ?? 1;
+
+        // If user is not logged in, store in localStorage and show message
+        if (!user?.id) {
+          localStorage.setItem("ProductId", product.id);
+          localStorage.setItem("selectedVariantId", variantId);
+          toast.success("Item added to cart", { position: "top-center" });
+          // Keep modal open for 4 seconds to show toast, then close
+          setTimeout(() => {
+            handleClose();
+          }, 4000);
+          setLoading(false);
+          return;
+        }
+
+        // API call for logged-in users
+        const payload = {
+          userId: parseInt(user.id, 10),
+          productId: parseInt(product.id, 10),
+          variantId: parseInt(variantId, 10),
+          quantity: availableQuantity,
+        };
+
+        const result = await axiosHttp.post(endPoints.addProductToCart, payload);
+
+        if (result.status === 200 || result.status === 201) {
+          // Add to Redux cart state
+          dispatch(addToCart({ product, variantId }));
+
+          toast.success(result.data?.message || "Added to bag successfully", {
+            position: "top-center",
+          });
+
+          // Keep modal open for 4 seconds to show toast, then close
+          setTimeout(() => {
+            handleClose();
+          }, 4000);
+        } else {
+          toast.error(result.data?.message || "Something went wrong", {
+            position: "top-center",
+          });
+        }
+      } catch (error) {
+        const errorMessage =
+          error.response?.data?.message ||
+          error.message ||
+          "Something went wrong";
+        toast.error(errorMessage, { position: "top-center" });
+      } finally {
+        setLoading(false);
+      }
+      return;
+    }
+
     // If size/color options are not shown yet, show them
     if (!showSizeColorOptions) {
       setShowSizeColorOptions(true);

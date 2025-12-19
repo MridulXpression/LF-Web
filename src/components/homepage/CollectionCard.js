@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Heart } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -8,12 +8,24 @@ import {
   openProductViewModal,
 } from "@/redux/slices/loginmodalSlice";
 import WishlistBoardModal from "../WishlistBoardModal";
-import ProductModal from "../Modal";
 
 const ProductCollectionCard = ({ product, onLike }) => {
   const dispatch = useDispatch();
   const [isLiked, setIsLiked] = useState(false);
   const [showWishlistModal, setShowWishlistModal] = useState(false);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const images = product.images || [product.image];
+  const [isHovering, setIsHovering] = useState(false);
+
+  useEffect(() => {
+    if (!isHovering || images.length <= 1) return;
+
+    const interval = setInterval(() => {
+      setCurrentImageIndex((prev) => (prev + 1) % images.length);
+    }, 2000);
+
+    return () => clearInterval(interval);
+  }, [isHovering, images.length]);
 
   const handlePreviewClick = (e) => {
     e.preventDefault();
@@ -21,12 +33,22 @@ const ProductCollectionCard = ({ product, onLike }) => {
     const modalProduct = {
       id: product.id,
       title: product.name,
-      imageUrls: [product.image],
+      imageUrls: images,
       basePrice: price,
       description: product.description || "",
       brand: product.brand,
     };
     dispatch(openProductViewModal(modalProduct));
+  };
+
+  const handleImageHover = (index) => {
+    setIsHovering(true);
+    setCurrentImageIndex(index);
+  };
+
+  const handleMouseLeave = () => {
+    setIsHovering(false);
+    setCurrentImageIndex(0);
   };
 
   const handleLike = (e) => {
@@ -62,14 +84,35 @@ const ProductCollectionCard = ({ product, onLike }) => {
           rel="noopener noreferrer"
         >
           {/* Image */}
-          <div className="relative h-[400px] p-9 bg-stone-200 rounded-xl overflow-hidden">
-            {product?.image ? (
-              <Image
-                src={product.image}
-                alt={product.name}
-                fill
-                className="absolute inset-0 object-fill"
-              />
+          <div
+            className="relative h-[400px] p-9 bg-stone-200 rounded-xl overflow-hidden group"
+            onMouseLeave={handleMouseLeave}
+          >
+            {images && images.length > 0 ? (
+              <>
+                <Image
+                  src={images[currentImageIndex]}
+                  alt={product.name}
+                  fill
+                  className="absolute inset-0 object-fill transition-all duration-300"
+                />
+
+                {/* Invisible Hover Zones - No visual indicator */}
+                {images.length > 1 && (
+                  <div
+                    className="absolute inset-0 flex"
+                    onMouseEnter={() => setIsHovering(true)}
+                  >
+                    {images.map((_, index) => (
+                      <div
+                        key={index}
+                        className="flex-1 cursor-pointer"
+                        onMouseEnter={() => handleImageHover(index)}
+                      />
+                    ))}
+                  </div>
+                )}
+              </>
             ) : (
               <div className="absolute inset-0 bg-gray-300" />
             )}
@@ -81,7 +124,7 @@ const ProductCollectionCard = ({ product, onLike }) => {
             {/* Hover Preview */}
             <button
               onClick={handlePreviewClick}
-              className="absolute left-2 bottom-2 w-[calc(100%-16px)] h-10 py-2 bg-stone-50 rounded-lg outline outline-[0.5px] outline-offset-[-0.5px] flex justify-center items-center opacity-0 hover:opacity-100 transition-opacity cursor-pointer hover:bg-stone-100"
+              className="absolute left-2 bottom-2 w-[calc(100%-16px)] h-10 py-2 bg-stone-50 rounded-lg outline outline-[0.5px] outline-offset-[-0.5px] flex justify-center items-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer hover:bg-stone-100"
             >
               <span className="text-stone-950 text-sm font-medium">
                 Product Preview
@@ -127,7 +170,7 @@ const ProductCollectionCard = ({ product, onLike }) => {
         <WishlistBoardModal
           productData={{
             id: product.id,
-            imageUrls: [product.image],
+            imageUrls: images,
             title: product.name,
             brand: product.brand,
             basePrice: price,
