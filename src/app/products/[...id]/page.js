@@ -11,6 +11,7 @@ import ProductDelivery from "@/components/ProductDelivery";
 import axiosHttp from "@/utils/axioshttp";
 import Footer from "@/components/footer";
 import { getParsedSelectedOptions } from "@/utils/variantUtils";
+import WriteReviewModal from "@/components/WriteReviewModal";
 
 const extractSizesFromVariants = (variants) => {
   if (!variants || !Array.isArray(variants)) return [];
@@ -141,6 +142,7 @@ export default function ProductPage({ params }) {
   const data = useProductsById(unwrappedParams.id);
   const [deliveryInfo, setDeliveryInfo] = useState([]);
   const [reviews, setReviews] = useState([]);
+  const [showReviewModal, setShowReviewModal] = useState(false);
 
   // Extract sizes
   const sizes = useMemo(() => {
@@ -364,45 +366,70 @@ export default function ProductPage({ params }) {
         {/* Reviews */}
         <div className="pt-[50px]">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            {/* LEFT - empty or additional content if needed */}
+            {/* LEFT - Empty */}
             <div></div>
 
-            {/* RIGHT - Reviews */}
-            <div className="space-y-4 max-h-[420px] overflow-y-auto pr-2">
-              {reviews && reviews.length > 0 ? (
-                reviews.slice(0, 5).map((r) => {
-                  const created = r.createdAt ? new Date(r.createdAt) : null;
-                  const timeAgo = (() => {
-                    if (!created) return "just now";
-                    const diff = Date.now() - created.getTime();
-                    const mins = Math.floor(diff / 60000);
-                    if (mins < 1) return "just now";
-                    if (mins < 60) return `${mins} min ago`;
-                    const hours = Math.floor(mins / 60);
-                    if (hours < 24) return `${hours} hr ago`;
-                    const days = Math.floor(hours / 24);
-                    return `${days} day ago`;
-                  })();
+            {/* RIGHT - Reviews with Button */}
+            <div>
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-lg font-semibold text-black">Reviews</h2>
+                <button
+                  onClick={() => setShowReviewModal(true)}
+                  className="px-4 py-2 bg-black text-white text-sm rounded hover:bg-gray-800 transition-colors font-medium cursor-pointer"
+                >
+                  Write a Review
+                </button>
+              </div>
+              <div className="space-y-4 max-h-[420px] overflow-y-auto pr-2">
+                {reviews && reviews.length > 0 ? (
+                  reviews.slice(0, 5).map((r) => {
+                    const created = r.createdAt ? new Date(r.createdAt) : null;
+                    const timeAgo = (() => {
+                      if (!created) return "just now";
+                      const diff = Date.now() - created.getTime();
+                      const mins = Math.floor(diff / 60000);
+                      if (mins < 1) return "just now";
+                      if (mins < 60) return `${mins} min ago`;
+                      const hours = Math.floor(mins / 60);
+                      if (hours < 24) return `${hours} hr ago`;
+                      const days = Math.floor(hours / 24);
+                      return `${days} day ago`;
+                    })();
 
-                  return (
-                    <ReviewCard
-                      key={r.id || `${r.userId}-${r.createdAt}`}
-                      name={r.user.fullName}
-                      rating={r.rating}
-                      timeAgo={timeAgo}
-                      comment={r.comment}
-                      size={r.product_variant.title}
-                    />
-                  );
-                })
-              ) : (
-                <div className="text-gray-500  p-[50px]">No reviews yet.</div>
-              )}
+                    return (
+                      <ReviewCard
+                        key={r.id || `${r.userId}-${r.createdAt}`}
+                        name={r.user.fullName}
+                        rating={r.rating}
+                        timeAgo={timeAgo}
+                        comment={r.comment}
+                        size={r.product_variant.title}
+                      />
+                    );
+                  })
+                ) : (
+                  <div className="text-gray-500  p-[50px]">
+                    No reviews yet.{" "}
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         </div>
       </div>
       <Footer />
+
+      {/* Write Review Modal */}
+      {showReviewModal && (
+        <WriteReviewModal
+          product={data}
+          onClose={() => setShowReviewModal(false)}
+          onSuccess={() => {
+            getReviews();
+            setShowReviewModal(false);
+          }}
+        />
+      )}
     </div>
   );
 }
