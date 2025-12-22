@@ -5,41 +5,22 @@ import axiosHttp from "@/utils/axioshttp";
 import FilterSidebar from "@/components/FilterSidebar";
 import SortSelector from "@/components/SortSelector";
 import ProductGrid from "@/components/ProductGrid";
-import useProducts from "@/hooks/useProducts";
 import usegetBrands from "@/hooks/useGetBrands";
-import useGetProductBySubCategories from "@/hooks/useGetSubCategories";
-import useFilterLogic from "@/hooks/useFilterLogic";
-import useSortLogic from "@/hooks/useSortLogic";
+import useUnifiedFilter from "@/hooks/useUnifiedFilter";
 import { Filter } from "lucide-react";
 
 const ShopByCategoriesPage = () => {
   const searchParams = useSearchParams();
   const router = useRouter();
 
-  // ===== SUBCATEGORY & GENDER =====
-  const subCategoryId = searchParams.get("subCategoryId");
-  const genderValue = searchParams.get("gender");
-  const query = !subCategoryId && genderValue ? `gender=${genderValue}` : "";
-
-  // ===== SEARCH =====
-  const searchQuery = searchParams.get("search")
-    ? decodeURIComponent(searchParams.get("search"))
+  // ===== URL PARAMETERS =====
+  const subCategoryId = searchParams.get("subCatId");
+  const superCatId = searchParams.get("superCatId");
+  const catId = searchParams.get("catId");
+  const searchQuery = searchParams.get("key")
+    ? decodeURIComponent(searchParams.get("key"))
     : null;
-
-  // ===== PRODUCTS HOOK =====
-  // Disable pagination products when search or subCategory is active
-  const {
-    products: allProducts,
-    loading: isProductsLoading,
-    hasMore,
-    loadMore,
-  } = useProducts(searchQuery || subCategoryId ? null : query);
-
-  // ===== SUBCATEGORY PRODUCTS =====
-  const subCategoryResponse = useGetProductBySubCategories(
-    subCategoryId ? Number(subCategoryId) : null
-  );
-  const subCategoryProducts = subCategoryResponse?.data?.products || [];
+  const collectionId = searchParams.get("collectionID");
 
   // ===== BRANDS =====
   const { brands: rawBrands } = usegetBrands();
@@ -49,71 +30,170 @@ const ShopByCategoriesPage = () => {
       name: brand?.name || "",
     })) || [];
 
-  // ===== FILTER LOGIC =====
-  const {
-    selectedBrands,
-    priceRange,
-    setPriceRange,
-    expandedBrands,
-    setExpandedBrands,
-    filteredProducts,
-    isFilterApplied,
-    isFilterLoading,
-    toggleBrandSelection,
-    handleApplyFilters,
-    handleClearFilters,
-  } = useFilterLogic();
+  // ===== SUPER CATEGORIES (Men, Women, Accessories) =====
+  const superCategories = [
+    { id: 1, name: "Men" },
+    { id: 2, name: "Women" },
+    { id: 3, name: "Accessories" },
+  ];
 
-  // ===== SORT LOGIC =====
-  const { sortQuery, isSortLoading, sortedProducts, handleSortChange } =
-    useSortLogic();
+  // ===== FILTER STATE =====
+  const [selectedBrands, setSelectedBrands] = useState([]);
+  const [selectedSuperCategory, setSelectedSuperCategory] = useState(
+    superCatId ? Number(superCatId) : null
+  );
+  const [priceRange, setPriceRange] = useState({
+    min: searchParams.get("minPrice") || "0",
+    max: searchParams.get("maxPrice") || "10000",
+  });
+  const [expandedBrands, setExpandedBrands] = useState(false);
+  const [selectedSizes, setSelectedSizes] = useState([]);
+  const [expandedSizes, setExpandedSizes] = useState(false);
+  const [selectedColors, setSelectedColors] = useState([]);
+  const [expandedColors, setExpandedColors] = useState(false);
 
-  // ===== STATE =====
-  const [searchResults, setSearchResults] = useState(null);
-  const [isSearching, setIsSearching] = useState(false);
+  // ===== SORT STATE =====
+  const [selectedSort, setSelectedSort] = useState("");
 
-  // ===== FILTER PANEL =====
+  // ===== FILTER PANEL STATE =====
   const [isFilterOpen, setIsFilterOpen] = useState(false);
 
-  // ===== SEARCH EFFECT =====
+  // ===== FILTER HOOK =====
+  const {
+    products,
+    isLoading: isFilterLoading,
+    applyFilters,
+  } = useUnifiedFilter();
+
+  // ===== AVAILABLE SIZES & COLORS (Mock - replace with API if needed) =====
+  const [availableSizes, setAvailableSizes] = useState([
+    { id: 1, name: "XS" },
+    { id: 2, name: "S" },
+    { id: 3, name: "M" },
+    { id: 4, name: "L" },
+    { id: 5, name: "XL" },
+    { id: 6, name: "XXL" },
+  ]);
+
+  const [availableColors, setAvailableColors] = useState([
+    { id: 1, name: "Black" },
+    { id: 2, name: "White" },
+    { id: 3, name: "Red" },
+    { id: 4, name: "Blue" },
+    { id: 5, name: "Green" },
+    { id: 6, name: "Yellow" },
+  ]);
+
+  // ===== APPLY FILTERS ON URL CHANGE =====
   useEffect(() => {
-    if (searchQuery) {
-      setIsSearching(true);
-      fetchSearchResults(searchQuery);
-    } else {
-      setSearchResults(null);
-    }
-  }, [searchQuery]);
-
-  const fetchSearchResults = async (query) => {
-    try {
-      const response = await axiosHttp.post(
-        `product-search?key=${encodeURIComponent(query)}`
-      );
-      setSearchResults(response.data.data || []);
-    } catch (error) {
-      setSearchResults([]);
-    } finally {
-      setIsSearching(false);
-    }
-  };
-
-  // ===== PRODUCT PRIORITY LOGIC =====
-  let products = [];
-
-  if (isFilterApplied) {
-    products = filteredProducts;
-  } else if (searchResults !== null) {
-    products = searchResults;
-  } else if (sortQuery) {
-    products = sortedProducts;
-  } else if (subCategoryId) {
-    products = subCategoryProducts;
-  } else {
-    products = allProducts;
-  }
+    applyFilters({
+      brandIds: selectedBrands,
+      minPrice: priceRange.min,
+      maxPrice: priceRange.max,
+      sort: selectedSort,
+      superCatId: selectedSuperCategory,
+      subCatId: subCategoryId ? Number(subCategoryId) : null,
+      catId: catId ? Number(catId) : null,
+      sizeIds: selectedSizes,
+      colorIds: selectedColors,
+      collectionId: collectionId ? Number(collectionId) : null,
+      key: searchQuery,
+    });
+  }, [
+    selectedBrands,
+    priceRange,
+    selectedSort,
+    selectedSuperCategory,
+    subCategoryId,
+    catId,
+    selectedSizes,
+    selectedColors,
+    collectionId,
+    searchQuery,
+    applyFilters,
+  ]);
 
   // ===== HANDLERS =====
+  const toggleBrandSelection = (brandId) => {
+    setSelectedBrands((prev) =>
+      prev.includes(brandId)
+        ? prev.filter((id) => id !== brandId)
+        : [...prev, brandId]
+    );
+  };
+
+  const toggleSizeSelection = (sizeId) => {
+    setSelectedSizes((prev) =>
+      prev.includes(sizeId)
+        ? prev.filter((id) => id !== sizeId)
+        : [...prev, sizeId]
+    );
+  };
+
+  const toggleColorSelection = (colorId) => {
+    setSelectedColors((prev) =>
+      prev.includes(colorId)
+        ? prev.filter((id) => id !== colorId)
+        : [...prev, colorId]
+    );
+  };
+
+  const handleApplyFilters = () => {
+    const params = new URLSearchParams();
+
+    if (selectedBrands.length > 0) {
+      params.set("brandIds", selectedBrands.join(","));
+    }
+    if (priceRange.min !== "0") {
+      params.set("minPrice", priceRange.min);
+    }
+    if (priceRange.max !== "10000") {
+      params.set("maxPrice", priceRange.max);
+    }
+    if (selectedSuperCategory) {
+      params.set("superCatId", selectedSuperCategory);
+    }
+    if (selectedSizes.length > 0) {
+      params.set("sizeIds", selectedSizes.join(","));
+    }
+    if (selectedColors.length > 0) {
+      params.set("colorIds", selectedColors.join(","));
+    }
+    if (selectedSort) {
+      params.set("sort", selectedSort);
+    }
+    if (subCategoryId) {
+      params.set("subCatId", subCategoryId);
+    }
+    if (catId) {
+      params.set("catId", catId);
+    }
+    if (collectionId) {
+      params.set("collectionID", collectionId);
+    }
+    if (searchQuery) {
+      params.set("key", encodeURIComponent(searchQuery));
+    }
+
+    router.push(`/products?${params.toString()}`);
+    setIsFilterOpen(false);
+  };
+
+  const handleClearFilters = () => {
+    setSelectedBrands([]);
+    setSelectedSuperCategory(null);
+    setPriceRange({ min: "0", max: "10000" });
+    setSelectedSizes([]);
+    setSelectedColors([]);
+    setSelectedSort("");
+    router.push("/products");
+  };
+
+  const handleSortChange = (e) => {
+    const sortValue = e.target.value;
+    setSelectedSort(sortValue);
+  };
+
   const handleBrowseAll = () => {
     router.push("/products");
   };
@@ -128,7 +208,7 @@ const ShopByCategoriesPage = () => {
         <Filter size={18} /> Filters
       </button>
 
-      <div className="max-w-[1400px] mx-auto flex  ">
+      <div className="max-w-[1400px] mx-auto flex">
         {/* FILTER SIDEBAR */}
         <FilterSidebar
           isFilterOpen={isFilterOpen}
@@ -140,6 +220,19 @@ const ShopByCategoriesPage = () => {
           setExpandedBrands={setExpandedBrands}
           priceRange={priceRange}
           setPriceRange={setPriceRange}
+          superCategories={superCategories}
+          selectedSuperCategory={selectedSuperCategory}
+          onSuperCategoryChange={setSelectedSuperCategory}
+          sizes={availableSizes}
+          selectedSizes={selectedSizes}
+          toggleSizeSelection={toggleSizeSelection}
+          expandedSizes={expandedSizes}
+          setExpandedSizes={setExpandedSizes}
+          colors={availableColors}
+          selectedColors={selectedColors}
+          toggleColorSelection={toggleColorSelection}
+          expandedColors={expandedColors}
+          setExpandedColors={setExpandedColors}
           onApplyFilters={handleApplyFilters}
           onClearFilters={handleClearFilters}
           isLoading={isFilterLoading}
@@ -151,20 +244,21 @@ const ShopByCategoriesPage = () => {
           <SortSelector
             searchQuery={searchQuery}
             onSortChange={handleSortChange}
-            isSortLoading={isSortLoading}
+            isSortLoading={isFilterLoading}
+            selectedSort={selectedSort}
           />
 
           {/* PRODUCT GRID */}
           <ProductGrid
             products={products}
-            isLoading={isProductsLoading}
-            isSearching={isSearching}
+            isLoading={isFilterLoading}
+            isSearching={false}
             isFilterLoading={isFilterLoading}
-            isSortLoading={isSortLoading}
-            isFilterApplied={isFilterApplied}
-            hasMore={hasMore}
+            isSortLoading={false}
+            isFilterApplied={true}
+            hasMore={false}
             subCategoryId={subCategoryId}
-            onLoadMore={loadMore}
+            onLoadMore={() => {}}
             onBrowseAll={handleBrowseAll}
           />
         </div>

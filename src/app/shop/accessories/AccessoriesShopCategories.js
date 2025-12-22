@@ -113,7 +113,7 @@ const ShopCategories = () => {
                 ))
               : fetchCategories.map((category) => (
                   <Link
-                    href={`/categories?categoryId=${category.id}`}
+                    href={`/categories?catId=${category.id}`}
                     key={category.id}
                     className="flex flex-col items-center min-w-[140px] md:min-w-[215px]"
                   >

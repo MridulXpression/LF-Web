@@ -53,7 +53,7 @@ export default function NavbarSearchComponent({
 
   const handleSearch = (e) => {
     if (e.key === "Enter" && searchQuery.trim()) {
-      router.push(`/products?search=${encodeURIComponent(searchQuery.trim())}`);
+      router.push(`/products?key=${encodeURIComponent(searchQuery.trim())}`);
       setIsOpen(false);
       dispatch(addSearch(searchQuery.trim()));
     }
@@ -61,7 +61,7 @@ export default function NavbarSearchComponent({
 
   const handleSuggestionClick = (suggestion) => {
     const trimmedSuggestion = suggestion.trim();
-    router.push(`/products?search=${encodeURIComponent(trimmedSuggestion)}`);
+    router.push(`/products?key=${encodeURIComponent(trimmedSuggestion)}`);
     setIsOpen(false);
     dispatch(addSearch(trimmedSuggestion));
   };

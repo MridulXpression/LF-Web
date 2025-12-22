@@ -36,7 +36,7 @@ const NewInSection = () => {
                       className=" object-cover "
                     />
                     <Link
-                      href="/products?gender=1" // explore page
+                      href="/products?superCatId=1" // explore page
                       className="absolute inset-0 flex items-center justify-center bg-black/40 text-white font-bold text-lg"
                     >
                       Explore All →

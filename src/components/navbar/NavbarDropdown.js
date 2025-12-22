@@ -22,7 +22,7 @@ const NavbarDropdown = ({ menu, latestBlogs, onMouseEnter, onMouseLeave }) => {
                     index % 2 === 0 ? "bg-[#F2F2F2] p-4 " : "bg-white p-4 "
                   }
                 >
-                  <Link href={`/categories?categoryId=${section.id}`}>
+                  <Link href={`/categories?catId=${section.id}`}>
                     <h3 className="text-[12px] font-[600] text-[#0F0F0F] mb-3  font-clash-display uppercase">
                       {section.heading}
                     </h3>
@@ -32,7 +32,7 @@ const NavbarDropdown = ({ menu, latestBlogs, onMouseEnter, onMouseLeave }) => {
                     {section.items.map((item) => (
                       <li key={item.id}>
                         <Link
-                          href={`/products?subCategoryId=${item.id}`}
+                          href={`/products?subCatId=${item.id}`}
                           className="text-[13px] font-normal text-[#404040] hover:text-black transition-colors"
                         >
                           {item.name}

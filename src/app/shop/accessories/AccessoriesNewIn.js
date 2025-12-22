@@ -41,7 +41,7 @@ const NewInSection = () => {
                     )}
 
                     <Link
-                      href="/products?gender=3" // explore page
+                      href="/products?superCatId=3" // explore page
                       className="absolute inset-0 flex items-center justify-center bg-black/40 text-white font-bold text-lg"
                     >
                       Explore All →

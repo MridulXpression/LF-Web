@@ -35,7 +35,7 @@ const MobileNavbar = ({ isOpen, onClose, menuData, getMenuHref }) => {
                   {menu.sections.map((section) => (
                     <div key={section.id} className="mt-2">
                       <Link
-                        href={`/categories?categoryId=${section.id}`}
+                        href={`/categories?catId=${section.id}`}
                         className="text-sm font-semibold block"
                         onClick={onClose}
                       >
@@ -45,7 +45,7 @@ const MobileNavbar = ({ isOpen, onClose, menuData, getMenuHref }) => {
                       {section.items.map((item) => (
                         <Link
                           key={item.id}
-                          href={`/products?subCategoryId=${item.id}`}
+                          href={`/products?subCatId=${item.id}`}
                           className="block py-1 text-sm text-gray-600"
                           onClick={onClose}
                         >
