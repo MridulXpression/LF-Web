@@ -32,7 +32,7 @@ const BannerCarousel = ({ slides }) => {
   return (
     <div className="w-full bg-white relative pt-[50px] md:min-h-[50vh] ">
       <div className="w-full max-w-full mx-auto">
-        <div className="relative h-[400px] md:h-[500px] lg:h-[600px] overflow-hidden">
+        <div className="relative h-[400px] md:h-[500px]  overflow-hidden">
           {slides.map((slide, index) => (
             <div
               key={index}

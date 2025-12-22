@@ -17,15 +17,15 @@ const FashionVideoBackground = ({ videoUrl, heading1, heading2, heading3 }) => {
 
       {/* Overlay Content - Right Side, Above Bottom */}
       <div className="absolute inset-0 flex items-end justify-end bg-gradient-to-b from-black/0 to-black/70">
-        <div className="text-right px-8 md:px-12 lg:px-16 pb-16 md:pb-20 lg:pb-24">
+        <div className="text-left px-8 md:px-12 lg:px-16 pb-16 md:pb-20 lg:pb-24">
           <div className="space-y-1">
-            <p className="text-sm md:text-3xl font-bold text-white traking-wide  uppercase leading-tight">
+            <p className="text-sm md:text-[25px] font-[600] text-white tracking-[1px]  uppercase leading-tight">
               {heading1}
             </p>
-            <p className="text-sm md:text-5xl font-bold text-white  uppercase leading-tight">
+            <p className="text-sm md:text-[40px] font-[600] text-white  uppercase leading-tight">
               {heading2}
             </p>
-            <p className="text-sm md:text-4xl font-normal text-white tracking-wide uppercase leading-tight">
+            <p className="text-sm md:text-[32px] font-[300] text-white tracking-[1.08px] uppercase leading-tight">
               {heading3}
             </p>
           </div>

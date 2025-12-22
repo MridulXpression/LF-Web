@@ -14,8 +14,7 @@ const TrendingNowSection = () => {
   // Banner configuration: specify how many banners to show below each collection
   const bannerConfig = {
     0: 2, // First collection: 2 banners
-    1: 1, // Second collection: 1 banner
-    2: 3, // Third collection: 3 banners
+    1: 3, // Second collection: 3 banners
   };
 
   // Pagination: 4 products, then 4, then 3 (total 11)
@@ -67,6 +66,8 @@ const TrendingNowSection = () => {
 
         const currentPage = currentPages[collection.id] || 0;
         const totalPages = pageItemCounts.length;
+        const totalProducts = collection.products.length;
+        const shouldDisableChevrons = totalProducts <= 5;
 
         // Calculate start and end indices based on cumulative item counts
         let startIndex = 0;
@@ -82,8 +83,13 @@ const TrendingNowSection = () => {
 
         // Get banner count for this collection
         const bannerCount = bannerConfig[collectionIndex] || 0;
+        // Calculate starting banner number (1-indexed globally)
+        let startingBannerNumber = 1;
+        for (let i = 0; i < collectionIndex; i++) {
+          startingBannerNumber += bannerConfig[i] || 0;
+        }
         const banners = Array.from({ length: bannerCount }, (_, i) => ({
-          id: i + 1,
+          id: startingBannerNumber + i,
         }));
 
         return (
@@ -93,7 +99,7 @@ const TrendingNowSection = () => {
           >
             {/* Header */}
             <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 sm:gap-6 mb-8 sm:mb-10">
-              <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-[42px] font-semibold uppercase text-black">
+              <h1 className="text-xl sm:text-2xl md:text-[38px] font-semibold uppercase text-black">
                 {collection.name}
               </h1>
 
@@ -115,9 +121,9 @@ const TrendingNowSection = () => {
                 </button>
                 <button
                   onClick={() => handlePrevPage(collection.id)}
-                  disabled={currentPage === 0}
+                  disabled={currentPage === 0 || shouldDisableChevrons}
                   className={`w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 border rounded-full flex items-center justify-center cursor-pointer transition text-sm sm:text-base ${
-                    currentPage === 0
+                    currentPage === 0 || shouldDisableChevrons
                       ? "text-[#A0A0A0]"
                       : "text-black hover:bg-stone-950 hover:text-white"
                   }`}
@@ -130,9 +136,11 @@ const TrendingNowSection = () => {
 
                 <button
                   onClick={() => handleNextPage(collection.id, totalPages)}
-                  disabled={currentPage === totalPages - 1}
+                  disabled={
+                    currentPage === totalPages - 1 || shouldDisableChevrons
+                  }
                   className={`w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 border rounded-full flex items-center justify-center cursor-pointer transition text-sm sm:text-base ${
-                    currentPage === totalPages - 1
+                    currentPage === totalPages - 1 || shouldDisableChevrons
                       ? "text-[#A0A0A0]"
                       : "text-black hover:bg-stone-950 hover:text-white"
                   }`}
@@ -185,7 +193,7 @@ const TrendingNowSection = () => {
             {/* Banners Section */}
             {bannerCount > 0 && (
               <div className="mt-8 sm:mt-10 md:mt-12">
-                <BannerGrid banners={banners} />
+                <BannerGrid banners={banners} bannerCount={bannerCount} />
               </div>
             )}
           </section>

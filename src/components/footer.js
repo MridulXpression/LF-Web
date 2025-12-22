@@ -146,7 +146,7 @@ const Footer = () => {
           {/* Row 2: Big Center Logo */}
           <div className="mt-10 flex justify-center">
             <Image
-              src="/images/Lafetch Logo.svg"
+              src="/images/lafetch-white.svg"
               alt="LAFETCH Logo"
               width={360}
               height={140}

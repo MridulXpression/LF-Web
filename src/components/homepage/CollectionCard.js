@@ -136,11 +136,13 @@ const ProductCollectionCard = ({ product, onLike }) => {
         <div className="px-3 pb-3 flex flex-col gap-2">
           <div className="flex justify-between items-start">
             <div className="">
-              <p className="text-[15px] font-semibold uppercase text-black">
+              <p className="text-[15px] font-[600] uppercase text-black">
                 {truncateText(product.name, 24)}
               </p>
 
-              <p className="text-sm uppercase text-black">{product.brand}</p>
+              <p className="text-[13px] uppercase font-[400] text-black">
+                {product.brand}
+              </p>
             </div>
 
             <button onClick={handleLike} className="cursor-pointer">
@@ -149,12 +151,14 @@ const ProductCollectionCard = ({ product, onLike }) => {
           </div>
 
           <div className="flex items-center gap-2">
-            <span className="font-medium text-black">Rs. {price}</span>
+            <span className="font-medium text-[15px]  text-black">
+              ₹{price}
+            </span>
 
             {showOriginalPrice && (
               <>
                 <span className="line-through opacity-60 text-sm text-black">
-                  Rs. {originalPrice}
+                  ₹{originalPrice}
                 </span>
 
                 <span className="text-emerald-600 text-sm">

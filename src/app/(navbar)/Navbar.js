@@ -38,8 +38,8 @@ const getMenuData = (categories) => {
     { title: "ALL BRANDS", sections: [] },
     ...dynamicMenus,
     { title: "BLOGS", sections: [] },
-    { title: "TRACK ORDER", sections: [] },
     { title: "NEWSLETTERS", sections: [] },
+    { title: "TRACK ORDER", sections: [] },
   ];
 };
 
@@ -97,7 +97,7 @@ const Navbar = () => {
 
             <Link href="/" className="hidden md:block">
               <Image
-                src="/images/Lafetch Logo.svg"
+                src="/images/logo-black.svg"
                 alt="Logo"
                 width={100}
                 height={40}
@@ -106,7 +106,7 @@ const Navbar = () => {
 
             <Link href="/" className="md:hidden border-r border-black/50 pr-4">
               <Image
-                src="/images/Lafetch Logo.svg"
+                src="/images/logo-black.svg"
                 alt="Logo"
                 width={70}
                 height={28}
@@ -158,6 +158,20 @@ const Navbar = () => {
 
           {/* RIGHT */}
           <div className="flex items-center gap-4">
+            <div className="border-r border-black/50 w-28 h-8 flex items-center justify-center ">
+              <button
+                onClick={() => setIsQuickModalOpen(true)}
+                className="relative overflow-hidden cursor-pointer"
+              >
+                <Image
+                  src="/images/quick.png"
+                  alt="Quick"
+                  width={100}
+                  height={30}
+                />
+                <div className="absolute inset-0 shine-overlay"></div>
+              </button>
+            </div>
             <Search
               className="text-black"
               onClick={() => setShowSearchDropdown(true)}

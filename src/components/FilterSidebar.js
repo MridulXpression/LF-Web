@@ -61,7 +61,7 @@ const FilterSidebar = ({
         ref={filterRef}
         className={`
           fixed lg:static top-0 left-0 h-full lg:h-auto 
-          w-72 bg-white p-6 border-r border-gray-400 overflow-y-auto z-50 md:z-30  
+          w-72 bg-white p-6 border-r border-gray-400 overflow-y-auto z-50 md:z-8  
           transform transition-transform duration-300
           ${
             isFilterOpen

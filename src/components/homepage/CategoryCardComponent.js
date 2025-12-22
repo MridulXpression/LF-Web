@@ -35,9 +35,9 @@ export default function ShopByCategory({ categories: externalCategories }) {
   };
 
   return (
-    <div className="w-full max-h-screen bg-neutral-100 px-4 sm:px-8 md:px-20 pt-10 sm:pt-16 md:pt-20 pb-16 sm:pb-24 md:pb-28">
+    <div className="w-full max-h-screen  px-4 sm:px-8 md:px-20 pt-10  md:pt-0 pb-16 sm:pb-24 md:pb-28">
       <div className="mb-6 sm:mb-8 md:mb-10">
-        <h1 className="text-stone-950 text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-semibold uppercase">
+        <h1 className="text-stone-950 text-2xl  md:text-[38px] font-semibold uppercase">
           Shop by Category
         </h1>
       </div>

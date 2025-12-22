@@ -102,7 +102,7 @@ const FashionGrid = ({ data, title = "TRENDING NOW" }) => {
       <div className="md:max-w-[1400px] mx-auto">
         <div className="flex items-center mb-[40px] gap-8">
           <div className="flex-1 h-[2px] bg-stone-950" />
-          <div className="text-stone-950 text-[32px] md:text-[44px] font-bold uppercase tracking-wider whitespace-nowrap">
+          <div className="text-stone-950 text-2xl  md:text-[38px] font-semibold uppercase tracking-wider whitespace-nowrap">
             {title}
           </div>
         </div>
@@ -143,7 +143,7 @@ const FashionGrid = ({ data, title = "TRENDING NOW" }) => {
 
               {/* Overlay (middle) */}
               <div
-                className="absolute inset-0 bg-gradient-to-b from-black/20 via-black/50 to-black/80 
+                className="absolute inset-0 bg-gradient-to-b from-black/20 via-black/40 to-black/20 
                   opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10"
               />
 

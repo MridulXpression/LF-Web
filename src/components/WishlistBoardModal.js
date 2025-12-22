@@ -104,7 +104,7 @@ const CreateBoardModal = ({ productData, onClose }) => {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-[4px] flex items-center justify-center">
+    <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-[4px] flex items-center justify-center min-h-screen">
       <div className="absolute inset-0" onClick={handleClose} />
 
       <div className="relative bg-white w-full max-w-3xl mx-4 flex overflow-hidden max-h-[400px]">
