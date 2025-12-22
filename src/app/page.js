@@ -15,9 +15,9 @@ const page = () => {
       <Navbar />
       <HomePage />
       <NewestAtLafetch />
+      <HomeCarousel />
       <CategorySection />
       <TrendingNowSection />
-      <HomeCarousel />
       <TrendingBlog />
       <PhoneAuthModal />
       <Footer />

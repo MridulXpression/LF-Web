@@ -10,7 +10,7 @@ export default function AnnouncementBar() {
   ];
 
   return (
-    <div className="fixed top-0 left-0 right-0 w-full bg-zinc-800 overflow-hidden py-3 z-50">
+    <div className="fixed top-0 left-0 right-0 w-full bg-zinc-800 overflow-hidden py-3 z-30">
       <div className="flex animate-scroll whitespace-nowrap">
         {/* Duplicate the content multiple times for seamless loop */}
         {[...Array(3)].map((_, setIndex) => (
@@ -18,10 +18,10 @@ export default function AnnouncementBar() {
             {announcements.map((item, index) => (
               <React.Fragment key={`${setIndex}-${index}`}>
                 <div className="flex items-center gap-2 mx-8">
-                  <div className="w-9 h-9 bg-zinc-300/20 rounded-full flex items-center justify-center">
-                    <item.icon className="w-5 h-5 text-neutral-100" />
+                  <div className="w-7 h-7 bg-zinc-300/20 rounded-full flex items-center justify-center">
+                    <item.icon className="w-4 h-4 text-neutral-100" />
                   </div>
-                  <span className="text-neutral-100 text-sm font-medium uppercase tracking-wide">
+                  <span className="text-neutral-100 text-sm font-[400] uppercase tracking-wide">
                     {item.text}
                   </span>
                 </div>

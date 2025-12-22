@@ -7,6 +7,7 @@ import SortSelector from "@/components/SortSelector";
 import ProductGrid from "@/components/ProductGrid";
 import usegetBrands from "@/hooks/useGetBrands";
 import useUnifiedFilter from "@/hooks/useUnifiedFilter";
+import useProducts from "@/hooks/useProducts";
 import { Filter } from "lucide-react";
 
 const ShopByCategoriesPage = () => {
@@ -58,12 +59,42 @@ const ShopByCategoriesPage = () => {
   // ===== FILTER PANEL STATE =====
   const [isFilterOpen, setIsFilterOpen] = useState(false);
 
-  // ===== FILTER HOOK =====
+  // ===== CHECK IF ANY FILTERS ARE APPLIED =====
+  const hasFiltersApplied = () => {
+    return (
+      selectedBrands.length > 0 ||
+      selectedSuperCategory ||
+      priceRange.min !== "0" ||
+      priceRange.max !== "10000" ||
+      selectedSizes.length > 0 ||
+      selectedColors.length > 0 ||
+      selectedSort ||
+      subCategoryId ||
+      catId ||
+      collectionId ||
+      searchQuery
+    );
+  };
+
+  // ===== HOOKS =====
+  // Use filter API when filters are applied
   const {
-    products,
+    products: filteredProducts,
     isLoading: isFilterLoading,
     applyFilters,
   } = useUnifiedFilter();
+
+  // Use pagination when no filters applied
+  const {
+    products: paginatedProducts,
+    loading: isPageLoading,
+    hasMore,
+    loadMore,
+  } = useProducts(hasFiltersApplied() ? null : "");
+
+  // Determine which products to display
+  const products = hasFiltersApplied() ? filteredProducts : paginatedProducts;
+  const isLoading = hasFiltersApplied() ? isFilterLoading : isPageLoading;
 
   // ===== AVAILABLE SIZES & COLORS (Mock - replace with API if needed) =====
   const [availableSizes, setAvailableSizes] = useState([
@@ -86,19 +117,22 @@ const ShopByCategoriesPage = () => {
 
   // ===== APPLY FILTERS ON URL CHANGE =====
   useEffect(() => {
-    applyFilters({
-      brandIds: selectedBrands,
-      minPrice: priceRange.min,
-      maxPrice: priceRange.max,
-      sort: selectedSort,
-      superCatId: selectedSuperCategory,
-      subCatId: subCategoryId ? Number(subCategoryId) : null,
-      catId: catId ? Number(catId) : null,
-      sizeIds: selectedSizes,
-      colorIds: selectedColors,
-      collectionId: collectionId ? Number(collectionId) : null,
-      key: searchQuery,
-    });
+    // Only apply filters if filters are actually applied
+    if (hasFiltersApplied()) {
+      applyFilters({
+        brandIds: selectedBrands,
+        minPrice: priceRange.min,
+        maxPrice: priceRange.max,
+        sort: selectedSort,
+        superCatId: selectedSuperCategory,
+        subCatId: subCategoryId ? Number(subCategoryId) : null,
+        catId: catId ? Number(catId) : null,
+        sizeIds: selectedSizes,
+        colorIds: selectedColors,
+        collectionId: collectionId ? Number(collectionId) : null,
+        key: searchQuery,
+      });
+    }
   }, [
     selectedBrands,
     priceRange,
@@ -235,7 +269,7 @@ const ShopByCategoriesPage = () => {
           setExpandedColors={setExpandedColors}
           onApplyFilters={handleApplyFilters}
           onClearFilters={handleClearFilters}
-          isLoading={isFilterLoading}
+          isLoading={isLoading}
         />
 
         {/* MAIN CONTENT */}
@@ -244,21 +278,21 @@ const ShopByCategoriesPage = () => {
           <SortSelector
             searchQuery={searchQuery}
             onSortChange={handleSortChange}
-            isSortLoading={isFilterLoading}
+            isSortLoading={isLoading}
             selectedSort={selectedSort}
           />
 
           {/* PRODUCT GRID */}
           <ProductGrid
             products={products}
-            isLoading={isFilterLoading}
+            isLoading={isLoading}
             isSearching={false}
-            isFilterLoading={isFilterLoading}
+            isFilterLoading={isLoading}
             isSortLoading={false}
-            isFilterApplied={true}
-            hasMore={false}
+            isFilterApplied={hasFiltersApplied()}
+            hasMore={hasFiltersApplied() ? false : hasMore}
             subCategoryId={subCategoryId}
-            onLoadMore={() => {}}
+            onLoadMore={loadMore}
             onBrowseAll={handleBrowseAll}
           />
         </div>

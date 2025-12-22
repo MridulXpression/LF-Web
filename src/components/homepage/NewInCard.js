@@ -76,7 +76,7 @@ const NewInCard = ({
             {/* Hover Preview */}
             <button
               onClick={handlePreviewClick}
-              className="absolute left-2 sm:left-3 md:left-[15px] bottom-2 sm:bottom-3 w-[calc(100%-16px)] sm:w-64 md:w-72 lg:w-80 h-10 sm:h-11 md:h-12 py-2 bg-stone-50 rounded-lg outline outline-[0.5px] outline-offset-[-0.5px] flex justify-center items-center opacity-0 hover:opacity-100 transition-opacity cursor-pointer hover:bg-stone-100"
+              className="absolute left-2 sm:left-3 md:left-[15px] bottom-2 sm:bottom-3 w-[calc(100%-16px)] sm:w-64 md:w-72 lg:w-80 h-10 sm:h-11 md:h-12 py-2 bg-stone-50 rounded-lg  flex justify-center items-center opacity-0 hover:opacity-100 transition-opacity cursor-pointer hover:bg-stone-100"
             >
               <span className="text-stone-950 text-xs sm:text-sm font-medium">
                 Product Preview

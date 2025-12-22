@@ -124,7 +124,7 @@ const ProductCollectionCard = ({ product, onLike }) => {
             {/* Hover Preview */}
             <button
               onClick={handlePreviewClick}
-              className="absolute left-2 bottom-2 w-[calc(100%-16px)] h-10 py-2 bg-stone-50 rounded-lg outline outline-[0.5px] outline-offset-[-0.5px] flex justify-center items-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer hover:bg-stone-100"
+              className="absolute left-2 bottom-2 w-[calc(100%-16px)] h-10 py-2 bg-stone-50 rounded-lg  flex justify-center items-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer hover:bg-stone-100"
             >
               <span className="text-stone-950 text-sm font-medium">
                 Product Preview

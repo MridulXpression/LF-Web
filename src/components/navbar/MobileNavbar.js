@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { X } from "lucide-react";
 
 const MobileNavbar = ({ isOpen, onClose, menuData, getMenuHref }) => {
@@ -13,7 +14,14 @@ const MobileNavbar = ({ isOpen, onClose, menuData, getMenuHref }) => {
         transition-transform duration-300 flex flex-col`}
       >
         <div className="flex items-center justify-between p-4 border-b">
-          <h2 className="text-lg font-semibold">Menu</h2>
+          <button className="border-r border-black/50 w-20 h-8 flex items-center justify-center">
+            <Image
+              src="/images/quick.png"
+              alt="Quick"
+              width={100}
+              height={30}
+            />
+          </button>
           <button onClick={onClose}>
             <X className="w-6 h-6 text-gray-600" />
           </button>

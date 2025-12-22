@@ -87,20 +87,29 @@ const Navbar = () => {
   return (
     <>
       {/* HEADER */}
-      <div className="fixed top-15 inset-x-0 bg-white z-40 shadow-sm">
-        <div className="max-w-full mx-auto px-16 py-7 h-24 flex items-center justify-between">
+      <div className="fixed top-14 inset-x-0 bg-white z-40 shadow-sm">
+        <div className="max-w-full mx-auto px-4 md:px-16 py-6 md:py-7 h-20 md:h-24 flex items-center justify-between">
           {/* LEFT */}
           <div className="flex items-center gap-4">
             <button className="md:hidden" onClick={() => setIsMobileOpen(true)}>
               <Menu />
             </button>
 
-            <Link href="/">
+            <Link href="/" className="hidden md:block">
               <Image
                 src="/images/Lafetch Logo.svg"
                 alt="Logo"
                 width={100}
                 height={40}
+              />
+            </Link>
+
+            <Link href="/" className="md:hidden border-r border-black/50 pr-4">
+              <Image
+                src="/images/Lafetch Logo.svg"
+                alt="Logo"
+                width={70}
+                height={28}
               />
             </Link>
           </div>
@@ -149,21 +158,6 @@ const Navbar = () => {
 
           {/* RIGHT */}
           <div className="flex items-center gap-4">
-            <div className="border-r border-black/50 w-28 h-8 flex items-center justify-center ">
-              <button
-                onClick={() => setIsQuickModalOpen(true)}
-                className="relative overflow-hidden cursor-pointer"
-              >
-                <Image
-                  src="/images/quick.png"
-                  alt="Quick"
-                  width={100}
-                  height={30}
-                />
-                <div className="absolute inset-0 shine-overlay"></div>
-              </button>
-            </div>
-
             <Search
               className="text-black"
               onClick={() => setShowSearchDropdown(true)}
