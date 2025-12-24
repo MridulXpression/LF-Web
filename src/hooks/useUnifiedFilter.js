@@ -39,7 +39,7 @@ const useUnifiedFilter = () => {
         if (colorIds && colorIds.length > 0) {
           params.append("colorIds", colorIds.join(","));
         }
-        if (collectionId) params.append("collectionID", collectionId);
+        if (collectionId) params.append("collectionId", collectionId);
         if (key) params.append("key", encodeURIComponent(key));
 
         const response = await axiosHttp.post(

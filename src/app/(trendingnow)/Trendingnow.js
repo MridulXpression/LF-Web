@@ -156,6 +156,28 @@ const TrendingNowSection = () => {
             {/* Grid */}
             <div className="flex gap-3 sm:gap-4 md:gap-6 overflow-x-auto">
               {displayedProducts.map((product) => {
+                // Extract variant sizes from variants array
+                const availableSizes = product.variants
+                  ? product.variants
+                      .map((variant) => {
+                        let options = [];
+                        try {
+                          if (typeof variant.selectedOptions === "string") {
+                            options = JSON.parse(variant.selectedOptions);
+                          } else if (Array.isArray(variant.selectedOptions)) {
+                            options = variant.selectedOptions;
+                          }
+                        } catch (e) {
+                          options = [];
+                        }
+                        const sizeOption = options.find(
+                          (opt) => opt.name === "Size"
+                        );
+                        return sizeOption?.value || "";
+                      })
+                      .filter(Boolean)
+                  : [];
+
                 // Transform the product data to match CollectionCard requirements
                 const transformedProduct = {
                   id: product.id,
@@ -166,6 +188,8 @@ const TrendingNowSection = () => {
                   description: product.description || "",
                   images: product.imageUrls || [product.image],
                   hasOverlay: product.hasOverlay || false,
+                  variants: product.variants || [],
+                  availableSizes: availableSizes,
                 };
 
                 return (
@@ -184,7 +208,10 @@ const TrendingNowSection = () => {
               {currentPage === totalPages - 1 && (
                 <div className="flex-shrink-0 w-64 sm:w-72 md:w-80 lg:w-80">
                   <ViewAllCard
-                    onClick={() => console.log("View all clicked")}
+                    onClick={() => {
+                      (window.location.href = `/products?collectionId=${collection.id}`),
+                        "_blank";
+                    }}
                   />
                 </div>
               )}

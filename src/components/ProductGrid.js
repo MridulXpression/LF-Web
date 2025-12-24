@@ -40,23 +40,14 @@ const ProductGrid = ({
     return () => observer.disconnect();
   }, [hasMore, isLoading, isFilterApplied, subCategoryId, onLoadMore]);
 
-  // FILTER LOADING
-  // if (isFilterLoading) {
-  //   return (
-  //     <div className="flex justify-center items-center h-64">
-  //       <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900"></div>
-  //     </div>
-  //   );
-  // }
-
-  // LOADING
-  // if (isLoading && !isSearching) {
-  //   return (
-  //     <div className="flex justify-center items-center h-64">
-  //       <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900"></div>
-  //     </div>
-  //   );
-  // }
+  // LOADING (Filter, Sort, or Pagination)
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center h-64">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900"></div>
+      </div>
+    );
+  }
 
   // SEARCHING
   if (isSearching) {

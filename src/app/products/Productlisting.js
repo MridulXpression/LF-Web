@@ -21,7 +21,7 @@ const ShopByCategoriesPage = () => {
   const searchQuery = searchParams.get("key")
     ? decodeURIComponent(searchParams.get("key"))
     : null;
-  const collectionId = searchParams.get("collectionID");
+  const collectionId = searchParams.get("collectionId");
 
   // ===== BRANDS =====
   const { brands: rawBrands } = usegetBrands();
@@ -203,7 +203,7 @@ const ShopByCategoriesPage = () => {
       params.set("catId", catId);
     }
     if (collectionId) {
-      params.set("collectionID", collectionId);
+      params.set("collectionId", collectionId);
     }
     if (searchQuery) {
       params.set("key", encodeURIComponent(searchQuery));

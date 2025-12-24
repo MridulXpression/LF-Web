@@ -36,6 +36,8 @@ const ProductCollectionCard = ({ product, onLike }) => {
       basePrice: price,
       description: product.description || "",
       brand: product.brand,
+      variants: product.variants || [],
+      availableSizes: product.availableSizes || [],
     };
     dispatch(openProductViewModal(modalProduct));
   };
