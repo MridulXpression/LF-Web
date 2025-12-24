@@ -9,15 +9,24 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import useNewsletterSubscribe from "@/hooks/useNewsletterSubscribe";
+import toast from "react-hot-toast";
 
 const Footer = () => {
   const [email, setEmail] = useState("");
+  const [loading, setLoading] = useState(false);
+  const { subscribeToNewsletter } = useNewsletterSubscribe();
 
-  const handleNewsletterSubmit = () => {
+  const handleNewsletterSubmit = async () => {
     if (email) {
-      // Handle newsletter subscription
-
-      setEmail("");
+      setLoading(true);
+      const success = await subscribeToNewsletter(email);
+      if (success) {
+        setEmail("");
+      }
+      setLoading(false);
+    } else {
+      toast.error("Please enter a valid email");
     }
   };
 
@@ -85,10 +94,19 @@ const Footer = () => {
                 <input
                   type="email"
                   placeholder="Write your email here"
-                  className="flex-1 bg-transparent text-xs uppercase outline-none placeholder-white/60"
+                  className="flex-1 bg-transparent text-sm  outline-none placeholder-white/60"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  onKeyPress={(e) =>
+                    e.key === "Enter" && handleNewsletterSubmit()
+                  }
                 />
-                <button className="px-6 py-2 bg-zinc-800 rounded-full text-xs uppercase">
-                  Subscribe
+                <button
+                  onClick={handleNewsletterSubmit}
+                  disabled={loading}
+                  className="px-6 py-2 bg-zinc-800 rounded-full text-xs uppercase disabled:opacity-50 cursor-pointer"
+                >
+                  {loading ? "Subscribing..." : "Subscribe"}
                 </button>
               </div>
             </div>

@@ -81,6 +81,8 @@ const Navbar = () => {
 
     if (t === "track order") return "/track-order";
 
+    if (t === "newsletters") return "#newsletters";
+
     return "#";
   };
 

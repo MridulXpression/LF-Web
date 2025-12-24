@@ -33,4 +33,5 @@ export const endPoints = {
   fetchSizeChart: "/fetch-size-chart",
   getProductsByCategory: "/sub-category-products?catId",
   cartsync: "/cart/sync",
+  newsletter: "/subscribe-newsletter",
 };
