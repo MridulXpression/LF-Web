@@ -43,24 +43,23 @@ const FashionGrid = ({ data, title = "TRENDING NOW" }) => {
 
   // Helper function to get title classes
   const getTitleClasses = (size, titleColor = "text-white") => {
-    const baseClasses =
-      "font-bold mb-2 bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent";
     const colorClass = titleColor || "text-white";
+    const baseClasses = "font-bold mb-2";
 
     switch (size) {
       case "large":
-        return `text-xl md:text-3xl ${baseClasses}`;
+        return `text-xl md:text-3xl ${baseClasses} ${colorClass}`;
       case "extra-large":
-        return `text-xl md:text-4xl ${baseClasses}`;
+        return `text-xl md:text-4xl ${baseClasses} ${colorClass}`;
       default:
-        return `text-lg md:text-2xl ${baseClasses}`;
+        return `text-lg md:text-2xl ${baseClasses} ${colorClass}`;
     }
   };
 
   // Helper function to get description classes
   const getDescriptionClasses = (textColor = "text-white") => {
     const colorClass = textColor || "text-white";
-    return `text-xs md:text-sm opacity-90 bg-gradient-to-r from-white to-gray-200 bg-clip-text text-transparent`;
+    return `text-xs md:text-sm opacity-90 ${colorClass}`;
   };
 
   // Helper function to get dimensions for each item
@@ -213,11 +212,11 @@ const FashionGrid = ({ data, title = "TRENDING NOW" }) => {
           const isHovered = hoveredCardId === `second-${index}`;
 
           // Item 4: text at bottom (default)
-          // Item 5: text at top with red title
+          // Item 5: text at top with custom title and description color
           if (index === 1) {
             position = "top-left";
-            titleColor = "text-[#773726]";
-            textColor = "text-[#0F0F0F]";
+            titleColor = "text-[#59291D]";
+            textColor = "text-black";
           }
           // Item 6: text at bottom (default)
 
@@ -238,6 +237,13 @@ const FashionGrid = ({ data, title = "TRENDING NOW" }) => {
                 height={fixedSize.height}
                 className="w-full h-full object-fill group-hover:scale-120 transition-transform duration-300"
               />
+
+              {/* Overlay (middle) */}
+              <div
+                className="absolute inset-0 bg-gradient-to-b from-black/20 via-black/40 to-black/20 
+                  opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10"
+              />
+
               <div
                 className={`${getTextPositionClasses(
                   position
@@ -255,40 +261,38 @@ const FashionGrid = ({ data, title = "TRENDING NOW" }) => {
 
               {/* Button positioned at bottom only on hover */}
               {isHovered && (
-                <Link href={`/blogs/${item.id}`}>
+                <div
+                  className="absolute bottom-6 left-6 z-20 transition-all duration-300"
+                  onMouseEnter={() => setHoveredButtonId(`second-${index}`)}
+                  onMouseLeave={() => setHoveredButtonId(null)}
+                >
                   <div
-                    className="absolute bottom-6 left-6 z-20 transition-all duration-300"
-                    onMouseEnter={() => setHoveredButtonId(`second-${index}`)}
-                    onMouseLeave={() => setHoveredButtonId(null)}
+                    className={`w-50 px-8 py-4 rounded-[46px] outline outline-2 outline-offset-[-2px] inline-flex justify-between items-center transition-colors duration-300 ${
+                      hoveredButtonId === `second-${index}`
+                        ? "bg-black outline-white"
+                        : "outline-black"
+                    }`}
                   >
                     <div
-                      className={`w-50 px-8 py-4 rounded-[46px] outline outline-2 outline-offset-[-2px] inline-flex justify-between items-center transition-colors duration-300 ${
+                      className={`justify-start text-[16px] font-semibold font-['Clash_Display'] uppercase transition-colors duration-300 ${
                         hoveredButtonId === `second-${index}`
-                          ? "bg-black outline-white"
-                          : "outline-black"
+                          ? "text-white"
+                          : "text-white"
                       }`}
                     >
-                      <div
-                        className={`justify-start text-[16px] font-semibold font-['Clash_Display'] uppercase transition-colors duration-300 ${
+                      Read more
+                    </div>
+                    <div className="w-8 h-8 p-1.5 rounded-[20px] flex justify-start items-center gap-1.5">
+                      <ArrowRight
+                        className={`rotate-[-45deg] transition-colors duration-300 ${
                           hoveredButtonId === `second-${index}`
                             ? "text-white"
-                            : "text-white"
+                            : "text-black"
                         }`}
-                      >
-                        Read more
-                      </div>
-                      <div className="w-8 h-8 p-1.5 rounded-[20px] flex justify-start items-center gap-1.5">
-                        <ArrowRight
-                          className={`rotate-[-45deg] transition-colors duration-300 ${
-                            hoveredButtonId === `second-${index}`
-                              ? "text-white"
-                              : "text-black"
-                          }`}
-                        />
-                      </div>
+                      />
                     </div>
                   </div>
-                </Link>
+                </div>
               )}
             </Link>
           );

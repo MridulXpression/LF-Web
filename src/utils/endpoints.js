@@ -34,4 +34,5 @@ export const endPoints = {
   getProductsByCategory: "/sub-category-products?catId",
   cartsync: "/cart/sync",
   newsletter: "/subscribe-newsletter",
+  announcements: "/announcements",
 };
