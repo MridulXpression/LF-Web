@@ -8,7 +8,6 @@ import {
   openProductViewModal,
 } from "@/redux/slices/loginmodalSlice";
 import WishlistBoardModal from "../WishlistBoardModal";
-
 const ProductCollectionCard = ({ product, onLike }) => {
   const dispatch = useDispatch();
   const [isLiked, setIsLiked] = useState(false);
@@ -77,7 +76,7 @@ const ProductCollectionCard = ({ product, onLike }) => {
 
   return (
     <>
-      <div className="w-full rounded-xl inline-flex flex-col gap-2.5 overflow-hidden">
+      <div className="w-full rounded-xl inline-flex flex-col gap-1.5 sm:gap-2 md:gap-2.5 overflow-hidden">
         <Link
           href={`/products/${product.id}`}
           target="_blank"
@@ -85,7 +84,7 @@ const ProductCollectionCard = ({ product, onLike }) => {
         >
           {/* Image */}
           <div
-            className="relative h-[400px] p-9 bg-stone-200 rounded-xl overflow-hidden group"
+            className="relative h-[250px] sm:h-[280px] md:h-[340px] lg:h-[400px] p-4 sm:p-6 md:p-8 lg:p-9 bg-stone-200 rounded-xl overflow-hidden group"
             onMouseLeave={handleMouseLeave}
           >
             {images && images.length > 0 ? (
@@ -124,44 +123,47 @@ const ProductCollectionCard = ({ product, onLike }) => {
             {/* Hover Preview */}
             <button
               onClick={handlePreviewClick}
-              className="absolute left-2 bottom-2 w-[calc(100%-16px)] h-10 py-2 bg-stone-50 rounded-lg  flex justify-center items-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer hover:bg-stone-100"
+              className="absolute left-1 bottom-1 sm:left-2 sm:bottom-2 w-[calc(100%-8px)] sm:w-[calc(100%-16px)] h-8 sm:h-10 py-1.5 sm:py-2 bg-stone-50 rounded-lg flex justify-center items-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer hover:bg-stone-100"
             >
-              <span className="text-stone-950 text-sm font-medium">
+              <span className="text-stone-950 text-xs sm:text-sm font-medium">
                 Product Preview
               </span>
             </button>
           </div>
         </Link>
         {/* Content */}
-        <div className="px-3 pb-3 flex flex-col gap-2">
-          <div className="flex justify-between items-start">
+        <div className="px-2 sm:px-3 pb-2 sm:pb-3 flex flex-col gap-1.5 sm:gap-2">
+          <div className="flex justify-between items-start gap-2">
             <div className="">
-              <p className="text-[15px] font-[600] uppercase text-black">
+              <p className="text-xs sm:text-sm md:text-base font-[600] uppercase text-black leading-tight">
                 {truncateText(product.name, 24)}
               </p>
 
-              <p className="text-[13px] uppercase font-[400] text-black">
+              <p className="text-[11px] sm:text-xs md:text-sm uppercase font-[400] text-black">
                 {product.brand}
               </p>
             </div>
 
-            <button onClick={handleLike} className="cursor-pointer">
-              <Heart className={`w-5 h-5 text-black`} />
+            <button
+              onClick={handleLike}
+              className="cursor-pointer flex-shrink-0"
+            >
+              <Heart className={`w-4 h-4 sm:w-5 sm:h-5 text-black`} />
             </button>
           </div>
 
-          <div className="flex items-center gap-2">
-            <span className="font-medium text-[15px]  text-black">
+          <div className="flex items-center gap-1 sm:gap-2 flex-wrap">
+            <span className="font-medium text-xs sm:text-sm md:text-base text-black">
               ₹{price}
             </span>
 
             {showOriginalPrice && (
               <>
-                <span className="line-through opacity-60 text-sm text-black">
+                <span className="line-through opacity-60 text-xs sm:text-sm text-black">
                   ₹{originalPrice}
                 </span>
 
-                <span className="text-emerald-600 text-sm">
+                <span className="text-emerald-600 text-xs sm:text-sm">
                   ({discountPercentage}% OFF)
                 </span>
               </>

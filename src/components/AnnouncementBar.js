@@ -45,7 +45,7 @@ export default function AnnouncementBar() {
         }
 
         .animate-scroll {
-          animation: scroll 20s linear infinite;
+          animation: scroll 10s linear infinite;
         }
 
         .animate-scroll:hover {

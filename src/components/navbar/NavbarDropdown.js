@@ -10,7 +10,7 @@ const NavbarDropdown = ({ menu, latestBlogs, onMouseEnter, onMouseLeave }) => {
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
     >
-      <div className="bg-white shadow-lg border-t border-gray-200">
+      <div className="bg-[#F8F8F8] shadow-lg border-t border-gray-200">
         <div className="max-w-full mx-auto px-16 py-8">
           <div className="grid grid-cols-[1fr_420px] gap-12 items-start">
             {/* Left Side - Categories Grid */}
@@ -19,24 +19,23 @@ const NavbarDropdown = ({ menu, latestBlogs, onMouseEnter, onMouseLeave }) => {
                 <div
                   key={section.id}
                   className={
-                    index % 2 === 0 ? "bg-[#F2F2F2] p-4 " : "bg-white p-4 "
+                    index % 2 === 0 ? "bg-[#F2F2F2] p-4 " : "bg-[#F8F8F8] p-4 "
                   }
                 >
-                  <Link href={`/categories?catId=${section.id}`}>
+                  <a href={`/categories?catId=${section.id}`}>
                     <h3 className="text-[12px] font-[600] text-[#0F0F0F] mb-3  font-clash-display uppercase">
                       {section.heading}
                     </h3>
-                  </Link>
-
+                  </a>
                   <ul className="space-y-2">
                     {section.items.map((item) => (
                       <li key={item.id}>
-                        <Link
+                        <a
                           href={`/products?subCatId=${item.id}`}
                           className="text-[13px] font-normal text-[#404040] hover:text-black transition-colors"
                         >
                           {item.name}
-                        </Link>
+                        </a>
                       </li>
                     ))}
                   </ul>

@@ -1,5 +1,5 @@
 "use client";
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, useState } from "react";
 
 const FilterSidebar = ({
   isFilterOpen,
@@ -29,6 +29,8 @@ const FilterSidebar = ({
   isLoading,
 }) => {
   const filterRef = useRef(null);
+  const [tempPriceMin, setTempPriceMin] = useState(priceRange.min);
+  const [tempPriceMax, setTempPriceMax] = useState(priceRange.max);
 
   // CLOSE FILTER PANEL ON OUTSIDE CLICK
   useEffect(() => {
@@ -144,24 +146,47 @@ const FilterSidebar = ({
           <h3 className="text-lg font-semibold text-gray-800 mb-2">
             Price Range
           </h3>
-          <div className="flex items-center gap-2">
-            <input
-              type="number"
-              value={priceRange.min}
-              onChange={(e) =>
-                setPriceRange({ ...priceRange, min: e.target.value })
-              }
-              className="w-20 border border-gray-300 rounded px-2 py-1 text-sm text-black"
-            />
-            <span>-</span>
-            <input
-              type="number"
-              value={priceRange.max}
-              onChange={(e) =>
-                setPriceRange({ ...priceRange, max: e.target.value })
-              }
-              className="w-20 border border-gray-300 rounded px-2 py-1 text-sm text-black"
-            />
+
+          <div className="space-y-3">
+            {/* Min Price Input */}
+            <div>
+              <label className="text-sm text-gray-700 mb-1 block">
+                Min Price
+              </label>
+              <input
+                type="number"
+                value={tempPriceMin}
+                onChange={(e) => setTempPriceMin(e.target.value)}
+                placeholder="0"
+                className="w-full border border-gray-300 rounded px-3 py-2 text-sm text-black focus:outline-none focus:border-black"
+              />
+            </div>
+
+            {/* Max Price Input */}
+            <div>
+              <label className="text-sm text-gray-700 mb-1 block">
+                Max Price
+              </label>
+              <input
+                type="number"
+                value={tempPriceMax}
+                onChange={(e) => setTempPriceMax(e.target.value)}
+                placeholder="10000"
+                className="w-full border border-gray-300 rounded px-3 py-2 text-sm text-black focus:outline-none focus:border-black"
+              />
+            </div>
+
+            {/* Apply Button */}
+            <button
+              onClick={() => {
+                setPriceRange({ min: tempPriceMin, max: tempPriceMax });
+                onApplyFilters();
+              }}
+              disabled={isLoading}
+              className="w-full bg-black text-white py-2 rounded cursor-pointer disabled:opacity-50 hover:bg-gray-800 transition-colors font-semibold text-sm"
+            >
+              Apply Price Range
+            </button>
           </div>
         </div>
 
@@ -230,17 +255,9 @@ const FilterSidebar = ({
         )}
 
         <button
-          onClick={onApplyFilters}
-          disabled={isLoading}
-          className="w-full bg-black text-white py-2 rounded cursor-pointer disabled:opacity-50"
-        >
-          Apply Filters
-        </button>
-
-        <button
           onClick={onClearFilters}
           disabled={isLoading}
-          className="w-full mt-3 border border-gray-300 py-2 rounded text-black cursor-pointer disabled:opacity-50"
+          className="w-full border border-gray-300 py-2 rounded text-black cursor-pointer disabled:opacity-50"
         >
           Clear Filters
         </button>

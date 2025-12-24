@@ -408,9 +408,7 @@ export default function ProductPage({ params }) {
                     );
                   })
                 ) : (
-                  <div className="text-gray-500  p-[50px]">
-                    No reviews yet.{" "}
-                  </div>
+                  <div className="text-gray-500  p-[50px]"></div>
                 )}
               </div>
             </div>

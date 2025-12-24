@@ -2,9 +2,19 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { X } from "lucide-react";
+import { X, Plus, Minus } from "lucide-react";
+import { useState } from "react";
 
 const MobileNavbar = ({ isOpen, onClose, menuData, getMenuHref }) => {
+  const [expandedSections, setExpandedSections] = useState({});
+
+  const toggleSection = (sectionId) => {
+    setExpandedSections((prev) => ({
+      ...prev,
+      [sectionId]: !prev[sectionId],
+    }));
+  };
+
   return (
     <>
       {/* Sidebar */}
@@ -22,6 +32,15 @@ const MobileNavbar = ({ isOpen, onClose, menuData, getMenuHref }) => {
               height={30}
             />
           </button>
+          <Link href="/" className="flex-shrink-0">
+            <Image
+              src="/images/logo-black.svg"
+              alt="Logo"
+              width={60}
+              height={24}
+            />
+          </Link>
+
           <button onClick={onClose}>
             <X className="w-6 h-6 text-gray-600" />
           </button>
@@ -42,24 +61,40 @@ const MobileNavbar = ({ isOpen, onClose, menuData, getMenuHref }) => {
                 <div className="pl-4">
                   {menu.sections.map((section) => (
                     <div key={section.id} className="mt-2">
-                      <Link
-                        href={`/categories?catId=${section.id}`}
-                        className="text-sm font-semibold block"
-                        onClick={onClose}
-                      >
-                        {section.heading}
-                      </Link>
-
-                      {section.items.map((item) => (
+                      <div className="flex items-center justify-between">
                         <Link
-                          key={item.id}
-                          href={`/products?subCatId=${item.id}`}
-                          className="block py-1 text-sm text-gray-600"
+                          href={`/categories?catId=${section.id}`}
+                          className="text-sm font-semibold block flex-1"
                           onClick={onClose}
                         >
-                          {item.name}
+                          {section.heading}
                         </Link>
-                      ))}
+
+                        {section.items.length > 0 && (
+                          <button
+                            onClick={() => toggleSection(section.id)}
+                            className="flex items-center justify-center py-2 px-2 text-gray-700 hover:text-black"
+                          >
+                            {expandedSections[section.id] ? (
+                              <Minus className="w-4 h-4" />
+                            ) : (
+                              <Plus className="w-4 h-4" />
+                            )}
+                          </button>
+                        )}
+                      </div>
+
+                      {expandedSections[section.id] &&
+                        section.items.map((item) => (
+                          <Link
+                            key={item.id}
+                            href={`/products?subCatId=${item.id}`}
+                            className="block py-1 text-sm  text-gray-800"
+                            onClick={onClose}
+                          >
+                            {item.name}
+                          </Link>
+                        ))}
                     </div>
                   ))}
                 </div>
@@ -71,7 +106,10 @@ const MobileNavbar = ({ isOpen, onClose, menuData, getMenuHref }) => {
 
       {/* Backdrop */}
       {isOpen && (
-        <div className="fixed inset-0 bg-black/40 z-[9998]" onClick={onClose} />
+        <div
+          className="fixed inset-0 bg-black/40 backdrop-blur-sm z-[9998]"
+          onClick={onClose}
+        />
       )}
     </>
   );

@@ -6,7 +6,6 @@ import { closeProductViewModal } from "@/redux/slices/loginmodalSlice";
 import Link from "next/link";
 import axiosHttp from "@/utils/axioshttp";
 import { endPoints } from "@/utils/endpoints";
-import toast, { Toaster } from "react-hot-toast";
 import { addToCart } from "@/redux/slices/cartSlice";
 import { getParsedSelectedOptions } from "@/utils/variantUtils";
 
@@ -20,6 +19,8 @@ const ProductModal = () => {
   const [selectedColor, setSelectedColor] = useState(null);
   const [loading, setLoading] = useState(false);
   const [showSizeColorOptions, setShowSizeColorOptions] = useState(false);
+  const [message, setMessage] = useState(null);
+  const [messageType, setMessageType] = useState(null); // 'success' or 'error'
 
   // Helper function to extract sizes from variants
   const extractSizesFromVariants = (variants) => {
@@ -47,7 +48,7 @@ const ProductModal = () => {
 
       const rawSize = sizeOption?.value ?? "";
       const sizeValue = normalizeSize(rawSize);
-      
+
       // If no size option or "Default Title", treat as ONE SIZE
       const finalSizeValue = sizeValue || "ONE SIZE";
       const finalSizeLabel = sizeValue || "ONE SIZE";
@@ -157,6 +158,35 @@ const ProductModal = () => {
     return sizeEntry?.colors || [];
   }, [selectedSize, sizes, colors]);
 
+  // Reset state when product changes
+  useEffect(() => {
+    if (product) {
+      setSelectedSize(null);
+      setSelectedColor(null);
+      setShowSizeColorOptions(false);
+      setLoading(false);
+      setMessage(null);
+      setMessageType(null);
+    }
+  }, [product?.id]);
+
+  // Auto-dismiss message after 4 seconds
+  useEffect(() => {
+    if (message) {
+      const timer = setTimeout(() => {
+        setMessage(null);
+        setMessageType(null);
+      }, 4000);
+      return () => clearTimeout(timer);
+    }
+  }, [message]);
+
+  // Helper function to show message
+  const showMessage = (text, type) => {
+    setMessage(text);
+    setMessageType(type);
+  };
+
   // Auto-select size when there's only one size or if no sizes available (ONE SIZE)
   useEffect(() => {
     if (isOpen && product) {
@@ -202,21 +232,24 @@ const ProductModal = () => {
         const variantId = getSelectedVariantId();
 
         if (!variantId) {
-          toast.error("Unable to select variant", { position: "top-center" });
+          showMessage("Unable to select variant", "error");
           setLoading(false);
           return;
         }
 
         // Get the available stock from the selected variant
-        const selectedVariant = product.variants.find((v) => v.id === variantId);
-        const availableQuantity = selectedVariant?.inventory?.availableStock ?? 1;
+        const selectedVariant = product.variants.find(
+          (v) => v.id === variantId
+        );
+        const availableQuantity =
+          selectedVariant?.inventory?.availableStock ?? 1;
 
         // If user is not logged in, store in localStorage and show message
         if (!user?.id) {
           localStorage.setItem("ProductId", product.id);
           localStorage.setItem("selectedVariantId", variantId);
-          toast.success("Item added to cart", { position: "top-center" });
-          // Keep modal open for 4 seconds to show toast, then close
+          showMessage("Item added to cart", "success");
+          // Keep modal open for 4 seconds to show message, then close
           setTimeout(() => {
             handleClose();
           }, 4000);
@@ -232,31 +265,33 @@ const ProductModal = () => {
           quantity: availableQuantity,
         };
 
-        const result = await axiosHttp.post(endPoints.addProductToCart, payload);
+        const result = await axiosHttp.post(
+          endPoints.addProductToCart,
+          payload
+        );
 
         if (result.status === 200 || result.status === 201) {
           // Add to Redux cart state
           dispatch(addToCart({ product, variantId }));
 
-          toast.success(result.data?.message || "Added to bag successfully", {
-            position: "top-center",
-          });
+          showMessage(
+            result.data?.message || "Added to bag successfully",
+            "success"
+          );
 
-          // Keep modal open for 4 seconds to show toast, then close
+          // Keep modal open for 4 seconds to show message, then close
           setTimeout(() => {
             handleClose();
           }, 4000);
         } else {
-          toast.error(result.data?.message || "Something went wrong", {
-            position: "top-center",
-          });
+          showMessage(result.data?.message || "Something went wrong", "error");
         }
       } catch (error) {
         const errorMessage =
           error.response?.data?.message ||
           error.message ||
           "Something went wrong";
-        toast.error(errorMessage, { position: "top-center" });
+        showMessage(errorMessage, "error");
       } finally {
         setLoading(false);
       }
@@ -270,12 +305,12 @@ const ProductModal = () => {
     }
 
     if (!selectedSize) {
-      toast.error("Please select a size", { position: "top-center" });
+      showMessage("Please select a size", "error");
       return;
     }
 
     if (colorsForSelectedSize.length > 0 && !selectedColor) {
-      toast.error("Please select a color", { position: "top-center" });
+      showMessage("Please select a color", "error");
       return;
     }
 
@@ -285,7 +320,7 @@ const ProductModal = () => {
       const variantId = getSelectedVariantId();
 
       if (!variantId) {
-        toast.error("Unable to select variant", { position: "top-center" });
+        showMessage("Unable to select variant", "error");
         setLoading(false);
         return;
       }
@@ -298,8 +333,8 @@ const ProductModal = () => {
       if (!user?.id) {
         localStorage.setItem("ProductId", product.id);
         localStorage.setItem("selectedVariantId", variantId);
-        toast.success("Item added to cart", { position: "top-center" });
-        // Keep modal open for 4 seconds to show toast, then close
+        showMessage("Item added to cart", "success");
+        // Keep modal open for 4 seconds to show message, then close
         setTimeout(() => {
           handleClose();
         }, 4000);
@@ -321,25 +356,24 @@ const ProductModal = () => {
         // Add to Redux cart state
         dispatch(addToCart({ product, variantId }));
 
-        toast.success(result.data?.message || "Added to bag successfully", {
-          position: "top-center",
-        });
+        showMessage(
+          result.data?.message || "Added to bag successfully",
+          "success"
+        );
 
-        // Keep modal open for 4 seconds to show toast, then close
+        // Keep modal open for 4 seconds to show message, then close
         setTimeout(() => {
           handleClose();
         }, 4000);
       } else {
-        toast.error(result.data?.message || "Something went wrong", {
-          position: "top-center",
-        });
+        showMessage(result.data?.message || "Something went wrong", "error");
       }
     } catch (error) {
       const errorMessage =
         error.response?.data?.message ||
         error.message ||
         "Something went wrong";
-      toast.error(errorMessage, { position: "top-center" });
+      showMessage(errorMessage, "error");
     } finally {
       setLoading(false);
     }
@@ -476,12 +510,21 @@ const ProductModal = () => {
                 View Details
               </Link>
             </div>
+            {/* Message Display */}
+            {message && (
+              <div
+                className={`mb-4 p-3 rounded-md text-sm font-medium text-center ${
+                  messageType === "success"
+                    ? "bg-green-100 text-green-800"
+                    : "bg-red-100 text-red-800"
+                }`}
+              >
+                {message}
+              </div>
+            )}
           </div>
         </div>
       </div>
-
-      {/* Toaster Component */}
-      <Toaster />
     </div>
   );
 };
