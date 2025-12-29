@@ -35,4 +35,5 @@ export const endPoints = {
   cartsync: "/cart/sync",
   newsletter: "/subscribe-newsletter",
   announcements: "/announcements",
+  getNewsletters: "/newsletters",
 };

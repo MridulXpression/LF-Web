@@ -162,7 +162,7 @@ const FashionGrid = ({ data, title = "TRENDING NOW" }) => {
 
               {/* CTA Button (bottom only on hover) */}
               {isHovered && (
-                <Link href={`/blogs/${item.id}`}>
+                <Link href={`/newsletter/${item.id}`}>
                   <div
                     className="absolute bottom-6 left-6 z-20 transition-all duration-300"
                     onMouseEnter={() => setHoveredButtonId(`first-${index}`)}
@@ -223,7 +223,7 @@ const FashionGrid = ({ data, title = "TRENDING NOW" }) => {
           return (
             <Link
               key={item.id}
-              href={`/blogs/${item.id}`}
+              href={`/newsletter/${item.id}`}
               target="_blank"
               rel="noopener noreferrer"
               className={getContainerClasses(fixedSize.size)}

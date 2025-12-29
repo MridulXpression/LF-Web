@@ -6,7 +6,7 @@ import Image from "next/image";
 const NavbarDropdown = ({ menu, latestBlogs, onMouseEnter, onMouseLeave }) => {
   return (
     <div
-      className="fixed left-0 right-0 top-36 z-40 max-h-full overflow-y-auto"
+      className="fixed left-0 right-0 top-36 z-40 max-h-[90vh] overflow-y-auto"
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
     >

@@ -50,8 +50,10 @@ const OrderSummary = ({
   const totalDiscount = appliedDiscount;
 
   // Final Total
+  // const totalPrice =
+  //   subtotal + gst + deliveryCharges + convenienceFee - totalDiscount;
   const totalPrice =
-    subtotal + gst + deliveryCharges + convenienceFee - totalDiscount;
+    subtotal + deliveryCharges + convenienceFee - totalDiscount;
 
   const handleApplyCoupon = (coupon) => {
     const discountValue = calculateDiscount(coupon);
@@ -133,10 +135,10 @@ const OrderSummary = ({
             </span>
           </div>
 
-          <div className="flex justify-between">
+          {/* <div className="flex justify-between">
             <span className="text-black">GST (18%)</span>
             <span className="font-semibold text-black">₹{gst.toFixed(2)}</span>
-          </div>
+          </div> */}
 
           {totalDiscount > 0 && (
             <div className="flex justify-between text-black">
