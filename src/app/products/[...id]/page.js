@@ -342,6 +342,7 @@ export default function ProductPage({ params }) {
               onAddToBag={handleAddToBag}
               onAddToWishlist={handleAddToWishlist}
               productData={data}
+              productId={data?.id}
               isInStock={
                 selectedVariant
                   ? Boolean(

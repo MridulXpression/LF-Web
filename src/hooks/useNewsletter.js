@@ -16,9 +16,9 @@ const useNewsletter = () => {
   };
 
   useEffect(() => {
-    getBlog();
+    getNewsletter();
   }, []);
-  return blogs;
+  return newsletters;
 };
 
 export default useNewsletter;

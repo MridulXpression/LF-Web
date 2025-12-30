@@ -5,7 +5,7 @@ import NewestAtLafetch from "./(new-drops)/Newdrop";
 import CategorySection from "./(categorycard)/Categorycard";
 import TrendingNowSection from "./(trendingnow)/Trendingnow";
 import HomeCarousel from "./(carousel)/Carousel";
-import TrendingBlog from "./(blog)/Blog";
+import TrendingBlog from "./(newsletter)/Newsletter";
 import PhoneAuthModal from "@/components/LoginModal";
 import Footer from "@/components/footer";
 

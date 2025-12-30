@@ -10,7 +10,7 @@ const useAddProductToCart = () => {
   const user = useSelector((state) => state.user.userInfo);
   const userId = user?.id;
 
-  const addProductToCart = async () => {
+  const addProductToCart = async (productId) => {
     setLoading(true);
     setError(null);
 
@@ -20,8 +20,7 @@ const useAddProductToCart = () => {
         return { success: true, message: "Item added to cart" };
       }
 
-      // ✅ Fetch productId and variantId from localStorage
-      const productId = localStorage.getItem("ProductId");
+      // ✅ Fetch variantId from localStorage
       const variantId = localStorage.getItem("selectedVariantId");
 
       if (!productId || !variantId) {

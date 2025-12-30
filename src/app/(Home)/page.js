@@ -6,7 +6,7 @@ import TrendingNowSection from "../(trendingnow)/Trendingnow";
 import Footer from "@/components/footer";
 import PhoneAuthModal from "@/components/LoginModal";
 import HomeCarousel from "../(carousel)/Carousel";
-import TrendingBlog from "../(blog)/Blog";
+import TrendingBlog from "../(newsletter)/Newsletter";
 import Navbar from "../(navbar)/Navbar";
 
 const page = () => {

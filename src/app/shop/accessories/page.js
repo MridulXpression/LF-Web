@@ -1,7 +1,7 @@
 import React from "react";
 import Footer from "@/components/footer";
 
-import TrendingBlog from "@/app/(blog)/Blog";
+import TrendingBlog from "@/app/(newsletter)/Newsletter";
 import AccessoriesBanner from "./LandingAccessoriesBanner";
 import AccessoriesNewInSection from "./AccessoriesNewIn";
 import AccessoriesShopCategories from "./AccessoriesShopCategories";

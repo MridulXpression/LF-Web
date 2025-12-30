@@ -1,20 +1,20 @@
 "use client";
 import FashionBlogHero from "@/components/Blog/HeroSection";
 import BlogCard from "@/components/Blog/BlogCard";
-import useBlog from "@/hooks/useBlog";
+import useNewsletter from "@/hooks/useNewsletter";
 
 const HomePage = () => {
-  const getBlog = useBlog();
+  const getNewsletter = useNewsletter();
 
-  const firstBlog = getBlog?.[0]; // Hero blog
-  const remainingBlogs = getBlog?.filter((_, index) => index !== 0) || []; // All except index 4
+  const firstBlog = getNewsletter?.[0]; // Hero blog
+  const remainingBlogs = getNewsletter?.filter((_, index) => index !== 0) || []; // All except index 4
 
   return (
     <div className="bg-white min-h-screen">
       {/* Hero Section */}
       <FashionBlogHero
         blogPost={firstBlog}
-        loading={!getBlog || getBlog.length === 0}
+        loading={!getBlog || getNewsletter.length === 0}
       />
 
       {/* Blog Grid Section */}
