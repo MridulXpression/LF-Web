@@ -35,8 +35,8 @@ const ShopByCategoriesPage = () => {
     max: searchParams.get("maxPrice") || "10000",
   });
 
-  const [selectedSizes, setSelectedSizes] = useState([]);
-  const [selectedColors, setSelectedColors] = useState([]);
+  const [selectedSizes, setSelectedSizes] = useState([]); // stores actual size values like "S", "M"
+  const [selectedColors, setSelectedColors] = useState([]); // stores actual color values like "Black", "Red"
 
   // ===== EXPAND / COLLAPSE UI STATE =====
   const [expandedBrands, setExpandedBrands] = useState(false);
@@ -102,16 +102,9 @@ const ShopByCategoriesPage = () => {
 
   const isLoading = hasFiltersApplied() ? isFilterLoading : isPageLoading;
 
-  // ===== NORMALIZE SIZE & COLOR DATA =====
-  const availableSizes = (sizes || []).map((s, i) => ({
-    id: i + 1,
-    name: s,
-  }));
-
-  const availableColors = (colors || []).map((c, i) => ({
-    id: i + 1,
-    name: c,
-  }));
+  // ===== AVAILABLE SIZES & COLORS FROM METADATA =====
+  const availableSizes = sizes || [];
+  const availableColors = colors || [];
 
   // ===== APPLY FILTERS ON CHANGE =====
   useEffect(() => {
@@ -125,8 +118,8 @@ const ShopByCategoriesPage = () => {
       superCatId: selectedSuperCategory,
       subCatId: subCategoryId ? Number(subCategoryId) : null,
       catId: catId ? Number(catId) : null,
-      sizeIds: selectedSizes,
-      colorIds: selectedColors,
+      sizes: selectedSizes,
+      colors: selectedColors,
       collectionId: collectionId ? Number(collectionId) : null,
       key: searchQuery,
     });
@@ -158,8 +151,8 @@ const ShopByCategoriesPage = () => {
     if (priceRange.min !== "0") params.set("minPrice", priceRange.min);
     if (priceRange.max !== "10000") params.set("maxPrice", priceRange.max);
     if (selectedSuperCategory) params.set("superCatId", selectedSuperCategory);
-    if (selectedSizes.length) params.set("sizeIds", selectedSizes.join(","));
-    if (selectedColors.length) params.set("colorIds", selectedColors.join(","));
+    if (selectedSizes.length) params.set("size", selectedSizes.join(","));
+    if (selectedColors.length) params.set("color", selectedColors.join(","));
     if (selectedSort) params.set("sort", selectedSort);
     if (subCategoryId) params.set("subCatId", subCategoryId);
     if (catId) params.set("catId", catId);
@@ -206,12 +199,16 @@ const ShopByCategoriesPage = () => {
           onSuperCategoryChange={setSelectedSuperCategory}
           sizes={availableSizes}
           selectedSizes={selectedSizes}
-          toggleSizeSelection={(id) => toggleSelection(setSelectedSizes, id)}
+          toggleSizeSelection={(size) =>
+            toggleSelection(setSelectedSizes, size)
+          }
           expandedSizes={expandedSizes}
           setExpandedSizes={setExpandedSizes}
           colors={availableColors}
           selectedColors={selectedColors}
-          toggleColorSelection={(id) => toggleSelection(setSelectedColors, id)}
+          toggleColorSelection={(color) =>
+            toggleSelection(setSelectedColors, color)
+          }
           expandedColors={expandedColors}
           setExpandedColors={setExpandedColors}
           onApplyFilters={handleApplyFilters}

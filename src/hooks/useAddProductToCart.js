@@ -10,7 +10,7 @@ const useAddProductToCart = () => {
   const user = useSelector((state) => state.user.userInfo);
   const userId = user?.id;
 
-  const addProductToCart = async (productId) => {
+  const addProductToCart = async (productId, quantity = 1) => {
     setLoading(true);
     setError(null);
 
@@ -32,6 +32,7 @@ const useAddProductToCart = () => {
         userId: parseInt(userId, 10),
         productId: parseInt(productId, 10),
         variantId: parseInt(variantId, 10),
+        quantity: parseInt(quantity, 10),
       };
       const result = await axiosHttp.post(endPoints.addProductToCart, payload);
 

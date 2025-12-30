@@ -97,26 +97,14 @@ const CheckOutAddress = () => {
             item.product.mrp ||
             item.product.basePrice ||
             item.product_variant.price, // MRP
-          quantity: item.quantity || 1,
+          quantity: item.quantity || 1, // Use quantity directly from API
         }));
 
-        // Prefer quantity stored in Redux (if available) so quantity persists
-        // across pages and refreshes. Fall back to API quantity when absent.
-        const merged = transformedData.map((td) => {
-          const reduxMatch = cartItemsFromRedux.find(
-            (ci) => ci.cartItemId === td.cartItemId
-          );
-          if (reduxMatch && typeof reduxMatch.quantity === "number") {
-            return { ...td, quantity: reduxMatch.quantity };
-          }
-          return td;
-        });
+        setProducts(transformedData);
 
-        setProducts(merged);
-
-        // Keep Redux cart items in sync with fetched data (preserve selected flag and quantity)
+        // Keep Redux cart items in sync for selection state only
         try {
-          const payload = merged.map((m) => ({
+          const payload = transformedData.map((m) => ({
             ...m,
             cartItemId: m.cartItemId,
             variantId: m.variantId || null,
@@ -237,30 +225,10 @@ const CheckOutAddress = () => {
       }
 
       // Build items array for initiate-payment
-      // Prefer quantity and price from Redux (frontend) when available so user selection
-      // is respected. Fall back to API quantity/price otherwise.
+      // Use quantity directly from API response
       const items = cartData.map((item) => {
-        // Try to find matching redux item by cartItemId, then by variantId/productId
-        const reduxMatch = cartItemsFromRedux.find(
-          (ci) =>
-            ci.cartItemId === item.id ||
-            (ci.variantId && ci.variantId === item.variantId) ||
-            (ci.productId &&
-              ci.productId === item.productId &&
-              ci.variantId === item.variantId)
-        );
-
-        const quantity =
-          reduxMatch && typeof reduxMatch.quantity === "number"
-            ? reduxMatch.quantity
-            : item.quantity || 1;
-
-        // Prefer price from redux (keeps frontend edits authoritative), else fallback to API price
-        const rawUnitPrice =
-          reduxMatch && (reduxMatch.price || reduxMatch.unitPrice) != null
-            ? reduxMatch.price || reduxMatch.unitPrice
-            : item.product_variant?.price || 0;
-
+        const quantity = item.quantity || 1;
+        const rawUnitPrice = item.product_variant?.price || 0;
         const unitPrice = Number(parseFloat(rawUnitPrice) || 0);
 
         return {
@@ -284,17 +252,9 @@ const CheckOutAddress = () => {
       const paymentTotal = Number(
         orderTotal && Number(orderTotal) > 0 ? orderTotal : computedTotal
       );
-      // totalMRP should consider quantity per item (prefer redux quantity if available)
+      // Calculate totalMRP using quantity from API
       const totalMRP = cartData.reduce((s, it) => {
-        const reduxMatch = cartItemsFromRedux.find(
-          (ci) =>
-            ci.cartItemId === it.id ||
-            (ci.variantId && ci.variantId === it.variantId)
-        );
-        const qty =
-          reduxMatch && typeof reduxMatch.quantity === "number"
-            ? reduxMatch.quantity
-            : it.quantity || 1;
+        const qty = it.quantity || 1;
         const mrpPerUnit = Number(
           parseFloat(it.product?.mrp || it.product?.basePrice || 0) || 0
         );

@@ -14,8 +14,8 @@ const useUnifiedFilter = () => {
       superCatId = null,
       subCatId = null,
       catId = null,
-      sizeIds = [],
-      colorIds = [],
+      sizes = [],
+      colors = [],
       collectionId = null,
       key = null,
     }) => {
@@ -27,17 +27,19 @@ const useUnifiedFilter = () => {
         if (brandIds && brandIds.length > 0) {
           params.append("brandIds", brandIds.join(","));
         }
-        if (minPrice) params.append("minPrice", minPrice);
-        if (maxPrice) params.append("maxPrice", maxPrice);
+        if (minPrice && minPrice !== 0 && minPrice !== "0")
+          params.append("minPrice", minPrice);
+        if (maxPrice && maxPrice !== 10000 && maxPrice !== "10000")
+          params.append("maxPrice", maxPrice);
         if (sort) params.append("sort", sort);
         if (superCatId) params.append("superCatId", superCatId);
         if (subCatId) params.append("subCatId", subCatId);
         if (catId) params.append("catId", catId);
-        if (sizeIds && sizeIds.length > 0) {
-          params.append("sizeIds", sizeIds.join(","));
+        if (sizes && sizes.length > 0) {
+          params.append("size", sizes.join(","));
         }
-        if (colorIds && colorIds.length > 0) {
-          params.append("colorIds", colorIds.join(","));
+        if (colors && colors.length > 0) {
+          params.append("color", colors.join(","));
         }
         if (collectionId) params.append("collectionId", collectionId);
         if (key) params.append("key", encodeURIComponent(key));

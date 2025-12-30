@@ -165,6 +165,7 @@ export default function ProductPage({ params }) {
 
   // ✅ Get selected variant from localStorage
   const [selectedVariant, setSelectedVariant] = useState(null);
+  const [quantity, setQuantity] = useState(1);
 
   useEffect(() => {
     if (data?.variants?.length) {
@@ -338,11 +339,39 @@ export default function ProductPage({ params }) {
               onVariantChange={setSelectedVariant}
             />
 
+            {/* Quantity Selector - shows when variant is selected */}
+            {selectedVariant && (
+              <div className="space-y-2">
+                <label className="text-sm  font-semibold  text-gray-800">
+                  Quantity
+                </label>
+                <div className="flex items-center border border-gray-300 rounded w-fit">
+                  <button
+                    onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                    className="px-4 py-2 hover:bg-gray-100 transition-colors text-gray-700 font-medium"
+                    disabled={quantity <= 1}
+                  >
+                    −
+                  </button>
+                  <span className="px-6 py-2 font-medium text-gray-900">
+                    {quantity}
+                  </span>
+                  <button
+                    onClick={() => setQuantity(quantity + 1)}
+                    className="px-4 py-2 hover:bg-gray-100 transition-colors text-gray-700 font-medium"
+                  >
+                    +
+                  </button>
+                </div>
+              </div>
+            )}
+
             <ProductActions
               onAddToBag={handleAddToBag}
               onAddToWishlist={handleAddToWishlist}
               productData={data}
               productId={data?.id}
+              quantity={quantity}
               isInStock={
                 selectedVariant
                   ? Boolean(

@@ -197,16 +197,16 @@ const FilterSidebar = ({
             <div className="space-y-2">
               {sizes.slice(0, expandedSizes ? sizes.length : 5).map((size) => (
                 <label
-                  key={size.id}
+                  key={size}
                   className="flex items-center space-x-2 text-sm text-gray-700"
                 >
                   <input
                     type="checkbox"
-                    checked={selectedSizes.includes(size.id)}
-                    onChange={() => toggleSizeSelection(size.id)}
+                    checked={selectedSizes.includes(size)}
+                    onChange={() => toggleSizeSelection(size)}
                     className="w-4 h-4 accent-black"
                   />
-                  <span>{size.name}</span>
+                  <span>{size}</span>
                 </label>
               ))}
             </div>
@@ -230,16 +230,16 @@ const FilterSidebar = ({
                 .slice(0, expandedColors ? colors.length : 5)
                 .map((color) => (
                   <label
-                    key={color.id}
+                    key={color}
                     className="flex items-center space-x-2 text-sm text-gray-700"
                   >
                     <input
                       type="checkbox"
-                      checked={selectedColors.includes(color.id)}
-                      onChange={() => toggleColorSelection(color.id)}
+                      checked={selectedColors.includes(color)}
+                      onChange={() => toggleColorSelection(color)}
                       className="w-4 h-4 accent-black"
                     />
-                    <span>{color.name}</span>
+                    <span>{color}</span>
                   </label>
                 ))}
             </div>

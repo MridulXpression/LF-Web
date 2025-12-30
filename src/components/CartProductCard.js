@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { X } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -11,6 +11,8 @@ const CartProductCard = ({
   isSelected,
   onToggleSelect,
 }) => {
+  const [showStockMessage, setShowStockMessage] = useState(false);
+
   const discountPercent =
     product.originalPrice > product.price
       ? Math.round(
@@ -21,8 +23,14 @@ const CartProductCard = ({
 
   // Increment Quantity
   const handleIncrease = () => {
-    if (product.quantity < 50) {
+    const availableStock = product.availableStock || 50;
+    if (product.quantity < availableStock) {
       onQuantityChange(product.cartItemId, product.quantity + 1);
+      setShowStockMessage(false);
+    } else {
+      // Show stock limit message
+      setShowStockMessage(true);
+      setTimeout(() => setShowStockMessage(false), 3000);
     }
   };
 
@@ -109,6 +117,13 @@ const CartProductCard = ({
               </div>
             </div>
           </div>
+
+          {/* Stock Availability Message */}
+          {showStockMessage && (
+            <div className="mt-2 text-xs text-red-600 bg-red-50 px-2 py-1 rounded">
+              Only {product.availableStock || 0} items available in stock
+            </div>
+          )}
 
           {/* Price */}
           <div className="mt-3 flex items-center gap-2">

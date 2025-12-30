@@ -11,6 +11,7 @@ const ProductActions = ({
   onAddToWishlist,
   productData,
   productId,
+  quantity = 1,
   isInStock = true,
 }) => {
   const [showModal, setShowModal] = useState(false);
@@ -27,7 +28,7 @@ const ProductActions = ({
       toast.error("Out of Stock", { position: "top-center" });
       return;
     }
-    const result = await addProductToCart(productId);
+    const result = await addProductToCart(productId, quantity);
 
     const variantId = localStorage.getItem("selectedVariantId");
     dispatch(addToCart({ product: productData, variantId }));
