@@ -11,12 +11,6 @@ const TrendingNowSection = () => {
   const { data: collections, loading, error } = useCollection();
   const [currentPages, setCurrentPages] = useState({});
 
-  // Banner configuration: specify how many banners to show below each collection
-  const bannerConfig = {
-    0: 2, // First collection: 2 banners
-    1: 3, // Second collection: 3 banners
-  };
-
   // Pagination: 4 products, then 4, then 3 (total 11)
   const pageItemCounts = [4, 4, 3];
 
@@ -81,16 +75,9 @@ const TrendingNowSection = () => {
           endIndex
         );
 
-        // Get banner count for this collection
-        const bannerCount = bannerConfig[collectionIndex] || 0;
-        // Calculate starting banner number (1-indexed globally)
-        let startingBannerNumber = 1;
-        for (let i = 0; i < collectionIndex; i++) {
-          startingBannerNumber += bannerConfig[i] || 0;
-        }
-        const banners = Array.from({ length: bannerCount }, (_, i) => ({
-          id: startingBannerNumber + i,
-        }));
+        // Get banners from collection data
+        const banners = collection.banners || [];
+        const bannerCount = banners.length;
 
         return (
           <section

@@ -4,7 +4,9 @@ import Banner from "./Banner";
 const BannerGrid = ({ banners = [], bannerCount }) => {
   if (!banners.length) return null;
 
-  const displayBanners = banners.slice(0, 3);
+  // Sort banners by position
+  const sortedBanners = [...banners].sort((a, b) => a.position - b.position);
+  const displayBanners = sortedBanners.slice(0, 3);
   const count = bannerCount || displayBanners.length;
 
   const gridClass =
@@ -13,7 +15,7 @@ const BannerGrid = ({ banners = [], bannerCount }) => {
   return (
     <div className={`grid ${gridClass} w-full gap-4 md:gap-6`}>
       {displayBanners.map((banner) => (
-        <Banner key={banner.id} bannerNumber={banner.id} />
+        <Banner key={banner.id} banner={banner} />
       ))}
     </div>
   );

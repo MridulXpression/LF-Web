@@ -1,17 +1,26 @@
 import Image from "next/image";
 import React from "react";
 
-const Banner = ({ bannerNumber }) => {
-  // Use the global banner number to determine which image to show
-  const imageSrc = `/images/banner-${bannerNumber}.png`;
+const Banner = ({ banner }) => {
+  const handleClick = () => {
+    if (banner.redirectUrl) {
+      window.open(banner.redirectUrl, "_blank");
+    }
+  };
 
   return (
-    <div className="w-full h-[350px] relative bg-stone-100 overflow-hidden">
+    <div
+      className={`w-full h-[350px] relative bg-stone-100 overflow-hidden ${
+        banner.redirectUrl ? "cursor-pointer" : ""
+      }`}
+      onClick={handleClick}
+    >
       <Image
-        className="w-full h-full object-fill"
-        src={imageSrc}
-        alt={`Banner ${bannerNumber}`}
+        className="w-full h-full object-cover"
+        src={banner.imageUrl}
+        alt={`Banner ${banner.id}`}
         fill
+        unoptimized
       />
     </div>
   );
