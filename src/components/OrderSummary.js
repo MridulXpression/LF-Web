@@ -31,9 +31,6 @@ const OrderSummary = ({
   // Subtotal = (MRP - Selling Price)
   const subtotal = totalVariantPrice;
 
-  // GST 18% ON SUBTOTAL
-  const gst = subtotal * 0.18;
-
   const deliveryCharges = 0;
   const convenienceFee = 0;
 
@@ -49,9 +46,6 @@ const OrderSummary = ({
 
   const totalDiscount = appliedDiscount;
 
-  // Final Total
-  // const totalPrice =
-  //   subtotal + gst + deliveryCharges + convenienceFee - totalDiscount;
   const totalPrice =
     subtotal + deliveryCharges + convenienceFee - totalDiscount;
 
