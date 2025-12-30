@@ -70,14 +70,16 @@ const ShoppingCart = () => {
           description:
             item.product.shortDescription || item.product.description,
           image:
-            item.product_variant.imageSrc || item.product.imageUrls[0] || "",
+            item.product_variant?.imageSrc || item.product.imageUrls[0] || "",
           imageUrls: item.product.imageUrls,
-          price: item.product_variant.price,
+          price: item.product_variant?.price || item.product.basePrice || 0,
           originalPrice: item.product.mrp || item.product.basePrice,
-          size: item.product_variant.title,
+          size: item.product_variant?.title || "One Size",
           quantity: item.quantity || 1, // Use quantity directly from API
-          availableStock: item.product_variant.inventory?.availableStock || 0, // Available stock from inventory
-          availableSizes: [item.product_variant.title],
+          availableStock: item.product_variant?.inventory?.availableStock || 0, // Available stock from inventory
+          availableSizes: item.product_variant?.title
+            ? [item.product_variant.title]
+            : ["One Size"],
           type: item.product.type,
           tags: item.product.tags,
           hasCOD: item.product.hasCOD,

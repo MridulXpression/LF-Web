@@ -1,38 +1,34 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
-import axiosHttp from "@/utils/axioshttp";
-import { endPoints } from "@/utils/endpoints"; // adjust import path as needed
+import useNewsletter from "@/hooks/useNewsletter";
 import BlogPostComponent from "@/components/Blog/BlogPost";
 import Navbar from "@/app/(navbar)/Navbar";
 import Footer from "@/components/footer";
 
 export default function BlogDetailsPage() {
   const params = useParams();
-  const [blogData, setBlogData] = useState(null);
-
-  const getBlogDetails = async (id) => {
-    try {
-      const res = await axiosHttp.get(`${endPoints.getBlogbyid}/${id}`);
-      const data = res?.data?.data;
-      setBlogData(data);
-    } catch (error) {
-      console.error("Error fetching blog:", error);
-    }
-  };
+  const newsletters = useNewsletter();
+  const [newsletterData, setNewsletterData] = useState(null);
 
   useEffect(() => {
-    if (params?.id && params.id[0]) {
-      setBlogData(null);
-      const blogId = params.id[0];
-      getBlogDetails(blogId);
+    if (params?.id && params.id[0] && newsletters.length > 0) {
+      const newsletterId = params.id[0];
+      const foundNewsletter = newsletters.find(
+        (newsletter) => newsletter.id === Number(newsletterId)
+      );
+      setNewsletterData(foundNewsletter || null);
     }
-  }, [params?.id]);
+  }, [params?.id, newsletters]);
 
-  if (!blogData) {
+  if (!newsletters.length) {
+    return <div className="text-center py-10 text-gray-500">Loading...</div>;
+  }
+
+  if (!newsletterData) {
     return (
       <div className="text-center py-10 text-gray-500">
-        Blog not found or failed to load.
+        Newsletter not found or failed to load.
       </div>
     );
   }
@@ -40,7 +36,7 @@ export default function BlogDetailsPage() {
   return (
     <>
       <Navbar />
-      <BlogPostComponent blogPost={blogData} />
+      <BlogPostComponent blogPost={newsletterData} />
       <Footer />
     </>
   );
