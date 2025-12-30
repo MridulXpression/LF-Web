@@ -195,7 +195,10 @@ const BrandDirectory = ({ brands }) => {
                               product.basePrice
                             );
                             return (
-                              <div
+                              <Link
+                                href={`/products/${product.id}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
                                 key={product.id}
                                 className="bg-white border border-gray-200 rounded-lg overflow-hidden hover:shadow-md transition-shadow cursor-pointer group"
                               >
@@ -206,7 +209,7 @@ const BrandDirectory = ({ brands }) => {
                                       src={product.imageUrls[0]}
                                       alt={product.title}
                                       fill
-                                      className="object-cover group-hover:scale-105 transition-transform duration-300"
+                                      className="object-fill group-hover:scale-105 transition-transform duration-300"
                                     />
                                   ) : (
                                     <div className="w-full h-full flex items-center justify-center">
@@ -238,7 +241,7 @@ const BrandDirectory = ({ brands }) => {
                                     )}
                                   </div>
                                 </div>
-                              </div>
+                              </Link>
                             );
                           })}
                         </div>

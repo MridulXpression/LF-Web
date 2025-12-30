@@ -78,6 +78,7 @@ const BrandProduct = () => {
                 }
                 title={product.title}
                 price={product.basePrice}
+                mrp={product.mrp}
                 productId={product.id}
                 hasCOD={product.hasCOD}
                 hasExchange={product.hasExchange}
