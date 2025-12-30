@@ -115,13 +115,16 @@ const CartProductCard = ({
             <span className="font-semibold text-black text-lg">
               Rs. {product.price}
             </span>
-
-            <span className="text-black line-through text-sm">
-              Rs. {product.originalPrice}
-            </span>
-            <span className="text-green-600 text-sm">
-              ({discountPercent}% OFF)
-            </span>
+            {product.originalPrice > product.price && (
+              <>
+                <span className="text-black line-through text-sm">
+                  Rs. {product.originalPrice}
+                </span>
+                <span className="text-green-600 text-sm">
+                  ({discountPercent}% OFF)
+                </span>
+              </>
+            )}
           </div>
         </div>
       </div>

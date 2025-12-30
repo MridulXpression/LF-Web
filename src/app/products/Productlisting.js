@@ -1,14 +1,16 @@
 "use client";
+
 import { useState, useEffect } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
-import axiosHttp from "@/utils/axioshttp";
+import { Filter } from "lucide-react";
+
 import FilterSidebar from "@/components/FilterSidebar";
 import SortSelector from "@/components/SortSelector";
 import ProductGrid from "@/components/ProductGrid";
-import usegetBrands from "@/hooks/useGetBrands";
+
+import useFilterMetadata from "@/hooks/useFilterMetadata";
 import useUnifiedFilter from "@/hooks/useUnifiedFilter";
 import useProducts from "@/hooks/useProducts";
-import { Filter } from "lucide-react";
 
 const ShopByCategoriesPage = () => {
   const searchParams = useSearchParams();
@@ -18,25 +20,10 @@ const ShopByCategoriesPage = () => {
   const subCategoryId = searchParams.get("subCatId");
   const superCatId = searchParams.get("superCatId");
   const catId = searchParams.get("catId");
+  const collectionId = searchParams.get("collectionId");
   const searchQuery = searchParams.get("key")
     ? decodeURIComponent(searchParams.get("key"))
     : null;
-  const collectionId = searchParams.get("collectionId");
-
-  // ===== BRANDS =====
-  const { brands: rawBrands } = usegetBrands();
-  const brands =
-    rawBrands?.map((brand) => ({
-      id: brand?.id || "",
-      name: brand?.name || "",
-    })) || [];
-
-  // ===== SUPER CATEGORIES (Men, Women, Accessories) =====
-  const superCategories = [
-    { id: 1, name: "Men" },
-    { id: 2, name: "Women" },
-    { id: 3, name: "Accessories" },
-  ];
 
   // ===== FILTER STATE =====
   const [selectedBrands, setSelectedBrands] = useState([]);
@@ -47,10 +34,13 @@ const ShopByCategoriesPage = () => {
     min: searchParams.get("minPrice") || "0",
     max: searchParams.get("maxPrice") || "10000",
   });
-  const [expandedBrands, setExpandedBrands] = useState(false);
+
   const [selectedSizes, setSelectedSizes] = useState([]);
-  const [expandedSizes, setExpandedSizes] = useState(false);
   const [selectedColors, setSelectedColors] = useState([]);
+
+  // ===== EXPAND / COLLAPSE UI STATE =====
+  const [expandedBrands, setExpandedBrands] = useState(false);
+  const [expandedSizes, setExpandedSizes] = useState(false);
   const [expandedColors, setExpandedColors] = useState(false);
 
   // ===== SORT STATE =====
@@ -59,32 +49,48 @@ const ShopByCategoriesPage = () => {
   // ===== FILTER PANEL STATE =====
   const [isFilterOpen, setIsFilterOpen] = useState(false);
 
-  // ===== CHECK IF ANY FILTERS ARE APPLIED =====
-  const hasFiltersApplied = () => {
-    return (
-      selectedBrands.length > 0 ||
-      selectedSuperCategory ||
-      priceRange.min !== "0" ||
-      priceRange.max !== "10000" ||
-      selectedSizes.length > 0 ||
-      selectedColors.length > 0 ||
-      selectedSort ||
-      subCategoryId ||
-      catId ||
-      collectionId ||
-      searchQuery
-    );
-  };
+  // ===== FILTER METADATA =====
+  const {
+    brands,
+    sizes,
+    colors,
+    loading: filterMetaLoading,
+  } = useFilterMetadata({
+    superCatId:
+      selectedSuperCategory ?? (superCatId ? Number(superCatId) : null),
+    catId: catId ? Number(catId) : null,
+    subCatId: subCategoryId ? Number(subCategoryId) : null,
+  });
 
-  // ===== HOOKS =====
-  // Use filter API when filters are applied
+  // ===== SUPER CATEGORIES =====
+  const superCategories = [
+    { id: 1, name: "Men" },
+    { id: 2, name: "Women" },
+    { id: 3, name: "Accessories" },
+  ];
+
+  // ===== CHECK IF ANY FILTERS ARE APPLIED =====
+  const hasFiltersApplied = () =>
+    selectedBrands.length > 0 ||
+    selectedSuperCategory ||
+    priceRange.min !== "0" ||
+    priceRange.max !== "10000" ||
+    selectedSizes.length > 0 ||
+    selectedColors.length > 0 ||
+    selectedSort ||
+    subCategoryId ||
+    catId ||
+    collectionId ||
+    searchQuery;
+
+  // ===== FILTERED PRODUCTS =====
   const {
     products: filteredProducts,
     isLoading: isFilterLoading,
     applyFilters,
   } = useUnifiedFilter();
 
-  // Use pagination when no filters applied
+  // ===== PAGINATED PRODUCTS =====
   const {
     products: paginatedProducts,
     loading: isPageLoading,
@@ -92,47 +98,38 @@ const ShopByCategoriesPage = () => {
     loadMore,
   } = useProducts(hasFiltersApplied() ? null : "");
 
-  // Determine which products to display
   const products = hasFiltersApplied() ? filteredProducts : paginatedProducts;
+
   const isLoading = hasFiltersApplied() ? isFilterLoading : isPageLoading;
 
-  // ===== AVAILABLE SIZES & COLORS (Mock - replace with API if needed) =====
-  const [availableSizes, setAvailableSizes] = useState([
-    { id: 1, name: "XS" },
-    { id: 2, name: "S" },
-    { id: 3, name: "M" },
-    { id: 4, name: "L" },
-    { id: 5, name: "XL" },
-    { id: 6, name: "XXL" },
-  ]);
+  // ===== NORMALIZE SIZE & COLOR DATA =====
+  const availableSizes = (sizes || []).map((s, i) => ({
+    id: i + 1,
+    name: s,
+  }));
 
-  const [availableColors, setAvailableColors] = useState([
-    { id: 1, name: "Black" },
-    { id: 2, name: "White" },
-    { id: 3, name: "Red" },
-    { id: 4, name: "Blue" },
-    { id: 5, name: "Green" },
-    { id: 6, name: "Yellow" },
-  ]);
+  const availableColors = (colors || []).map((c, i) => ({
+    id: i + 1,
+    name: c,
+  }));
 
-  // ===== APPLY FILTERS ON URL CHANGE =====
+  // ===== APPLY FILTERS ON CHANGE =====
   useEffect(() => {
-    // Only apply filters if filters are actually applied
-    if (hasFiltersApplied()) {
-      applyFilters({
-        brandIds: selectedBrands,
-        minPrice: priceRange.min,
-        maxPrice: priceRange.max,
-        sort: selectedSort,
-        superCatId: selectedSuperCategory,
-        subCatId: subCategoryId ? Number(subCategoryId) : null,
-        catId: catId ? Number(catId) : null,
-        sizeIds: selectedSizes,
-        colorIds: selectedColors,
-        collectionId: collectionId ? Number(collectionId) : null,
-        key: searchQuery,
-      });
-    }
+    if (!hasFiltersApplied()) return;
+
+    applyFilters({
+      brandIds: selectedBrands,
+      minPrice: priceRange.min,
+      maxPrice: priceRange.max,
+      sort: selectedSort,
+      superCatId: selectedSuperCategory,
+      subCatId: subCategoryId ? Number(subCategoryId) : null,
+      catId: catId ? Number(catId) : null,
+      sizeIds: selectedSizes,
+      colorIds: selectedColors,
+      collectionId: collectionId ? Number(collectionId) : null,
+      key: searchQuery,
+    });
   }, [
     selectedBrands,
     priceRange,
@@ -148,66 +145,26 @@ const ShopByCategoriesPage = () => {
   ]);
 
   // ===== HANDLERS =====
-  const toggleBrandSelection = (brandId) => {
-    setSelectedBrands((prev) =>
-      prev.includes(brandId)
-        ? prev.filter((id) => id !== brandId)
-        : [...prev, brandId]
-    );
-  };
-
-  const toggleSizeSelection = (sizeId) => {
-    setSelectedSizes((prev) =>
-      prev.includes(sizeId)
-        ? prev.filter((id) => id !== sizeId)
-        : [...prev, sizeId]
-    );
-  };
-
-  const toggleColorSelection = (colorId) => {
-    setSelectedColors((prev) =>
-      prev.includes(colorId)
-        ? prev.filter((id) => id !== colorId)
-        : [...prev, colorId]
+  const toggleSelection = (setter, value) => {
+    setter((prev) =>
+      prev.includes(value) ? prev.filter((v) => v !== value) : [...prev, value]
     );
   };
 
   const handleApplyFilters = () => {
     const params = new URLSearchParams();
 
-    if (selectedBrands.length > 0) {
-      params.set("brandIds", selectedBrands.join(","));
-    }
-    if (priceRange.min !== "0") {
-      params.set("minPrice", priceRange.min);
-    }
-    if (priceRange.max !== "10000") {
-      params.set("maxPrice", priceRange.max);
-    }
-    if (selectedSuperCategory) {
-      params.set("superCatId", selectedSuperCategory);
-    }
-    if (selectedSizes.length > 0) {
-      params.set("sizeIds", selectedSizes.join(","));
-    }
-    if (selectedColors.length > 0) {
-      params.set("colorIds", selectedColors.join(","));
-    }
-    if (selectedSort) {
-      params.set("sort", selectedSort);
-    }
-    if (subCategoryId) {
-      params.set("subCatId", subCategoryId);
-    }
-    if (catId) {
-      params.set("catId", catId);
-    }
-    if (collectionId) {
-      params.set("collectionId", collectionId);
-    }
-    if (searchQuery) {
-      params.set("key", encodeURIComponent(searchQuery));
-    }
+    if (selectedBrands.length) params.set("brandIds", selectedBrands.join(","));
+    if (priceRange.min !== "0") params.set("minPrice", priceRange.min);
+    if (priceRange.max !== "10000") params.set("maxPrice", priceRange.max);
+    if (selectedSuperCategory) params.set("superCatId", selectedSuperCategory);
+    if (selectedSizes.length) params.set("sizeIds", selectedSizes.join(","));
+    if (selectedColors.length) params.set("colorIds", selectedColors.join(","));
+    if (selectedSort) params.set("sort", selectedSort);
+    if (subCategoryId) params.set("subCatId", subCategoryId);
+    if (catId) params.set("catId", catId);
+    if (collectionId) params.set("collectionId", collectionId);
+    if (searchQuery) params.set("key", encodeURIComponent(searchQuery));
 
     router.push(`/products?${params.toString()}`);
     setIsFilterOpen(false);
@@ -223,15 +180,6 @@ const ShopByCategoriesPage = () => {
     router.push("/products");
   };
 
-  const handleSortChange = (e) => {
-    const sortValue = e.target.value;
-    setSelectedSort(sortValue);
-  };
-
-  const handleBrowseAll = () => {
-    router.push("/products");
-  };
-
   return (
     <div className="min-h-screen bg-white relative mt-[150px]">
       {/* MOBILE FILTER BUTTON */}
@@ -243,13 +191,12 @@ const ShopByCategoriesPage = () => {
       </button>
 
       <div className="max-w-[1400px] mx-auto flex">
-        {/* FILTER SIDEBAR */}
         <FilterSidebar
           isFilterOpen={isFilterOpen}
           setIsFilterOpen={setIsFilterOpen}
           brands={brands}
           selectedBrands={selectedBrands}
-          toggleBrandSelection={toggleBrandSelection}
+          toggleBrandSelection={(id) => toggleSelection(setSelectedBrands, id)}
           expandedBrands={expandedBrands}
           setExpandedBrands={setExpandedBrands}
           priceRange={priceRange}
@@ -259,41 +206,34 @@ const ShopByCategoriesPage = () => {
           onSuperCategoryChange={setSelectedSuperCategory}
           sizes={availableSizes}
           selectedSizes={selectedSizes}
-          toggleSizeSelection={toggleSizeSelection}
+          toggleSizeSelection={(id) => toggleSelection(setSelectedSizes, id)}
           expandedSizes={expandedSizes}
           setExpandedSizes={setExpandedSizes}
           colors={availableColors}
           selectedColors={selectedColors}
-          toggleColorSelection={toggleColorSelection}
+          toggleColorSelection={(id) => toggleSelection(setSelectedColors, id)}
           expandedColors={expandedColors}
           setExpandedColors={setExpandedColors}
           onApplyFilters={handleApplyFilters}
           onClearFilters={handleClearFilters}
-          isLoading={isLoading}
+          isLoading={isLoading || filterMetaLoading}
         />
 
-        {/* MAIN CONTENT */}
         <div className="flex-1 p-6">
-          {/* SORT SELECTOR */}
           <SortSelector
             searchQuery={searchQuery}
-            onSortChange={handleSortChange}
-            isSortLoading={isLoading}
             selectedSort={selectedSort}
+            onSortChange={(e) => setSelectedSort(e.target.value)}
+            isSortLoading={isLoading}
           />
 
-          {/* PRODUCT GRID */}
           <ProductGrid
             products={products}
             isLoading={isLoading}
-            isSearching={false}
-            isFilterLoading={isLoading}
-            isSortLoading={false}
             isFilterApplied={hasFiltersApplied()}
-            hasMore={hasFiltersApplied() ? false : hasMore}
-            subCategoryId={subCategoryId}
+            hasMore={!hasFiltersApplied() && hasMore}
             onLoadMore={loadMore}
-            onBrowseAll={handleBrowseAll}
+            onBrowseAll={() => router.push("/products")}
           />
         </div>
       </div>

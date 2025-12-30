@@ -25,9 +25,7 @@ const useAddProductToCart = () => {
       const variantId = localStorage.getItem("selectedVariantId");
 
       if (!productId || !variantId) {
-        throw new Error(
-          "Product or variant information missing in localStorage"
-        );
+        throw new Error("Please select a size ");
       }
 
       // ✅ Final payload

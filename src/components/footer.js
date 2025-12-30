@@ -31,8 +31,8 @@ const Footer = () => {
   };
 
   return (
-    <footer className="bg-[#0F0F0F] text-white">
-      <div className="px-4 sm:px-6 lg:px-8 py-12">
+    <footer className="bg-[#0F0F0F] text-white w-full flex flex-col justify-end ">
+      <div className="px-4 sm:px-6 lg:px-8 py-12 flex flex-col flex-1 justify-end">
         {/* Main Footer Content */}
         <div className="flex flex-col lg:flex-row justify-between gap-20 mb-16 px-[20px]">
           {/* Left: 4 Columns */}

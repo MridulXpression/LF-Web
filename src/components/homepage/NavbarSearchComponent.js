@@ -51,19 +51,23 @@ export default function NavbarSearchComponent({
     return () => clearTimeout(timer);
   }, [searchQuery]);
 
+  const anchorRef = useRef(null);
   const handleSearch = (e) => {
     if (e.key === "Enter" && searchQuery.trim()) {
-      router.push(`/products?key=${encodeURIComponent(searchQuery.trim())}`);
       setIsOpen(false);
       dispatch(addSearch(searchQuery.trim()));
+      // Programmatically click the anchor to navigate
+      if (anchorRef.current) {
+        anchorRef.current.click();
+      }
     }
   };
 
   const handleSuggestionClick = (suggestion) => {
     const trimmedSuggestion = suggestion.trim();
-    router.push(`/products?key=${encodeURIComponent(trimmedSuggestion)}`);
     setIsOpen(false);
     dispatch(addSearch(trimmedSuggestion));
+    // Navigation is now handled by anchor tag, so no router.push
   };
 
   if (!isOpen) return null;
@@ -101,6 +105,20 @@ export default function NavbarSearchComponent({
                 className="text-center justify-start text-stone-950 text-sm font-medium uppercase leading-4 border-none outline-none bg-transparent flex-1"
                 autoFocus
               />
+              {/* Hidden anchor for Enter key navigation */}
+              <a
+                href={
+                  searchQuery.trim()
+                    ? `/products?key=${encodeURIComponent(searchQuery.trim())}`
+                    : "#"
+                }
+                ref={anchorRef}
+                style={{ display: "none" }}
+                tabIndex={-1}
+                aria-hidden="true"
+              >
+                Go
+              </a>
             </div>
             <button
               onClick={() => setIsOpen(false)}
@@ -131,8 +149,11 @@ export default function NavbarSearchComponent({
                   </div>
                 ) : suggestions.length > 0 ? (
                   suggestions.map((suggestion, index) => (
-                    <button
+                    <a
                       key={index}
+                      href={`/products?key=${encodeURIComponent(
+                        suggestion.trim()
+                      )}`}
                       onClick={() => handleSuggestionClick(suggestion)}
                       className="h-7 px-2.5 py-1.5 bg-zinc-100 rounded flex justify-center items-center gap-1 cursor-pointer hover:bg-zinc-200 transition-colors"
                     >
@@ -141,12 +162,15 @@ export default function NavbarSearchComponent({
                           {suggestion}
                         </div>
                       </div>
-                    </button>
+                    </a>
                   ))
                 ) : recentSearches.length > 0 ? (
                   recentSearches.map((search, index) => (
-                    <button
+                    <a
                       key={index}
+                      href={`/products?key=${encodeURIComponent(
+                        search.trim()
+                      )}`}
                       onClick={() => handleSuggestionClick(search)}
                       className="h-7 px-2.5 py-1.5 bg-zinc-100 rounded flex justify-center items-center gap-1 cursor-pointer hover:bg-zinc-200 transition-colors"
                     >
@@ -155,7 +179,7 @@ export default function NavbarSearchComponent({
                           {search}
                         </div>
                       </div>
-                    </button>
+                    </a>
                   ))
                 ) : (
                   <div className="justify-start text-neutral-700 text-sm font-normal">
@@ -175,15 +199,18 @@ export default function NavbarSearchComponent({
                   <div className="flex-1 inline-flex flex-col justify-start items-start gap-3.5">
                     <div className="flex flex-col justify-start items-start gap-1.5">
                       {trendingSearches.map((item, index) => (
-                        <button
+                        <a
                           key={index}
+                          href={`/products?key=${encodeURIComponent(
+                            item.trim()
+                          )}`}
                           onClick={() => handleSuggestionClick(item)}
                           className="inline-flex justify-center items-center gap-2.5 cursor-pointer hover:opacity-70 transition-opacity"
                         >
                           <div className="justify-start text-neutral-700 text-sm font-normal">
                             {item}
                           </div>
-                        </button>
+                        </a>
                       ))}
                     </div>
                   </div>

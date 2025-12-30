@@ -140,6 +140,13 @@ const extractColorsFromVariants = (variants) => {
 export default function ProductPage({ params }) {
   const unwrappedParams = React.use(params);
   const data = useProductsById(unwrappedParams.id);
+
+  // Clear selectedVariantId when product changes
+  useEffect(() => {
+    if (data?.id) {
+      localStorage.removeItem("selectedVariantId");
+    }
+  }, [data?.id]);
   const [deliveryInfo, setDeliveryInfo] = useState([]);
   const [reviews, setReviews] = useState([]);
   const [showReviewModal, setShowReviewModal] = useState(false);
@@ -372,7 +379,9 @@ export default function ProductPage({ params }) {
             {/* RIGHT - Reviews with Button */}
             <div>
               <div className="flex items-center justify-between mb-6">
-                <h2 className="text-lg font-semibold text-black">Reviews</h2>
+                {reviews && reviews.length > 0 && (
+                  <h2 className="text-lg font-semibold text-black">Reviews</h2>
+                )}
                 <button
                   onClick={() => setShowReviewModal(true)}
                   className="px-4 py-2 bg-black text-white text-sm rounded hover:bg-gray-800 transition-colors font-medium cursor-pointer"
