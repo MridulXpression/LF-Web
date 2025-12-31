@@ -97,11 +97,11 @@ const FashionGrid = ({ data, title = "TRENDING NOW" }) => {
   const secondRowItems = data.slice(3, 6);
 
   return (
-    <div id="newsletters" className="min-h-[80vh] bg-white">
+    <div id="newsletters" className="md:min-h-[80vh] bg-white">
       <div className="md:max-w-[1400px] mx-auto">
         <div className="flex items-center mb-[40px] gap-8">
           <div className="flex-1 h-[2px] bg-stone-950" />
-          <div className="text-stone-950 text-2xl  md:text-[38px] font-semibold uppercase tracking-wider whitespace-nowrap">
+          <div className="text-stone-950 text-md  md:text-[38px] font-semibold uppercase tracking-wider whitespace-nowrap">
             {title}
           </div>
         </div>

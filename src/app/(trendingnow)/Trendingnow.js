@@ -10,6 +10,8 @@ import BannerGrid from "@/components/collections/BannerGrid";
 const TrendingNowSection = () => {
   const { data: collections, loading, error } = useCollection();
   const [currentPages, setCurrentPages] = useState({});
+  const [sortOrders, setSortOrders] = useState({}); // Track sort order per collection
+  const [showSortDropdown, setShowSortDropdown] = useState({}); // Track dropdown visibility per collection
 
   // Pagination: 4 products, then 4, then 3 (total 11)
   const pageItemCounts = [4, 4, 3];
@@ -26,6 +28,44 @@ const TrendingNowSection = () => {
       ...prev,
       [collectionId]: Math.min((prev[collectionId] || 0) + 1, totalPages - 1),
     }));
+  };
+
+  const handleSortChange = (collectionId, sortOption) => {
+    setSortOrders((prev) => ({
+      ...prev,
+      [collectionId]: sortOption,
+    }));
+    setShowSortDropdown((prev) => ({
+      ...prev,
+      [collectionId]: false,
+    }));
+  };
+
+  const toggleSortDropdown = (collectionId) => {
+    setShowSortDropdown((prev) => ({
+      ...prev,
+      [collectionId]: !prev[collectionId],
+    }));
+  };
+
+  const sortProducts = (products, sortOrder) => {
+    if (!sortOrder || sortOrder === "default") return products;
+
+    const sortedProducts = [...products];
+    if (sortOrder === "lowToHigh") {
+      return sortedProducts.sort((a, b) => {
+        const priceA = a.basePrice || a.price || 0;
+        const priceB = b.basePrice || b.price || 0;
+        return priceA - priceB;
+      });
+    } else if (sortOrder === "highToLow") {
+      return sortedProducts.sort((a, b) => {
+        const priceA = a.basePrice || a.price || 0;
+        const priceB = b.basePrice || b.price || 0;
+        return priceB - priceA;
+      });
+    }
+    return sortedProducts;
   };
 
   if (loading) {
@@ -63,6 +103,10 @@ const TrendingNowSection = () => {
         const totalProducts = collection.products.length;
         const shouldDisableChevrons = totalProducts <= 5;
 
+        // Apply sorting before pagination
+        const sortOrder = sortOrders[collection.id] || "default";
+        const sortedProducts = sortProducts(collection.products, sortOrder);
+
         // Calculate start and end indices based on cumulative item counts
         let startIndex = 0;
         for (let i = 0; i < currentPage; i++) {
@@ -70,10 +114,7 @@ const TrendingNowSection = () => {
         }
         const endIndex = startIndex + (pageItemCounts[currentPage] || 0);
 
-        const displayedProducts = collection.products.slice(
-          startIndex,
-          endIndex
-        );
+        const displayedProducts = sortedProducts.slice(startIndex, endIndex);
 
         // Get banners from collection data
         const banners = collection.banners || [];
@@ -91,21 +132,61 @@ const TrendingNowSection = () => {
               </h1>
 
               <div className="flex gap-2 sm:gap-3 ml-auto">
-                {/* Sort By Button */}
-                <button className="h-10 sm:h-12 md:h-14 px-3 sm:px-4 md:px-6 py-2 sm:py-3 md:py-4 bg-white rounded-lg sm:rounded-xl outline outline-1 outline-offset-[-1px] outline-stone-950 inline-flex justify-center items-center gap-1 sm:gap-1.5">
-                  <div className="flex justify-start items-center gap-1 sm:gap-1.5">
-                    <div className="text-center justify-start text-stone-950 text-xs sm:text-sm md:text-lg lg:text-xl font-medium leading-5 sm:leading-6 tracking-wide">
-                      Sort By
+                {/* Sort By Button with Dropdown */}
+                <div className="relative">
+                  <button
+                    onClick={() => toggleSortDropdown(collection.id)}
+                    className="h-10 sm:h-12 md:h-14 px-3 sm:px-4 md:px-6 py-2 sm:py-3 md:py-4 bg-white rounded-lg sm:rounded-xl outline outline-1 outline-offset-[-1px] outline-stone-950 inline-flex justify-center items-center gap-1 sm:gap-1.5 cursor-pointer"
+                  >
+                    <div className="flex justify-start items-center gap-1 sm:gap-1.5">
+                      <div className="text-center justify-start text-stone-950 text-xs sm:text-sm md:text-lg lg:text-xl font-medium leading-5 sm:leading-6 tracking-wide">
+                        {sortOrders[collection.id] === "lowToHigh"
+                          ? "Price: Low to High"
+                          : sortOrders[collection.id] === "highToLow"
+                          ? "Price: High to Low"
+                          : "Sort By"}
+                      </div>
+                      <Image
+                        src="/images/sort.svg"
+                        alt="Sort"
+                        width={16}
+                        height={16}
+                        className="sm:w-5 sm:h-5 md:w-6 md:h-6"
+                      />
                     </div>
-                    <Image
-                      src="/images/sort.svg"
-                      alt="Sort"
-                      width={16}
-                      height={16}
-                      className="sm:w-5 sm:h-5 md:w-6 md:h-6"
-                    />
-                  </div>
-                </button>
+                  </button>
+
+                  {/* Dropdown Menu */}
+                  {showSortDropdown[collection.id] && (
+                    <div className="absolute top-full mt-2 right-0 bg-white border border-stone-950 rounded-lg shadow-lg z-10 min-w-[200px]">
+                      <button
+                        onClick={() =>
+                          handleSortChange(collection.id, "default")
+                        }
+                        className="w-full px-4 py-3 text-left text-sm md:text-base hover:bg-stone-100 transition"
+                      >
+                        Default
+                      </button>
+                      <button
+                        onClick={() =>
+                          handleSortChange(collection.id, "lowToHigh")
+                        }
+                        className="w-full px-4 py-3 text-left text-sm md:text-base hover:bg-stone-100 transition border-t border-stone-200"
+                      >
+                        Price: Low to High
+                      </button>
+                      <button
+                        onClick={() =>
+                          handleSortChange(collection.id, "highToLow")
+                        }
+                        className="w-full px-4 py-3 text-left text-sm md:text-base hover:bg-stone-100 transition border-t border-stone-200"
+                      >
+                        Price: High to Low
+                      </button>
+                    </div>
+                  )}
+                </div>
+
                 <button
                   onClick={() => handlePrevPage(collection.id)}
                   disabled={currentPage === 0 || shouldDisableChevrons}
