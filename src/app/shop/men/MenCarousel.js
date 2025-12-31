@@ -7,18 +7,16 @@ const MenCarousel = () => {
   const query = "gender=1";
   const fetchBanners = useBanner(query);
 
-  // Transform the API response to match Carousel component's expected format
-  const slides =
-    fetchBanners?.map((banner) => ({
-      image: banner.image,
-    })) || [];
+  // Get the first banner image
+  const bannerImage = fetchBanners?.[0]?.image;
 
-  if (!fetchBanners || fetchBanners.length === 0) {
+  if (!bannerImage) {
     return null;
   }
+
   return (
     <div>
-      <BannerCarousel slides={slides} />
+      <BannerCarousel image={bannerImage} />
     </div>
   );
 };

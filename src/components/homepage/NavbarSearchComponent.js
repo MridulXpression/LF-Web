@@ -75,10 +75,10 @@ export default function NavbarSearchComponent({
   return (
     <div className="w-full max-h-screen bg-white z-[1000] fixed top-15 left-0">
       {/* Search Input Area */}
-      <div className="w-full h-24 px-16 py-7 bg-white inline-flex justify-between items-center">
-        <div className="flex-1 flex justify-start items-center gap-32">
-          <div className="flex justify-start items-center gap-14">
-            <div className="w-20 h-8 relative">
+      <div className="w-full h-auto min-h-20 md:h-24 px-4 sm:px-8 md:px-12 lg:px-16 py-4 md:py-7 bg-white inline-flex justify-between items-center">
+        <div className="flex-1 flex justify-start items-center gap-4 md:gap-8 lg:gap-32">
+          <div className="hidden sm:flex justify-start items-center gap-4 md:gap-14">
+            <div className="w-16 sm:w-20 h-6 sm:h-8 relative">
               <Image
                 src="/images/Lafetch Logo.svg"
                 alt="Logo"
@@ -88,11 +88,11 @@ export default function NavbarSearchComponent({
             </div>
           </div>
           <div className="flex-1 py-0.5 border-b border-stone-950 flex justify-between items-center">
-            <div className="flex justify-start items-center gap-2">
-              <div className="flex justify-start items-center gap-5">
-                <div className="flex justify-start items-center gap-4">
-                  <div className="w-9 h-9 relative rounded">
-                    <Search className="w-6 h-6 absolute left-[6px] top-[5.51px] text-stone-950" />
+            <div className="flex justify-start items-center gap-1 sm:gap-2">
+              <div className="flex justify-start items-center gap-2 sm:gap-5">
+                <div className="flex justify-start items-center gap-2 sm:gap-4">
+                  <div className="w-6 h-6 sm:w-9 sm:h-9 relative rounded">
+                    <Search className="w-4 h-4 sm:w-6 sm:h-6 text-stone-950" />
                   </div>
                 </div>
               </div>
@@ -101,8 +101,8 @@ export default function NavbarSearchComponent({
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 onKeyDown={handleSearch}
-                placeholder="Searh To Explore More"
-                className="text-center justify-start text-stone-950 text-sm font-medium uppercase leading-4 border-none outline-none bg-transparent flex-1"
+                placeholder="Search To Explore More"
+                className="text-left justify-start text-stone-950 text-xs sm:text-sm font-medium uppercase leading-4 border-none outline-none bg-transparent flex-1"
                 autoFocus
               />
               {/* Hidden anchor for Enter key navigation */}
@@ -122,7 +122,7 @@ export default function NavbarSearchComponent({
             </div>
             <button
               onClick={() => setIsOpen(false)}
-              className="text-center justify-start text-stone-950 text-sm font-semibold uppercase leading-4 cursor-pointer"
+              className="text-center justify-start text-stone-950 text-xs sm:text-sm font-semibold uppercase leading-4 cursor-pointer whitespace-nowrap"
             >
               Close
             </button>
@@ -133,18 +133,18 @@ export default function NavbarSearchComponent({
       {/* Dropdown Area */}
       <div
         ref={searchDropdownRef}
-        className="w-full px-44 pt-7 pb-14 bg-stone-50 inline-flex justify-center items-start gap-10"
+        className="w-full px-4 sm:px-8 md:px-16 lg:px-32 xl:px-44 pt-4 sm:pt-7 pb-8 sm:pb-14 bg-stone-50 inline-flex justify-center items-start gap-6 md:gap-10"
       >
         <div className="flex-1 inline-flex flex-col justify-start items-start gap-3.5">
-          <div className="self-stretch inline-flex justify-start items-start">
+          <div className="self-stretch flex flex-col md:inline-flex md:flex-row justify-start items-start gap-6 md:gap-0">
             {/* Recent Searches */}
-            <div className="inline-flex flex-col justify-start items-start gap-3.5">
-              <div className="justify-start text-neutral-700 text-sm font-normal">
+            <div className="w-full md:w-auto md:pr-8 inline-flex flex-col justify-start items-start gap-3.5">
+              <div className="justify-start text-neutral-700 text-xs sm:text-sm font-normal">
                 {suggestions.length > 0 ? "Suggestions" : "Recent Searches"}
               </div>
-              <div className="max-w-[500px] inline-flex justify-start items-start gap-3.5 flex-wrap content-start">
+              <div className="w-full md:max-w-[500px] inline-flex justify-start items-start gap-2 sm:gap-3.5 flex-wrap content-start">
                 {isLoadingSuggestions ? (
-                  <div className="justify-start text-neutral-700 text-sm font-normal">
+                  <div className="justify-start text-neutral-700 text-xs sm:text-sm font-normal">
                     Loading...
                   </div>
                 ) : suggestions.length > 0 ? (
@@ -155,10 +155,10 @@ export default function NavbarSearchComponent({
                         suggestion.trim()
                       )}`}
                       onClick={() => handleSuggestionClick(suggestion)}
-                      className="h-7 px-2.5 py-1.5 bg-zinc-100 rounded flex justify-center items-center gap-1 cursor-pointer hover:bg-zinc-200 transition-colors"
+                      className="h-auto sm:h-7 px-2 sm:px-2.5 py-1 sm:py-1.5 bg-zinc-100 rounded flex justify-center items-center gap-1 cursor-pointer hover:bg-zinc-200 transition-colors"
                     >
                       <div className="flex justify-center items-start gap-2.5">
-                        <div className="justify-start text-neutral-700 text-sm font-normal">
+                        <div className="justify-start text-neutral-700 text-xs sm:text-sm font-normal">
                           {suggestion}
                         </div>
                       </div>
@@ -172,17 +172,17 @@ export default function NavbarSearchComponent({
                         search.trim()
                       )}`}
                       onClick={() => handleSuggestionClick(search)}
-                      className="h-7 px-2.5 py-1.5 bg-zinc-100 rounded flex justify-center items-center gap-1 cursor-pointer hover:bg-zinc-200 transition-colors"
+                      className="h-auto sm:h-7 px-2 sm:px-2.5 py-1 sm:py-1.5 bg-zinc-100 rounded flex justify-center items-center gap-1 cursor-pointer hover:bg-zinc-200 transition-colors"
                     >
                       <div className="flex justify-center items-start gap-2.5">
-                        <div className="justify-start text-neutral-700 text-sm font-normal">
+                        <div className="justify-start text-neutral-700 text-xs sm:text-sm font-normal">
                           {search}
                         </div>
                       </div>
                     </a>
                   ))
                 ) : (
-                  <div className="justify-start text-neutral-700 text-sm font-normal">
+                  <div className="justify-start text-neutral-700 text-xs sm:text-sm font-normal">
                     No recent searches
                   </div>
                 )}
@@ -190,12 +190,12 @@ export default function NavbarSearchComponent({
             </div>
 
             {/* Trending Searches */}
-            <div className="pl-7 border-l-[0.50px] border-stone-950 inline-flex flex-col justify-start items-start gap-3.5">
-              <div className="justify-start text-neutral-700 text-sm font-normal">
+            <div className="w-full md:w-auto md:pl-8 md:border-l-[0.50px] border-stone-950 inline-flex flex-col justify-start items-start gap-3.5">
+              <div className="justify-start text-neutral-700 text-xs sm:text-sm font-normal">
                 Trending Searches
               </div>
               <div className="inline-flex justify-start items-start gap-1">
-                <div className="w-56 self-stretch px-4 py-3.5 bg-zinc-100 flex justify-start items-start gap-2.5">
+                <div className="w-full sm:w-56 self-stretch px-3 sm:px-4 py-2.5 sm:py-3.5 bg-zinc-100 flex justify-start items-start gap-2.5">
                   <div className="flex-1 inline-flex flex-col justify-start items-start gap-3.5">
                     <div className="flex flex-col justify-start items-start gap-1.5">
                       {trendingSearches.map((item, index) => (
@@ -207,7 +207,7 @@ export default function NavbarSearchComponent({
                           onClick={() => handleSuggestionClick(item)}
                           className="inline-flex justify-center items-center gap-2.5 cursor-pointer hover:opacity-70 transition-opacity"
                         >
-                          <div className="justify-start text-neutral-700 text-sm font-normal">
+                          <div className="justify-start text-neutral-700 text-xs sm:text-sm font-normal">
                             {item}
                           </div>
                         </a>

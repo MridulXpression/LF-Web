@@ -157,7 +157,10 @@ const FashionGrid = ({ data, title = "TRENDING NOW" }) => {
                 <h2 className={getTitleClasses(fixedSize.size)}>
                   {item.title}
                 </h2>
-                <p className={getDescriptionClasses()}>{item.description}</p>
+                <p className={`${getDescriptionClasses()} max-w-[300px]`}>
+                  {item.description?.split(" ").slice(0, 20).join(" ")}
+                  {item.description?.split(" ").length > 20 ? "..." : ""}
+                </p>
               </div>
 
               {/* CTA Button (bottom only on hover) */}
@@ -254,8 +257,20 @@ const FashionGrid = ({ data, title = "TRENDING NOW" }) => {
                 <h2 className={getTitleClasses(fixedSize.size, titleColor)}>
                   {item.title}
                 </h2>
-                <p className={getDescriptionClasses(textColor)}>
-                  {item.description || "hshdihiceidiiiicjsidje idijiweodoei "}
+                <p
+                  className={`${getDescriptionClasses(
+                    textColor
+                  )} max-w-[300px]`}
+                >
+                  {(item.description || "hshdihiceidiiiicjsidje idijiweodoei ")
+                    .split(" ")
+                    .slice(0, 20)
+                    .join(" ")}
+                  {(
+                    item.description || "hshdihiceidiiiicjsidje idijiweodoei "
+                  ).split(" ").length > 20
+                    ? "..."
+                    : ""}
                 </p>
               </div>
 

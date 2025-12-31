@@ -222,7 +222,7 @@ const TrendingNowSection = () => {
             </div>
 
             {/* Grid */}
-            <div className="flex gap-3 sm:gap-4 md:gap-6 overflow-x-auto">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4 md:gap-6">
               {displayedProducts.map((product) => {
                 // Extract variant sizes from variants array
                 const availableSizes = product.variants
@@ -261,10 +261,7 @@ const TrendingNowSection = () => {
                 };
 
                 return (
-                  <div
-                    key={product.id}
-                    className="flex-shrink-0 w-64 sm:w-72 md:w-80 lg:w-[330px]"
-                  >
+                  <div key={product.id} className="w-full">
                     <ProductCollectionCard
                       product={transformedProduct}
                       onLike={(id) => console.log("Liked:", id)}
@@ -274,7 +271,7 @@ const TrendingNowSection = () => {
               })}
 
               {currentPage === totalPages - 1 && (
-                <div className="flex-shrink-0 w-64 sm:w-72 md:w-80 lg:w-80">
+                <div className="w-full">
                   <ViewAllCard
                     onClick={() => {
                       (window.location.href = `/products?collectionId=${collection.id}`),
@@ -287,7 +284,7 @@ const TrendingNowSection = () => {
 
             {/* Banners Section */}
             {bannerCount > 0 && (
-              <div className="mt-8 sm:mt-10 md:mt-12">
+              <div className="mt-8 sm:mt-10 md:mt-12 -mx-4 sm:-mx-6 md:-mx-10">
                 <BannerGrid banners={banners} bannerCount={bannerCount} />
               </div>
             )}

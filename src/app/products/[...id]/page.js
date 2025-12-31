@@ -442,7 +442,6 @@ export default function ProductPage({ params }) {
                         rating={r.rating}
                         timeAgo={timeAgo}
                         comment={r.comment}
-                        size={r.product_variant.title}
                       />
                     );
                   })

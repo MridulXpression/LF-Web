@@ -8,6 +8,7 @@ import { endPoints } from "@/utils/endpoints";
 import React, { useState } from "react";
 import { useSelector } from "react-redux";
 import toast from "react-hot-toast";
+import Image from "next/image";
 
 const WishlistBoards = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -83,8 +84,16 @@ const WishlistBoards = () => {
             Loading boards...
           </div>
         ) : boards.length === 0 ? (
-          <div className="text-center text-gray-500 mt-10">
-            No boards found.
+          <div className="flex flex-col items-center justify-center mt-10">
+            <div className="relative w-64 h-64 mb-4">
+              <Image
+                src="/images/emptywishlist.png"
+                alt="No boards found"
+                fill
+                className="object-contain"
+              />
+            </div>
+            <p className="text-center text-gray-500">No boards found.</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">

@@ -5,7 +5,7 @@ const FashionVideoBackground = ({ videoUrl, heading1, heading2, heading3 }) => {
     <div className="relative w-full h-[50vh] md:h-[85vh] overflow-hidden mt-[130px] md:mt-[150px]  ">
       {/* Background Video */}
       <video
-        className="absolute top-0 left-0 w-full h-full object-cover"
+        className="absolute top-0 left-0 w-full h-full object-fill"
         autoPlay
         muted
         loop

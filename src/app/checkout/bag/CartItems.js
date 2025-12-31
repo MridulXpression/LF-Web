@@ -387,7 +387,12 @@ const ShoppingCart = () => {
 
           {/* Main Content */}
           {products.length === 0 ? (
-            <div className="text-center py-12">
+            <div className="text-center py-8">
+              <img
+                src="/images/emptycart.png"
+                alt="Empty Cart"
+                className="mx-auto mb-2 w-64 h-64 object-contain"
+              />
               <p className="text-gray-600 text-lg">Your cart is waiting</p>
               <button
                 onClick={() => (window.location.href = "/products")}
