@@ -1,7 +1,21 @@
 "use client";
 import Link from "next/link";
 
-const SortSelector = ({ searchQuery, onSortChange, isSortLoading }) => {
+const SortSelector = ({
+  searchQuery,
+  onSortChange,
+  isSortLoading,
+  selectedSort,
+}) => {
+  const sortOptions = [
+    { value: "", label: "All Products" },
+    { value: "price_asc", label: "Price: Low to High" },
+    { value: "price_desc", label: "Price: High to Low" },
+    { value: "rating", label: "Customer Rating" },
+    { value: "discount", label: "Discount" },
+    { value: "newest", label: "Newest First" },
+  ];
+
   return (
     <div className="flex items-center justify-between mb-6">
       <div className="flex items-center gap-4">
@@ -10,16 +24,21 @@ const SortSelector = ({ searchQuery, onSortChange, isSortLoading }) => {
             <span className="text-sm text-black">Sort by:</span>
             <select
               onChange={onSortChange}
+              value={selectedSort || ""}
               disabled={isSortLoading}
               className="text-sm text-black border border-gray-300 rounded px-3 py-1 disabled:opacity-50"
             >
-              <option>All Products</option>
-              <option>Price: Low to High</option>
-              <option>Price: High to Low</option>
-              <option>Customer Rating</option>
-              <option>Discount</option>
-              <option>Newest First</option>
+              {sortOptions.map((opt) => (
+                <option key={opt.value} value={opt.value}>
+                  {opt.label}
+                </option>
+              ))}
             </select>
+            {selectedSort && (
+              <span className="text-xs bg-black text-white px-2 py-1 rounded">
+                {sortOptions.find((opt) => opt.value === selectedSort)?.label}
+              </span>
+            )}
           </>
         )}
       </div>

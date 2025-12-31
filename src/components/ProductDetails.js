@@ -2,7 +2,7 @@ import React from "react";
 
 const ProductDetails = ({ type, title, brand }) => {
   return (
-    <div className="border-t pt-5 space-y-4">
+    <div className=" pt-5 space-y-4">
       <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wide">
         {type}
       </h3>

@@ -3,6 +3,7 @@ import Link from "next/link";
 import ProductCard from "@/components/Card";
 import useProducts from "@/hooks/useProducts";
 import Image from "next/image";
+import { Toaster } from "react-hot-toast";
 
 const NewInSection = () => {
   const query = "gender=2";
@@ -35,19 +36,12 @@ const NewInSection = () => {
                       className=" object-cover "
                     />
                     <Link
-                      href="/products?gender=2" // explore page
+                      href="/products?superCatId=2" // explore page
                       className="absolute inset-0 flex items-center justify-center bg-black/40 text-white font-bold text-lg"
                     >
                       Explore All →
                     </Link>
                   </div>
-                  {/* Keep title and price as normal below image */}
-                  <h3 className="mt-2 text-sm md:text-lg  text-black text-center">
-                    {product.title}
-                  </h3>
-                  <p className="text-gray-600 text-center text-sm">
-                    Rs. {product.basePrice}
-                  </p>
                 </div>
               );
             }
@@ -67,6 +61,8 @@ const NewInSection = () => {
           })}
         </div>
       </div>
+      {/* Toaster Component */}
+      <Toaster />
     </section>
   );
 };

@@ -12,11 +12,16 @@ const WishlistCard = ({
   productName,
   currentPrice,
   originalPrice,
-  discount,
   onDelete,
 }) => {
   const [showDeleteOverlay, setShowDeleteOverlay] = useState(false);
   const router = useRouter(); // ✅ initialize router
+
+  // ✅ Calculate discount only if original price > current price
+  const discount =
+    originalPrice > currentPrice
+      ? Math.round(((originalPrice - currentPrice) / originalPrice) * 100)
+      : 0;
 
   const handleDelete = () => {
     onDelete(id);
@@ -86,12 +91,16 @@ const WishlistCard = ({
           <span className="text-sm font-bold text-gray-900">
             Rs. {currentPrice}
           </span>
-          <span className="text-xs text-gray-400 line-through">
-            Rs. {originalPrice}
-          </span>
-          <span className="text-xs font-semibold text-green-600">
-            ({discount})
-          </span>
+          {originalPrice > currentPrice && (
+            <>
+              <span className="text-xs text-gray-400 line-through">
+                Rs. {originalPrice}
+              </span>
+              <span className="text-xs font-semibold text-green-600">
+                ({discount}%)
+              </span>
+            </>
+          )}
         </div>
 
         {/* ✅ View Product Button at bottom */}

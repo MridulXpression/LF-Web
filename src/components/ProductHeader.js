@@ -30,82 +30,14 @@ const ProductInfo = ({
 
   // ✅ Initialize selected size, color and variant from localStorage or first available
   useEffect(() => {
-    const storedVariantId = localStorage.getItem("selectedVariantId");
-
-    // If sizes exist, pick first available size (and its first available color)
-    if (sizes && sizes.length > 0) {
-      let initialSize = sizes.find((s) => s.available) || sizes[0];
-
-      // If storedVariantId corresponds to a color variant inside any size, try to use that
-      if (storedVariantId) {
-        const fromSizes = sizes.find((s) =>
-          s.colors?.some((c) => c.variantId === Number(storedVariantId))
-        );
-        if (fromSizes) initialSize = fromSizes;
-      }
-
-      setSelectedSize(initialSize.value);
-
-      // pick a color for the size if available
-      const colorForSize =
-        (initialSize.colors || []).find((c) => c.available) ||
-        (initialSize.colors || [])[0] ||
-        null;
-
-      setSelectedColor(colorForSize ? colorForSize.value : null);
-
-      // Resolve full variant object from provided `variants` prop when possible
-      let resolvedVariant = null;
-      if (colorForSize?.variantId && Array.isArray(variants)) {
-        resolvedVariant = variants.find(
-          (v) => v.id === Number(colorForSize.variantId)
-        );
-      }
-      if (
-        !resolvedVariant &&
-        initialSize?.variantId &&
-        Array.isArray(variants)
-      ) {
-        resolvedVariant = variants.find(
-          (v) => v.id === Number(initialSize.variantId)
-        );
-      }
-
-      // fallback to the lightweight color/size object if full variant not found
-      setSelectedVariant(resolvedVariant || colorForSize || initialSize);
-
-      const storeId =
-        resolvedVariant?.id ??
-        colorForSize?.variantId ??
-        initialSize?.variantId;
-      if (storeId) localStorage.setItem("selectedVariantId", storeId);
-      return;
-    }
-
-    // If no sizes but colors exist, pick a color
-    if (colors && colors.length > 0) {
-      const initialColor = colors.find((c) => c.available) || colors[0];
-      setSelectedColor(initialColor.value);
-
-      // resolve full variant for the initial color
-      let resolved = null;
-      if (initialColor?.variantId && Array.isArray(variants)) {
-        resolved = variants.find(
-          (v) => v.id === Number(initialColor.variantId)
-        );
-      }
-
-      setSelectedVariant(resolved || initialColor);
-      if (initialColor.variantId)
-        localStorage.setItem("selectedVariantId", initialColor.variantId);
-      return;
-    }
-
-    // fallback: if neither present, try stored variant from localStorage via variants prop
-    const stored = localStorage.getItem("selectedVariantId");
-    if (stored && variants) {
-      const v = variants.find((vt) => vt.id === Number(stored));
-      if (v) setSelectedVariant(v);
+    // Do not select any size or color by default
+    setSelectedSize(null);
+    setSelectedColor(null);
+    setSelectedVariant(null);
+    // If only colors exist (no sizes), allow color selection as before
+    if ((!sizes || sizes.length === 0) && colors && colors.length > 0) {
+      setSelectedColor(null);
+      setSelectedVariant(null);
     }
   }, [sizes, colors, variants]);
 
@@ -132,6 +64,7 @@ const ProductInfo = ({
 
     const storeId = resolved?.id ?? colorForSize?.variantId ?? size?.variantId;
     if (storeId) localStorage.setItem("selectedVariantId", storeId);
+    setShowSizeError(false);
   };
 
   // ✅ Handle color selection
@@ -147,7 +80,10 @@ const ProductInfo = ({
 
     const storeId = resolved?.id ?? color?.variantId;
     if (storeId) localStorage.setItem("selectedVariantId", storeId);
+    setShowSizeError(false);
   };
+  // Error state for size selection
+  const [showSizeError, setShowSizeError] = useState(false);
 
   // notify parent when selectedVariant changes
   useEffect(() => {
@@ -195,8 +131,18 @@ const ProductInfo = ({
     return (colors || []).map((c) => ({ ...c }));
   })();
 
+  // Handler for actions that require size selection
+  const requireSizeSelection = (action) => {
+    if (hasSizes && !selectedSize) {
+      setShowSizeError(true);
+      return;
+    }
+    setShowSizeError(false);
+    if (typeof action === "function") action();
+  };
+
   return (
-    <div className="border-b pb-6">
+    <div className=" pb-1">
       {/* Header */}
       <div className="space-y-3 mb-5">
         <div className="flex items-start justify-between">
@@ -238,7 +184,7 @@ const ProductInfo = ({
         )}
       </div>
 
-      <div className="text-xs text-green-500 font-semibold mb-6">
+      <div className="text-sm text-red-500 font-semibold mb-6">
         Inclusive of all taxes
       </div>
 
@@ -251,7 +197,6 @@ const ProductInfo = ({
             </h3>
             <button
               onClick={async () => {
-                // fetch size chart when clicked
                 try {
                   setSizeChartLoading(true);
                   const resp = await axiosHttp.get(
@@ -289,16 +234,14 @@ const ProductInfo = ({
                 >
                   {size.label ? size.label : "ONE SIZE"}
                 </button>
-
-                {/* ✅ Show "Out of Stock" text below disabled button */}
-                {/* {!size.available && (
-                  <span className="text-[11px] text-red-500 mt-1 font-medium">
-                    Out of Stock
-                  </span>
-                )} */}
               </div>
             ))}
           </div>
+          {showSizeError && (
+            <div className="text-xs text-red-500 mt-2 font-semibold">
+              Please select a size.
+            </div>
+          )}
         </div>
       )}
 

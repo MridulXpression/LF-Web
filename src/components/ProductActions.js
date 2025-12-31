@@ -7,7 +7,13 @@ import useAddProductToCart from "@/hooks/useAddProductToCart";
 import toast, { Toaster } from "react-hot-toast";
 import { addToCart } from "@/redux/slices/cartSlice";
 
-const ProductActions = ({ onAddToWishlist, productData, isInStock = true }) => {
+const ProductActions = ({
+  onAddToWishlist,
+  productData,
+  productId,
+  quantity = 1,
+  isInStock = true,
+}) => {
   const [showModal, setShowModal] = useState(false);
   const dispatch = useDispatch();
   const { addProductToCart, loading } = useAddProductToCart();
@@ -22,7 +28,7 @@ const ProductActions = ({ onAddToWishlist, productData, isInStock = true }) => {
       toast.error("Out of Stock", { position: "top-center" });
       return;
     }
-    const result = await addProductToCart();
+    const result = await addProductToCart(productId, quantity);
 
     const variantId = localStorage.getItem("selectedVariantId");
     dispatch(addToCart({ product: productData, variantId }));

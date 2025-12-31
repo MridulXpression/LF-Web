@@ -25,7 +25,7 @@ const DeliveryOptions = ({ pincode, deliveryInfo, onCheckPincode }) => {
   const safeDeliveryInfo = Array.isArray(deliveryInfo) ? deliveryInfo : [];
 
   return (
-    <div className="border-t pt-5 space-y-4">
+    <div className="pt-5 space-y-4">
       <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wide">
         Delivery Options
       </h3>

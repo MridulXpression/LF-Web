@@ -7,6 +7,7 @@ import axiosHttp from "@/utils/axioshttp";
 import { endPoints } from "@/utils/endpoints";
 import CartProductCard from "@/components/CartProductCard";
 import useGetCoupons from "@/hooks/useGetCoupons";
+import useUpdateCartQuantity from "@/hooks/useUpdateCartQuantity";
 import Link from "next/link";
 import DeleteConfirmModal from "@/components/DeleteModal";
 import { openPhoneAuthModal } from "@/redux/slices/loginmodalSlice";
@@ -14,7 +15,6 @@ import { openPhoneAuthModal } from "@/redux/slices/loginmodalSlice";
 import {
   removeFromCart,
   setCartItems,
-  updateQuantity,
   setItemSelected,
   setSelectedCartItems,
 } from "@/redux/slices/cartSlice";
@@ -29,6 +29,7 @@ const ShoppingCart = () => {
   const [deleteTargetId, setDeleteTargetId] = useState(null);
 
   const getCoupons = useGetCoupons();
+  const { updateQuantity: updateCartQuantity } = useUpdateCartQuantity();
 
   const cartItemsFromRedux = useSelector((state) => state.cart?.items || []);
 
@@ -59,7 +60,7 @@ const ShoppingCart = () => {
       const response = await axiosHttp.get(`/cart-items/${userId}`);
 
       if (response.data.status === 200 && response.data.data) {
-        // Transform API data to component format
+        // Transform API data to component format - use quantity directly from API
         const transformedData = response.data.data.map((item) => ({
           id: item.id,
           cartItemId: item.id,
@@ -69,14 +70,16 @@ const ShoppingCart = () => {
           description:
             item.product.shortDescription || item.product.description,
           image:
-            item.product_variant.imageSrc || item.product.imageUrls[0] || "",
+            item.product_variant?.imageSrc || item.product.imageUrls[0] || "",
           imageUrls: item.product.imageUrls,
-          price: item.product_variant.price,
+          price: item.product_variant?.price || item.product.basePrice || 0,
           originalPrice: item.product.mrp || item.product.basePrice,
-          size: item.product_variant.title,
-          // Default quantity from API (if provided) — we'll merge Redux/local values below
-          quantity: item.quantity || 1,
-          availableSizes: [item.product_variant.title],
+          size: item.product_variant?.title || "One Size",
+          quantity: item.quantity || 1, // Use quantity directly from API
+          availableStock: item.product_variant?.inventory?.availableStock || 0, // Available stock from inventory
+          availableSizes: item.product_variant?.title
+            ? [item.product_variant.title]
+            : ["One Size"],
           type: item.product.type,
           tags: item.product.tags,
           hasCOD: item.product.hasCOD,
@@ -84,42 +87,10 @@ const ShoppingCart = () => {
           exchangeDays: item.product.exchangeDays,
         }));
 
-        // Try to restore saved checkout (localStorage) quantities if Redux doesn't have them
-        let savedCheckout = null;
-        try {
-          const raw = localStorage.getItem(`lafetch_checkout_${userId}`);
-          if (raw) savedCheckout = JSON.parse(raw);
-        } catch (e) {}
+        setProducts(transformedData);
 
-        const merged = transformedData.map((t) => {
-          // Prefer Redux quantity
-          const reduxMatch = cartItemsFromRedux.find(
-            (ci) => ci.cartItemId === t.cartItemId
-          );
-          if (reduxMatch && typeof reduxMatch.quantity === "number") {
-            return { ...t, quantity: reduxMatch.quantity };
-          }
-
-          // Next prefer saved checkout (localStorage)
-          if (savedCheckout && Array.isArray(savedCheckout.items)) {
-            const savedMatch = savedCheckout.items.find(
-              (s) =>
-                (s.cartItemId && s.cartItemId === t.cartItemId) ||
-                (s.productId === t.productId && s.variantId === t.variantId)
-            );
-            if (savedMatch && typeof savedMatch.quantity === "number") {
-              return { ...t, quantity: savedMatch.quantity };
-            }
-          }
-
-          // Fallback to API quantity already present on t
-          return t;
-        });
-
-        setProducts(merged);
-
-        // Keep Redux cart items in sync but preserve existing selected flags
-        const payload = merged.map((m) => ({
+        // Keep Redux cart items in sync for selection state only
+        const payload = transformedData.map((m) => ({
           ...m,
           cartItemId: m.cartItemId,
           variantId: m.variantId || null,
@@ -130,7 +101,7 @@ const ShoppingCart = () => {
             ).selected ?? true,
         }));
 
-        dispatch(setCartItems(payload)); // keep Redux in sync with merged quantities
+        dispatch(setCartItems(payload));
 
         // Try to restore saved checkout selection (match by productId+variantId)
         try {
@@ -161,7 +132,7 @@ const ShoppingCart = () => {
     }
   };
 
-  // Persist checkout state to localStorage whenever products or selection changes
+  // Persist checkout selection state to localStorage
   useEffect(() => {
     if (!userId) return;
     try {
@@ -175,9 +146,8 @@ const ShoppingCart = () => {
         productId: p.productId,
         variantId: p.variantId,
         productName: p.name,
-        quantity: p.quantity || 1,
+        quantity: p.quantity || 1, // Store for reference but API is source of truth
         unitPrice: p.price || 0,
-        // No discount/tax for now
         discount: 0,
         tax: 0,
         total: +((p.price || 0) * (p.quantity || 1)).toFixed(2),
@@ -219,16 +189,32 @@ const ShoppingCart = () => {
 
   const handleQuantityChange = async (cartItemId, quantity) => {
     try {
-      setProducts((prevProducts) => {
-        const updatedProducts = prevProducts.map((p) =>
-          p.cartItemId === cartItemId ? { ...p, quantity } : p
-        );
+      // Find the product to get productId and variantId
+      const product = products.find((p) => p.cartItemId === cartItemId);
+      if (!product) return;
 
-        return updatedProducts;
-      });
-      // persist quantity in redux as well
-      dispatch(updateQuantity({ cartItemId, quantity }));
-    } catch (error) {}
+      // Optimistically update UI
+      setProducts((prevProducts) =>
+        prevProducts.map((p) =>
+          p.cartItemId === cartItemId ? { ...p, quantity } : p
+        )
+      );
+
+      // Call API to update quantity on server
+      const result = await updateCartQuantity(
+        userId,
+        product.productId,
+        product.variantId,
+        quantity
+      );
+
+      // If API call fails, revert the optimistic update
+      if (!result.success) {
+        fetchCartItems(); // Refresh from server
+      }
+    } catch (error) {
+      fetchCartItems(); // Refresh from server on error
+    }
   };
 
   const handleSizeChange = async (cartItemId, size) => {
@@ -375,7 +361,7 @@ const ShoppingCart = () => {
 
   return (
     <>
-      <div className="min-h-screen bg-gray-50 py-8 ">
+      <div className="min-h-screen bg-gray-50 py-8 mt-[150px]">
         <div className="max-w-7xl mx-auto px-4">
           {/* Progress Steps */}
           <div className="mb-8 flex items-center justify-center gap-2 text-sm">

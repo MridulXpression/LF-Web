@@ -5,7 +5,7 @@ const BlogPostComponent = ({ blogPost }) => {
   if (!blogPost) return null;
 
   return (
-    <div className="bg-white">
+    <div className="bg-white mt-[150px]">
       <article className="max-w-[1400px] mx-auto px-4 py-8">
         {/* Image with Overlay Content */}
         <div className="relative w-full h-[600px] mb-8 overflow-hidden">

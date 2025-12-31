@@ -12,21 +12,33 @@ import {
   closePhoneAuthModal,
   setPhoneAuthModalClosing,
 } from "@/redux/slices/loginmodalSlice";
+import useNewsletterSubscribe from "@/hooks/useNewsletterSubscribe";
 
 const PhoneAuthModal = () => {
   const dispatch = useDispatch(); // ✅ Initialize dispatch
   const isOpen = useSelector((state) => state.modal.phoneAuthModal); // 🔥 use redux
+  const { subscribeToNewsletter } = useNewsletterSubscribe();
   const [currentStep, setCurrentStep] = useState("phone");
   const [authType, setAuthType] = useState("login"); // "login" or "signup"
   const [phoneNumber, setPhoneNumber] = useState("");
+
+  // const [currentStep, setCurrentStep] = useState("details"); // BYPASS: Changed from "phone" to "details" for testing
+  // const [authType, setAuthType] = useState("signup"); // BYPASS: Changed from "login" to "signup" for testing
+  // const [phoneNumber, setPhoneNumber] = useState("7903952488"); // BYPASS: Set default for testing
+
   const [otp, setOtp] = useState(["", "", "", ""]);
   const [loading, setLoading] = useState(false);
+  const [otpSuccess, setOtpSuccess] = useState(false);
+  const [resendCountdown, setResendCountdown] = useState(0);
+  const [resendMessage, setResendMessage] = useState("");
+  const [resendError, setResendError] = useState("");
   // Updated state for step 3 form data
   const [userDetails, setUserDetails] = useState({
     name: "",
     email: "",
     gender: "",
   });
+  const [subscribeNewsletter, setSubscribeNewsletter] = useState(false);
 
   const signUpEndPoint = `${endPoints.auth}`; // For "I'm New Here" - signup
   const signInEndPoint = `${endPoints.signin}`; // For "Sign In" - login
@@ -51,12 +63,8 @@ const PhoneAuthModal = () => {
 
       if (response.status === 200) {
         setCurrentStep("otp");
-        const successMessage = response?.data?.message;
-        toast.success(
-          typeof successMessage === "string"
-            ? successMessage
-            : "OTP sent successfully"
-        );
+        setOtpSuccess(true);
+        setResendCountdown(60);
       }
     } catch (error) {
       const errorMessage =
@@ -146,6 +154,12 @@ const PhoneAuthModal = () => {
 
       if (res.status === 200) {
         dispatch(setUser(res.data.data));
+
+        // Subscribe to newsletter if checkbox is selected
+        if (subscribeNewsletter) {
+          await subscribeToNewsletter(userDetails.email);
+        }
+
         setCurrentStep("welcome");
       } else {
         toast.error(
@@ -160,19 +174,36 @@ const PhoneAuthModal = () => {
   };
 
   const resendOtp = async () => {
+    if (resendCountdown > 0) return;
+
     setLoading(true);
+    setResendMessage("");
+    setResendError("");
     try {
       const res = await axiosHttp.post(resendOtpendPoint, {
         phone: `+91${phoneNumber}`,
       });
 
-      toast.success(res?.data?.message || "OTP resent successfully");
+      setOtpSuccess(true);
+      setResendCountdown(60);
+      setResendMessage(res?.data?.message || "OTP resent successfully");
     } catch (error) {
-      toast.error("Failed to resend OTP");
+      setResendError(error.response?.data?.message || "Failed to resend OTP");
     } finally {
       setLoading(false);
     }
   };
+
+  // Countdown timer effect
+  React.useEffect(() => {
+    let interval;
+    if (resendCountdown > 0) {
+      interval = setInterval(() => {
+        setResendCountdown((prev) => prev - 1);
+      }, 1000);
+    }
+    return () => clearInterval(interval);
+  }, [resendCountdown]);
 
   const closeModal = () => {
     // Set closing flag to prevent re-opening during cleanup
@@ -187,6 +218,11 @@ const PhoneAuthModal = () => {
     setPhoneNumber("");
     setOtp(["", "", "", ""]);
     setUserDetails({ name: "", email: "", gender: "" });
+    setSubscribeNewsletter(false);
+    setOtpSuccess(false);
+    setResendCountdown(0);
+    setResendMessage("");
+    setResendError("");
 
     // Reset closing flag after modal animation completes
     setTimeout(() => {
@@ -409,15 +445,42 @@ const PhoneAuthModal = () => {
                       ))}
                     </div>
 
+                    {otpSuccess && (
+                      <div className="flex items-center justify-center text-green-600 text-sm font-medium">
+                        <span className="text-lg mr-2">✓</span>
+                        OTP has been sent successfully!
+                      </div>
+                    )}
+
+                    {resendMessage && (
+                      <div className="flex items-center justify-center text-green-600 text-sm font-medium">
+                        <span className="text-lg mr-2">✓</span>
+                        {resendMessage}
+                      </div>
+                    )}
+
+                    {resendError && (
+                      <div className="flex items-center justify-center text-red-600 text-sm font-medium">
+                        <span className="text-lg mr-2">✕</span>
+                        {resendError}
+                      </div>
+                    )}
+
                     <div className="text-center">
                       <p className="text-black">
                         Haven't received your code?{" "}
                         <button
                           onClick={resendOtp}
-                          disabled={loading}
-                          className="text-black underline font-medium hover:text-black cursor-pointer disabled:opacity-50"
+                          disabled={loading || resendCountdown > 0}
+                          className={`font-medium ${
+                            resendCountdown > 0
+                              ? "text-gray-800 cursor-not-allowed"
+                              : "text-black underline hover:text-black cursor-pointer"
+                          } disabled:opacity-50`}
                         >
-                          Resend Now
+                          {resendCountdown > 0
+                            ? `Resend in ${resendCountdown}s`
+                            : "Resend Now"}
                         </button>
                       </p>
                     </div>
@@ -505,6 +568,24 @@ const PhoneAuthModal = () => {
                         <option value="female">Female</option>
                         <option value="other">Other</option>
                       </select>
+                    </div>
+
+                    <div className="flex items-center">
+                      <input
+                        type="checkbox"
+                        id="newsletter"
+                        checked={subscribeNewsletter}
+                        onChange={(e) =>
+                          setSubscribeNewsletter(e.target.checked)
+                        }
+                        className="w-4 h-4 text-black bg-gray-100 border-gray-300 rounded cursor-pointer"
+                      />
+                      <label
+                        htmlFor="newsletter"
+                        className="ml-2 text-sm  text-black cursor-pointer"
+                      >
+                        Subscribe to our newsletter
+                      </label>
                     </div>
 
                     <button

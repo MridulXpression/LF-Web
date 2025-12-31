@@ -9,9 +9,9 @@ const useCategories = (query) => {
     try {
       let endPoint;
       if (query) {
-        endPoint = `${endPoints.getCategories}?${query}`;
+        endPoint = `${endPoints.getCategories}?${query}&status=true`;
       } else {
-        endPoint = `${endPoints.getCategories}`;
+        endPoint = `${endPoints.getCategories}?status=true`;
       }
 
       const result = await axiosHttp.get(endPoint);

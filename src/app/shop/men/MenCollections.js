@@ -5,7 +5,7 @@ import { useState } from "react";
 
 const MenCollectionSection = () => {
   const query = "gender=1";
-  const collections = useCollection(query);
+  const { data: collections } = useCollection(query);
   const [displayedProductsCount, setDisplayedProductsCount] = useState({});
 
   const handleExploreMore = (collectionId) => {
@@ -43,6 +43,7 @@ const MenCollectionSection = () => {
                   const title = product.title;
                   const price = product.basePrice;
                   const id = product.id;
+                  const mrp = product.mrp;
 
                   return (
                     <ProductCard
@@ -52,6 +53,7 @@ const MenCollectionSection = () => {
                       brand={product?.brand?.name}
                       price={price}
                       id={id}
+                      mrp={mrp}
                       // Pass the full product object if needed for modal
                       product={product}
                     />

@@ -59,7 +59,7 @@ const WishlistProductCard = () => {
   };
 
   return (
-    <div className="bg-white p-6 min-h-screen flex md:items-center md:justify-center">
+    <div className="bg-white p-6 min-h-screen flex md:items-center md:justify-center mt-[80px]">
       <div className="max-w-[1400px] w-full px-4">
         {products.length === 0 ? (
           <div className="flex flex-col items-center justify-center min-h-[60vh]">
@@ -94,14 +94,6 @@ const WishlistProductCard = () => {
                   productName={product?.title}
                   currentPrice={product?.basePrice || 0}
                   originalPrice={product?.mrp || 0}
-                  discount={
-                    product?.mrp && product?.basePrice
-                      ? `${Math.round(
-                          ((product.mrp - product.basePrice) / product.mrp) *
-                            100
-                        )}% OFF`
-                      : "0% OFF"
-                  }
                   onDelete={handleDelete}
                 />
               );

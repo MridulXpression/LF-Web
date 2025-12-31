@@ -12,7 +12,7 @@ import axiosHttp from "@/utils/axioshttp";
 
 import NavbarDropdown from "@/components/navbar/NavbarDropdown";
 import MobileNavbar from "@/components/navbar/MobileNavbar";
-import NavbarSearch from "@/components/NavbarSearch";
+import NavbarSearchComponent from "@/components/homepage/NavbarSearchComponent";
 import UserDropdown from "@/components/UserDrpdown";
 import QuickModal from "@/components/QuickModal";
 
@@ -38,6 +38,7 @@ const getMenuData = (categories) => {
     { title: "ALL BRANDS", sections: [] },
     ...dynamicMenus,
     { title: "BLOGS", sections: [] },
+    { title: "NEWSLETTERS", sections: [] },
     { title: "TRACK ORDER", sections: [] },
   ];
 };
@@ -63,7 +64,6 @@ const Navbar = () => {
   const [dropdownTimeout, setDropdownTimeout] = useState(null);
 
   const [searchQuery, setSearchQuery] = useState("");
-  const [suggestions, setSuggestions] = useState([]);
 
   const getMenuHref = (title = "") => {
     const t = title.toLowerCase().trim();
@@ -81,37 +81,37 @@ const Navbar = () => {
 
     if (t === "track order") return "/track-order";
 
+    if (t === "newsletters") return "#newsletters";
+
     return "#";
   };
-
-  useEffect(() => {
-    if (!searchQuery.trim()) return setSuggestions([]);
-
-    const timer = setTimeout(async () => {
-      const res = await axiosHttp.post(`product-suggestion?key=${searchQuery}`);
-      setSuggestions(res.data.data || []);
-    }, 300);
-
-    return () => clearTimeout(timer);
-  }, [searchQuery]);
 
   return (
     <>
       {/* HEADER */}
-      <div className="fixed top-0 inset-x-0 bg-white z-50 shadow-sm">
-        <div className="max-w-full mx-auto px-16 py-7 h-24 flex items-center justify-between">
+      <div className="fixed top-14 inset-x-0 bg-white z-40 shadow-sm">
+        <div className="max-w-full mx-auto px-4 md:px-16 py-6 md:py-7 h-20 md:h-24 flex items-center justify-between">
           {/* LEFT */}
           <div className="flex items-center gap-4">
             <button className="md:hidden" onClick={() => setIsMobileOpen(true)}>
               <Menu />
             </button>
 
-            <Link href="/">
+            <Link href="/" className="hidden md:block">
               <Image
-                src="/images/Lafetch Logo.svg"
+                src="/images/logo-black.svg"
                 alt="Logo"
                 width={100}
                 height={40}
+              />
+            </Link>
+
+            <Link href="/" className="md:hidden border-r border-black/50 pr-4">
+              <Image
+                src="/images/logo-black.svg"
+                alt="Logo"
+                width={70}
+                height={28}
               />
             </Link>
           </div>
@@ -160,17 +160,20 @@ const Navbar = () => {
 
           {/* RIGHT */}
           <div className="flex items-center gap-4">
-            <div className="border-r border-black/50 w-28 h-8 flex items-center justify-center">
-              <button onClick={() => setIsQuickModalOpen(true)}>
+            <div className="border-r border-black/50 w-28 h-8 flex items-center justify-center ">
+              <button
+                onClick={() => setIsQuickModalOpen(true)}
+                className="relative overflow-hidden cursor-pointer"
+              >
                 <Image
                   src="/images/quick.png"
                   alt="Quick"
                   width={100}
                   height={30}
                 />
+                <div className="absolute inset-0 shine-overlay"></div>
               </button>
             </div>
-
             <Search
               className="text-black"
               onClick={() => setShowSearchDropdown(true)}
@@ -202,14 +205,12 @@ const Navbar = () => {
       </div>
 
       {/* SEARCH */}
-      {showSearchDropdown && (
-        <NavbarSearch
-          searchQuery={searchQuery}
-          setSearchQuery={setSearchQuery}
-          suggestions={suggestions}
-          setShowSearchDropdown={setShowSearchDropdown}
-        />
-      )}
+      <NavbarSearchComponent
+        searchQuery={searchQuery}
+        setSearchQuery={setSearchQuery}
+        isOpen={showSearchDropdown}
+        setIsOpen={setShowSearchDropdown}
+      />
 
       {/* MOBILE NAVBAR */}
       <MobileNavbar

@@ -1,123 +1,180 @@
 "use client";
+
 import { useState, useEffect } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
-import axiosHttp from "@/utils/axioshttp";
+import { Filter } from "lucide-react";
+
 import FilterSidebar from "@/components/FilterSidebar";
 import SortSelector from "@/components/SortSelector";
 import ProductGrid from "@/components/ProductGrid";
+
+import useFilterMetadata from "@/hooks/useFilterMetadata";
+import useUnifiedFilter from "@/hooks/useUnifiedFilter";
 import useProducts from "@/hooks/useProducts";
-import usegetBrands from "@/hooks/useGetBrands";
-import useGetProductBySubCategories from "@/hooks/useGetSubCategories";
-import useFilterLogic from "@/hooks/useFilterLogic";
-import useSortLogic from "@/hooks/useSortLogic";
-import { Filter } from "lucide-react";
 
 const ShopByCategoriesPage = () => {
   const searchParams = useSearchParams();
   const router = useRouter();
 
-  // ===== SUBCATEGORY & GENDER =====
-  const subCategoryId = searchParams.get("subCategoryId");
-  const genderValue = searchParams.get("gender");
-  const query = !subCategoryId && genderValue ? `gender=${genderValue}` : "";
+  // ===== URL PARAMETERS =====
+  const subCategoryId = searchParams.get("subCatId");
+  const superCatId = searchParams.get("superCatId");
+  const catId = searchParams.get("catId");
+  const collectionId = searchParams.get("collectionId");
+  const searchQuery = searchParams.get("key")
+    ? decodeURIComponent(searchParams.get("key"))
+    : null;
 
-  // ===== SEARCH =====
-  const searchQuery = searchParams.get("search");
-
-  // ===== PRODUCTS HOOK =====
-  // Disable pagination products when search or subCategory is active
-  const {
-    products: allProducts,
-    loading: isProductsLoading,
-    hasMore,
-    loadMore,
-  } = useProducts(searchQuery || subCategoryId ? null : query);
-
-  // ===== SUBCATEGORY PRODUCTS =====
-  const subCategoryResponse = useGetProductBySubCategories(
-    subCategoryId ? Number(subCategoryId) : null
+  // ===== FILTER STATE =====
+  const [selectedBrands, setSelectedBrands] = useState([]);
+  const [selectedSuperCategory, setSelectedSuperCategory] = useState(
+    superCatId ? Number(superCatId) : null
   );
-  const subCategoryProducts = subCategoryResponse?.data?.products || [];
+  const [priceRange, setPriceRange] = useState({
+    min: searchParams.get("minPrice") || "0",
+    max: searchParams.get("maxPrice") || "10000",
+  });
 
-  // ===== BRANDS =====
-  const { brands: rawBrands } = usegetBrands();
-  const brands =
-    rawBrands?.map((brand) => ({
-      id: brand?.id || "",
-      name: brand?.name || "",
-    })) || [];
+  const [selectedSizes, setSelectedSizes] = useState([]); // stores actual size values like "S", "M"
+  const [selectedColors, setSelectedColors] = useState([]); // stores actual color values like "Black", "Red"
 
-  // ===== FILTER LOGIC =====
-  const {
-    selectedBrands,
-    priceRange,
-    setPriceRange,
-    expandedBrands,
-    setExpandedBrands,
-    filteredProducts,
-    isFilterApplied,
-    isFilterLoading,
-    toggleBrandSelection,
-    handleApplyFilters,
-    handleClearFilters,
-  } = useFilterLogic();
+  // ===== EXPAND / COLLAPSE UI STATE =====
+  const [expandedBrands, setExpandedBrands] = useState(false);
+  const [expandedSizes, setExpandedSizes] = useState(false);
+  const [expandedColors, setExpandedColors] = useState(false);
 
-  // ===== SORT LOGIC =====
-  const { sortQuery, isSortLoading, sortedProducts, handleSortChange } =
-    useSortLogic();
+  // ===== SORT STATE =====
+  const [selectedSort, setSelectedSort] = useState("");
 
-  // ===== STATE =====
-  const [searchResults, setSearchResults] = useState(null);
-  const [isSearching, setIsSearching] = useState(false);
-
-  // ===== FILTER PANEL =====
+  // ===== FILTER PANEL STATE =====
   const [isFilterOpen, setIsFilterOpen] = useState(false);
 
-  // ===== SEARCH EFFECT =====
+  // ===== FILTER METADATA =====
+  const {
+    brands,
+    sizes,
+    colors,
+    loading: filterMetaLoading,
+  } = useFilterMetadata({
+    superCatId:
+      selectedSuperCategory ?? (superCatId ? Number(superCatId) : null),
+    catId: catId ? Number(catId) : null,
+    subCatId: subCategoryId ? Number(subCategoryId) : null,
+  });
+
+  // ===== SUPER CATEGORIES =====
+  const superCategories = [
+    { id: 1, name: "Men" },
+    { id: 2, name: "Women" },
+    { id: 3, name: "Accessories" },
+  ];
+
+  // ===== CHECK IF ANY FILTERS ARE APPLIED =====
+  const hasFiltersApplied = () =>
+    selectedBrands.length > 0 ||
+    selectedSuperCategory ||
+    priceRange.min !== "0" ||
+    priceRange.max !== "10000" ||
+    selectedSizes.length > 0 ||
+    selectedColors.length > 0 ||
+    selectedSort ||
+    subCategoryId ||
+    catId ||
+    collectionId ||
+    searchQuery;
+
+  // ===== FILTERED PRODUCTS =====
+  const {
+    products: filteredProducts,
+    isLoading: isFilterLoading,
+    applyFilters,
+  } = useUnifiedFilter();
+
+  // ===== PAGINATED PRODUCTS =====
+  const {
+    products: paginatedProducts,
+    loading: isPageLoading,
+    hasMore,
+    loadMore,
+  } = useProducts(hasFiltersApplied() ? null : "");
+
+  const products = hasFiltersApplied() ? filteredProducts : paginatedProducts;
+
+  const isLoading = hasFiltersApplied() ? isFilterLoading : isPageLoading;
+
+  // ===== AVAILABLE SIZES & COLORS FROM METADATA =====
+  const availableSizes = sizes || [];
+  const availableColors = colors || [];
+
+  // ===== APPLY FILTERS ON CHANGE =====
   useEffect(() => {
-    if (searchQuery) {
-      setIsSearching(true);
-      fetchSearchResults(searchQuery);
-    } else {
-      setSearchResults(null);
-    }
-  }, [searchQuery]);
+    if (!hasFiltersApplied()) return;
 
-  const fetchSearchResults = async (query) => {
-    try {
-      const response = await axiosHttp.post(
-        `product-search?key=${encodeURIComponent(query)}`
-      );
-      setSearchResults(response.data.data || []);
-    } catch (error) {
-      setSearchResults([]);
-    } finally {
-      setIsSearching(false);
-    }
-  };
-
-  // ===== PRODUCT PRIORITY LOGIC =====
-  let products = [];
-
-  if (isFilterApplied) {
-    products = filteredProducts;
-  } else if (searchResults !== null) {
-    products = searchResults;
-  } else if (sortQuery) {
-    products = sortedProducts;
-  } else if (subCategoryId) {
-    products = subCategoryProducts;
-  } else {
-    products = allProducts;
-  }
+    applyFilters({
+      brandIds: selectedBrands,
+      minPrice: priceRange.min,
+      maxPrice: priceRange.max,
+      sort: selectedSort,
+      superCatId: selectedSuperCategory,
+      subCatId: subCategoryId ? Number(subCategoryId) : null,
+      catId: catId ? Number(catId) : null,
+      sizes: selectedSizes,
+      colors: selectedColors,
+      collectionId: collectionId ? Number(collectionId) : null,
+      key: searchQuery,
+    });
+  }, [
+    selectedBrands,
+    priceRange,
+    selectedSort,
+    selectedSuperCategory,
+    subCategoryId,
+    catId,
+    selectedSizes,
+    selectedColors,
+    collectionId,
+    searchQuery,
+    applyFilters,
+  ]);
 
   // ===== HANDLERS =====
-  const handleBrowseAll = () => {
+  const toggleSelection = (setter, value) => {
+    setter((prev) =>
+      prev.includes(value) ? prev.filter((v) => v !== value) : [...prev, value]
+    );
+  };
+
+  const handleApplyFilters = () => {
+    const params = new URLSearchParams();
+
+    if (selectedBrands.length) params.set("brandIds", selectedBrands.join(","));
+    if (priceRange.min !== "0") params.set("minPrice", priceRange.min);
+    if (priceRange.max !== "10000") params.set("maxPrice", priceRange.max);
+    if (selectedSuperCategory) params.set("superCatId", selectedSuperCategory);
+    if (selectedSizes.length) params.set("size", selectedSizes.join(","));
+    if (selectedColors.length) params.set("color", selectedColors.join(","));
+    if (selectedSort) params.set("sort", selectedSort);
+    if (subCategoryId) params.set("subCatId", subCategoryId);
+    if (catId) params.set("catId", catId);
+    if (collectionId) params.set("collectionId", collectionId);
+    if (searchQuery) params.set("key", encodeURIComponent(searchQuery));
+
+    router.push(`/products?${params.toString()}`);
+    setIsFilterOpen(false);
+  };
+
+  const handleClearFilters = () => {
+    setSelectedBrands([]);
+    setSelectedSuperCategory(null);
+    setPriceRange({ min: "0", max: "10000" });
+    setSelectedSizes([]);
+    setSelectedColors([]);
+    setSelectedSort("");
     router.push("/products");
   };
 
   return (
-    <div className="min-h-screen bg-white relative">
+    <div className="min-h-screen bg-white relative mt-[150px]">
       {/* MOBILE FILTER BUTTON */}
       <button
         className="lg:hidden fixed bottom-4 left-4 z-10 bg-black text-white px-4 py-2 rounded-full flex items-center gap-2 shadow-lg"
@@ -126,44 +183,54 @@ const ShopByCategoriesPage = () => {
         <Filter size={18} /> Filters
       </button>
 
-      <div className="max-w-[1400px] mx-auto flex  ">
-        {/* FILTER SIDEBAR */}
+      <div className="max-w-[1400px] mx-auto flex">
         <FilterSidebar
           isFilterOpen={isFilterOpen}
           setIsFilterOpen={setIsFilterOpen}
           brands={brands}
           selectedBrands={selectedBrands}
-          toggleBrandSelection={toggleBrandSelection}
+          toggleBrandSelection={(id) => toggleSelection(setSelectedBrands, id)}
           expandedBrands={expandedBrands}
           setExpandedBrands={setExpandedBrands}
           priceRange={priceRange}
           setPriceRange={setPriceRange}
+          superCategories={superCategories}
+          selectedSuperCategory={selectedSuperCategory}
+          onSuperCategoryChange={setSelectedSuperCategory}
+          sizes={availableSizes}
+          selectedSizes={selectedSizes}
+          toggleSizeSelection={(size) =>
+            toggleSelection(setSelectedSizes, size)
+          }
+          expandedSizes={expandedSizes}
+          setExpandedSizes={setExpandedSizes}
+          colors={availableColors}
+          selectedColors={selectedColors}
+          toggleColorSelection={(color) =>
+            toggleSelection(setSelectedColors, color)
+          }
+          expandedColors={expandedColors}
+          setExpandedColors={setExpandedColors}
           onApplyFilters={handleApplyFilters}
           onClearFilters={handleClearFilters}
-          isLoading={isFilterLoading}
+          isLoading={isLoading || filterMetaLoading}
         />
 
-        {/* MAIN CONTENT */}
         <div className="flex-1 p-6">
-          {/* SORT SELECTOR */}
           <SortSelector
             searchQuery={searchQuery}
-            onSortChange={handleSortChange}
-            isSortLoading={isSortLoading}
+            selectedSort={selectedSort}
+            onSortChange={(e) => setSelectedSort(e.target.value)}
+            isSortLoading={isLoading}
           />
 
-          {/* PRODUCT GRID */}
           <ProductGrid
             products={products}
-            isLoading={isProductsLoading}
-            isSearching={isSearching}
-            isFilterLoading={isFilterLoading}
-            isSortLoading={isSortLoading}
-            isFilterApplied={isFilterApplied}
-            hasMore={hasMore}
-            subCategoryId={subCategoryId}
+            isLoading={isLoading}
+            isFilterApplied={hasFiltersApplied()}
+            hasMore={!hasFiltersApplied() && hasMore}
             onLoadMore={loadMore}
-            onBrowseAll={handleBrowseAll}
+            onBrowseAll={() => router.push("/products")}
           />
         </div>
       </div>

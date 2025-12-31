@@ -5,7 +5,7 @@ import { useState } from "react";
 
 const AccessoriesCollectionSection = () => {
   const query = "gender=3";
-  const collections = useCollection(query);
+  const { data: collections } = useCollection(query);
   const [displayedProductsCount, setDisplayedProductsCount] = useState({});
 
   const handleExploreMore = (collectionId) => {

@@ -6,7 +6,7 @@ import ShopCategories from "./ShopCategories";
 import CollectionSection from "./Collections";
 import Footer from "@/components/footer";
 import WomenCarousel from "./WomenCarousel";
-import TrendingBlog from "@/app/(blog)/Blog";
+import TrendingBlog from "@/app/(newsletter)/Newsletter";
 
 const page = () => {
   return (

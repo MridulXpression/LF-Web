@@ -1,0 +1,89 @@
+"use client";
+import React, { useState } from "react";
+import { ArrowRight } from "lucide-react";
+import Link from "next/link";
+import Image from "next/image";
+
+export default function ShopByCategory({ categories: externalCategories }) {
+  const [hoveredIndex, setHoveredIndex] = useState(null);
+
+  const categories = externalCategories || [
+    {
+      id: 1,
+      name: "Men",
+      image: "/images/men.png",
+      href: "/shop/men",
+    },
+    {
+      id: 2,
+      name: "Women",
+      image: "/images/women.png",
+      href: "/shop/women",
+    },
+    {
+      id: 3,
+      name: "Accessories",
+      image: "/images/accessories.png",
+      href: "/shop/accessories",
+    },
+  ];
+
+  const getCardWidth = (index) => {
+    if (hoveredIndex === null) return "flex-1";
+    if (hoveredIndex === index) return "flex-[2]";
+    return "flex-[0.6]";
+  };
+
+  return (
+    <div className="w-full max-h-screen  px-4 sm:px-8 md:px-20 pt-10  md:pt-0 pb-16 sm:pb-24 md:pb-28">
+      <div className="mb-6 sm:mb-8 md:mb-10">
+        <h1 className="text-stone-950 text-2xl  md:text-[38px] font-semibold uppercase">
+          Shop by Category
+        </h1>
+      </div>
+
+      <div className="flex gap-2 sm:gap-3 md:gap-5 h-64 sm:h-80 md:h-96 lg:h-[500px]">
+        {categories.map((category, index) => (
+          <Link
+            key={category.id}
+            href={category.href}
+            className={`${getCardWidth(
+              index
+            )} relative rounded-lg sm:rounded-xl md:rounded-2xl lg:rounded-[20px] overflow-hidden transition-all duration-500 ease-in-out cursor-pointer group bg-neutral-200`}
+            onMouseEnter={() => setHoveredIndex(index)}
+            onMouseLeave={() => setHoveredIndex(null)}
+          >
+            {/* Image */}
+            <Image
+              src={category.image}
+              alt={category.name}
+              fill
+              className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+            />
+
+            {/* Gradient Overlay */}
+            <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent opacity-60 sm:opacity-40 md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-500" />
+
+            {/* Category Label */}
+            <div
+              className={`absolute bottom-4 sm:bottom-6 md:bottom-8 lg:bottom-10 left-4 sm:left-6 md:left-8 flex items-center gap-2 sm:gap-3 transition-all duration-500 md:opacity-0 md:translate-y-4 ${
+                hoveredIndex === index
+                  ? "md:opacity-100 md:translate-y-0 opacity-100"
+                  : "opacity-100 md:group-hover:opacity-100 md:group-hover:translate-y-0"
+              }`}
+            >
+              <h2 className="text-neutral-100 text-lg sm:text-2xl md:text-3xl lg:text-4xl font-semibold uppercase">
+                {category.name}
+              </h2>
+
+              {/* Arrow is now visual-only */}
+              <div className="w-8 sm:w-9 md:w-10 h-8 sm:h-9 md:h-10 rounded-full flex items-center justify-center flex-shrink-0">
+                <ArrowRight className="w-5 sm:w-6 h-5 sm:h-6 text-white" />
+              </div>
+            </div>
+          </Link>
+        ))}
+      </div>
+    </div>
+  );
+}

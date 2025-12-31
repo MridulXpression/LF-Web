@@ -30,9 +30,9 @@ const BannerCarousel = ({ slides }) => {
   };
 
   return (
-    <div className="w-full bg-white relative pt-[50px] md:min-h-[60vh] lg:min-h-screen">
-      <div className="w-full max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="relative h-[400px] md:h-[500px] lg:h-[600px] overflow-hidden">
+    <div className="w-full bg-white relative pt-[50px] md:min-h-[50vh] ">
+      <div className="w-full max-w-full mx-auto">
+        <div className="relative h-[140px] md:h-[500px]  overflow-hidden">
           {slides.map((slide, index) => (
             <div
               key={index}
@@ -49,7 +49,7 @@ const BannerCarousel = ({ slides }) => {
               <Image
                 src={slide.image}
                 alt={`Slide ${index + 1}`}
-                width={1400}
+                width={1800}
                 height={600}
                 className=" object-cover rounded-lg"
                 loading="lazy"

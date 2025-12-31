@@ -7,7 +7,7 @@ import useCategoryProducts from "@/hooks/useSubCategoryHierarchy";
 
 const CategoryPage = () => {
   const searchParams = useSearchParams();
-  const categoryId = searchParams.get("categoryId"); // <-- get id from URL
+  const categoryId = searchParams.get("catId"); // <-- get id from URL
 
   const { categoryProducts, isCategoryLoading } =
     useCategoryProducts(categoryId);
@@ -18,7 +18,7 @@ const CategoryPage = () => {
 
   return (
     <div className="bg-white">
-      <div className="max-w-7xl mx-auto px-4 py-8 mt-[50px]  ">
+      <div className="max-w-7xl mx-auto px-4 py-8 mt-[150px]  ">
         {/* Category Header */}
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900 mb-2">
@@ -47,7 +47,7 @@ const CategoryPage = () => {
                     {/* Desktop View All */}
                     {subcategory.products?.length > 5 && (
                       <Link
-                        href={`/products?subCategoryId=${subcategory.id}`}
+                        href={`/products?subCatId=${subcategory.id}`}
                         className="hidden lg:block text-[#808080] border-b border-[#808080] text-sm "
                       >
                         View All →
@@ -93,7 +93,7 @@ const CategoryPage = () => {
                   {subcategory.products?.length > 5 && (
                     <div className="mt-4 text-center lg:hidden">
                       <Link
-                        href={`/products?subCategoryId=${subcategory.id}`}
+                        href={`/products?subCatId=${subcategory.id}`}
                         className="text-blue-600 font-medium hover:underline"
                       >
                         View All Products

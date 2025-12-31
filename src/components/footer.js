@@ -9,271 +9,167 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import useNewsletterSubscribe from "@/hooks/useNewsletterSubscribe";
+import toast from "react-hot-toast";
 
 const Footer = () => {
   const [email, setEmail] = useState("");
+  const [loading, setLoading] = useState(false);
+  const { subscribeToNewsletter } = useNewsletterSubscribe();
 
-  const handleNewsletterSubmit = () => {
+  const handleNewsletterSubmit = async () => {
     if (email) {
-      // Handle newsletter subscription
-
-      setEmail("");
+      setLoading(true);
+      const success = await subscribeToNewsletter(email);
+      if (success) {
+        setEmail("");
+      }
+      setLoading(false);
+    } else {
+      toast.error("Please enter a valid email");
     }
   };
 
   return (
-    <footer className="bg-[#0e100d] text-white">
-      <div className="px-4 sm:px-6 lg:px-8 py-12">
+    <footer className="bg-[#0F0F0F] text-white w-full flex flex-col justify-end ">
+      <div className="px-4 sm:px-6 lg:px-8 py-12 flex flex-col flex-1 justify-end">
         {/* Main Footer Content */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-2 mb-8 px-[20px]">
-          {/* Logo */}
-          <div className="lg:col-span-1 md:col-span-2">
-            <div className="flex items-center">
-              <Image
-                src="/images/Lafetch Logo.svg"
-                alt="LAFETCH Logo"
-                width={120}
-                height={40}
-                className="object-contain"
-              />
-            </div>
-          </div>
-
-          {/* Navigation Column 1 */}
-          <div className="space-y-3">
-            <ul className="space-y-3">
-              <li>
-                <a
-                  href="#"
-                  className="text-gray-300 hover:text-white transition-colors text-sm"
-                >
-                  Welcome to La Fetch
-                </a>
-              </li>
-              <li>
-                <a
-                  href="#"
-                  className="text-gray-300 hover:text-white transition-colors text-sm"
-                >
-                  Announcements
-                </a>
-              </li>
-              <li>
-                <a
-                  href="#"
-                  className="text-gray-300 hover:text-white transition-colors text-sm"
-                >
-                  What's new
-                </a>
-              </li>
-              <li>
-                <a
-                  href="#"
-                  className="text-gray-300 hover:text-white transition-colors text-sm"
-                >
-                  Contact us
-                </a>
-              </li>
+        <div className="flex flex-col lg:flex-row justify-between gap-20 mb-16 px-[20px]">
+          {/* Left: 4 Columns */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-x-14 gap-y-6">
+            {/* Column 1 */}
+            <ul className="space-y-3 text-sm text-gray-300">
+              <li>Welcome to La Fetch</li>
+              <li>Announcements</li>
+              <li>What's new</li>
+              <li>Contact us</li>
             </ul>
-          </div>
 
-          {/* Navigation Column 2 */}
-          <div className="space-y-3">
-            <ul className="space-y-3">
+            {/* Column 2 */}
+            <ul className="space-y-3 text-sm text-gray-300">
+              <li>
+                <Link href="/">Home</Link>
+              </li>
+              <li>About us</li>
+              <li>Discover now</li>
+              <li>La fetch quick</li>
+            </ul>
+
+            {/* Column 3 */}
+            <ul className="space-y-3 text-sm text-gray-300">
               <li>
                 <Link
-                  href="/"
-                  className="text-gray-300 hover:text-white transition-colors text-sm"
-                >
-                  Home
-                </Link>
-              </li>
-              <li>
-                <a
-                  href="https://www.la-fetch.com/about"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-gray-300 hover:text-white transition-colors text-sm"
-                >
-                  About us
-                </a>
-              </li>
-              <li>
-                <a
-                  href="#"
-                  className="text-gray-300 hover:text-white transition-colors text-sm"
-                >
-                  Discover now
-                </a>
-              </li>
-              <li>
-                <a
-                  href="#"
-                  className="text-gray-300 hover:text-white transition-colors text-sm"
-                >
-                  La fetch quick
-                </a>
-              </li>
-            </ul>
-          </div>
-
-          {/* Navigation Column 3 */}
-          <div className="space-y-3">
-            <ul className="space-y-3">
-              <li>
-                <a
                   href="/privacy-policy"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-gray-300 hover:text-white transition-colors text-sm"
                 >
                   Privacy policy
-                </a>
+                </Link>
               </li>
-
-              <li>
-                <a
-                  href="https://www.la-fetch.com/terms-and-conditions"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-gray-300 hover:text-white transition-colors text-sm"
-                >
-                  Terms & conditions
-                </a>
-              </li>
-
-              <li>
-                <a
-                  href="https://www.la-fetch.com/shipping-policy"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-gray-300 hover:text-white transition-colors text-sm"
-                >
-                  Shipping policy
-                </a>
-              </li>
-
-              <li>
-                <a
-                  href="https://www.la-fetch.com/cancellation-policy"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-gray-300 hover:text-white transition-colors text-sm"
-                >
-                  Cancellation policy
-                </a>
-              </li>
+              <li>Terms & conditions</li>
+              <li>Shipping policy</li>
+              <li>Cancellation policy</li>
             </ul>
-          </div>
 
-          {/* Navigation Column 4 */}
-          <div className="space-y-3">
-            <ul className="space-y-3">
+            {/* Column 4 */}
+            <ul className="space-y-3 text-sm text-gray-300">
               <li>
-                <a
-                  href="/blogs"
-                  className="text-gray-300 hover:text-white transition-colors text-sm"
-                >
+                <Link target="_blank" rel="noopener noreferrer" href="/blogs">
                   Blogs
-                </a>
+                </Link>
               </li>
-              <li>
-                <a
-                  href="#"
-                  className="text-gray-300 hover:text-white transition-colors text-sm"
-                >
-                  Email Us
-                </a>
-              </li>
+              <li>Email Us</li>
             </ul>
           </div>
 
-          {/* Newsletter Column (Column 5) */}
-          <div>
-            <h3 className="text-white text-lg font-medium mb-4">
-              Subscribe to our newsletter
-            </h3>
-            <div className="flex flex-col gap-4 md:max-w-md">
-              <div className="flex flex-col sm:flex-row gap-3">
-                <div className="flex-1">
-                  <input
-                    type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    placeholder="Write your email here"
-                    className=" w-[180px]  md:w-[190px] px-4 py-3 bg-[#333333] rounded-full text-white placeholder-[#B3B3B3] focus:outline-none focus:border-gray-400 text-sm"
-                  />
-                </div>
-              </div>
+          {/* Right: Newsletter */}
+          <div className="flex justify-end">
+            {/* YOUR PROVIDED SUBSCRIBE UI */}
+            <div className="w-96 inline-flex flex-col gap-4">
+              <p className="text-sm uppercase font-medium">
+                Subscribe to our newsletter
+              </p>
 
-              {/* Social Media Icons */}
-
-              <div className="flex space-x-4 mt-14 justify-end">
-                <a
-                  href="https://www.instagram.com/stylewithlafetch/"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="hover:opacity-80 transition-opacity"
-                  aria-label="Instagram"
+              <div className="w-full px-4 py-4 rounded-full border border-white/25 flex items-center gap-3">
+                <input
+                  type="email"
+                  placeholder="Write your email here"
+                  className="flex-1 bg-transparent text-sm  outline-none placeholder-white/60"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  onKeyPress={(e) =>
+                    e.key === "Enter" && handleNewsletterSubmit()
+                  }
+                />
+                <button
+                  onClick={handleNewsletterSubmit}
+                  disabled={loading}
+                  className="px-6 py-2 bg-zinc-800 rounded-full text-xs uppercase disabled:opacity-50 cursor-pointer"
                 >
-                  <Image
-                    src="/icons/instagram.png"
-                    alt="Instagram"
-                    width={20}
-                    height={20}
-                    className="w-5 h-5"
-                  />
-                </a>
-
-                <a
-                  href="https://www.facebook.com/p/LaFetch-61555807824172/"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="hover:opacity-80 transition-opacity"
-                  aria-label="Facebook"
-                >
-                  <Image
-                    src="/icons/meta.png"
-                    alt="Facebook"
-                    width={20}
-                    height={20}
-                    className="w-5 h-5"
-                  />
-                </a>
-
-                <a
-                  href="https://www.youtube.com/@LaFetch"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="hover:opacity-80 transition-opacity"
-                  aria-label="YouTube"
-                >
-                  <Youtube className="w-5 h-5 text-white" />
-                </a>
+                  {loading ? "Subscribing..." : "Subscribe"}
+                </button>
               </div>
             </div>
           </div>
         </div>
 
         {/* Bottom Section */}
-        <div className="border-t border-[#60606080] pt-8">
-          <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
-            {/* Copyright */}
-            <div className="text-gray-400 text-sm">
+        <div className="border-t border-white/20 pt-8">
+          {/* Row 1: Copyright + Socials */}
+          <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-gray-400">
+            {/* Left */}
+            <div>
               ©2025 Powered By and All Right Reserved to AS10 TECH-RETAIL
               PRIVATE LIMITED
             </div>
 
-            {/* Logo (Right) */}
-            <div className="">
-              <Image
-                src="/images/Lafetch Logo.svg"
-                alt="LAFETCH Logo"
-                width={120} // adjust size
-                height={40}
-                className="object-contain"
-              />
+            {/* Right */}
+            <div className="flex items-center gap-5">
+              <a
+                href="https://www.instagram.com/stylewithlafetch/"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <Image
+                  src="/icons/instagram.png"
+                  alt="Instagram"
+                  width={18}
+                  height={18}
+                />
+              </a>
+
+              <a
+                href="https://www.facebook.com/p/LaFetch-61555807824172/"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <Image
+                  src="/icons/meta.png"
+                  alt="Facebook"
+                  width={18}
+                  height={18}
+                />
+              </a>
+
+              <a
+                href="https://www.youtube.com/@LaFetch"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <Youtube className="w-5 h-5 text-white" />
+              </a>
             </div>
+          </div>
+
+          {/* Row 2: Big Center Logo */}
+          <div className="mt-10 flex justify-center">
+            <Image
+              src="/images/lafetch-white.svg"
+              alt="LAFETCH Logo"
+              width={360}
+              height={140}
+              className="object-contain"
+            />
           </div>
         </div>
       </div>

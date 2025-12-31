@@ -3,23 +3,27 @@ import React, { useState } from "react";
 import Image from "next/image";
 import { Heart } from "lucide-react";
 
-const ProductImageGallery = ({ images, hasColorVariants = false }) => {
+const ProductImageGallery = ({ images = [], hasColorVariants = false }) => {
   const [selectedImage, setSelectedImage] = useState(0);
 
   return (
     <div className="space-y-4">
       {/* Main Image */}
       <div className="relative w-full bg-gray-50 rounded-lg overflow-hidden h-[400px] md:h-[800px]">
-        <Image
-          src={images[selectedImage]}
-          alt={`Product ${selectedImage + 1}`}
-          fill
-          className="w-full h-auto object-fit"
-          priority
-        />
+        {images?.[selectedImage] ? (
+          <Image
+            src={images[selectedImage]}
+            alt={`Product ${selectedImage + 1}`}
+            fill
+            className="w-full h-auto object-fit"
+            priority
+          />
+        ) : (
+          <div className="absolute inset-0 bg-gray-300" />
+        )}
       </div>
       {/* Thumbnail Grid - Hidden when both size and color variants exist */}
-      {!hasColorVariants && (
+      {!hasColorVariants && images?.length > 0 && (
         <div className={images.length > 4 ? "overflow-x-auto" : ""}>
           <div
             className={`${
@@ -34,13 +38,17 @@ const ProductImageGallery = ({ images, hasColorVariants = false }) => {
                   selectedImage === idx ? "border-black" : "border-transparent"
                 } ${images.length > 4 ? "flex-shrink-0 w-24 h-24" : ""}`}
               >
-                <Image
-                  src={img}
-                  alt={`Thumbnail ${idx + 1}`}
-                  width={100}
-                  height={100}
-                  className="w-full object-cover"
-                />
+                {img ? (
+                  <Image
+                    src={img}
+                    alt={`Thumbnail ${idx + 1}`}
+                    width={100}
+                    height={100}
+                    className="w-full object-cover"
+                  />
+                ) : (
+                  <div className="w-full h-full bg-gray-300" />
+                )}
               </button>
             ))}
           </div>

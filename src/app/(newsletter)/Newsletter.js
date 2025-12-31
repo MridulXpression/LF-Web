@@ -1,26 +1,25 @@
 "use client";
 import React from "react";
-import useBlog from "@/hooks/useBlog";
+import useNewsletter from "@/hooks/useNewsletter";
 import FashionGrid from "@/components/Blog";
 
 const TrendingBlog = () => {
-  const fetchBlogs = useBlog();
-
+  const fetchNewsletter = useNewsletter();
   const data =
-    fetchBlogs?.map((blog, index) => ({
+    fetchNewsletter?.map((blog, index) => ({
       id: blog.id || index,
       image: blog.image_url,
       title: blog.title,
-      description: blog.meta_description,
+      description: blog.content,
       size: "medium",
       position: "bottom-left",
     })) || [];
 
-  if (!fetchBlogs || fetchBlogs.length === 0) {
+  if (!fetchNewsletter || fetchNewsletter.length === 0) {
     return null; // no content
   }
 
-  return <FashionGrid data={data} title="TRENDING NOW" />;
+  return <FashionGrid data={data} title="NEWSLETTERS" />;
 };
 
 export default TrendingBlog;

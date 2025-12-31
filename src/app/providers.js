@@ -5,6 +5,7 @@ import { store, persistor } from "@/redux/store"; // import persistor
 import { PersistGate } from "redux-persist/integration/react";
 import useCartSync from "@/hooks/useCartSync";
 import PhoneAuthModal from "@/components/LoginModal";
+import ProductModal from "@/components/Modal";
 
 function CartSyncWrapper({ children }) {
   useCartSync(); // Initialize cart sync - NOW INSIDE PROVIDER
@@ -18,6 +19,8 @@ export function Providers({ children }) {
         <CartSyncWrapper>
           {/* Global PhoneAuthModal - Only one instance */}
           <PhoneAuthModal />
+          {/* Global ProductModal - Only one instance */}
+          <ProductModal />
           {children}
         </CartSyncWrapper>
       </PersistGate>

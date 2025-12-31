@@ -1,14 +1,14 @@
 import React from "react";
 
 import Footer from "@/components/footer";
-import FashionGrid from "@/app/(blog)/Blog";
+import FashionGrid from "@/app/(newsletter)/Newsletter";
 import MenBanner from "./LandingMenBanner";
 import MenNewInSection from "./MenNewIn";
 import MenShopCategories from "./MenShopCategories";
 import MenCollectionSection from "./MenCollections";
 import Navbar from "@/app/(navbar)/Navbar";
 import MenCarousel from "./MenCarousel";
-import TrendingBlog from "@/app/(blog)/Blog";
+import TrendingBlog from "@/app/(newsletter)/Newsletter";
 
 const page = () => {
   return (

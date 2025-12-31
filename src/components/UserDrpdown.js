@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { User } from "lucide-react";
 import Link from "next/link";
 import useLogout from "@/hooks/useLogout";
@@ -12,6 +12,23 @@ const UserDropdown = ({ user }) => {
 
   const [open, setOpen] = useState(false);
   const [showLogoutModal, setShowLogoutModal] = useState(false);
+  const [dropdownTimeout, setDropdownTimeout] = useState(null);
+  const dropdownRef = useRef(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setOpen(false);
+      }
+    };
+
+    if (open) {
+      document.addEventListener("mousedown", handleClickOutside);
+      return () => {
+        document.removeEventListener("mousedown", handleClickOutside);
+      };
+    }
+  }, [open]);
 
   const handleLogoutClick = () => {
     setShowLogoutModal(true);
@@ -27,21 +44,30 @@ const UserDropdown = ({ user }) => {
 
   return (
     <div
+      ref={dropdownRef}
       className="relative"
-      onMouseEnter={() => isDesktop && setOpen(true)}
-      onMouseLeave={() => isDesktop && setOpen(false)}
+      onMouseEnter={() => {
+        clearTimeout(dropdownTimeout);
+        isDesktop && setOpen(true);
+      }}
+      onMouseLeave={() => {
+        if (isDesktop) {
+          const timeout = setTimeout(() => setOpen(false), 200);
+          setDropdownTimeout(timeout);
+        }
+      }}
     >
       {/* Profile Icon */}
       <button
         onClick={() => setOpen((prev) => !prev)}
-        className="p-2 text-[#808080] hover:text-gray-900 cursor-pointer"
+        className=" text-[#808080] hover:text-gray-900 cursor-pointer"
       >
         <User className="w-6 h-6 text-black" />
       </button>
 
       {/* DROPDOWN */}
       {open && (
-        <div className="absolute -right-5 -md:right-10 top-[20px] mt-2 w-56 bg-white shadow-lg border border-gray-100 z-50">
+        <div className="absolute -right-5 -md:right-10 top-[20px] md:top-[55px] mt-2 w-56 bg-white shadow-lg border border-gray-100 z-50">
           <div className="p-4">
             {user && (
               <div className="border-b border-gray-200 pb-3 mb-3">
