@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import ProductCard from "@/components/Card";
+import ProductCollectionCard from "@/components/homepage/CollectionCard";
 import useProducts from "@/hooks/useProducts";
 import Image from "next/image";
 import { Toaster } from "react-hot-toast";
@@ -27,7 +27,7 @@ const NewInSection = () => {
             if (isLast) {
               return (
                 <div key={product.id} className="w-full">
-                  <div className="relative w-[160px] h-[240px] md:w-[300px] md:h-[380px]">
+                  <div className="relative w-[160px] h-[240px] md:w-[300px] md:h-[400px] rounded-lg overflow-hidden">
                     {/* Product Image + Overlay */}
                     <Image
                       src={product.imageUrls?.[0]}
@@ -46,16 +46,48 @@ const NewInSection = () => {
               );
             }
 
+            // Extract variant sizes from variants array
+            const availableSizes = product.variants
+              ? product.variants
+                  .map((variant) => {
+                    let options = [];
+                    try {
+                      if (typeof variant.selectedOptions === "string") {
+                        options = JSON.parse(variant.selectedOptions);
+                      } else if (Array.isArray(variant.selectedOptions)) {
+                        options = variant.selectedOptions;
+                      }
+                    } catch (e) {
+                      options = [];
+                    }
+                    const sizeOption = options.find(
+                      (opt) => opt.name === "Size"
+                    );
+                    return sizeOption?.value || "";
+                  })
+                  .filter(Boolean)
+              : [];
+
+            // Transform the product data to match CollectionCard requirements
+            const transformedProduct = {
+              id: product.id,
+              name: product.title || product.name,
+              brand: product.brand?.name || product.brand,
+              price: product.basePrice || product.price,
+              originalPrice: product.mrp,
+              description: product.description || "",
+              images: product.imageUrls || [product.image],
+              hasOverlay: product.hasOverlay || false,
+              variants: product.variants || [],
+              availableSizes: availableSizes,
+            };
+
             // Default card
             return (
-              <ProductCard
+              <ProductCollectionCard
                 key={product.id}
-                images={product.imageUrls}
-                title={product.title}
-                brand={product?.brand?.name}
-                price={product.basePrice}
-                id={product.id}
-                product={product}
+                product={transformedProduct}
+                onLike={(id) => console.log("Liked:", id)}
               />
             );
           })}

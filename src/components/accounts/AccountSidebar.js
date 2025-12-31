@@ -63,11 +63,11 @@ const AccountSidebar = () => {
   ];
 
   const externalUrls = {
-    about: "https://www.la-fetch.com/about",
-    terms: "https://www.la-fetch.com/terms-and-conditions",
-    privacy: "https://www.la-fetch.com/privacy-policy",
-    cancellations: "https://www.la-fetch.com/cancellation-policy",
-    shipping: "https://www.la-fetch.com/shipping-policy",
+    about: "/about-us",
+    terms: "/terms-and-conditions",
+    privacy: "/privacy-policy",
+    cancellations: "/cancellation-policy",
+    shipping: "/shipping-policy",
   };
 
   const handleNavigation = (id) => {

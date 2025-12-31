@@ -244,10 +244,14 @@ const ProductModal = () => {
         const availableQuantity =
           selectedVariant?.inventory?.availableStock ?? 1;
 
-        // If user is not logged in, store in localStorage and show message
+        // If user is not logged in, store in localStorage, dispatch to Redux, and show message
         if (!user?.id) {
           localStorage.setItem("ProductId", product.id);
           localStorage.setItem("selectedVariantId", variantId);
+
+          // Add to Redux cart state for cart sync
+          dispatch(addToCart({ product, variantId, quantity: 1 }));
+
           showMessage("Item added to cart", "success");
           // Keep modal open for 4 seconds to show message, then close
           setTimeout(() => {
@@ -262,7 +266,7 @@ const ProductModal = () => {
           userId: parseInt(user.id, 10),
           productId: parseInt(product.id, 10),
           variantId: parseInt(variantId, 10),
-          quantity: availableQuantity,
+          quantity: 1,
         };
 
         const result = await axiosHttp.post(
@@ -329,10 +333,14 @@ const ProductModal = () => {
       const selectedVariant = product.variants.find((v) => v.id === variantId);
       const availableQuantity = selectedVariant?.inventory?.availableStock ?? 1;
 
-      // If user is not logged in, store in localStorage and show message
+      // If user is not logged in, store in localStorage, dispatch to Redux, and show message
       if (!user?.id) {
         localStorage.setItem("ProductId", product.id);
         localStorage.setItem("selectedVariantId", variantId);
+
+        // Add to Redux cart state for cart sync
+        dispatch(addToCart({ product, variantId, quantity: 1 }));
+
         showMessage("Item added to cart", "success");
         // Keep modal open for 4 seconds to show message, then close
         setTimeout(() => {
@@ -347,7 +355,7 @@ const ProductModal = () => {
         userId: parseInt(user.id, 10),
         productId: parseInt(product.id, 10),
         variantId: parseInt(variantId, 10),
-        quantity: availableQuantity,
+        quantity: 1,
       };
 
       const result = await axiosHttp.post(endPoints.addProductToCart, payload);

@@ -1,6 +1,6 @@
 "use client";
 import React, { useState } from "react";
-import { X, Phone, Shield } from "lucide-react";
+import { X, Phone, Shield, Play } from "lucide-react";
 import Image from "next/image";
 import { endPoints } from "@/utils/endpoints";
 import axiosHttp from "@/utils/axioshttp";
@@ -269,6 +269,36 @@ const PhoneAuthModal = () => {
                 </div>
               )}
 
+              {/* App Store Links - Top Right */}
+              {currentStep !== "welcome" && (
+                <div className="absolute top-4 right-4 flex gap-2">
+                  <a
+                    href="https://apps.apple.com/in/app/lafetch-fetch-your-fashion/id6739497338"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="bg-white hover:bg-gray-100 rounded-lg p-2 transition-all cursor-pointer shadow-md"
+                    title="Download on App Store"
+                  >
+                    <Image
+                      src="/images/Apple.png"
+                      alt="Apple App Store"
+                      width={20}
+                      height={20}
+                      className="object-contain"
+                    />
+                  </a>
+                  <a
+                    href="https://play.google.com/store/search?q=lafetch&c=apps&hl=en"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="bg-white hover:bg-gray-100 rounded-lg p-2 transition-all cursor-pointer shadow-md"
+                    title="Get it on Google Play"
+                  >
+                    <Play className="w-5 h-5 text-black fill-black" />
+                  </a>
+                </div>
+              )}
+
               {/* Conditional content based on step */}
               {currentStep === "welcome" ? (
                 // Step 4 - Welcome screen content
@@ -283,7 +313,7 @@ const PhoneAuthModal = () => {
                 </div>
               ) : (
                 // Steps 1, 2, 3 - Mobile screenshots
-                <div className="flex gap-6 mt-[50px]">
+                <div className="flex flex-col items-center justify-center mt-[50px]">
                   <Image
                     src="/images/iphone-login.png"
                     alt="App preview"

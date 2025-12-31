@@ -50,7 +50,15 @@ const Footer = () => {
               <li>
                 <Link href="/">Home</Link>
               </li>
-              <li>About us</li>
+              <li>
+                <Link
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  href="/about-us"
+                >
+                  About Us
+                </Link>
+              </li>
               <li>Discover now</li>
               <li>La fetch quick</li>
             </ul>
@@ -66,9 +74,35 @@ const Footer = () => {
                   Privacy policy
                 </Link>
               </li>
-              <li>Terms & conditions</li>
-              <li>Shipping policy</li>
-              <li>Cancellation policy</li>
+
+              <li>
+                <Link
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  href="/terms-and-conditions"
+                >
+                  Terms & conditions
+                </Link>
+              </li>
+              <li>
+                <Link
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  href="/shipping-policy"
+                >
+                  {" "}
+                  Shipping policy
+                </Link>
+              </li>
+              <li>
+                <Link
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  href="/cancellation-policy"
+                >
+                  Cancellation policy{" "}
+                </Link>
+              </li>
             </ul>
 
             {/* Column 4 */}
@@ -90,7 +124,7 @@ const Footer = () => {
                 Subscribe to our newsletter
               </p>
 
-              <div className="w-full px-4 py-4 rounded-full border border-white/25 flex items-center gap-3">
+              <div className="w-full px-2 py-1 rounded-full border border-white/25 flex items-center gap-3">
                 <input
                   type="email"
                   placeholder="Write your email here"
@@ -104,7 +138,7 @@ const Footer = () => {
                 <button
                   onClick={handleNewsletterSubmit}
                   disabled={loading}
-                  className="px-6 py-2 bg-zinc-800 rounded-full text-xs uppercase disabled:opacity-50 cursor-pointer"
+                  className="px-6 py-3 bg-zinc-800 rounded-full text-xs uppercase disabled:opacity-50 cursor-pointer"
                 >
                   {loading ? "Subscribing..." : "Subscribe"}
                 </button>

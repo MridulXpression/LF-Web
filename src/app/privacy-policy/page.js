@@ -1,7 +1,5 @@
 "use client";
 import React from "react";
-import Navbar from "../(navbar)/Navbar";
-import Footer from "@/components/footer";
 
 const PrivacyPolicyPage = () => {
   const sections = [

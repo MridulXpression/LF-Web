@@ -60,7 +60,7 @@ const WishlistProductCard = () => {
 
   return (
     <div className="bg-white p-6 min-h-screen flex md:items-center md:justify-center mt-[80px]">
-      <div className="max-w-[1400px] w-full px-4">
+      <div className="max-w-[1400px] w-full px-4 mt-[100px]">
         {products.length === 0 ? (
           <div className="flex flex-col items-center justify-center min-h-[60vh]">
             <h2 className="text-2xl font-semibold text-gray-700 mb-4">

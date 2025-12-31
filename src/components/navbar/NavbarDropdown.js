@@ -11,8 +11,8 @@ const NavbarDropdown = ({ menu, latestBlogs, onMouseEnter, onMouseLeave }) => {
       onMouseLeave={onMouseLeave}
     >
       <div className="bg-[#F8F8F8] shadow-lg border-t border-gray-200">
-        <div className="max-w-full mx-auto px-16 py-8">
-          <div className="grid grid-cols-[1fr_420px] gap-12 items-start">
+        <div className="max-w-full mx-auto px-16 ">
+          <div className="grid grid-cols-[1fr_420px] gap-8 items-start">
             {/* Left Side - Categories Grid */}
             <div className="flex-1 grid grid-cols-4 gap-x-5 ">
               {menu.sections.map((section, index) => (
@@ -23,16 +23,16 @@ const NavbarDropdown = ({ menu, latestBlogs, onMouseEnter, onMouseLeave }) => {
                   }
                 >
                   <a href={`/categories?catId=${section.id}`}>
-                    <h3 className="text-[12px] font-[600] text-[#0F0F0F] mb-3  font-clash-display uppercase">
+                    <h3 className="text-[10px] font-[600] text-[#0F0F0F] mb-1  font-clash-display uppercase">
                       {section.heading}
                     </h3>
                   </a>
-                  <ul className="space-y-2">
+                  <ul className="space-y-1">
                     {section.items.map((item) => (
                       <li key={item.id}>
                         <a
                           href={`/products?subCatId=${item.id}`}
-                          className="text-[13px] font-normal text-[#404040] hover:text-black transition-colors"
+                          className="text-[10px] font-normal text-[#404040] hover:text-black transition-colors"
                         >
                           {item.name}
                         </a>

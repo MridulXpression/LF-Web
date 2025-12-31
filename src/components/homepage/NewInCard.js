@@ -96,7 +96,7 @@ const NewInCard = ({
               <div className="flex gap-2 sm:gap-2.5">
                 <div className="flex-1 flex flex-col gap-1">
                   <h3 className="text-xs sm:text-sm md:text-[15px] font-[600] uppercase text-[#0F0F0F]">
-                    {title}
+                    {title.length > 20 ? title.substring(0, 20) + "..." : title}
                   </h3>
                   <p className="text-xs sm:text-xs md:text-[13px] uppercase font-[400] text-[#0F0F0F]">
                     {brand}

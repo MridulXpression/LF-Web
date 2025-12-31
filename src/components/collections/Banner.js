@@ -16,7 +16,7 @@ const Banner = ({ banner }) => {
       onClick={handleClick}
     >
       <Image
-        className="w-full h-full object-contain md:object-cover"
+        className="w-full h-full object-contain md:object-fill"
         src={banner.imageUrl}
         alt={`Banner ${banner.id}`}
         fill
