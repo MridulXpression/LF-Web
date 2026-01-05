@@ -2,6 +2,8 @@
 import ProductCollectionCard from "@/components/homepage/CollectionCard";
 import useCollection from "@/hooks/useCollection";
 import { useState } from "react";
+import Image from "next/image";
+import Link from "next/link";
 
 const MenCollectionSection = () => {
   const query = "gender=1";
@@ -37,7 +39,35 @@ const MenCollectionSection = () => {
 
               {/* Products Grid */}
               <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-[20px] justify-items-center">
-                {visibleProducts?.map((product) => {
+                {visibleProducts?.map((product, index) => {
+                  const isLast =
+                    index === visibleProducts.length - 1 &&
+                    visibleProducts.length === 8;
+
+                  if (isLast) {
+                    return (
+                      <div key={product.id} className="w-full ">
+                        <div className="relative w-[160px] h-[240px] md:w-[300px] md:h-[400px] rounded-lg overflow-hidden">
+                          {/* Product Image + Overlay */}
+                          <Image
+                            src={product.imageUrls?.[0]}
+                            alt={product.title}
+                            fill
+                            className="object-cover"
+                          />
+                          <Link
+                            href={`/products?collectionId=${collection.id}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="absolute inset-0 flex items-center justify-center bg-black/40 text-white font-bold text-lg"
+                          >
+                            Explore All →
+                          </Link>
+                        </div>
+                      </div>
+                    );
+                  }
+
                   // Extract variant sizes from variants array
                   const availableSizes = product.variants
                     ? product.variants
@@ -81,11 +111,20 @@ const MenCollectionSection = () => {
                       onLike={() => {}}
                     />
                   );
+
+                  // Commented out - Original ProductCollectionCard rendering
+                  // return (
+                  //   <ProductCollectionCard
+                  //     key={product.id}
+                  //     product={transformedProduct}
+                  //     onLike={() => {}}
+                  //   />
+                  // );
                 })}
               </div>
 
               {/* Explore More Button */}
-              {hasMoreProducts && (
+              {/* {hasMoreProducts && (
                 <div className="flex justify-center mt-8">
                   <button
                     onClick={() => handleExploreMore(collection.id)}
@@ -94,7 +133,7 @@ const MenCollectionSection = () => {
                     Explore More
                   </button>
                 </div>
-              )}
+              )} */}
             </section>
           );
         })}

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo, useCallback } from "react";
 import { Heart } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -8,174 +8,145 @@ import {
   openProductViewModal,
 } from "@/redux/slices/loginmodalSlice";
 import WishlistBoardModal from "../WishlistBoardModal";
+
 const ProductCollectionCard = ({ product, onLike }) => {
   const dispatch = useDispatch();
-  const [isLiked, setIsLiked] = useState(false);
+
   const [showWishlistModal, setShowWishlistModal] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  const images = product.images || [product.image];
   const [isHovering, setIsHovering] = useState(false);
 
+  /** 🧠 Memoized images array */
+  const images = useMemo(() => {
+    if (product?.images?.length) return product.images;
+    if (product?.image) return [product.image];
+    return [];
+  }, [product?.images, product?.image]);
+
+  /** 🧠 Prices memoized */
+  const price = useMemo(() => Number(product.price), [product.price]);
+  const originalPrice = useMemo(
+    () => Number(product.originalPrice),
+    [product.originalPrice]
+  );
+
+  const showOriginalPrice = originalPrice > price;
+  const discountPercentage = showOriginalPrice
+    ? Math.round(((originalPrice - price) / originalPrice) * 100)
+    : 0;
+
+  /** 🔁 Optimized hover interval */
   useEffect(() => {
     if (!isHovering || images.length <= 1) return;
 
-    const interval = setInterval(() => {
+    const intervalId = setInterval(() => {
       setCurrentImageIndex((prev) => (prev + 1) % images.length);
-    }, 2000);
+    }, 1000);
 
-    return () => clearInterval(interval);
+    return () => clearInterval(intervalId);
   }, [isHovering, images.length]);
 
-  const handlePreviewClick = (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    const modalProduct = {
-      id: product.id,
-      title: product.name,
-      imageUrls: images,
-      basePrice: price,
-      description: product.description || "",
-      brand: product.brand,
-      variants: product.variants || [],
-      availableSizes: product.availableSizes || [],
-    };
-    dispatch(openProductViewModal(modalProduct));
-  };
+  /** ♻️ Callbacks (stable references) */
+  const handlePreviewClick = useCallback(
+    (e) => {
+      e.preventDefault();
+      e.stopPropagation();
 
-  const handleImageHover = (index) => {
-    setIsHovering(true);
-    setCurrentImageIndex(index);
-  };
+      dispatch(
+        openProductViewModal({
+          id: product.id,
+          title: product.name,
+          imageUrls: images,
+          basePrice: price,
+          description: product.description || "",
+          brand: product.brand,
+          variants: product.variants || [],
+          availableSizes: product.availableSizes || [],
+        })
+      );
+    },
+    [dispatch, product, images, price]
+  );
 
-  const handleMouseLeave = () => {
+  const handleLike = useCallback(
+    (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      setShowWishlistModal(true);
+      dispatch(openWishlistModal());
+      onLike?.(product.id);
+    },
+    [dispatch, onLike, product.id]
+  );
+
+  const handleMouseLeave = useCallback(() => {
     setIsHovering(false);
     setCurrentImageIndex(0);
-  };
+  }, []);
 
-  const handleLike = (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setIsLiked(!isLiked);
-    setShowWishlistModal(true);
-    dispatch(openWishlistModal());
-    onLike?.(product.id);
-  };
-  const price = Number(product.price);
-  const originalPrice = Number(product.originalPrice);
-
-  // valid original price only if greater than price
-  const showOriginalPrice = originalPrice > 0 && originalPrice > price;
-
-  // discount calculation
-  const discountPercentage = showOriginalPrice
-    ? Math.round(((originalPrice - price) / originalPrice) * 100)
-    : null;
-
-  const truncateText = (text, limit = 24) => {
+  const truncateText = useCallback((text, limit = 24) => {
     if (!text) return "";
     return text.length > limit ? text.slice(0, limit) + "..." : text;
-  };
+  }, []);
 
   return (
     <>
-      <div className="w-full rounded-xl inline-flex flex-col gap-1.5 sm:gap-2 md:gap-2.5 overflow-hidden">
+      <div className="w-full rounded-xl flex flex-col gap-2 overflow-hidden">
         <Link
           href={`/products/${product.id}`}
           target="_blank"
           rel="noopener noreferrer"
         >
-          {/* Image */}
           <div
-            className="relative h-[250px] sm:h-[280px] md:h-[340px] lg:h-[400px] 
-             p-4 sm:p-6 md:p-8 lg:p-6 
-             bg-stone-200 rounded-xl overflow-hidden group
+            className="relative h-[250px] sm:h-[280px] md:h-[340px] lg:h-[400px]
+             p-4 bg-stone-200 rounded-xl overflow-hidden group
              flex items-center justify-center"
             onMouseLeave={handleMouseLeave}
+            onMouseEnter={() => setIsHovering(true)}
           >
-            {images && images.length > 0 ? (
-              <>
-                <Image
-                  src={images[currentImageIndex]}
-                  alt={product.name}
-                  width={400}
-                  height={500}
-                  className="max-h-full max-w-full object-contain transition-all duration-300"
-                  priority={false}
-                />
-
-                {/* Hover Zones */}
-                {images.length > 1 && (
-                  <div
-                    className="absolute inset-0 flex"
-                    onMouseEnter={() => setIsHovering(true)}
-                  >
-                    {images.map((_, index) => (
-                      <div
-                        key={index}
-                        className="flex-1 cursor-pointer"
-                        onMouseEnter={() => handleImageHover(index)}
-                      />
-                    ))}
-                  </div>
-                )}
-              </>
-            ) : (
-              <div className="absolute inset-0 bg-gray-300" />
+            {images.length > 0 && (
+              <Image
+                src={images[currentImageIndex]}
+                alt={product.name}
+                width={400}
+                height={500}
+                className="max-h-full max-w-full object-contain"
+              />
             )}
 
-            {product?.hasOverlay && (
-              <div className="absolute inset-0 bg-gradient-to-b from-black/0 to-black/30" />
-            )}
-
-            {/* Preview Button */}
             <button
               onClick={handlePreviewClick}
-              className="absolute left-1 bottom-1 sm:left-2 sm:bottom-2 
-               w-[calc(100%-8px)] sm:w-[calc(100%-16px)] 
-               h-8 sm:h-10 bg-stone-50 rounded-lg
-               flex justify-center items-center
-               opacity-0 group-hover:opacity-100 transition-opacity
-               hover:bg-stone-100 cursor-pointer"
+              className="absolute left-2 bottom-2 w-[calc(100%-16px)] h-9
+               bg-stone-50 rounded-lg flex items-center justify-center
+               opacity-0 group-hover:opacity-100 transition-opacity"
             >
-              <span className="text-stone-950 text-xs sm:text-sm font-medium ">
-                Product Preview
-              </span>
+              <span className="text-sm font-medium">Product Preview</span>
             </button>
           </div>
         </Link>
-        {/* Content */}
-        <div className="px-2 sm:px-3 pb-2 sm:pb-3 flex flex-col gap-1.5 sm:gap-2">
-          <div className="flex justify-between items-start gap-2">
-            <div className="">
-              <p className="text-xs sm:text-sm md:text-base font-[600] uppercase text-black leading-tight">
-                {truncateText(product.name, 24)}
-              </p>
 
-              <p className="text-[11px] sm:text-xs md:text-sm uppercase font-[400] text-black">
-                {product.brand}
+        <div className="px-2 pb-2 flex flex-col gap-1">
+          <div className="flex justify-between items-start">
+            <div>
+              <p className="text-sm font-semibold uppercase">
+                {truncateText(product.name)}
               </p>
+              <p className="text-xs uppercase">{product.brand}</p>
             </div>
 
-            <button
-              onClick={handleLike}
-              className="cursor-pointer flex-shrink-0"
-            >
-              <Heart className={`w-4 h-4 sm:w-5 sm:h-5 text-black`} />
+            <button onClick={handleLike}>
+              <Heart className="w-5 h-5 text-black" />
             </button>
           </div>
 
-          <div className="flex items-center gap-1 sm:gap-2 flex-wrap">
-            <span className="font-medium text-xs sm:text-sm md:text-base text-black">
-              ₹{price}
-            </span>
-
+          <div className="flex items-center gap-2">
+            <span className="font-medium">₹{price}</span>
             {showOriginalPrice && (
               <>
-                <span className="line-through opacity-60 text-xs sm:text-sm text-black">
+                <span className="line-through opacity-60">
                   ₹{originalPrice}
                 </span>
-
-                <span className="text-emerald-600 text-xs sm:text-sm">
+                <span className="text-emerald-600">
                   ({discountPercentage}% OFF)
                 </span>
               </>
@@ -193,7 +164,7 @@ const ProductCollectionCard = ({ product, onLike }) => {
             brand: product.brand,
             basePrice: price,
             mrp: showOriginalPrice ? originalPrice : null,
-            discountPercentage: showOriginalPrice ? discountPercentage : 0,
+            discountPercentage,
           }}
           onClose={() => setShowWishlistModal(false)}
         />
@@ -202,4 +173,4 @@ const ProductCollectionCard = ({ product, onLike }) => {
   );
 };
 
-export default ProductCollectionCard;
+export default React.memo(ProductCollectionCard);

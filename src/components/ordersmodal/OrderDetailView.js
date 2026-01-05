@@ -241,7 +241,7 @@ const OrderDetailView = ({ orderId, onBack, axiosHttp }) => {
 
       {/* Delivery Estimate */}
       {/* Order Info */}
-      <div className="bg-white p-4 mb-6">
+      <div className="bg-white p-2 mb-2">
         <p className="text-gray-900 font-medium mb-1">
           Ordered At {formatDate(orderData?.createdAt)}
         </p>
@@ -249,8 +249,8 @@ const OrderDetailView = ({ orderId, onBack, axiosHttp }) => {
 
       {/* Order Progress */}
       {/* Order Status & Tracking */}
-      <div className="bg-white rounded-lg p-6 mb-6">
-        <h3 className="font-semibold text-gray-900 mb-4">Order Status</h3>
+      <div className="bg-white rounded-lg p-4 mb-6">
+        <h3 className="font-semibold text-gray-900 mb-2">Order Status</h3>
 
         <div className="flex items-center justify-between flex-wrap gap-3 mb-4">
           {/* Status */}
@@ -272,9 +272,7 @@ const OrderDetailView = ({ orderId, onBack, axiosHttp }) => {
               Track Order
             </a>
           ) : (
-            <span className="text-sm text-orange-600 font-medium">
-              Waiting to ship
-            </span>
+            <span className="text-sm text-orange-600 font-medium"></span>
           )}
         </div>
 

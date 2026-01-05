@@ -58,6 +58,24 @@ const BrandDirectory = ({ brands }) => {
     try {
       const response = await axiosHttp.get(`/view-brand-preview/${brandId}`);
       setBrandPreview(response.data.data);
+
+      // Scroll to the brand card after preview loads
+      setTimeout(() => {
+        const brandElement = document.querySelector(
+          `[data-brand-id="${brandId}"]`
+        );
+        if (brandElement) {
+          const navbarHeight = 200;
+          const elementPosition = brandElement.getBoundingClientRect().top;
+          const offsetPosition =
+            elementPosition + window.pageYOffset - navbarHeight;
+
+          window.scrollTo({
+            top: offsetPosition,
+            behavior: "smooth",
+          });
+        }
+      }, 100);
     } catch (error) {
       setBrandPreview(null);
     } finally {
@@ -69,7 +87,15 @@ const BrandDirectory = ({ brands }) => {
     setSelectedLetter(letter);
     const element = document.getElementById(`letter-${letter}`);
     if (element) {
-      element.scrollIntoView({ behavior: "smooth", block: "start" });
+      const navbarHeight = 200; // Adjust this value based on your navbar height
+      const elementPosition = element.getBoundingClientRect().top;
+      const offsetPosition =
+        elementPosition + window.pageYOffset - navbarHeight;
+
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: "smooth",
+      });
     }
   };
 
@@ -93,6 +119,22 @@ const BrandDirectory = ({ brands }) => {
       return 0;
     };
 
+    // Calculate grid columns based on screen size (for positioning preview)
+    const getGridColumns = () => {
+      if (typeof window !== "undefined") {
+        if (window.innerWidth >= 1024) return 7; // lg
+        if (window.innerWidth >= 768) return 6; // md
+        if (window.innerWidth >= 640) return 5; // sm
+        return 3; // mobile
+      }
+      return 7;
+    };
+
+    // Find the index of the expanded brand
+    const expandedBrandIndex = displayBrands.findIndex(
+      (b) => b.id === expandedBrandId
+    );
+
     return (
       <div key={letter} id={`letter-${letter}`} className="mb-8">
         <div className="flex flex-col sm:flex-row gap-4 sm:gap-6">
@@ -109,45 +151,154 @@ const BrandDirectory = ({ brands }) => {
           <div className="flex-1">
             <div className="grid grid-cols-3 sm:grid-cols-5 md:grid-cols-6 lg:grid-cols-7 gap-3 sm:gap-4">
               {displayBrands.map((brand, idx) => (
-                <div
-                  key={idx}
-                  onClick={() => {
-                    if (brand?.id) {
-                      localStorage.setItem("brandId", brand.id);
-                      fetchBrandPreview(brand.id);
-                    }
-                  }}
-                  className="relative bg-[#ECECF0] flex flex-col items-center cursor-pointer overflow-hidden group h-full"
-                >
-                  {/* Image */}
-                  <div className="w-full p-6 flex items-center justify-center">
-                    <div className="aspect-square w-32 bg-white rounded-full flex items-center justify-center overflow-hidden transition-all duration-300 group-hover:scale-110">
-                      {brand.logo ? (
-                        <Image
-                          src={brand.logo}
-                          alt={brand.name}
-                          width={150}
-                          height={150}
-                          className="max-w-full max-h-full object-contain"
-                        />
-                      ) : (
-                        <div className="w-full h-full rounded-full bg-gray-100 flex items-center justify-center">
-                          <span className="text-gray-400 text-sm font-semibold">
-                            {brand.name.substring(0, 2).toUpperCase()}
-                          </span>
-                        </div>
-                      )}
+                <React.Fragment key={idx}>
+                  <div
+                    data-brand-id={brand.id}
+                    onClick={() => {
+                      if (brand?.id) {
+                        localStorage.setItem("brandId", brand.id);
+                        fetchBrandPreview(brand.id);
+                      }
+                    }}
+                    className={`relative bg-[#ECECF0] flex flex-col items-center cursor-pointer overflow-hidden group h-full transition-all duration-300 ${
+                      expandedBrandId === brand.id
+                        ? "ring-2 ring-[#988BFF] shadow-lg"
+                        : ""
+                    }`}
+                  >
+                    {/* Image */}
+                    <div className="w-full p-6 flex items-center justify-center">
+                      <div className="aspect-square w-32 bg-white rounded-full flex items-center justify-center overflow-hidden transition-all duration-300 group-hover:scale-110">
+                        {brand.logo ? (
+                          <Image
+                            src={brand.logo}
+                            alt={brand.name}
+                            width={150}
+                            height={150}
+                            className="max-w-full max-h-full object-contain"
+                          />
+                        ) : (
+                          <div className="w-full h-full rounded-full bg-gray-100 flex items-center justify-center">
+                            <span className="text-gray-400 text-sm font-semibold">
+                              {brand.name.substring(0, 2).toUpperCase()}
+                            </span>
+                          </div>
+                        )}
+                      </div>
                     </div>
+
+                    {/* Spacer pushes name to bottom */}
+                    <div className="flex-grow" />
+
+                    {/* Brand Name - always at bottom */}
+                    <p className="text-sm text-center text-gray-900 font-normal w-full px-4 py-2 min-h-[40px] flex items-center justify-center transition-colors duration-300 group-hover:bg-[#E0E0E3]">
+                      {brand.name}
+                    </p>
                   </div>
 
-                  {/* Spacer pushes name to bottom */}
-                  <div className="flex-grow" />
+                  {/* Show preview after the current row */}
+                  {expandedBrandId === brand.id && (
+                    <div className="col-span-3 sm:col-span-5 md:col-span-6 lg:col-span-7">
+                      {/* Brand Preview Section */}
+                      <div className="bg-white border border-gray-200 rounded-lg p-3 sm:p-6 shadow-lg">
+                        {previewLoading ? (
+                          <div className="flex justify-center items-center py-12">
+                            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#988BFF]"></div>
+                          </div>
+                        ) : brandPreview ? (
+                          <div>
+                            {/* Products Grid */}
+                            {brandPreview.products &&
+                              brandPreview.products.length > 0 && (
+                                <div>
+                                  <h4 className="text-base sm:text-lg font-medium text-gray-900 mb-3 sm:mb-4">
+                                    Featured Products
+                                  </h4>
+                                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 sm:gap-4 mb-4 sm:mb-6">
+                                    {brandPreview.products
+                                      .slice(0, 6)
+                                      .map((product) => {
+                                        const discount = calculateDiscount(
+                                          product.mrp,
+                                          product.basePrice
+                                        );
+                                        return (
+                                          <Link
+                                            href={`/products/${product.id}`}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            key={product.id}
+                                            className="bg-white border border-gray-200 rounded-lg overflow-hidden hover:shadow-md transition-shadow cursor-pointer group"
+                                          >
+                                            {/* Product Image */}
+                                            <div className="relative aspect-square bg-gray-100">
+                                              {product.imageUrls &&
+                                              product.imageUrls[0] ? (
+                                                <Image
+                                                  src={product.imageUrls[0]}
+                                                  alt={product.title}
+                                                  fill
+                                                  className="object-fill group-hover:scale-105 transition-transform duration-300"
+                                                />
+                                              ) : (
+                                                <div className="w-full h-full flex items-center justify-center">
+                                                  <span className="text-gray-400 text-xs">
+                                                    No Image
+                                                  </span>
+                                                </div>
+                                              )}
+                                            </div>
 
-                  {/* Brand Name - always at bottom */}
-                  <p className="text-sm text-center text-gray-900 font-normal w-full px-4 py-2 min-h-[40px] flex items-center justify-center transition-colors duration-300 group-hover:bg-[#E0E0E3]">
-                    {brand.name}
-                  </p>
-                </div>
+                                            {/* Product Info */}
+                                            <div className="p-2 sm:p-3">
+                                              <h5 className="text-xs sm:text-sm font-medium text-gray-900 line-clamp-2 mb-1 sm:mb-2 min-h-[32px] sm:min-h-[40px]">
+                                                {product.title}
+                                              </h5>
+                                              <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap">
+                                                <span className="text-xs sm:text-sm font-semibold text-gray-900">
+                                                  ₹{product.basePrice}
+                                                </span>
+                                                {product.mrp >
+                                                  product.basePrice && (
+                                                  <span className="text-[10px] sm:text-xs text-gray-500 line-through">
+                                                    ₹{product.mrp}
+                                                  </span>
+                                                )}
+                                                {discount > 0 && (
+                                                  <span className="text-[10px] sm:text-xs font-semibold text-green-600">
+                                                    {discount}% OFF
+                                                  </span>
+                                                )}
+                                              </div>
+                                            </div>
+                                          </Link>
+                                        );
+                                      })}
+                                  </div>
+
+                                  {/* Explore All Button */}
+                                  <div className="flex justify-center">
+                                    <Link
+                                      href={`/brands/${expandedBrandId}`}
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                      className="px-6 sm:px-8 py-2.5 sm:py-3 bg-black text-white text-sm sm:text-base font-medium rounded-lg transition-colors w-full sm:w-auto text-center"
+                                    >
+                                      Explore All Products
+                                    </Link>
+                                  </div>
+                                </div>
+                              )}
+                          </div>
+                        ) : (
+                          <div className="text-center py-8 text-gray-500">
+                            Failed to load brand preview
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  )}
+                </React.Fragment>
               ))}
 
               {/* View More / View Less Button */}
@@ -169,103 +320,6 @@ const BrandDirectory = ({ brands }) => {
             </div>
           </div>
         </div>
-
-        {/* Brand Preview Section */}
-        {expandedBrandId &&
-          brandsForLetter.some((b) => b.id === expandedBrandId) && (
-            <div className="mt-4 sm:mt-6 bg-white border border-gray-200 rounded-lg p-3 sm:p-6 shadow-sm">
-              {previewLoading ? (
-                <div className="flex justify-center items-center py-12">
-                  <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#988BFF]"></div>
-                </div>
-              ) : brandPreview ? (
-                <div>
-                  {/* Products Grid */}
-                  {brandPreview.products &&
-                    brandPreview.products.length > 0 && (
-                      <div>
-                        <h4 className="text-base sm:text-lg font-medium text-gray-900 mb-3 sm:mb-4">
-                          Featured Products
-                        </h4>
-                        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 sm:gap-4 mb-4 sm:mb-6">
-                          {brandPreview.products.slice(0, 6).map((product) => {
-                            const discount = calculateDiscount(
-                              product.mrp,
-                              product.basePrice
-                            );
-                            return (
-                              <Link
-                                href={`/products/${product.id}`}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                key={product.id}
-                                className="bg-white border border-gray-200 rounded-lg overflow-hidden hover:shadow-md transition-shadow cursor-pointer group"
-                              >
-                                {/* Product Image */}
-                                <div className="relative aspect-square bg-gray-100">
-                                  {product.imageUrls && product.imageUrls[0] ? (
-                                    <Image
-                                      src={product.imageUrls[0]}
-                                      alt={product.title}
-                                      fill
-                                      className="object-fill group-hover:scale-105 transition-transform duration-300"
-                                    />
-                                  ) : (
-                                    <div className="w-full h-full flex items-center justify-center">
-                                      <span className="text-gray-400 text-xs">
-                                        No Image
-                                      </span>
-                                    </div>
-                                  )}
-                                </div>
-
-                                {/* Product Info */}
-                                <div className="p-2 sm:p-3">
-                                  <h5 className="text-xs sm:text-sm font-medium text-gray-900 line-clamp-2 mb-1 sm:mb-2 min-h-[32px] sm:min-h-[40px]">
-                                    {product.title}
-                                  </h5>
-                                  <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap">
-                                    <span className="text-xs sm:text-sm font-semibold text-gray-900">
-                                      ₹{product.basePrice}
-                                    </span>
-                                    {product.mrp > product.basePrice && (
-                                      <span className="text-[10px] sm:text-xs text-gray-500 line-through">
-                                        ₹{product.mrp}
-                                      </span>
-                                    )}
-                                    {discount > 0 && (
-                                      <span className="text-[10px] sm:text-xs font-semibold text-green-600">
-                                        {discount}% OFF
-                                      </span>
-                                    )}
-                                  </div>
-                                </div>
-                              </Link>
-                            );
-                          })}
-                        </div>
-
-                        {/* Explore All Button */}
-                        <div className="flex justify-center">
-                          <Link
-                            href={`/brands/${expandedBrandId}`}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="px-6 sm:px-8 py-2.5 sm:py-3 bg-black text-white text-sm sm:text-base font-medium rounded-lg transition-colors w-full sm:w-auto text-center"
-                          >
-                            Explore All Products
-                          </Link>
-                        </div>
-                      </div>
-                    )}
-                </div>
-              ) : (
-                <div className="text-center py-8 text-gray-500">
-                  Failed to load brand preview
-                </div>
-              )}
-            </div>
-          )}
       </div>
     );
   };
