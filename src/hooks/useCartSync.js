@@ -36,10 +36,8 @@ const useCartSync = () => {
           const response = await axiosHttp.post(endPoints.cartsync, payload);
 
           if (response.data.status === 200) {
-            console.log("Cart synced successfully with server");
           }
         } catch (error) {
-          console.error("Error syncing cart:", error);
           // Don't throw error - let the app continue normally
           // User's local cart is still intact
         }

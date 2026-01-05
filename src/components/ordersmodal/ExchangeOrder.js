@@ -76,9 +76,7 @@ const ExchangeOrderModal = ({
           setSelectedAddressId(defaultAddress.id);
         }
       }
-    } catch (error) {
-      console.error("Failed to fetch addresses:", error);
-    }
+    } catch (error) {}
   };
 
   const fetchProductVariants = async () => {
@@ -115,7 +113,6 @@ const ExchangeOrderModal = ({
       }
     } catch (error) {
       toast.error("Failed to fetch available variants");
-      console.error("Failed to fetch variants:", error);
     } finally {
       setLoadingVariants(false);
     }

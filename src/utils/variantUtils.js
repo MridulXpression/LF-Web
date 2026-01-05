@@ -8,7 +8,6 @@ export const getParsedSelectedOptions = (selectedOptions) => {
       const parsed = JSON.parse(selectedOptions);
       return Array.isArray(parsed) ? parsed : [];
     } catch (error) {
-      console.error("Invalid selectedOptions JSON:", selectedOptions);
       return [];
     }
   }

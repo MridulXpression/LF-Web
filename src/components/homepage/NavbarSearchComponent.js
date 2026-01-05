@@ -42,7 +42,6 @@ export default function NavbarSearchComponent({
         );
         setSuggestions(res.data.data || []);
       } catch (error) {
-        console.error("Error fetching suggestions:", error);
         setSuggestions([]);
       }
       setIsLoadingSuggestions(false);

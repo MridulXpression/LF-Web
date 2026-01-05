@@ -40,9 +40,7 @@ const SavedAddresses = () => {
       if (response.data.status === 200 && response.data.data) {
         setAddresses(response.data.data);
       }
-    } catch (error) {
-      console.error("Failed to fetch addresses:", error);
-    }
+    } catch (error) {}
   };
 
   const handleAddNewAddress = () => {

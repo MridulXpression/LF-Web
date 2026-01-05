@@ -7,7 +7,7 @@ const BlogCard = ({ blog }) => {
     <Link href={`/blogs/${blog.id}`} className="block">
       <div className="bg-white overflow-hidden group cursor-pointer hover:shadow-lg transition-shadow duration-300">
         {/* Blog Image */}
-        <div className="relative w-full h-[350px] overflow-hidden">
+        <div className="relative w-full  h-[250px] md:h-[300px] overflow-hidden">
           <Image
             src={blog.image_url}
             alt={blog.title}

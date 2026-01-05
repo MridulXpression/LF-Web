@@ -13,17 +13,17 @@ const FashionGrid = ({ data, title = "TRENDING NOW" }) => {
 
     switch (size) {
       case "large": // 720x519
-        return `w-full md:w-[720px] h-[300px] md:h-[519px] ${baseClasses}`;
+        return `w-full md:w-[720px] h-[300px] md:h-[419px] ${baseClasses}`;
       case "medium": // 440x519
-        return `w-full md:w-[440px] h-[300px] md:h-[519px] ${baseClasses}`;
+        return `w-full md:w-[440px] h-[300px] md:h-[419px] ${baseClasses}`;
       case "small": // 350x550
-        return `w-full md:w-[350px] h-[300px] md:h-[550px] ${baseClasses}`;
+        return `w-full md:w-[350px] h-[300px] md:h-[450px] ${baseClasses}`;
       case "extra-large": // 800x550
-        return `w-full md:w-[800px] h-[300px] md:h-[550px] ${baseClasses}`;
+        return `w-full md:w-[800px] h-[300px] md:h-[450px] ${baseClasses}`;
       case "medium-large": // 450x550
-        return `w-full md:w-[450px] h-[300px] md:h-[550px] ${baseClasses}`;
+        return `w-full md:w-[450px] h-[300px] md:h-[450px] ${baseClasses}`;
       default:
-        return `w-full md:w-[440px] h-[300px] md:h-[519px] ${baseClasses}`;
+        return `w-full md:w-[440px] h-[300px] md:h-[419px] ${baseClasses}`;
     }
   };
 
@@ -66,30 +66,30 @@ const FashionGrid = ({ data, title = "TRENDING NOW" }) => {
   const getDimensions = (size) => {
     switch (size) {
       case "large": // First row, first column
-        return { width: 720, height: 519 };
+        return { width: 720, height: 419 };
       case "medium": // First row, second & third columns
-        return { width: 440, height: 519 };
+        return { width: 440, height: 419 };
       case "small": // Second row, first column
-        return { width: 350, height: 550 };
+        return { width: 350, height: 450 };
       case "extra-large": // Second row, second column
-        return { width: 800, height: 550 };
+        return { width: 800, height: 450 };
       case "medium-large": // Second row, third column
-        return { width: 450, height: 550 };
+        return { width: 450, height: 450 };
       default:
-        return { width: 440, height: 519 };
+        return { width: 440, height: 419 };
     }
   };
 
   // Fixed sizes for each position - no need to rely on data.size
   const fixedSizes = [
     // First Row
-    { size: "large", width: 720, height: 519 }, // Position 1
-    { size: "medium", width: 440, height: 519 }, // Position 2
-    { size: "medium", width: 440, height: 519 }, // Position 3
+    { size: "large", width: 720, height: 419 }, // Position 1
+    { size: "medium", width: 440, height: 419 }, // Position 2
+    { size: "medium", width: 440, height: 419 }, // Position 3
     // Second Row
-    { size: "small", width: 350, height: 550 }, // Position 4
-    { size: "extra-large", width: 800, height: 550 }, // Position 5
-    { size: "medium-large", width: 450, height: 550 }, // Position 6
+    { size: "small", width: 350, height: 450 }, // Position 4
+    { size: "extra-large", width: 800, height: 450 }, // Position 5
+    { size: "medium-large", width: 450, height: 450 }, // Position 6
   ];
 
   // Split items for two rows layout
@@ -165,7 +165,11 @@ const FashionGrid = ({ data, title = "TRENDING NOW" }) => {
 
               {/* CTA Button (bottom only on hover) */}
               {isHovered && (
-                <Link href={`/newsletter/${item.id}`}>
+                <Link
+                  href={`/newsletter/${item.id}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
                   <div
                     className="absolute bottom-6 left-6 z-20 transition-all duration-300"
                     onMouseEnter={() => setHoveredButtonId(`first-${index}`)}

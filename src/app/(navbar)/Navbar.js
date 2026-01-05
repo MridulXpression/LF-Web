@@ -97,7 +97,7 @@ const Navbar = () => {
               <Menu />
             </button>
 
-            <Link href="/" className="hidden md:block">
+            <Link href="/" className="mt-[2px] md:mt-0">
               <Image
                 src="/images/logo-black.svg"
                 alt="Logo"
@@ -106,14 +106,14 @@ const Navbar = () => {
               />
             </Link>
 
-            <Link href="/" className="md:hidden border-r border-black/50 pr-4">
+            {/* <Link href="/" className="md:hidden border-r border-black/50 pr-4">
               <Image
                 src="/images/logo-black.svg"
                 alt="Logo"
-                width={70}
-                height={28}
+                width={100}
+                height={40}
               />
-            </Link>
+            </Link> */}
           </div>
 
           {/* DESKTOP MENU */}

@@ -42,7 +42,7 @@ export default function ShopByCategory({ categories: externalCategories }) {
         </h1>
       </div>
 
-      <div className="flex gap-2 sm:gap-3 md:gap-5 h-64 sm:h-80 md:h-96 lg:h-[500px]">
+      <div className="flex gap-2 sm:gap-3 md:gap-5 h-64 sm:h-80 md:h-[400px] lg:h-[450px]">
         {categories.map((category, index) => (
           <Link
             key={category.id}

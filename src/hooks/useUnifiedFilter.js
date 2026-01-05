@@ -56,7 +56,6 @@ const useUnifiedFilter = () => {
           return [];
         }
       } catch (error) {
-        console.error("Filter error:", error);
         setProducts([]);
         return [];
       } finally {

@@ -124,7 +124,7 @@ const Footer = () => {
                 Subscribe to our newsletter
               </p>
 
-              <div className="w-full px-2 py-1 rounded-full border border-white/25 flex items-center gap-3">
+              <div className="w-full  px-1 py-1 rounded-full border border-white/25 flex items-center gap-3">
                 <input
                   type="email"
                   placeholder="Write your email here"
