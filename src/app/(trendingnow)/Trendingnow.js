@@ -262,10 +262,7 @@ const TrendingNowSection = () => {
 
                 return (
                   <div key={product.id} className="w-full">
-                    <ProductCollectionCard
-                      product={transformedProduct}
-                      onLike={(id) => console.log("Liked:", id)}
-                    />
+                    <ProductCollectionCard product={transformedProduct} />
                   </div>
                 );
               })}

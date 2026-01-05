@@ -59,7 +59,6 @@ const BrandDirectory = ({ brands }) => {
       const response = await axiosHttp.get(`/view-brand-preview/${brandId}`);
       setBrandPreview(response.data.data);
     } catch (error) {
-      console.error("Error fetching brand preview:", error);
       setBrandPreview(null);
     } finally {
       setPreviewLoading(false);

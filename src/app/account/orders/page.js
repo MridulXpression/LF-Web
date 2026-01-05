@@ -55,9 +55,7 @@ const MyOrders = () => {
       if (response.data.status === 200) {
         setOrders(response.data.data);
       }
-    } catch (error) {
-      console.error("Failed to fetch orders:", error);
-    }
+    } catch (error) {}
   };
 
   useEffect(() => {

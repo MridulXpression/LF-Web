@@ -21,7 +21,6 @@ const useAnnouncements = () => {
         }
       } catch (err) {
         setError(err.message || "Error fetching announcements");
-        console.error("Error fetching announcements:", err);
       } finally {
         setLoading(false);
       }

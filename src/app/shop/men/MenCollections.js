@@ -78,7 +78,7 @@ const MenCollectionSection = () => {
                     <ProductCollectionCard
                       key={product.id}
                       product={transformedProduct}
-                      onLike={(id) => console.log("Liked:", id)}
+                      onLike={() => {}}
                     />
                   );
                 })}

@@ -16,11 +16,9 @@ const QuickModal = ({ isOpen, onClose }) => {
     // Ask browser for location
     navigator.geolocation.getCurrentPosition(
       (pos) => {
-        console.log("User Location:", pos.coords);
         setLocationStatus("success");
       },
       (err) => {
-        console.log("Location Error:", err);
         setLocationStatus("error");
       }
     );

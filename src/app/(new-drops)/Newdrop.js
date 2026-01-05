@@ -45,9 +45,7 @@ const NewestAtLafetch = () => {
     return result;
   }, [currentProducts]);
 
-  const handleLike = (productId) => {
-    console.log(`Liked product: ${productId}`);
-  };
+  const handleLike = (productId) => {};
 
   return (
     <div className="w-full min-h-screen px-4 sm:px-8 md:px-12 lg:px-20 py-6 sm:py-8 md:py-10 bg-white flex flex-col gap-6 sm:gap-8 md:gap-10">

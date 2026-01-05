@@ -86,7 +86,10 @@ const ProductCollectionCard = ({ product, onLike }) => {
         >
           {/* Image */}
           <div
-            className="relative h-[250px] sm:h-[280px] md:h-[340px] lg:h-[400px] p-4 sm:p-6 md:p-8 lg:p-9 bg-stone-200 rounded-xl overflow-hidden group"
+            className="relative h-[250px] sm:h-[280px] md:h-[340px] lg:h-[400px] 
+             p-4 sm:p-6 md:p-8 lg:p-6 
+             bg-stone-200 rounded-xl overflow-hidden group
+             flex items-center justify-center"
             onMouseLeave={handleMouseLeave}
           >
             {images && images.length > 0 ? (
@@ -94,11 +97,13 @@ const ProductCollectionCard = ({ product, onLike }) => {
                 <Image
                   src={images[currentImageIndex]}
                   alt={product.name}
-                  fill
-                  className="absolute inset-0 object-fill transition-all duration-300"
+                  width={400}
+                  height={500}
+                  className="max-h-full max-w-full object-contain transition-all duration-300"
+                  priority={false}
                 />
 
-                {/* Invisible Hover Zones - No visual indicator */}
+                {/* Hover Zones */}
                 {images.length > 1 && (
                   <div
                     className="absolute inset-0 flex"
@@ -122,12 +127,17 @@ const ProductCollectionCard = ({ product, onLike }) => {
               <div className="absolute inset-0 bg-gradient-to-b from-black/0 to-black/30" />
             )}
 
-            {/* Hover Preview */}
+            {/* Preview Button */}
             <button
               onClick={handlePreviewClick}
-              className="absolute left-1 bottom-1 sm:left-2 sm:bottom-2 w-[calc(100%-8px)] sm:w-[calc(100%-16px)] h-8 sm:h-10 py-1.5 sm:py-2 bg-stone-50 rounded-lg flex justify-center items-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer hover:bg-stone-100"
+              className="absolute left-1 bottom-1 sm:left-2 sm:bottom-2 
+               w-[calc(100%-8px)] sm:w-[calc(100%-16px)] 
+               h-8 sm:h-10 bg-stone-50 rounded-lg
+               flex justify-center items-center
+               opacity-0 group-hover:opacity-100 transition-opacity
+               hover:bg-stone-100 cursor-pointer"
             >
-              <span className="text-stone-950 text-xs sm:text-sm font-medium">
+              <span className="text-stone-950 text-xs sm:text-sm font-medium ">
                 Product Preview
               </span>
             </button>

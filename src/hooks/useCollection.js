@@ -24,7 +24,6 @@ const useCollection = (query) => {
       }
     } catch (err) {
       setError(err);
-      console.error("Error fetching collections:", err);
     } finally {
       setLoading(false);
     }

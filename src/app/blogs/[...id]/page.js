@@ -16,9 +16,7 @@ export default function BlogDetailsPage() {
       const res = await axiosHttp.get(`${endPoints.getBlogbyid}/${id}`);
       const data = res?.data?.data;
       setBlogData(data);
-    } catch (error) {
-      console.error("Error fetching blog:", error);
-    }
+    } catch (error) {}
   };
 
   useEffect(() => {
