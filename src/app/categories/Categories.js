@@ -18,7 +18,7 @@ const CategoryPage = () => {
 
   return (
     <div className="bg-white">
-      <div className="max-w-7xl mx-auto px-4 py-8 mt-[150px]  ">
+      <div className="w-full md:px-[100px] md:py-0 px-4 p-12 mb-4 mt-[160px]  ">
         {/* Category Header */}
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900 mb-2">
@@ -57,7 +57,7 @@ const CategoryPage = () => {
 
                   {/* Products */}
                   {firstFiveProducts?.length > 0 ? (
-                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
+                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 md:gap-5">
                       {firstFiveProducts.map((product) => (
                         <ListingCard
                           key={product.id}

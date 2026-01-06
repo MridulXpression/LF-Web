@@ -13,17 +13,17 @@ const FashionGrid = ({ data, title = "TRENDING NOW" }) => {
 
     switch (size) {
       case "large": // 720x519
-        return `w-full md:w-[720px] h-[300px] md:h-[419px] ${baseClasses}`;
+        return `w-full md:flex-[1.64] h-[300px] md:h-[419px] ${baseClasses}`;
       case "medium": // 440x519
-        return `w-full md:w-[440px] h-[300px] md:h-[419px] ${baseClasses}`;
+        return `w-full md:flex-1 h-[300px] md:h-[419px] ${baseClasses}`;
       case "small": // 350x550
-        return `w-full md:w-[350px] h-[300px] md:h-[450px] ${baseClasses}`;
+        return `w-full md:flex-[0.78] h-[300px] md:h-[450px] ${baseClasses}`;
       case "extra-large": // 800x550
-        return `w-full md:w-[800px] h-[300px] md:h-[450px] ${baseClasses}`;
+        return `w-full md:flex-[1.78] h-[300px] md:h-[450px] ${baseClasses}`;
       case "medium-large": // 450x550
-        return `w-full md:w-[450px] h-[300px] md:h-[450px] ${baseClasses}`;
+        return `w-full md:flex-1 h-[300px] md:h-[450px] ${baseClasses}`;
       default:
-        return `w-full md:w-[440px] h-[300px] md:h-[419px] ${baseClasses}`;
+        return `w-full md:flex-1 h-[300px] md:h-[419px] ${baseClasses}`;
     }
   };
 
@@ -98,7 +98,7 @@ const FashionGrid = ({ data, title = "TRENDING NOW" }) => {
 
   return (
     <div id="newsletters" className="md:min-h-[80vh] bg-white">
-      <div className="md:max-w-[1400px] mx-auto">
+      <div className="max-w-full px-4 md:px-0 mx-auto">
         <div className="flex items-center mb-[40px] gap-8">
           <div className="flex-1 h-[2px] bg-stone-950" />
           <div className="text-stone-950 text-md  md:text-[38px] font-semibold uppercase tracking-wider whitespace-nowrap">
@@ -108,7 +108,7 @@ const FashionGrid = ({ data, title = "TRENDING NOW" }) => {
       </div>
 
       {/* First Row */}
-      <div className="flex flex-col md:flex-row max-w-full">
+      <div className="flex flex-col md:flex-row w-full">
         {firstRowItems.map((item, index) => {
           const fixedSize = fixedSizes[index];
           let position = item.position || "bottom-left";
@@ -210,7 +210,7 @@ const FashionGrid = ({ data, title = "TRENDING NOW" }) => {
       </div>
 
       {/* Second Row */}
-      <div className="flex flex-col md:flex-row max-w-full">
+      <div className="flex flex-col md:flex-row w-full">
         {secondRowItems.map((item, index) => {
           const fixedSize = fixedSizes[index + 3];
           let position = item.position || "bottom-left";

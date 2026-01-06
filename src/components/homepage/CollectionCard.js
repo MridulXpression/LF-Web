@@ -140,13 +140,13 @@ const ProductCollectionCard = ({ product, onLike }) => {
           </div>
 
           <div className="flex items-center gap-2">
-            <span className="font-medium">₹{price}</span>
+            <span className="text-sm md:text-md">₹{price}</span>
             {showOriginalPrice && (
               <>
-                <span className="line-through opacity-60">
+                <span className="line-through opacity-60 text-sm md:text-md">
                   ₹{originalPrice}
                 </span>
-                <span className="text-emerald-600">
+                <span className="text-emerald-600 text-sm md:text-md font-medium">
                   ({discountPercentage}% OFF)
                 </span>
               </>

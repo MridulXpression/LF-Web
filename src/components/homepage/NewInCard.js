@@ -66,13 +66,13 @@ const NewInCard = ({
       >
         <div className="w-full rounded-xl inline-flex flex-col gap-2 sm:gap-2.5 overflow-hidden cursor-pointer">
           {/* Image */}
-          <div className="relative h-48 sm:h-56 md:h-64 bg-stone-50 rounded-xl overflow-hidden flex items-center justify-center">
+          <div className="relative h-48 sm:h-56 md:h-[150px] bg-stone-50 rounded-xl overflow-hidden flex items-center justify-center">
             {image ? (
               <Image
                 src={image}
                 alt={title}
-                width={150}
-                height={250}
+                width={120}
+                height={120}
                 className="object-cover"
               />
             ) : (

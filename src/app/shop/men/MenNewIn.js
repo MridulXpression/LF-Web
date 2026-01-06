@@ -13,7 +13,7 @@ const NewInSection = () => {
 
   return (
     <section className="py-16 px-4 bg-white">
-      <div className="max-w-[1400px] mx-auto">
+      <div className="w-full md:p-[20px] lg:p-[50px]">
         {/* Section Title */}
         <h2 className="text-4xl md:text-5xl font-bold text-center text-black mb-12 tracking-wide">
           NEW IN
@@ -26,18 +26,18 @@ const NewInSection = () => {
 
             if (isLast) {
               return (
-                <div key={product.id} className="w-full ">
-                  <div className="relative w-[160px] h-[240px] md:w-[300px] md:h-[400px] rounded-lg overflow-hidden">
+                <div key={product.id} className="w-full">
+                  <div className="relative w-full aspect-[2/3] max-h-[350px]  md:max-h-[400px] rounded-lg overflow-hidden">
                     {/* Product Image + Overlay */}
                     <Image
                       src={product.imageUrls?.[0]}
                       alt={product.title}
                       fill
-                      className=" object-cover "
+                      className="object-cover"
                     />
                     <Link
                       href="/products?superCatId=1" // explore page
-                      className="absolute inset-0 flex items-center justify-center bg-black/40 text-white font-bold text-lg"
+                      className="absolute inset-0 flex items-center justify-center bg-black/40 text-white font-bold text-lg md:text-xl hover:bg-black/50 transition-colors"
                     >
                       Explore All →
                     </Link>

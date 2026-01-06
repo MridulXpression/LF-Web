@@ -126,8 +126,8 @@ const TrendingNowSection = () => {
             className="py-8 sm:py-12 md:py-16 px-4 sm:px-6 md:px-10"
           >
             {/* Header */}
-            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 sm:gap-6 mb-8 sm:mb-10">
-              <h1 className="text-xl sm:text-2xl md:text-[38px] font-semibold uppercase text-black w-full sm:w-auto">
+            <div className="flex flex-row justify-between items-center gap-2 sm:gap-4 mb-8 sm:mb-10">
+              <h1 className="text-[15px]  md:text-[38px] font-semibold uppercase text-black">
                 {collection.name}
               </h1>
 
@@ -136,10 +136,10 @@ const TrendingNowSection = () => {
                 <div className="relative">
                   <button
                     onClick={() => toggleSortDropdown(collection.id)}
-                    className="h-10 sm:h-12 md:h-14 px-3 sm:px-4 md:px-6 py-2 sm:py-3 md:py-4 bg-white rounded-lg sm:rounded-xl outline outline-1 outline-offset-[-1px] outline-stone-950 inline-flex justify-center items-center gap-1 sm:gap-1.5 cursor-pointer"
+                    className="h-8 sm:h-9 md:h-10 px-2 sm:px-3 md:px-4 py-1.5 sm:py-2 md:py-2.5 bg-white rounded-lg sm:rounded-xl outline outline-1 outline-offset-[-1px] outline-stone-950 inline-flex justify-center items-center gap-1 sm:gap-1.5 cursor-pointer"
                   >
-                    <div className="flex justify-start items-center gap-1 sm:gap-1.5">
-                      <div className="text-center justify-start text-stone-950 text-xs sm:text-sm md:text-lg lg:text-xl font-medium leading-5 sm:leading-6 tracking-wide">
+                    <div className="flex flex-col sm:flex-row justify-start items-center gap-0 sm:gap-1.5">
+                      <div className="text-center justify-start text-stone-950 text-xs sm:text-sm md:text-base font-medium leading-tight sm:leading-5 tracking-wide whitespace-nowrap sm:whitespace-normal">
                         {sortOrders[collection.id] === "lowToHigh"
                           ? "Price: Low to High"
                           : sortOrders[collection.id] === "highToLow"
@@ -149,9 +149,9 @@ const TrendingNowSection = () => {
                       <Image
                         src="/images/sort.svg"
                         alt="Sort"
-                        width={16}
-                        height={16}
-                        className="sm:w-5 sm:h-5 md:w-6 md:h-6"
+                        width={14}
+                        height={14}
+                        className="sm:w-4 sm:h-4 md:w-5 md:h-5"
                       />
                     </div>
                   </button>
@@ -190,15 +190,15 @@ const TrendingNowSection = () => {
                 <button
                   onClick={() => handlePrevPage(collection.id)}
                   disabled={currentPage === 0 || shouldDisableChevrons}
-                  className={`w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 border rounded-full flex items-center justify-center cursor-pointer transition text-sm sm:text-base ${
+                  className={`w-8 h-8 sm:w-9 sm:h-9 md:w-10 md:h-10 border rounded-full flex items-center justify-center cursor-pointer transition text-sm sm:text-base ${
                     currentPage === 0 || shouldDisableChevrons
                       ? "text-[#A0A0A0]"
                       : "text-black hover:bg-stone-950 hover:text-white"
                   }`}
                 >
                   <ChevronLeft
-                    size={18}
-                    className="sm:w-5 sm:h-5 md:w-6 md:h-6"
+                    size={16}
+                    className="sm:w-4 sm:h-4 md:w-5 md:h-5"
                   />
                 </button>
 
@@ -207,22 +207,22 @@ const TrendingNowSection = () => {
                   disabled={
                     currentPage === totalPages - 1 || shouldDisableChevrons
                   }
-                  className={`w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 border rounded-full flex items-center justify-center cursor-pointer transition text-sm sm:text-base ${
+                  className={`w-8 h-8 sm:w-9 sm:h-9 md:w-10 md:h-10 border rounded-full flex items-center justify-center cursor-pointer transition text-sm sm:text-base ${
                     currentPage === totalPages - 1 || shouldDisableChevrons
                       ? "text-[#A0A0A0]"
                       : "text-black hover:bg-stone-950 hover:text-white"
                   }`}
                 >
                   <ChevronRight
-                    size={18}
-                    className="sm:w-5 sm:h-5 md:w-6 md:h-6"
+                    size={16}
+                    className="sm:w-4 sm:h-4 md:w-5 md:h-5"
                   />
                 </button>
               </div>
             </div>
 
             {/* Grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4 md:gap-6">
+            <div className="grid grid-cols-2 sm:flex sm:flex-row sm:flex-nowrap gap-3 sm:gap-4 md:gap-6">
               {displayedProducts.map((product) => {
                 // Extract variant sizes from variants array
                 const availableSizes = product.variants

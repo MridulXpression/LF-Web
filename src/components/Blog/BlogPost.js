@@ -5,8 +5,8 @@ const BlogPostComponent = ({ blogPost }) => {
   if (!blogPost) return null;
 
   return (
-    <div className="bg-white mt-[150px]">
-      <article className="max-w-[1400px] mx-auto px-4 py-8">
+    <div className="bg-white mt-[130px] md:mt-[150px]  lg:mt-[180px]">
+      <article className="w-full md:px-[100px] md:py-0 px-4 p-12 mb-4 ">
         {/* Image with Overlay Content */}
         <div className="relative w-full h-[600px] mb-8 overflow-hidden">
           <Image
@@ -17,7 +17,16 @@ const BlogPostComponent = ({ blogPost }) => {
           />
 
           {/* Overlay Content Box */}
-          <div className="absolute bottom-0 left-0 right-0 bg-white mx-8 mb-8 p-6 max-w-4xl mx-auto">
+          <div
+            className="
+  absolute bottom-0 left-0 right-0
+  mx-8 mb-8 p-6 max-w-4xl mx-auto
+  
+  bg-white/25 backdrop-blur-xs
+ 
+  shadow-lg
+"
+          >
             {/* Category Tag */}
             {/* {blogPost.category && (
               <div className="mb-3">
@@ -33,7 +42,7 @@ const BlogPostComponent = ({ blogPost }) => {
             </h1>
 
             {/* Created At */}
-            <time className="block text-sm text-gray-500">
+            <time className="block text-sm text-black">
               {blogPost.createdAt
                 ? new Date(blogPost.createdAt).toLocaleDateString("en-US", {
                     year: "numeric",
@@ -47,7 +56,7 @@ const BlogPostComponent = ({ blogPost }) => {
 
         {/* Rich Text HTML Content */}
         <div
-          className="prose prose-lg max-w-none
+          className="prose prose-lg max-w-none text-[18px]
           prose-headings:font-bold prose-headings:text-black
           prose-h1:text-4xl prose-h1:mb-4 prose-h1:mt-8
           prose-h2:text-3xl prose-h2:mb-3 prose-h2:mt-6

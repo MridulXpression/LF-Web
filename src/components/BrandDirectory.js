@@ -325,7 +325,7 @@ const BrandDirectory = ({ brands }) => {
   };
 
   return (
-    <div className="max-w-7xl mx-auto p-4 sm:p-6">
+    <div className="w-full  p-4 md:px-[100px] md:py-[50px]">
       {/* Top Section - Alphabet Navigation and Search */}
       <div className="mb-8">
         {/* Alphabet Navigation */}

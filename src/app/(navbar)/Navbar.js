@@ -54,6 +54,17 @@ const Navbar = () => {
   const categoriesHierarchy = useGetCategoriesHierarchy();
   const menuData = getMenuData(categoriesHierarchy);
 
+  // Show NEWSLETTERS only on specific routes
+  const shouldShowNewsletter =
+    pathname === "/" ||
+    pathname === "/shop/men" ||
+    pathname === "/shop/women" ||
+    pathname === "/shop/accessories";
+
+  const filteredMenuData = menuData.filter(
+    (menu) => menu.title !== "NEWSLETTERS" || shouldShowNewsletter
+  );
+
   const blogs = useBlog();
   const latestBlogs = blogs?.slice(0, 3);
 
@@ -118,7 +129,7 @@ const Navbar = () => {
 
           {/* DESKTOP MENU */}
           <div className="hidden md:flex gap-6">
-            {menuData.map((menu, index) => (
+            {filteredMenuData.map((menu, index) => (
               <div
                 key={index}
                 className="relative text-sm font-clash-display font-medium text-[#0F0F0F] uppercase leading-4
@@ -216,7 +227,7 @@ const Navbar = () => {
       <MobileNavbar
         isOpen={isMobileOpen}
         onClose={() => setIsMobileOpen(false)}
-        menuData={menuData}
+        menuData={filteredMenuData}
         getMenuHref={getMenuHref}
       />
 
