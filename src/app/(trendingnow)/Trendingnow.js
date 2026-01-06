@@ -123,7 +123,7 @@ const TrendingNowSection = () => {
         return (
           <section
             key={collection.id}
-            className="py-8 sm:py-12 md:py-16 px-4 sm:px-6 md:px-10"
+            className="py-4 sm:py-6 md:py-8 px-4 sm:px-6 md:px-10"
           >
             {/* Header */}
             <div className="flex flex-row justify-between items-center gap-2 sm:gap-4 mb-8 sm:mb-10">

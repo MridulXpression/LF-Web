@@ -58,7 +58,7 @@ const NewestAtLafetch = () => {
   bg-white
   flex flex-col
   gap-6 sm:gap-8 md:gap-10
-  max-h-screen
+  
 "
     >
       {/* Header */}

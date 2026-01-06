@@ -153,6 +153,12 @@ const CreateBoardModal = ({ productData, onClose }) => {
             </div>
           </div>
 
+          {/* Or Divider */}
+          <div className="flex items-start justify-start mb-1 md:mb-2">
+            <span className="text-xs md:text-sm text-black font-medium">
+              OR
+            </span>
+          </div>
           {/* Existing Boards */}
           <div className="mb-4 md:mb-6">
             <h3 className="text-xs md:text-sm font-medium text-gray-900 mb-2 md:mb-3">
