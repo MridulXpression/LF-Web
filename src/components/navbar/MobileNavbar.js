@@ -64,7 +64,7 @@ const MobileNavbar = ({ isOpen, onClose, menuData, getMenuHref }) => {
                       <div className="flex items-center justify-between">
                         <Link
                           href={`/categories?catId=${section.id}`}
-                          className="text-sm font-semibold block flex-1"
+                          className="text-[12px] font-semibold block flex-1"
                           onClick={onClose}
                         >
                           {section.heading}

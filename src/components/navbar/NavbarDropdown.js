@@ -23,7 +23,7 @@ const NavbarDropdown = ({ menu, latestBlogs, onMouseEnter, onMouseLeave }) => {
                   }
                 >
                   <a href={`/categories?catId=${section.id}`}>
-                    <h3 className="text-[10px] font-[600] text-[#0F0F0F] mb-1  font-clash-display uppercase">
+                    <h3 className="text-[10px] font-[600] text-[#0F0F0F] mb-1 font-clash-display uppercase break-words">
                       {section.heading}
                     </h3>
                   </a>

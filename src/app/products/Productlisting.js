@@ -87,20 +87,23 @@ const ShopByCategoriesPage = () => {
   const {
     products: filteredProducts,
     isLoading: isFilterLoading,
+    hasMore: hasMoreFiltered,
     applyFilters,
+    loadMore: loadMoreFiltered,
   } = useUnifiedFilter();
 
   // ===== PAGINATED PRODUCTS =====
   const {
     products: paginatedProducts,
     loading: isPageLoading,
-    hasMore,
-    loadMore,
+    hasMore: hasMorePaginated,
+    loadMore: loadMorePaginated,
   } = useProducts(hasFiltersApplied() ? null : "");
 
   const products = hasFiltersApplied() ? filteredProducts : paginatedProducts;
-
   const isLoading = hasFiltersApplied() ? isFilterLoading : isPageLoading;
+  const hasMore = hasFiltersApplied() ? hasMoreFiltered : hasMorePaginated;
+  const loadMore = hasFiltersApplied() ? loadMoreFiltered : loadMorePaginated;
 
   // ===== AVAILABLE SIZES & COLORS FROM METADATA =====
   const availableSizes = sizes || [];
@@ -228,7 +231,7 @@ const ShopByCategoriesPage = () => {
             products={products}
             isLoading={isLoading}
             isFilterApplied={hasFiltersApplied()}
-            hasMore={!hasFiltersApplied() && hasMore}
+            hasMore={hasMore}
             onLoadMore={loadMore}
             onBrowseAll={() => router.push("/products")}
           />

@@ -20,13 +20,7 @@ const ProductGrid = ({
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
-        if (
-          entries[0].isIntersecting &&
-          hasMore &&
-          !isLoading &&
-          !isFilterApplied &&
-          !subCategoryId
-        ) {
+        if (entries[0].isIntersecting && hasMore && !isLoading) {
           onLoadMore();
         }
       },
@@ -38,7 +32,7 @@ const ProductGrid = ({
     }
 
     return () => observer.disconnect();
-  }, [hasMore, isLoading, isFilterApplied, subCategoryId, onLoadMore]);
+  }, [hasMore, isLoading, onLoadMore]);
 
   // LOADING (Filter, Sort, or Pagination)
   if (isLoading) {
@@ -127,7 +121,7 @@ const ProductGrid = ({
 
       {/* Infinite Scroll Observer Target */}
       <div ref={observerTarget} className="py-8 flex justify-center">
-        {hasMore && !subCategoryId && (
+        {hasMore && (
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900"></div>
         )}
       </div>
