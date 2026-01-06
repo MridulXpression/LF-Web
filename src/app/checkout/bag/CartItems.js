@@ -72,7 +72,11 @@ const ShoppingCart = () => {
           image:
             item.product_variant?.imageSrc || item.product.imageUrls[0] || "",
           imageUrls: item.product.imageUrls,
-          price: item.product_variant?.price || item.product.basePrice || 0,
+          price:
+            item.pricing?.unitPrice ||
+            item.product_variant?.price ||
+            item.product.basePrice ||
+            0,
           originalPrice: item.product.mrp || item.product.basePrice,
           size: item.product_variant?.title || "One Size",
           quantity: item.quantity || 1, // Use quantity directly from API
