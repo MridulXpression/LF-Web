@@ -10,7 +10,7 @@ const Banner = ({ banner, bannerCount }) => {
 
   // Height based on banner count
   const heightClass =
-    bannerCount === 1 ? "h-[140px]" : "h-[220px] md:h-[400px]";
+    bannerCount === 1 ? "h-[140px] md:h-[400px]" : "h-[220px] md:h-[400px]";
 
   return (
     <div

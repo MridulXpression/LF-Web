@@ -93,7 +93,7 @@ const CheckOutAddress = () => {
           productId: item.productId,
           variantId: item.variantId,
           name: item.product.title,
-          price: item.product_variant.price, // Selling Price
+          price: item.pricing?.unitPrice || item.product_variant.price, // Use unitPrice from pricing
           originalPrice:
             item.product.mrp ||
             item.product.basePrice ||
