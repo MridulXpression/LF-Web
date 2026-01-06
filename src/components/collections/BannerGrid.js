@@ -18,9 +18,9 @@ const BannerGrid = ({ banners = [], bannerCount }) => {
       : "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3";
 
   return (
-    <div className={`grid ${gridClass} w-full gap-4 md:gap-6`}>
+    <div className={`grid ${gridClass} w-full gap-2 md:gap-6`}>
       {displayBanners.map((banner) => (
-        <Banner key={banner.id} banner={banner} />
+        <Banner key={banner.id} banner={banner} bannerCount={count} />
       ))}
     </div>
   );

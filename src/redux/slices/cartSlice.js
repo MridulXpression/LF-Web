@@ -5,6 +5,7 @@ const cartSlice = createSlice({
   initialState: {
     items: [], // store products + variant info
     totalItems: 0, // count of unique variant items
+    appliedCoupon: null, // store applied coupon for checkout
   },
   reducers: {
     addToCart: (state, action) => {
@@ -63,6 +64,17 @@ const cartSlice = createSlice({
     clearCart: (state) => {
       state.items = [];
       state.totalItems = 0;
+      state.appliedCoupon = null;
+    },
+
+    // Set applied coupon
+    setAppliedCoupon: (state, action) => {
+      state.appliedCoupon = action.payload;
+    },
+
+    // Clear applied coupon
+    clearAppliedCoupon: (state) => {
+      state.appliedCoupon = null;
     },
   },
 });
@@ -75,5 +87,7 @@ export const {
   updateQuantity,
   setItemSelected,
   setSelectedCartItems,
+  setAppliedCoupon,
+  clearAppliedCoupon,
 } = cartSlice.actions;
 export default cartSlice.reducer;

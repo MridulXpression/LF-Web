@@ -1,6 +1,8 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
+import { useDispatch, useSelector } from "react-redux";
+import { setAppliedCoupon, clearAppliedCoupon } from "@/redux/slices/cartSlice";
 import { X } from "lucide-react";
 import Link from "next/link";
 
@@ -13,9 +15,9 @@ const OrderSummary = ({
   onProceedWithoutLogin = null,
 }) => {
   const pathname = usePathname();
-  const [selectedCoupon, setSelectedCoupon] = useState(null);
+  const dispatch = useDispatch();
+  const appliedCoupon = useSelector((state) => state.cart?.appliedCoupon);
   const [showModal, setShowModal] = useState(false);
-  const [appliedDiscount, setAppliedDiscount] = useState(0);
 
   const totalMrp = products.reduce(
     (sum, p) => sum + (p.originalPrice || 0) * p.quantity,
@@ -44,16 +46,18 @@ const OrderSummary = ({
     return Math.min(discountAmount, coupon.maxDiscountCap || discountAmount);
   };
 
-  const totalDiscount = appliedDiscount;
+  const totalDiscount = appliedCoupon ? calculateDiscount(appliedCoupon) : 0;
 
   const totalPrice =
     subtotal + deliveryCharges + convenienceFee - totalDiscount;
 
   const handleApplyCoupon = (coupon) => {
-    const discountValue = calculateDiscount(coupon);
-    setAppliedDiscount(discountValue);
-    setSelectedCoupon(coupon);
+    dispatch(setAppliedCoupon(coupon));
     setShowModal(false);
+  };
+
+  const handleRemoveCoupon = () => {
+    dispatch(clearAppliedCoupon());
   };
 
   const isAddressPage = pathname === "/checkout/address";
@@ -101,10 +105,18 @@ const OrderSummary = ({
             <p className="text-gray-500 text-sm">No coupons available</p>
           )}
 
-          {selectedCoupon && (
-            <div className="mt-3 bg-green-100 p-2 rounded text-sm text-black">
-              Applied Coupon: <strong>{selectedCoupon.code}</strong> (
-              {selectedCoupon.discountType})
+          {appliedCoupon && (
+            <div className="mt-3 bg-green-100 p-2 rounded text-sm text-black flex justify-between items-center">
+              <div>
+                Applied Coupon: <strong>{appliedCoupon.code}</strong> (
+                {appliedCoupon.discountType})
+              </div>
+              <button
+                onClick={handleRemoveCoupon}
+                className="text-red-600 text-xs underline cursor-pointer"
+              >
+                Remove
+              </button>
             </div>
           )}
         </div>

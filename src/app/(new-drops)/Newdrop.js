@@ -110,12 +110,12 @@ const NewestAtLafetch = () => {
         <div className="flex flex-col gap-4 sm:gap-5 md:gap-6 lg:gap-7">
           <div className="h-48 sm:h-72 md:h-[280px] rounded-xl md:rounded-2xl bg-stone-200 overflow-hidden">
             <video
-              src="/videos/newin-video.mp4"
+              src="/videos/newin.mp4"
               autoPlay
               muted
               loop
               playsInline
-              className="w-full h-full object-cover"
+              className="w-full h-full object-fill"
             />
           </div>
 

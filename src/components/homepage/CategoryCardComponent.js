@@ -23,7 +23,7 @@ export default function ShopByCategory({ categories: externalCategories }) {
     {
       id: 3,
       name: "Accessories",
-      image: "/images/accessories.png",
+      image: "/images/Accesories.png",
       href: "/shop/accessories",
     },
   ];

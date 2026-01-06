@@ -3,7 +3,7 @@ import FashionVideoBackground from "@/components/Banner";
 export default function HomePage() {
   // Mock data inside the page
   const mockData = {
-    videoUrl: "/videos/Homepage-Banner.mp4", // keep the video in public folder
+    videoUrl: "/videos/homepage_video.mp4", // keep the video in public folder
     heading1: "Fetch your fashion in a",
     heading2: "Flash Premium Jackets",
     heading3: "Just at 60 Min",

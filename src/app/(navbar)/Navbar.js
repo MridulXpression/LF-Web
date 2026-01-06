@@ -61,9 +61,13 @@ const Navbar = () => {
     pathname === "/shop/women" ||
     pathname === "/shop/accessories";
 
-  const filteredMenuData = menuData.filter(
-    (menu) => menu.title !== "NEWSLETTERS" || shouldShowNewsletter
-  );
+  const filteredMenuData = menuData.filter((menu) => {
+    // Hide NEWSLETTERS if not on specific routes
+    if (menu.title === "NEWSLETTERS" && !shouldShowNewsletter) return false;
+    // Hide TRACK ORDER if user is not logged in
+    if (menu.title === "TRACK ORDER" && !user) return false;
+    return true;
+  });
 
   const blogs = useBlog();
   const latestBlogs = blogs?.slice(0, 3);
@@ -90,7 +94,7 @@ const Navbar = () => {
 
     if (t.includes("accessor")) return "/shop/accessories";
 
-    if (t === "track order") return "/track-order";
+    if (t === "track order") return "/account/orders";
 
     if (t === "newsletters") return "#newsletters";
 
