@@ -224,50 +224,48 @@ const CheckOutAddress = () => {
         return;
       }
 
-      // Build items array for initiate-payment
-      // Use quantity directly from API response
+      // Build items array for initiate-payment using pricing data from API
       const items = cartData.map((item) => {
+        const pricing = item.pricing || {};
         const quantity = item.quantity || 1;
-        const rawUnitPrice = item.product_variant?.price || 0;
-        const unitPrice = Number(parseFloat(rawUnitPrice) || 0);
 
         return {
-          productName: item.product?.title || "",
           productId: item.productId,
           variantId: item.variantId,
           quantity,
-          unitPrice,
-          total: Number((unitPrice * quantity).toFixed(2)),
-          sku: item.product?.sku || "",
-          hsn: item.product?.hsn || "",
+          unitPrice: Number(pricing.unitPrice || pricing.basePrice || 0),
+          discount: 0,
+          total: Number(pricing.total || 0),
+          tax: 0,
+          gstAmount: Number(pricing.gstAmount || 0),
+          hsnCode: pricing.hsnCode || "",
+          gstRate: Number(pricing.gstRate || 0),
+          statutoryGSTRate: Number(pricing.statutoryGSTRate || 0),
+          gstRuleApplied: pricing.gstRuleApplied || "VALUE_BASED",
         };
       });
 
-      const computedTotal = items.reduce(
-        (s, it) => s + (it.unitPrice || 0) * (it.quantity || 1),
-        0
-      );
-      // Use orderTotal from OrderSummary (includes GST) when available,
-      // otherwise fall back to computed cart total.
-      const paymentTotal = Number(
-        orderTotal && Number(orderTotal) > 0 ? orderTotal : computedTotal
-      );
-      // Calculate totalMRP using quantity from API
+      // Calculate totals from cart pricing data
       const totalMRP = cartData.reduce((s, it) => {
         const qty = it.quantity || 1;
-        const mrpPerUnit = Number(
-          parseFloat(it.product?.mrp || it.product?.basePrice || 0) || 0
+        const basePrice = Number(
+          it.pricing?.basePrice || it.product?.mrp || it.product?.basePrice || 0
         );
-        return s + mrpPerUnit * qty;
+        return s + basePrice * qty;
       }, 0);
+
+      const totalGST = items.reduce((s, it) => s + (it.gstAmount || 0), 0);
+      const paymentTotal = items.reduce((s, it) => s + (it.total || 0), 0);
 
       // Step 2: Call /initiate-payment API
       const initiatePayload = {
         userId: userId,
         shippingAddressId: selectedAddressId,
         items: items,
-        totalMRP: +totalMRP.toFixed(2),
-        total: +paymentTotal.toFixed(2),
+        totalMRP: Number(totalMRP.toFixed(2)),
+        couponDiscount: 0,
+        tax: Number(totalGST.toFixed(2)),
+        total: Number(paymentTotal.toFixed(2)),
         paymentMethod: "prepaid",
       };
 

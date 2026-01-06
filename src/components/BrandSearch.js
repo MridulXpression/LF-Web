@@ -15,7 +15,7 @@ const SearchFilterBar = ({
 }) => {
   return (
     <div className="bg-white pt-[100px] ">
-      <div className="max-w-7xl mx-auto px-4 mb-6 ">
+      <div className="w-full md:px-[100px] md:py-0 px-4 p-12 mb-4 ">
         <div className="flex flex-wrap gap-4 items-center justify-between  p-4 rounded-lg ">
           <div className="flex-1 min-w-[150px] max-w-md">
             <div className="relative">

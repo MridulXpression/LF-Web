@@ -67,7 +67,7 @@ const BrandProduct = () => {
         categories={categories}
       />
 
-      <div className="max-w-7xl mx-auto px-4 p-12">
+      <div className="w-full md:px-[100px] md:py-0 px-4 p-12">
         {filteredProducts.length > 0 ? (
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
             {filteredProducts.map((product) => (

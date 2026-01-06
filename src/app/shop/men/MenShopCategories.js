@@ -130,7 +130,7 @@ const ShopCategories = () => {
                       </div>
                     </div>
 
-                    <h3 className="text-black text-center font-semibold text-sm md:text-base lg:text-lg mt-4 px-4 leading-tight">
+                    <h3 className="text-black text-center font-semibold text-sm md:text-base  mt-4 px-4 leading-tight">
                       {category.name}
                     </h3>
                   </Link>

@@ -1,13 +1,15 @@
 "use client";
 import React from "react";
+import Link from "next/link";
 import useBanner from "@/hooks/useBanner";
 import BannerCarousel from "@/components/Carousel";
 
 const HomeCarousel = () => {
   const fetchBanners = useBanner();
 
-  // Get the first banner image
+  // Get the first banner image and redirect URL
   const bannerImage = fetchBanners?.[0]?.image;
+  const redirectUrl = fetchBanners?.[0]?.redirectUrl;
 
   if (!bannerImage) {
     return null;
@@ -15,7 +17,13 @@ const HomeCarousel = () => {
 
   return (
     <div>
-      <BannerCarousel image={bannerImage} />
+      {redirectUrl ? (
+        <Link href={redirectUrl} target="_blank" rel="noopener noreferrer">
+          <BannerCarousel image={bannerImage} />
+        </Link>
+      ) : (
+        <BannerCarousel image={bannerImage} />
+      )}
     </div>
   );
 };

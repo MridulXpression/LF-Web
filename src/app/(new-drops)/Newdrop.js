@@ -48,7 +48,19 @@ const NewestAtLafetch = () => {
   const handleLike = (productId) => {};
 
   return (
-    <div className="w-full min-h-screen px-4 sm:px-8 md:px-12 lg:px-20 py-6 sm:py-8 md:py-10 bg-white flex flex-col gap-6 sm:gap-8 md:gap-10">
+    <div
+      className="
+  w-full
+ 
+ 
+  p-[24px]
+  py-6 sm:py-8
+  bg-white
+  flex flex-col
+  gap-6 sm:gap-8 md:gap-10
+  max-h-screen
+"
+    >
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center gap-4 md:gap-10">
         <div className="flex-1 h-1 bg-stone-100/90 overflow-hidden relative">
@@ -61,7 +73,7 @@ const NewestAtLafetch = () => {
           />
         </div>
 
-        <h2 className="w-full md:w-[772px] text-left md:text-right text-2xl  md:text-[36px] font-semibold uppercase text-[#0F0F0F]">
+        <h2 className="w-full md:w-[600px] text-left md:text-right text-2xl  md:text-[36px] font-semibold uppercase text-[#0F0F0F]">
           What's Newest at Lafetch
         </h2>
       </div>
@@ -73,7 +85,7 @@ const NewestAtLafetch = () => {
           {rows.map((row, rowIndex) => (
             <div
               key={rowIndex}
-              className="flex flex-col sm:flex-row gap-4 sm:gap-6 md:gap-7 lg:gap-9"
+              className="flex flex-row gap-4 sm:gap-6 md:gap-7 lg:gap-9"
             >
               {row.map((product) => (
                 <div key={product.id} className="w-full sm:flex-1">
@@ -96,7 +108,7 @@ const NewestAtLafetch = () => {
 
         {/* Right Section - Static */}
         <div className="flex flex-col gap-4 sm:gap-5 md:gap-6 lg:gap-7">
-          <div className="h-48 sm:h-72 md:h-[440px] rounded-xl md:rounded-2xl bg-stone-200 overflow-hidden">
+          <div className="h-48 sm:h-72 md:h-[280px] rounded-xl md:rounded-2xl bg-stone-200 overflow-hidden">
             <video
               src="/videos/newin-video.mp4"
               autoPlay
@@ -107,14 +119,14 @@ const NewestAtLafetch = () => {
             />
           </div>
 
-          <div className="relative h-48 sm:h-56 md:h-64 rounded-xl md:rounded-2xl overflow-hidden">
+          <div className="relative h-48  md:h-[220px] rounded-xl md:rounded-2xl overflow-hidden">
             <div className="absolute inset-0 bg-[#e7e7e6] rounded-xl md:rounded-2xl" />
-            <div className="absolute inset-0 left-4 sm:left-5 md:left-6 lg:left-7 top-4 sm:top-5 md:top-6 lg:top-8 right-4 sm:right-5 md:right-6 lg:right-7 flex flex-col gap-4 sm:gap-5 md:gap-6 lg:gap-9">
+            <div className="absolute inset-0 left-4 sm:left-5 md:left-6 lg:left-7 top-4 sm:top-5 md:top-6  right-4 sm:right-5 md:right-6 lg:right-7 flex flex-col gap-3 sm:gap-3 md:gap-4 lg:gap-5">
               <div>
-                <h3 className="text-lg sm:text-xl md:text-2xl lg:text-[27px] font-[550] text-[#0F0F0F] uppercase">
+                <h3 className="text-lg   md:text-[23px] font-[550] text-[#0F0F0F] uppercase">
                   Top Trending Collection of 2025
                 </h3>
-                <p className="text-xs sm:text-sm  md:text-[15px] font-[500] text-[#0F0F0FCC] leading-5 sm:leading-6 md:leading-7 lg:leading-[24px]">
+                <p className="text-xs  md:text-[13px] font-[500] text-[#0F0F0FCC] leading-5 sm:leading-6 md:leading-7 lg:leading-[24px]">
                   Explore our curated collection of the season's must-have
                   styles. From runway-inspired looks to timeless classics, find
                   your next favorite piece here.
@@ -123,7 +135,7 @@ const NewestAtLafetch = () => {
 
               <Link
                 href="/products"
-                className="px-6 sm:px-7 md:px-8 lg:px-10 py-2 sm:py-3 md:py-4 max-w-[212px] text-[#0F0F0F] text-sm sm:text-base md:text-[15px]  font-[600] cursor-pointer rounded-full outline outline-2 outline-stone-950 hover:bg-stone-950 hover:text-white transition w-fit flex items-center gap-2 sm:gap-3 group uppercase"
+                className="px-6 sm:px-7 md:px-8 lg:px-10 py-2 sm:py-3 md:py-4 max-w-[200px] text-[#0F0F0F] text-sm md:text-[14px]  font-[600] cursor-pointer rounded-full outline outline-2 outline-stone-950 hover:bg-stone-950 hover:text-white transition w-fit flex items-center gap-2 sm:gap-3 group uppercase"
               >
                 View All
                 <ArrowRight className="text-black group-hover:text-white rotate-[-45deg]" />

@@ -128,7 +128,7 @@ const Footer = () => {
                 <input
                   type="email"
                   placeholder="Write your email here"
-                  className="flex-1 bg-transparent text-sm  outline-none placeholder-white/60"
+                  className="flex-1 bg-transparent text-sm  outline-none placeholder-white/60 pl-4"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   onKeyPress={(e) =>
@@ -149,50 +149,41 @@ const Footer = () => {
 
         {/* Bottom Section */}
         <div className="border-t border-white/20 pt-8">
-          {/* Row 1: Copyright + Socials */}
-          <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-gray-400">
-            {/* Left */}
-            <div>
-              ©2025 Powered By and All Right Reserved to AS10 TECH-RETAIL
-              PRIVATE LIMITED
-            </div>
+          {/* Row 1: Socials */}
+          <div className="flex justify-end items-center gap-5">
+            <a
+              href="https://www.instagram.com/stylewithlafetch/"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <Image
+                src="/icons/instagram.png"
+                alt="Instagram"
+                width={18}
+                height={18}
+              />
+            </a>
 
-            {/* Right */}
-            <div className="flex items-center gap-5">
-              <a
-                href="https://www.instagram.com/stylewithlafetch/"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <Image
-                  src="/icons/instagram.png"
-                  alt="Instagram"
-                  width={18}
-                  height={18}
-                />
-              </a>
+            <a
+              href="https://www.facebook.com/p/LaFetch-61555807824172/"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <Image
+                src="/icons/meta.png"
+                alt="Facebook"
+                width={18}
+                height={18}
+              />
+            </a>
 
-              <a
-                href="https://www.facebook.com/p/LaFetch-61555807824172/"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <Image
-                  src="/icons/meta.png"
-                  alt="Facebook"
-                  width={18}
-                  height={18}
-                />
-              </a>
-
-              <a
-                href="https://www.youtube.com/@LaFetch"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <Youtube className="w-5 h-5 text-white" />
-              </a>
-            </div>
+            <a
+              href="https://www.youtube.com/@LaFetch"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <Youtube className="w-5 h-5 text-white" />
+            </a>
           </div>
 
           {/* Row 2: Big Center Logo */}
@@ -204,6 +195,12 @@ const Footer = () => {
               height={140}
               className="object-contain"
             />
+          </div>
+
+          {/* Row 3: Copyright - Left aligned */}
+          <div className="mt-6 text-sm text-gray-400">
+            ©2025 Powered By and All Right Reserved to AS10 TECH-RETAIL PRIVATE
+            LIMITED
           </div>
         </div>
       </div>
