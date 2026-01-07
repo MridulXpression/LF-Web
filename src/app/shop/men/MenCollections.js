@@ -4,6 +4,7 @@ import useCollection from "@/hooks/useCollection";
 import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import BannerGrid from "@/components/collections/BannerGrid";
 
 const MenCollectionSection = () => {
   const query = "gender=1";
@@ -18,8 +19,8 @@ const MenCollectionSection = () => {
   };
 
   return (
-    <div className="py-16 px-4 bg-white">
-      <div className="w-full p-[20px] lg:p-[50px]">
+    <div className="px-0  bg-white">
+      <div className="w-full py-4 sm:py-6 md:py-8 px-4 sm:px-6 md:px-10">
         {collections?.map((collection) => {
           const productsToShow = displayedProductsCount[collection.id] || 8;
           const visibleProducts = collection.products?.slice(0, productsToShow);
@@ -30,13 +31,16 @@ const MenCollectionSection = () => {
             return null;
           }
 
+          // Get banners from collection data
+          const banners = collection.banners || [];
+          const bannerCount = banners.length;
+
           return (
             <section key={collection.id} className="mb-16">
               {/* Section Title */}
               <h2 className="text-[20px] md:text-4xl font-bold text-center text-black mb-12 tracking-wide">
                 {collection.name} {/* dynamic title */}
               </h2>
-
               {/* Products Grid */}
               <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-[20px] justify-items-center">
                 {visibleProducts?.map((product, index) => {
@@ -47,7 +51,7 @@ const MenCollectionSection = () => {
                   if (isLast) {
                     return (
                       <div key={product.id} className="w-full">
-                        <div className="relative w-full aspect-[2/3] max-h-[350px]  md:max-h-[400px] rounded-lg overflow-hidden">
+                        <div className="relative w-full aspect-[2/3] max-h-[400px] rounded-lg overflow-hidden">
                           {/* Product Image + Overlay */}
                           <Image
                             src={product.imageUrls?.[0]}
@@ -122,7 +126,6 @@ const MenCollectionSection = () => {
                   // );
                 })}
               </div>
-
               {/* Explore More Button */}
               {/* {hasMoreProducts && (
                 <div className="flex justify-center mt-8">
@@ -134,6 +137,12 @@ const MenCollectionSection = () => {
                   </button>
                 </div>
               )} */}
+              {/* Banners Section */}
+              {bannerCount > 0 && (
+                <div className="mt-8 sm:mt-10 md:mt-12 -mx-4 sm:-mx-6 md:-mx-10">
+                  <BannerGrid banners={banners} bannerCount={bannerCount} />
+                </div>
+              )}
             </section>
           );
         })}

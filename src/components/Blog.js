@@ -179,7 +179,7 @@ const FashionGrid = ({ data, title = "TRENDING NOW" }) => {
                       className={`w-50 px-8 py-4 rounded-[46px] outline outline-2 outline-offset-[-2px] inline-flex justify-between items-center transition-colors duration-300 ${
                         hoveredButtonId === `first-${index}`
                           ? "bg-black outline-white"
-                          : "outline-black"
+                          : "outline-white"
                       }`}
                     >
                       <div
@@ -196,7 +196,7 @@ const FashionGrid = ({ data, title = "TRENDING NOW" }) => {
                           className={`rotate-[-45deg] transition-colors duration-300 ${
                             hoveredButtonId === `first-${index}`
                               ? "text-white"
-                              : "text-black"
+                              : "text-white"
                           }`}
                         />
                       </div>
@@ -289,7 +289,7 @@ const FashionGrid = ({ data, title = "TRENDING NOW" }) => {
                     className={`w-50 px-8 py-4 rounded-[46px] outline outline-2 outline-offset-[-2px] inline-flex justify-between items-center transition-colors duration-300 ${
                       hoveredButtonId === `second-${index}`
                         ? "bg-black outline-white"
-                        : "outline-black"
+                        : "outline-white"
                     }`}
                   >
                     <div
@@ -306,7 +306,7 @@ const FashionGrid = ({ data, title = "TRENDING NOW" }) => {
                         className={`rotate-[-45deg] transition-colors duration-300 ${
                           hoveredButtonId === `second-${index}`
                             ? "text-white"
-                            : "text-black"
+                            : "text-white"
                         }`}
                       />
                     </div>

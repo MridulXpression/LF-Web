@@ -166,6 +166,7 @@ export default function ProductPage({ params }) {
   // ✅ Get selected variant from localStorage
   const [selectedVariant, setSelectedVariant] = useState(null);
   const [quantity, setQuantity] = useState(1);
+  const [message, setMessage] = useState(null);
 
   useEffect(() => {
     if (data?.variants?.length) {
@@ -297,6 +298,13 @@ export default function ProductPage({ params }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data?.id]);
 
+  // Handle message display
+  const handleMessage = (msg) => {
+    setMessage(msg);
+    // Auto clear message after 5 seconds
+    setTimeout(() => setMessage(null), 5000);
+  };
+
   if (!data)
     return (
       <div className="flex items-center justify-center h-screen bg-white">
@@ -366,6 +374,18 @@ export default function ProductPage({ params }) {
               </div>
             )}
 
+            {/* Display message below Add to Bag */}
+            {message && (
+              <div
+                className={`p-3 rounded text-sm font-medium ${
+                  message.type === "success"
+                    ? "bg-green-100 text-green-800 border border-green-200"
+                    : "bg-red-100 text-red-800 border border-red-200"
+                }`}
+              >
+                {message.text}
+              </div>
+            )}
             <ProductActions
               onAddToBag={handleAddToBag}
               onAddToWishlist={handleAddToWishlist}
@@ -384,6 +404,7 @@ export default function ProductPage({ params }) {
                       )
                     )
               }
+              onMessage={handleMessage}
             />
 
             <ProductDelivery

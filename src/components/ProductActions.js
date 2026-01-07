@@ -4,7 +4,6 @@ import { useDispatch } from "react-redux";
 import { openWishlistModal } from "@/redux/slices/loginmodalSlice";
 import CreateBoardModal from "./WishlistBoardModal";
 import useAddProductToCart from "@/hooks/useAddProductToCart";
-import toast, { Toaster } from "react-hot-toast";
 import { addToCart } from "@/redux/slices/cartSlice";
 
 const ProductActions = ({
@@ -13,6 +12,7 @@ const ProductActions = ({
   productId,
   quantity = 1,
   isInStock = true,
+  onMessage = null,
 }) => {
   const [showModal, setShowModal] = useState(false);
   const dispatch = useDispatch();
@@ -25,7 +25,7 @@ const ProductActions = ({
 
   const handleAddToBag = async () => {
     if (!isInStock) {
-      toast.error("Out of Stock", { position: "top-center" });
+      if (onMessage) onMessage({ type: "error", text: "Out of Stock" });
       return;
     }
     const result = await addProductToCart(productId, quantity);
@@ -34,13 +34,9 @@ const ProductActions = ({
     dispatch(addToCart({ product: productData, variantId }));
 
     if (result.success) {
-      toast.success(result.message, {
-        position: "top-center",
-      });
+      if (onMessage) onMessage({ type: "success", text: result.message });
     } else {
-      toast.error(result.message, {
-        position: "top-center",
-      });
+      if (onMessage) onMessage({ type: "error", text: result.message });
     }
   };
 
@@ -69,9 +65,6 @@ const ProductActions = ({
           onClose={() => setShowModal(false)}
         />
       )}
-
-      {/* Toaster Component */}
-      <Toaster />
     </>
   );
 };

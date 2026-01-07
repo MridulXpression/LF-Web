@@ -46,7 +46,7 @@ const DeliveryOptions = ({ pincode, deliveryInfo, onCheckPincode }) => {
         </div>
         <button
           onClick={handleCheck}
-          className={`px-5 py-2.5 text-pink-600 font-bold text-sm hover:bg-pink-50 transition-colors ${
+          className={`px-5 py-2.5 text-[#9c90ff] font-bold text-sm hover:bg-pink-50 transition-colors ${
             pin.length !== 6 ? "opacity-50 cursor-not-allowed" : ""
           }`}
           disabled={loading || pin.length !== 6}

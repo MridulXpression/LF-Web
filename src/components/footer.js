@@ -32,7 +32,7 @@ const Footer = () => {
 
   return (
     <footer className="bg-[#0F0F0F] text-white w-full flex flex-col justify-end ">
-      <div className="px-4 sm:px-6 lg:px-8 py-6 flex flex-col flex-1 justify-end">
+      <div className="px-4 sm:px-6 lg:px-8 py-10 flex flex-col flex-1 justify-end">
         {/* Main Footer Content */}
         <div className="flex flex-col lg:flex-row justify-between gap-20 mb-16 px-[20px]">
           {/* Left: 4 Columns */}
@@ -176,8 +176,8 @@ const Footer = () => {
                 <Image
                   src="/icons/instagram.png"
                   alt="Instagram"
-                  width={18}
-                  height={18}
+                  width={25}
+                  height={25}
                 />
               </a>
 
@@ -189,8 +189,8 @@ const Footer = () => {
                 <Image
                   src="/icons/meta.png"
                   alt="Facebook"
-                  width={18}
-                  height={18}
+                  width={25}
+                  height={25}
                 />
               </a>
 
@@ -199,7 +199,7 @@ const Footer = () => {
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                <Youtube className="w-5 h-5 text-white" />
+                <Youtube className="w-6 h-6 text-white" />
               </a>
             </div>
           </div>

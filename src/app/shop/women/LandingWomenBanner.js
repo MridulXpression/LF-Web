@@ -4,8 +4,9 @@ export default function WomenBanner() {
   // Mock data inside the page
   const mockData = {
     videoUrl: "/videos/Lafetch-Women.mp4", // keep the video in public folder
-    heading1: "Fetch your fashion in a flash",
-    heading2: "Premium Jackets at 60 min",
+    heading1: "Homegrown Fashion Edit",
+    heading2: "Handpicked Styles",
+    heading3: "Chosen for Her",
   };
 
   return (
@@ -13,6 +14,7 @@ export default function WomenBanner() {
       videoUrl={mockData.videoUrl}
       heading1={mockData.heading1}
       heading2={mockData.heading2}
+      heading3={mockData.heading3}
       subHeading={mockData.subHeading}
       description={mockData.description}
     />

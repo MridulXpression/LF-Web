@@ -4,6 +4,44 @@ import Link from "next/link";
 import Image from "next/image";
 
 const NavbarDropdown = ({ menu, latestBlogs, onMouseEnter, onMouseLeave }) => {
+  // Determine which images to show based on menu title
+  const getCategoryImages = () => {
+    const title = menu.title.toLowerCase();
+
+    // Check for "women" first, since "women" contains "men"
+    if (title.includes("women")) {
+      return [
+        { src: "/images/women-nav-top.png", alt: "Women Category 1" },
+        { src: "/images/women-nav1.png", alt: "Women Category 2" },
+        { src: "/images/women-nav2.png", alt: "Women Category 3" },
+      ];
+    } else if (title.includes("men")) {
+      return [
+        { src: "/images/men-dropdown-1.jpg", alt: "Men Category 1" },
+        { src: "/images/men-dropdown-2.jpg", alt: "Men Category 2" },
+        { src: "/images/men-dropdown-3.jpg", alt: "Men Category 3" },
+      ];
+    } else if (title.includes("accessor")) {
+      return [
+        {
+          src: "/images/access-nav-top.png",
+          alt: "Accessories Category 1",
+        },
+        {
+          src: "/images/access-1.png",
+          alt: "Accessories Category 2",
+        },
+        {
+          src: "/images/access-2.png",
+          alt: "Accessories Category 3",
+        },
+      ];
+    }
+    return null;
+  };
+
+  const categoryImages = getCategoryImages();
+
   return (
     <div
       className="fixed left-0 right-0 top-36 z-40 max-h-[90vh] overflow-y-auto"
@@ -44,55 +82,43 @@ const NavbarDropdown = ({ menu, latestBlogs, onMouseEnter, onMouseLeave }) => {
             </div>
 
             {/* Right Side - Image Gallery */}
-            {latestBlogs?.length > 0 && (
-              <div className="w-[420px] flex-shrink-0 max-h-[550px]">
+            {categoryImages && (
+              <div className="w-[420px] flex-shrink-0 max-h-[550px] mt-[10px] ">
                 <div className="grid grid-cols-2 grid-rows-2 gap-3 h-full">
                   {/* Large Image - Top Row Spanning 2 Columns */}
-                  {latestBlogs[0] && (
-                    <Link
-                      href={`/blogs/${latestBlogs[0].id}`}
-                      target="_blank"
-                      className="col-span-2 row-span-1 relative rounded-lg overflow-hidden h-[240px]"
-                    >
+                  {categoryImages[0] && (
+                    <div className="col-span-2 row-span-1 relative rounded-lg overflow-hidden h-[240px]">
                       <Image
-                        src={latestBlogs[0].image_url}
-                        alt={latestBlogs[0].title}
+                        src={categoryImages[0].src}
+                        alt={categoryImages[0].alt}
                         fill
                         className="object-cover hover:scale-105 transition-transform duration-300"
                       />
-                    </Link>
+                    </div>
                   )}
 
                   {/* Small Image - Bottom Left */}
-                  {latestBlogs[1] && (
-                    <Link
-                      href={`/blogs/${latestBlogs[1].id}`}
-                      target="_blank"
-                      className="relative rounded-lg overflow-hidden h-[200px]"
-                    >
+                  {categoryImages[1] && (
+                    <div className="relative rounded-lg overflow-hidden h-[200px]">
                       <Image
-                        src={latestBlogs[1].image_url}
-                        alt={latestBlogs[1].title}
+                        src={categoryImages[1].src}
+                        alt={categoryImages[1].alt}
                         fill
                         className="object-cover hover:scale-105 transition-transform duration-300"
                       />
-                    </Link>
+                    </div>
                   )}
 
                   {/* Small Image - Bottom Right */}
-                  {latestBlogs[2] && (
-                    <Link
-                      href={`/blogs/${latestBlogs[2].id}`}
-                      target="_blank"
-                      className="relative rounded-lg overflow-hidden h-[200px]"
-                    >
+                  {categoryImages[2] && (
+                    <div className="relative rounded-lg overflow-hidden h-[200px]">
                       <Image
-                        src={latestBlogs[2].image_url}
-                        alt={latestBlogs[2].title}
+                        src={categoryImages[2].src}
+                        alt={categoryImages[2].alt}
                         fill
                         className="object-cover hover:scale-105 transition-transform duration-300"
                       />
-                    </Link>
+                    </div>
                   )}
                 </div>
               </div>

@@ -53,7 +53,7 @@ const useUnifiedFilter = () => {
           params.append("color", colors.join(","));
         }
         if (collectionId) params.append("collectionId", collectionId);
-        if (key) params.append("key", encodeURIComponent(key));
+        if (key) params.append("key", key);
 
         // Add page parameter
         params.append("page", pageNumber);

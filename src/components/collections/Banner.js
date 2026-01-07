@@ -10,7 +10,9 @@ const Banner = ({ banner, bannerCount }) => {
 
   // Height based on banner count
   const heightClass =
-    bannerCount === 1 ? "h-[140px] md:h-[400px]" : "h-[220px] md:h-[400px]";
+    bannerCount === 1
+      ? "h-[130px] md:h-[140px] md:h-[400px]"
+      : "h-[180px] sm:h-[220px] md:h-[400px]";
 
   return (
     <div
@@ -20,7 +22,7 @@ const Banner = ({ banner, bannerCount }) => {
       onClick={handleClick}
     >
       <Image
-        className="w-full h-full object-cover"
+        className="w-full h-full object-cover rounded-xl"
         src={banner.imageUrl}
         alt={`Banner ${banner.id}`}
         fill

@@ -177,14 +177,14 @@ const ProductInfo = ({
               MRP ₹{mrp}
             </span>
 
-            <span className="text-base text-orange-500 font-semibold">
+            <span className="text-base text-green-500 font-semibold">
               ({discount}% OFF)
             </span>
           </>
         )}
       </div>
 
-      <div className="text-sm text-red-500 font-semibold mb-6">
+      <div className="text-sm text-[#9c90ff] font-semibold mb-6">
         Inclusive of all taxes
       </div>
 
@@ -211,7 +211,7 @@ const ProductInfo = ({
                   setSizeChartLoading(false);
                 }
               }}
-              className="text-sm text-pink-600 font-bold hover:text-pink-700 cursor-pointer"
+              className="text-sm text-[#9c90ff] font-bold hover:text-[#9c90ff] cursor-pointer"
             >
               SIZE CHART &gt;
             </button>
