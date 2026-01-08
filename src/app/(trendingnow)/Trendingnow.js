@@ -282,7 +282,11 @@ const TrendingNowSection = () => {
             {/* Banners Section */}
             {bannerCount > 0 && (
               <div className="mt-8 sm:mt-10 md:mt-12 -mx-4 sm:-mx-6 md:-mx-10">
-                <BannerGrid banners={banners} bannerCount={bannerCount} />
+                <BannerGrid
+                  banners={banners}
+                  bannerCount={bannerCount}
+                  displayFor="homepage"
+                />
               </div>
             )}
           </section>

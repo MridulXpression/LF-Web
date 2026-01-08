@@ -32,7 +32,6 @@ const CollectionSection = () => {
           }
           // Get banners from collection data
           const banners = collection.banners || [];
-          const bannerCount = banners.length;
 
           return (
             <section key={collection.id} className="mb-16">
@@ -138,9 +137,9 @@ const CollectionSection = () => {
               )} */}
 
               {/* Banners Section */}
-              {bannerCount > 0 && (
+              {banners.length > 0 && (
                 <div className="mt-8 sm:mt-10 md:mt-12 -mx-4 sm:-mx-6 md:-mx-10">
-                  <BannerGrid banners={banners} bannerCount={bannerCount} />
+                  <BannerGrid banners={banners} displayFor="women" />
                 </div>
               )}
             </section>

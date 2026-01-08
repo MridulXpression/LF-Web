@@ -22,7 +22,7 @@ const Banner = ({ banner, bannerCount }) => {
       onClick={handleClick}
     >
       <Image
-        className="w-full h-full object-cover rounded-xl"
+        className="w-full h-full object-fill rounded-xl"
         src={banner.imageUrl}
         alt={`Banner ${banner.id}`}
         fill

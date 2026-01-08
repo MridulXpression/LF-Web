@@ -1,13 +1,23 @@
 import React from "react";
 import Banner from "./Banner";
 
-const BannerGrid = ({ banners = [], bannerCount }) => {
+const BannerGrid = ({ banners = [], bannerCount, displayFor = "homepage" }) => {
   if (!banners.length) return null;
 
+  // Filter banners based on displayFor
+  const filteredBanners = banners.filter((banner) => {
+    if (!banner.displayFor || !Array.isArray(banner.displayFor)) return true;
+    return banner.displayFor.includes(displayFor);
+  });
+
+  if (!filteredBanners.length) return null;
+
   // Sort banners by position
-  const sortedBanners = [...banners].sort((a, b) => a.position - b.position);
+  const sortedBanners = [...filteredBanners].sort(
+    (a, b) => a.position - b.position
+  );
   const displayBanners = sortedBanners.slice(0, 3);
-  const count = bannerCount || displayBanners.length;
+  const count = displayBanners.length;
 
   // Responsive grid classes based on banner count
   const gridClass =
