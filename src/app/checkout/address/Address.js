@@ -32,6 +32,7 @@ const CheckOutAddress = () => {
   const getCoupons = useGetCoupons();
   const userInfo = useSelector((state) => state.user?.userInfo);
   const cartItemsFromRedux = useSelector((state) => state.cart?.items || []);
+  const appliedCoupon = useSelector((state) => state.cart?.appliedCoupon);
   const userId = userInfo?.id;
   const dispatch = useDispatch();
   const router = useRouter();
@@ -92,7 +93,7 @@ const CheckOutAddress = () => {
           productId: item.productId,
           variantId: item.variantId,
           name: item.product.title,
-          price: item.product_variant.price, // Selling Price
+          price: item.pricing?.unitPrice || item.product_variant.price, // Use unitPrice from pricing
           originalPrice:
             item.product.mrp ||
             item.product.basePrice ||
@@ -255,7 +256,25 @@ const CheckOutAddress = () => {
       }, 0);
 
       const totalGST = items.reduce((s, it) => s + (it.gstAmount || 0), 0);
-      const paymentTotal = items.reduce((s, it) => s + (it.total || 0), 0);
+      const subtotalBeforeCoupon = items.reduce(
+        (s, it) => s + (it.total || 0),
+        0
+      );
+
+      // Calculate coupon discount
+      let couponDiscount = 0;
+      if (appliedCoupon && appliedCoupon.discountType) {
+        const discountPercent = parseFloat(
+          appliedCoupon.discountType.replace("%", "")
+        );
+        const discountAmount = (subtotalBeforeCoupon * discountPercent) / 100;
+        couponDiscount = Math.min(
+          discountAmount,
+          appliedCoupon.maxDiscountCap || discountAmount
+        );
+      }
+
+      const paymentTotal = subtotalBeforeCoupon - couponDiscount;
 
       // Step 2: Call /initiate-payment API
       const initiatePayload = {
@@ -263,7 +282,7 @@ const CheckOutAddress = () => {
         shippingAddressId: selectedAddressId,
         items: items,
         totalMRP: Number(totalMRP.toFixed(2)),
-        couponDiscount: 0,
+        couponDiscount: Number(couponDiscount.toFixed(2)),
         tax: Number(totalGST.toFixed(2)),
         total: Number(paymentTotal.toFixed(2)),
         paymentMethod: "prepaid",

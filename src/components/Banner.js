@@ -22,13 +22,13 @@ const FashionVideoBackground = ({ videoUrl, heading1, heading2, heading3 }) => {
             <p className="text-sm md:text-[25px] font-[600] text-white tracking-[1px]  uppercase leading-tight">
               {heading1}
             </p>
-            <p className="text-sm md:text-[40px] font-[600] text-white  uppercase leading-tight">
+            <p className="text-sm md:text-[40px] font-[600] text-white tracking-[1px] uppercase leading-tight">
               {heading2}
             </p>
-            <p className="text-sm md:text-[32px] font-[300] text-white tracking-[1.08px] uppercase leading-tight">
-              {heading3}
-            </p>
           </div>
+          <p className="text-sm mt-[5px] md:text-[24px] font-[400] text-white tracking-[1.08px] uppercase leading-tight">
+            {heading3}
+          </p>
         </div>
       </div>
     </div>

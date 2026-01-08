@@ -13,6 +13,7 @@ import Image from "next/image";
 const OrderCard = ({ order, onAction, onClick }) => {
   const {
     id,
+    orderId,
     product,
     order: orderDetails,
     quantity,
@@ -122,7 +123,7 @@ const OrderCard = ({ order, onAction, onClick }) => {
             </div>
           )}
           <p className="text-sm text-gray-500">
-            Order ID: <span className="text-black font-medium">#{id}</span>
+            Order ID: <span className="text-black font-medium">#{orderId}</span>
           </p>
         </div>
       </div>

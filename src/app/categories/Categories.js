@@ -18,10 +18,10 @@ const CategoryPage = () => {
 
   return (
     <div className="bg-white">
-      <div className="w-full md:px-[100px] md:py-0 px-4 p-12 mb-4 mt-[160px]  ">
+      <div className="w-full md:px-[100px] md:py-0 px-4 p-12 mb-4 mt-[130px] md:mt-[160px]  ">
         {/* Category Header */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">
+          <h1 className="text-lg md:text-3xl font-bold text-gray-900 mb-2">
             {categoryProducts.name}
           </h1>
         </div>
@@ -40,7 +40,7 @@ const CategoryPage = () => {
                 >
                   {/* Subcategory Name */}
                   <div className="mb-6 flex justify-between items-center">
-                    <h2 className="text-2xl font-semibold text-gray-900 uppercase tracking-wide">
+                    <h2 className="text-lg md:text-2xl font-semibold text-gray-900 uppercase tracking-wide">
                       {subcategory.name}
                     </h2>
 
@@ -57,7 +57,7 @@ const CategoryPage = () => {
 
                   {/* Products */}
                   {firstFiveProducts?.length > 0 ? (
-                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 md:gap-5">
+                    <div className="grid grid-cols-2 gap-5  md:grid-cols-4 lg:grid-cols-5 md:gap-5">
                       {firstFiveProducts.map((product) => (
                         <ListingCard
                           key={product.id}

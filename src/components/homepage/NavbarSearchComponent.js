@@ -108,7 +108,7 @@ export default function NavbarSearchComponent({
               <a
                 href={
                   searchQuery.trim()
-                    ? `/products?key=${encodeURIComponent(searchQuery.trim())}`
+                    ? `/products?key=${searchQuery.trim()}`
                     : "#"
                 }
                 ref={anchorRef}
@@ -150,9 +150,7 @@ export default function NavbarSearchComponent({
                   suggestions.map((suggestion, index) => (
                     <a
                       key={index}
-                      href={`/products?key=${encodeURIComponent(
-                        suggestion.trim()
-                      )}`}
+                      href={`/products?key=${suggestion.trim()}`}
                       onClick={() => handleSuggestionClick(suggestion)}
                       className="h-auto sm:h-7 px-2 sm:px-2.5 py-1 sm:py-1.5 bg-zinc-100 rounded flex justify-center items-center gap-1 cursor-pointer hover:bg-zinc-200 transition-colors"
                     >
@@ -167,11 +165,9 @@ export default function NavbarSearchComponent({
                   recentSearches.map((search, index) => (
                     <a
                       key={index}
-                      href={`/products?key=${encodeURIComponent(
-                        search.trim()
-                      )}`}
+                      href={`/products?key=${search.trim()}`}
                       onClick={() => handleSuggestionClick(search)}
-                      className="h-auto sm:h-7 px-2 sm:px-2.5 py-1 sm:py-1.5 bg-zinc-100 rounded flex justify-center items-center gap-1 cursor-pointer hover:bg-zinc-200 transition-colors"
+                      className="h-auto sm:h-7 px-2 sm:px-2.5 py-1 sm:px-2.5 bg-zinc-100 rounded flex justify-center items-center gap-1 cursor-pointer hover:bg-zinc-200 transition-colors"
                     >
                       <div className="flex justify-center items-start gap-2.5">
                         <div className="justify-start text-neutral-700 text-xs sm:text-sm font-normal">
@@ -200,9 +196,7 @@ export default function NavbarSearchComponent({
                       {trendingSearches.map((item, index) => (
                         <a
                           key={index}
-                          href={`/products?key=${encodeURIComponent(
-                            item.trim()
-                          )}`}
+                          href={`/products?key=${item.trim()}`}
                           onClick={() => handleSuggestionClick(item)}
                           className="inline-flex justify-center items-center gap-2.5 cursor-pointer hover:opacity-70 transition-opacity"
                         >

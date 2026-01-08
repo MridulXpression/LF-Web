@@ -19,8 +19,8 @@ const CategorySection = () => {
 
     {
       id: 3,
-      name: "Accessories",
-      image: "/images/accessories.png",
+      name: "Essentials",
+      image: "/images/Accesories.png",
       href: "/shop/accessories",
     },
   ];

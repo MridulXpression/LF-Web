@@ -45,6 +45,9 @@ const clashDisplay = localFont({
 export const metadata = {
   title: "LaFetch",
   description: "LaFetch - Your one-stop online shopping destination",
+  icons: {
+    icon: "/favicon.png",
+  },
 };
 
 export default function RootLayout({ children }) {

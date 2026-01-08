@@ -32,7 +32,7 @@ const Footer = () => {
 
   return (
     <footer className="bg-[#0F0F0F] text-white w-full flex flex-col justify-end ">
-      <div className="px-4 sm:px-6 lg:px-8 py-12 flex flex-col flex-1 justify-end">
+      <div className="px-4 sm:px-6 lg:px-8 py-10 flex flex-col flex-1 justify-end">
         {/* Main Footer Content */}
         <div className="flex flex-col lg:flex-row justify-between gap-20 mb-16 px-[20px]">
           {/* Left: 4 Columns */}
@@ -149,45 +149,8 @@ const Footer = () => {
 
         {/* Bottom Section */}
         <div className="border-t border-white/20 pt-8">
-          {/* Row 1: Socials */}
-          <div className="flex justify-end items-center gap-5">
-            <a
-              href="https://www.instagram.com/stylewithlafetch/"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <Image
-                src="/icons/instagram.png"
-                alt="Instagram"
-                width={18}
-                height={18}
-              />
-            </a>
-
-            <a
-              href="https://www.facebook.com/p/LaFetch-61555807824172/"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <Image
-                src="/icons/meta.png"
-                alt="Facebook"
-                width={18}
-                height={18}
-              />
-            </a>
-
-            <a
-              href="https://www.youtube.com/@LaFetch"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <Youtube className="w-5 h-5 text-white" />
-            </a>
-          </div>
-
-          {/* Row 2: Big Center Logo */}
-          <div className="mt-10 flex justify-center">
+          {/* Row 1: Big Center Logo */}
+          <div className="flex justify-center">
             <Image
               src="/images/lafetch-white.svg"
               alt="LAFETCH Logo"
@@ -197,10 +160,48 @@ const Footer = () => {
             />
           </div>
 
-          {/* Row 3: Copyright - Left aligned */}
-          <div className="mt-6 text-sm text-gray-400">
-            ©2025 Powered By and All Right Reserved to AS10 TECH-RETAIL PRIVATE
-            LIMITED
+          {/* Row 2: Copyright and Socials on same line */}
+          <div className="mt-10 flex flex-col md:flex-row justify-between items-center gap-6 md:gap-0">
+            <div className="text-sm text-gray-400 text-center md:text-left">
+              ©2025 Powered By and All Right Reserved to AS10 TECH-RETAIL
+              PRIVATE LIMITED
+            </div>
+
+            <div className="flex items-center gap-5">
+              <a
+                href="https://www.instagram.com/stylewithlafetch/"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <Image
+                  src="/icons/instagram.png"
+                  alt="Instagram"
+                  width={25}
+                  height={25}
+                />
+              </a>
+
+              <a
+                href="https://www.facebook.com/p/LaFetch-61555807824172/"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <Image
+                  src="/icons/meta.png"
+                  alt="Facebook"
+                  width={25}
+                  height={25}
+                />
+              </a>
+
+              <a
+                href="https://www.youtube.com/@LaFetch"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <Youtube className="w-6 h-6 text-white" />
+              </a>
+            </div>
           </div>
         </div>
       </div>

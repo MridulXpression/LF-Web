@@ -1,11 +1,13 @@
 import FashionVideoBackground from "@/components/Banner";
+import { Heading3 } from "lucide-react";
 
 export default function MenBanner() {
   // Mock data inside the page
   const mockData = {
     videoUrl: "/videos/Lafetch-Men's.mp4", // keep the video in public folder
-    heading1: "Fetch your fashion in a flash",
-    heading2: "Premium Jackets at 60 min",
+    heading1: "Homegrown Fashion Edit",
+    heading2: "Handpicked Styles ",
+    heading3: "Chosen for Him",
   };
 
   return (
@@ -13,8 +15,7 @@ export default function MenBanner() {
       videoUrl={mockData.videoUrl}
       heading1={mockData.heading1}
       heading2={mockData.heading2}
-      subHeading={mockData.subHeading}
-      description={mockData.description}
+      heading3={mockData.heading3}
     />
   );
 }

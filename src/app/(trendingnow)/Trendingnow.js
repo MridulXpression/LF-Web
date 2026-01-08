@@ -123,11 +123,11 @@ const TrendingNowSection = () => {
         return (
           <section
             key={collection.id}
-            className="py-8 sm:py-12 md:py-16 px-4 sm:px-6 md:px-10"
+            className="py-4 sm:py-6 md:py-8 px-4 sm:px-6 md:px-10"
           >
             {/* Header */}
             <div className="flex flex-row justify-between items-center gap-2 sm:gap-4 mb-8 sm:mb-10">
-              <h1 className="text-[15px]  md:text-[38px] font-semibold uppercase text-black">
+              <h1 className="text-[13px]  md:text-[35px] font-semibold uppercase text-black max-w-[200px] md:max-w-[500px] ">
                 {collection.name}
               </h1>
 
@@ -138,8 +138,8 @@ const TrendingNowSection = () => {
                     onClick={() => toggleSortDropdown(collection.id)}
                     className="h-8 sm:h-9 md:h-10 px-2 sm:px-3 md:px-4 py-1.5 sm:py-2 md:py-2.5 bg-white rounded-lg sm:rounded-xl outline outline-1 outline-offset-[-1px] outline-stone-950 inline-flex justify-center items-center gap-1 sm:gap-1.5 cursor-pointer"
                   >
-                    <div className="flex flex-col sm:flex-row justify-start items-center gap-0 sm:gap-1.5">
-                      <div className="text-center justify-start text-stone-950 text-xs sm:text-sm md:text-base font-medium leading-tight sm:leading-5 tracking-wide whitespace-nowrap sm:whitespace-normal">
+                    <div className="flex flex-row justify-start items-center gap-1 sm:gap-1.5">
+                      <div className="text-center justify-start text-stone-950 text-xs sm:text-sm md:text-base font-medium leading-tight sm:leading-5 tracking-wide whitespace-nowrap">
                         {sortOrders[collection.id] === "lowToHigh"
                           ? "Price: Low to High"
                           : sortOrders[collection.id] === "highToLow"
@@ -282,7 +282,11 @@ const TrendingNowSection = () => {
             {/* Banners Section */}
             {bannerCount > 0 && (
               <div className="mt-8 sm:mt-10 md:mt-12 -mx-4 sm:-mx-6 md:-mx-10">
-                <BannerGrid banners={banners} bannerCount={bannerCount} />
+                <BannerGrid
+                  banners={banners}
+                  bannerCount={bannerCount}
+                  displayFor="homepage"
+                />
               </div>
             )}
           </section>

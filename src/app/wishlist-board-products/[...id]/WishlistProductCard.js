@@ -63,9 +63,6 @@ const WishlistProductCard = () => {
       <div className="w-full md:px-[100px] md:py-0 px-4 p-12 mb-4 mt-[100px]">
         {products.length === 0 ? (
           <div className="flex flex-col items-center justify-center min-h-[60vh]">
-            <h2 className="text-2xl font-semibold text-gray-700 mb-4">
-              Loading
-            </h2>
             <p className="text-gray-500 mb-6">
               Looks like this board is empty. Start adding some products!
             </p>

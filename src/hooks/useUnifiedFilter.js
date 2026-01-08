@@ -1,9 +1,15 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useRef } from "react";
 import axiosHttp from "@/utils/axioshttp";
 
 const useUnifiedFilter = () => {
   const [products, setProducts] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(false);
+  const [totalPages, setTotalPages] = useState(0);
+
+  // Store current filter params for loadMore
+  const currentFiltersRef = useRef({});
 
   const applyFilters = useCallback(
     async ({
@@ -18,8 +24,13 @@ const useUnifiedFilter = () => {
       colors = [],
       collectionId = null,
       key = null,
+      pageNumber = 1,
+      isLoadMore = false,
     }) => {
-      setIsLoading(true);
+      if (pageNumber === 1) {
+        setIsLoading(true);
+      }
+
       try {
         // Build query parameters
         const params = new URLSearchParams();
@@ -42,33 +53,88 @@ const useUnifiedFilter = () => {
           params.append("color", colors.join(","));
         }
         if (collectionId) params.append("collectionId", collectionId);
-        if (key) params.append("key", encodeURIComponent(key));
+        if (key) params.append("key", key);
+
+        // Add page parameter
+        params.append("page", pageNumber);
 
         const response = await axiosHttp.post(
           `/filter-products?${params.toString()}`
         );
 
         if (response?.status === 200) {
-          setProducts(response?.data?.data || []);
-          return response?.data?.data || [];
+          const newProducts = response?.data?.data?.products || [];
+          const pagination = response?.data?.data?.pagination || {};
+
+          if (isLoadMore) {
+            // Append new products to existing ones
+            setProducts((prevProducts) => [...prevProducts, ...newProducts]);
+          } else {
+            // First load - replace products
+            setProducts(newProducts);
+          }
+
+          // Update pagination state
+          setPage(pagination.currentPage || pageNumber);
+          setTotalPages(pagination.totalPages || 0);
+          setHasMore(pagination.currentPage < pagination.totalPages);
+
+          // Store current filters for loadMore
+          if (!isLoadMore) {
+            currentFiltersRef.current = {
+              brandIds,
+              minPrice,
+              maxPrice,
+              sort,
+              superCatId,
+              subCatId,
+              catId,
+              sizes,
+              colors,
+              collectionId,
+              key,
+            };
+          }
+
+          return newProducts;
         } else {
-          setProducts([]);
+          if (!isLoadMore) {
+            setProducts([]);
+          }
+          setHasMore(false);
           return [];
         }
       } catch (error) {
-        setProducts([]);
+        if (!isLoadMore) {
+          setProducts([]);
+        }
+        setHasMore(false);
         return [];
       } finally {
-        setIsLoading(false);
+        if (pageNumber === 1) {
+          setIsLoading(false);
+        }
       }
     },
     []
   );
 
+  const loadMore = useCallback(() => {
+    if (hasMore && page < totalPages) {
+      applyFilters({
+        ...currentFiltersRef.current,
+        pageNumber: page + 1,
+        isLoadMore: true,
+      });
+    }
+  }, [page, hasMore, totalPages, applyFilters]);
+
   return {
     products,
     isLoading,
+    hasMore,
     applyFilters,
+    loadMore,
   };
 };
 

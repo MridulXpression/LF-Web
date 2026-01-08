@@ -22,8 +22,8 @@ export default function ShopByCategory({ categories: externalCategories }) {
     },
     {
       id: 3,
-      name: "Accessories",
-      image: "/images/accessories.png",
+      name: "Essentials",
+      image: "/images/Accesories.png",
       href: "/shop/accessories",
     },
   ];
@@ -72,13 +72,13 @@ export default function ShopByCategory({ categories: externalCategories }) {
                   : "opacity-100 md:group-hover:opacity-100 md:group-hover:translate-y-0"
               }`}
             >
-              <h2 className="text-neutral-100 text-lg sm:text-2xl md:text-3xl lg:text-4xl font-semibold uppercase">
+              <h2 className="text-neutral-100 text-[10px] md:text-3xl  font-semibold uppercase">
                 {category.name}
               </h2>
 
               {/* Arrow is now visual-only */}
-              <div className="w-8 sm:w-9 md:w-10 h-8 sm:h-9 md:h-10 rounded-full flex items-center justify-center flex-shrink-0">
-                <ArrowRight className="w-5 sm:w-6 h-5 sm:h-6 text-white" />
+              <div className="w-5  md:w-10 h-5  md:h-10 rounded-full flex items-center justify-center flex-shrink-0">
+                <ArrowRight className="w-4 md:w-6 h-4 md:h-6 text-white" />
               </div>
             </div>
           </Link>
