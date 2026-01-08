@@ -177,7 +177,7 @@ const ShopByCategoriesPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-white relative mt-[150px]">
+    <div className="min-h-screen bg-white relative mt-[130px]">
       {/* MOBILE FILTER BUTTON */}
       <button
         className="lg:hidden fixed bottom-4 left-4 z-10 bg-black text-white px-4 py-2 rounded-full flex items-center gap-2 shadow-lg"

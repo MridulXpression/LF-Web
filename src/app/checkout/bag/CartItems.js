@@ -170,6 +170,50 @@ const ShoppingCart = () => {
 
   const handleRemove = async (productId) => {
     try {
+      const itemToRemove = products.find((p) => p.productId === productId);
+
+      if (!userId) {
+        // Handle removal for non-logged-in users (Redux + localStorage)
+        if (itemToRemove) {
+          // Remove from Redux
+          dispatch(removeFromCart(itemToRemove.variantId));
+
+          // Remove from local state
+          setProducts((prev) => prev.filter((p) => p.productId !== productId));
+
+          // Remove from selected items
+          setSelectedItems((prev) => {
+            const newSet = new Set(prev);
+            newSet.delete(itemToRemove.cartItemId);
+            return newSet;
+          });
+
+          // Update localStorage
+          try {
+            const savedKeys = Object.keys(localStorage).filter((key) =>
+              key.startsWith("lafetch_checkout_")
+            );
+            if (savedKeys.length > 0) {
+              const lastKey = savedKeys[savedKeys.length - 1];
+              const raw = localStorage.getItem(lastKey);
+              if (raw) {
+                const saved = JSON.parse(raw);
+                if (saved.items && Array.isArray(saved.items)) {
+                  saved.items = saved.items.filter(
+                    (item) => item.productId !== productId
+                  );
+                  localStorage.setItem(lastKey, JSON.stringify(saved));
+                }
+              }
+            }
+          } catch (e) {
+            console.error("Error updating localStorage:", e);
+          }
+        }
+        return;
+      }
+
+      // Handle removal for logged-in users (API call)
       const isDeleted = await axiosHttp.delete(endPoints.deleteCartItem, {
         data: {
           userId: userId,
@@ -178,17 +222,21 @@ const ShoppingCart = () => {
       });
       if (isDeleted) {
         // Remove from selectedItems before fetching
-        const itemToRemove = products.find((p) => p.productId === productId);
         if (itemToRemove) {
           setSelectedItems((prev) => {
             const newSet = new Set(prev);
             newSet.delete(itemToRemove.cartItemId);
             return newSet;
           });
+
+          // Remove from Redux
+          dispatch(removeFromCart(itemToRemove.variantId));
         }
         fetchCartItems();
       }
-    } catch (error) {}
+    } catch (error) {
+      console.error("Error removing item:", error);
+    }
   };
 
   const handleQuantityChange = async (cartItemId, quantity) => {
@@ -235,14 +283,19 @@ const ShoppingCart = () => {
   const handleToggleSelect = (cartItemId) => {
     setSelectedItems((prev) => {
       const newSet = new Set(prev);
-      if (newSet.has(cartItemId)) {
+      const isSelected = newSet.has(cartItemId);
+
+      if (isSelected) {
         newSet.delete(cartItemId);
-        // update redux
-        dispatch(setItemSelected({ cartItemId, selected: false }));
       } else {
         newSet.add(cartItemId);
-        dispatch(setItemSelected({ cartItemId, selected: true }));
       }
+
+      // Dispatch after state calculation, outside the setState callback
+      Promise.resolve().then(() => {
+        dispatch(setItemSelected({ cartItemId, selected: !isSelected }));
+      });
+
       return newSet;
     });
   };
@@ -272,13 +325,6 @@ const ShoppingCart = () => {
 
   const handleConfirmDelete = async () => {
     await handleRemove(deleteTargetId);
-
-    // ✅ Remove from Redux store as well
-    const deletedProduct = products.find((p) => p.productId === deleteTargetId);
-    if (deletedProduct) {
-      dispatch(removeFromCart(deletedProduct.variantId));
-    }
-
     setIsDeleteModalOpen(false);
   };
 
@@ -365,7 +411,7 @@ const ShoppingCart = () => {
 
   return (
     <>
-      <div className="min-h-screen bg-gray-50 py-8 mt-[150px]">
+      <div className="min-h-screen bg-gray-50 py-8 mt-[130px]">
         <div className="max-w-7xl mx-auto px-4">
           {/* Progress Steps */}
           <div className="mb-8 flex items-center justify-center gap-2 text-sm">

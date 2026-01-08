@@ -4,7 +4,12 @@ import Link from "next/link";
 
 const BlogCard = ({ blog }) => {
   return (
-    <Link href={`/blogs/${blog.id}`} className="block">
+    <Link
+      href={`/blogs/${blog.id}`}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="block"
+    >
       <div className="bg-white overflow-hidden group cursor-pointer hover:shadow-lg transition-shadow duration-300">
         {/* Blog Image */}
         <div className="relative w-full  h-[250px] md:h-[300px] overflow-hidden">

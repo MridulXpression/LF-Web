@@ -63,7 +63,7 @@ const WishlistBoards = () => {
   };
 
   return (
-    <div className="min-h-screen bg-white p-6 mt-[150px]">
+    <div className="min-h-screen bg-white p-6 mt-[130px]">
       <div className="max-w-7xl mx-auto">
         <div className="flex items-center justify-between mb-8">
           <div>

@@ -4,7 +4,7 @@ import Link from "next/link";
 
 const FashionBlogHero = ({ blogPost, loading }) => {
   return (
-    <div className="relative w-full bg-white mt-[150px]">
+    <div className="relative w-full bg-white mt-[130px]">
       {/* Top Banner */}
       <div
         className="relative w-full bg-cover bg-center bg-no-repeat h-48 sm:h-64 md:h-80 lg:h-96"
@@ -14,7 +14,12 @@ const FashionBlogHero = ({ blogPost, loading }) => {
       ></div>
 
       {blogPost && (
-        <Link href={`/blogs/${blogPost.id}`} className="block">
+        <Link
+          href={`/blogs/${blogPost.id}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="block"
+        >
           <div
             className="relative mx-auto cursor-pointer px-4 sm:px-6 lg:px-0 max-w-full lg:max-w-5xl"
             style={{

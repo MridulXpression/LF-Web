@@ -52,7 +52,6 @@ const NewestAtLafetch = () => {
       className="
   w-full
  
- 
   p-[24px]
   py-6 sm:py-8
   bg-white
@@ -62,7 +61,7 @@ const NewestAtLafetch = () => {
 "
     >
       {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-center gap-4 md:gap-10">
+      <div className="flex flex-col md:flex-row md:items-center gap-4 md:gap-10 ">
         <div className="flex-1 h-1 bg-stone-100/90 overflow-hidden relative">
           <div
             className="h-full bg-stone-950 transition-all duration-500"
@@ -79,7 +78,7 @@ const NewestAtLafetch = () => {
       </div>
 
       {/* Content */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 md:gap-7">
+      <div className=" max-w-[1400px] mx-auto grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 md:gap-[100px]">
         {/* Products */}
         <div className="flex flex-col gap-4 sm:gap-5 md:gap-6 lg:gap-7">
           {rows.map((row, rowIndex) => (
