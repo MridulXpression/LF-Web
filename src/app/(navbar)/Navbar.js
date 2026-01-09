@@ -114,10 +114,10 @@ const Navbar = () => {
 
             <Link href="/" className="mt-[2px] md:mt-0">
               <Image
-                src="/images/logo-black.svg"
+                src="/images/logo.png"
                 alt="Logo"
                 width={100}
-                height={40}
+                height={60}
               />
             </Link>
 
@@ -180,12 +180,23 @@ const Navbar = () => {
                 onClick={() => setIsQuickModalOpen(true)}
                 className="relative overflow-hidden cursor-pointer"
               >
-                <Image
-                  src="/images/quick.png"
-                  alt="Quick"
-                  width={100}
-                  height={30}
-                />
+                <div className="md:block hidden   pr-4">
+                  <Image
+                    src="/images/quick.png"
+                    alt="Quick"
+                    width={100}
+                    height={30}
+                  />
+                </div>
+
+                <div className="md:hidden  pr-4">
+                  <Image
+                    src="/images/quick.png"
+                    alt="Logo"
+                    width={80}
+                    height={40}
+                  />
+                </div>
                 <div className="absolute inset-0 shine-overlay"></div>
               </button>
             </div>

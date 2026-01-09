@@ -19,6 +19,7 @@ export default function AnnouncementBar() {
             <div key={setIndex} className="flex items-center">
               {announcements.map((item, index) => (
                 <React.Fragment key={`${setIndex}-${index}`}>
+                  <div className="h-8 w-px bg-neutral-100/30 mx-4" />
                   <div className="flex items-center gap-2 mx-8">
                     <div className="w-7 h-7 bg-zinc-300/20 rounded-full flex items-center justify-center">
                       <Image
@@ -33,9 +34,6 @@ export default function AnnouncementBar() {
                       {item.text}
                     </span>
                   </div>
-                  {index < announcements.length - 1 && (
-                    <div className="h-8 w-px bg-neutral-100/30 mx-4" />
-                  )}
                 </React.Fragment>
               ))}
             </div>
@@ -55,10 +53,6 @@ export default function AnnouncementBar() {
 
         .animate-scroll {
           animation: scroll 10s linear infinite;
-        }
-
-        .animate-scroll:hover {
-          animation-play-state: paused;
         }
       `}</style>
     </div>

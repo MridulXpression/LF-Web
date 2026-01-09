@@ -7,7 +7,7 @@ import Link from "next/link";
 import BannerGrid from "@/components/collections/BannerGrid";
 
 const AccessoriesCollectionSection = () => {
-  const query = "gender=3";
+  const query = "gender=3&displayFor=accessories";
   const { data: collections } = useCollection(query);
   const [displayedProductsCount, setDisplayedProductsCount] = useState({});
 

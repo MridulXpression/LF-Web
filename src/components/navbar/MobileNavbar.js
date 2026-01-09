@@ -33,12 +33,7 @@ const MobileNavbar = ({ isOpen, onClose, menuData, getMenuHref }) => {
             />
           </button>
           <Link href="/" className="flex-shrink-0">
-            <Image
-              src="/images/logo-black.svg"
-              alt="Logo"
-              width={60}
-              height={24}
-            />
+            <Image src="/images/logo.png" alt="Logo" width={60} height={24} />
           </Link>
 
           <button onClick={onClose}>

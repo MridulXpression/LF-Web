@@ -8,7 +8,11 @@ import useCollection from "@/hooks/useCollection";
 import BannerGrid from "@/components/collections/BannerGrid";
 
 const TrendingNowSection = () => {
-  const { data: collections, loading, error } = useCollection();
+  const {
+    data: collections,
+    loading,
+    error,
+  } = useCollection("displayFor=homepage");
   const [currentPages, setCurrentPages] = useState({});
   const [sortOrders, setSortOrders] = useState({}); // Track sort order per collection
   const [showSortDropdown, setShowSortDropdown] = useState({}); // Track dropdown visibility per collection

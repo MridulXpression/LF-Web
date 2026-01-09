@@ -12,7 +12,17 @@ const CategoryPage = () => {
   const { categoryProducts, isCategoryLoading } =
     useCategoryProducts(categoryId);
 
-  if (!categoryProducts) {
+  // Show loader while data is being fetched
+  if (isCategoryLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900"></div>
+      </div>
+    );
+  }
+
+  // Return null only if loading is complete but no data exists
+  if (!isCategoryLoading && !categoryProducts) {
     return null;
   }
 
