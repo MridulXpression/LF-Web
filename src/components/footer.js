@@ -148,20 +148,20 @@ const Footer = () => {
         </div>
 
         {/* Bottom Section */}
-        <div className="border-t border-white/20 pt-8">
+        <div className="border-t border-white/20 ">
           {/* Row 1: Big Center Logo */}
           <div className="flex justify-center">
             <Image
               src="/images/logo-white.png"
               alt="LAFETCH Logo"
-              width={360}
-              height={140}
+              width={300}
+              height={100}
               className="object-contain"
             />
           </div>
 
           {/* Row 2: Copyright and Socials on same line */}
-          <div className="mt-10 flex flex-col md:flex-row justify-between items-center gap-6 md:gap-0">
+          <div className="mt-6 flex flex-col md:flex-row justify-between items-center gap-6 md:gap-0">
             <div className="text-sm text-gray-400 text-center md:text-left">
               ©2025 Powered By and All Right Reserved to AS10 TECH-RETAIL
               PRIVATE LIMITED
