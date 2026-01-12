@@ -66,7 +66,7 @@ export default function ShopByCategory({ categories: externalCategories }) {
 
             {/* Category Label */}
             <div
-              className={`absolute bottom-4 sm:bottom-6 md:bottom-8 lg:bottom-10 left-4 sm:left-6 md:left-8 flex items-center gap-2 sm:gap-3 transition-all duration-500 md:opacity-0 md:translate-y-4 ${
+              className={`absolute bottom-4 sm:bottom-6 md:bottom-8 lg:bottom-10 left-4 sm:left-6 md:left-8 flex items-center gap-1 md:gap-2 transition-all duration-500 md:opacity-0 md:translate-y-4 ${
                 hoveredIndex === index
                   ? "md:opacity-100 md:translate-y-0 opacity-100"
                   : "opacity-100 md:group-hover:opacity-100 md:group-hover:translate-y-0"

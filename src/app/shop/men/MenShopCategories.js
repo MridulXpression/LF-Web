@@ -62,7 +62,7 @@ const ShopCategories = () => {
     !isLoading && fetchCategories && fetchCategories.length > 6;
 
   return (
-    <section className="w-full py-8 md:py-16 bg-white">
+    <section className="w-full py-8  bg-white">
       <div className=" px-2 md:px-4">
         {/* Header */}
         <div className="text-center mb-8 md:mb-12">
