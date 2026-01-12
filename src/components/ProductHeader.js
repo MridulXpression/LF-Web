@@ -171,17 +171,20 @@ const ProductInfo = ({
         </span>
 
         {/* Show MRP + Discount ONLY if MRP > 0 AND MRP > Price */}
-        {mrp && Number(mrp) > 0 && Number(mrp) > Number(variantPrice) && (
-          <>
-            <span className="text-base text-gray-400 line-through">
-              MRP ₹{mrp}
-            </span>
+        {mrp != null &&
+          mrp !== "" &&
+          Number(mrp) > 0 &&
+          Number(mrp) > Number(variantPrice) && (
+            <>
+              <span className="text-base text-gray-400 line-through">
+                MRP ₹{mrp}
+              </span>
 
-            <span className="text-base text-green-500 font-semibold">
-              ({discount}% OFF)
-            </span>
-          </>
-        )}
+              <span className="text-base text-green-500 font-semibold">
+                ({discount}% OFF)
+              </span>
+            </>
+          )}
       </div>
 
       <div className="text-sm text-[#9c90ff] font-semibold mb-6">

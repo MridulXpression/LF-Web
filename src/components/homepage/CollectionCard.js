@@ -118,7 +118,7 @@ const ProductCollectionCard = ({ product, onLike }) => {
               onClick={handlePreviewClick}
               className="absolute left-2 bottom-2 w-[calc(100%-16px)] h-9
                bg-stone-50 rounded-lg flex items-center justify-center
-               opacity-0 group-hover:opacity-100 transition-opacity"
+               opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer"
             >
               <span className="text-sm font-medium">Product Preview</span>
             </button>

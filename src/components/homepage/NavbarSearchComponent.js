@@ -86,8 +86,8 @@ export default function NavbarSearchComponent({
               />
             </div>
           </div>
-          <div className="flex-1 py-0.5 border-b border-stone-950 flex justify-between items-center">
-            <div className="flex justify-start items-center gap-1 sm:gap-2">
+          <div className="flex-1 py-0.5 border-b border-stone-950 flex justify-between items-center gap-2">
+            <div className="flex-1 flex justify-start items-center gap-1 sm:gap-2">
               <div className="flex justify-start items-center gap-2 sm:gap-5">
                 <div className="flex justify-start items-center gap-2 sm:gap-4">
                   <div className="w-6 h-6 sm:w-9 sm:h-9 relative rounded">
@@ -101,7 +101,7 @@ export default function NavbarSearchComponent({
                 onChange={(e) => setSearchQuery(e.target.value)}
                 onKeyDown={handleSearch}
                 placeholder="Search To Explore More"
-                className="text-left justify-start text-stone-950 text-xs sm:text-sm font-medium uppercase leading-4 border-none outline-none bg-transparent flex-1"
+                className="text-left justify-start text-stone-950 text-xs sm:text-sm font-medium uppercase leading-4 border-none outline-none bg-transparent flex-1 min-w-0"
                 autoFocus
               />
               {/* Hidden anchor for Enter key navigation */}

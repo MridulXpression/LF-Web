@@ -12,7 +12,7 @@ const NewInSection = () => {
   const topProducts = products.slice(0, 8);
 
   return (
-    <section className="py-16 px-4 bg-white">
+    <section className="py-10 px-4 bg-white">
       <div className="w-full md:p-[20px] lg:p-[50px]">
         {/* Section Title */}
         <h2 className="text-4xl md:text-5xl font-bold text-center text-black mb-12 tracking-wide">

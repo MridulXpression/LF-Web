@@ -201,7 +201,7 @@ const Navbar = () => {
               </button>
             </div>
             <Search
-              className="text-black"
+              className="text-black cursor-pointer"
               onClick={() => setShowSearchDropdown(true)}
             />
 

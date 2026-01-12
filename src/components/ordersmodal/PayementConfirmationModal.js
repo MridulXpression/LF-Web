@@ -176,12 +176,6 @@ const PaymentStatusModal = ({
                 >
                   Copy Transaction ID
                 </button>
-                <button
-                  onClick={onContinueShopping}
-                  className="w-full bg-white text-black py-3 rounded-lg font-semibold border border-gray-300 hover:bg-gray-50 transition-colors cursor-pointer"
-                >
-                  Contact Support
-                </button>
               </>
             )}
           </div>
