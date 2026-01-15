@@ -53,7 +53,7 @@ const MyOrders = () => {
     try {
       const response = await axiosHttp.get(`/order-history/${userId}`);
       if (response.data.status === 200) {
-        setOrders(response.data.data.reverse());
+        setOrders(response.data.data);
       }
     } catch (error) {}
   };

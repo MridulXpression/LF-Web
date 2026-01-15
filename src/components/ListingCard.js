@@ -61,20 +61,6 @@ const ListingCard = ({
           </div>
         </Link>
 
-        {/* Action Icons */}
-        <div className="absolute top-3 right-3 flex flex-col gap-2">
-          {/* Wishlist Icon */}
-          <button
-            onClick={handleWishlistClick}
-            className="w-8 h-8 rounded-full bg-white shadow-md flex items-center justify-center hover:bg-gray-50 transition-colors duration-200"
-          >
-            <Heart
-              size={16}
-              className={`text-black transition-colors duration-200 cursor-pointer`}
-            />
-          </button>
-        </div>
-
         {/* Product Info */}
         <div className="p-3 justify-between">
           {/* Rating */}
@@ -108,11 +94,24 @@ const ListingCard = ({
             <p className="text-xs text-gray-400 mb-1"></p>
           )}
 
-          {/* Brand */}
+          {/* Brand and Wishlist */}
           {brand && (
-            <p className="text-xs text-gray-600 font-medium uppercase tracking-wide mb-1">
-              {brand}
-            </p>
+            <div className="flex items-center justify-between gap-2 mb-1">
+              <p className="text-xs text-gray-600 font-medium uppercase tracking-wide">
+                {brand}
+              </p>
+
+              {/* Wishlist Icon */}
+              <button
+                onClick={handleWishlistClick}
+                className="w-8 h-8 rounded-full bg-white shadow-md flex items-center justify-center hover:bg-gray-50 transition-colors duration-200 flex-shrink-0"
+              >
+                <Heart
+                  size={16}
+                  className={`text-black transition-colors duration-200 cursor-pointer`}
+                />
+              </button>
+            </div>
           )}
 
           {/* Title */}
@@ -142,7 +141,7 @@ const ListingCard = ({
                   </span>
 
                   {discountPercentage > 0 && (
-                    <span className="text-xs text-green-600 font-medium">
+                    <span className="text-xs text-[#ac9ffc] font-medium">
                       ({discountPercentage}% OFF)
                     </span>
                   )}

@@ -88,7 +88,7 @@ const OrderSummary = ({
             <span className="font-semibold text-black">COUPONS</span>
             <button
               onClick={() => setShowModal(true)}
-              className="text-sm text-blue-600 hover:underline cursor-pointer"
+              className="text-sm text-[#9c90ff] hover:underline cursor-pointer"
             >
               VIEW MORE
             </button>
@@ -155,7 +155,7 @@ const OrderSummary = ({
 
           <div className="flex justify-between">
             <span className="text-black">Delivery Charges</span>
-            <span className="text-green-600">
+            <span className="text-[#9c90ff]">
               {deliveryCharges === 0 ? "Free" : `₹${deliveryCharges}`}
             </span>
           </div>

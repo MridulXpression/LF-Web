@@ -54,16 +54,7 @@ const Navbar = () => {
   const categoriesHierarchy = useGetCategoriesHierarchy();
   const menuData = getMenuData(categoriesHierarchy);
 
-  // Show NEWSLETTERS only on specific routes
-  const shouldShowNewsletter =
-    pathname === "/" ||
-    pathname === "/shop/men" ||
-    pathname === "/shop/women" ||
-    pathname === "/shop/accessories";
-
   const filteredMenuData = menuData.filter((menu) => {
-    // Hide NEWSLETTERS if not on specific routes
-    if (menu.title === "NEWSLETTERS" && !shouldShowNewsletter) return false;
     // Hide TRACK ORDER if user is not logged in
     if (menu.title === "TRACK ORDER" && !user) return false;
     return true;
@@ -77,6 +68,7 @@ const Navbar = () => {
   const [showSearchDropdown, setShowSearchDropdown] = useState(false);
   const [isQuickModalOpen, setIsQuickModalOpen] = useState(false);
   const [dropdownTimeout, setDropdownTimeout] = useState(null);
+  const [hoveredMenu, setHoveredMenu] = useState(null);
 
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -99,6 +91,16 @@ const Navbar = () => {
     if (t === "newsletters") return "#newsletters";
 
     return "#";
+  };
+
+  const handleMenuClick = (e, href) => {
+    if (href === "#newsletters") {
+      e.preventDefault();
+      const element = document.getElementById("newsletters");
+      if (element) {
+        element.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+    }
   };
 
   return (
@@ -133,44 +135,63 @@ const Navbar = () => {
 
           {/* DESKTOP MENU */}
           <div className="hidden md:flex gap-6">
-            {filteredMenuData.map((menu, index) => (
-              <div
-                key={index}
-                className="relative text-sm font-clash-display font-medium text-[#0F0F0F] uppercase leading-4
-             after:absolute after:left-0 after:-bottom-2
-             after:h-[1.5px] after:w-full after:bg-transparent
-             hover:after:bg-black
-             hover:font-semibold"
-                onMouseEnter={() => {
-                  clearTimeout(dropdownTimeout);
-                  menu.sections.length && setActiveDropdown(index);
-                }}
-                onMouseLeave={() => {
-                  const timeout = setTimeout(
-                    () => setActiveDropdown(null),
-                    200
-                  );
-                  setDropdownTimeout(timeout);
-                }}
-              >
-                <Link href={getMenuHref(menu.title)}>{menu.title}</Link>
+            {filteredMenuData.map((menu, index) => {
+              const menuHref = getMenuHref(menu.title);
+              const isActive =
+                pathname === menuHref ||
+                (menuHref !== "/" && pathname.startsWith(menuHref));
+              const shouldHighlight =
+                hoveredMenu !== null ? hoveredMenu === index : isActive;
 
-                {menu.sections.length > 0 && activeDropdown === index && (
-                  <NavbarDropdown
-                    menu={menu}
-                    latestBlogs={latestBlogs}
-                    onMouseEnter={() => clearTimeout(dropdownTimeout)}
-                    onMouseLeave={() => {
-                      const timeout = setTimeout(
-                        () => setActiveDropdown(null),
-                        200
-                      );
-                      setDropdownTimeout(timeout);
-                    }}
-                  />
-                )}
-              </div>
-            ))}
+              return (
+                <div
+                  key={index}
+                  className={`relative text-sm font-clash-display text-[#0F0F0F] uppercase leading-4
+             after:absolute after:left-0 after:-bottom-2
+             after:h-[1.5px] after:w-full after:transition-all
+             ${
+               shouldHighlight
+                 ? "font-semibold after:bg-[#9c90ff]"
+                 : "font-medium after:bg-transparent"
+             }`}
+                  onMouseEnter={() => {
+                    clearTimeout(dropdownTimeout);
+                    setHoveredMenu(index);
+                    menu.sections.length && setActiveDropdown(index);
+                  }}
+                  onMouseLeave={() => {
+                    setHoveredMenu(null);
+                    const timeout = setTimeout(
+                      () => setActiveDropdown(null),
+                      200
+                    );
+                    setDropdownTimeout(timeout);
+                  }}
+                >
+                  <Link
+                    href={menuHref}
+                    onClick={(e) => handleMenuClick(e, menuHref)}
+                  >
+                    {menu.title}
+                  </Link>
+
+                  {menu.sections.length > 0 && activeDropdown === index && (
+                    <NavbarDropdown
+                      menu={menu}
+                      latestBlogs={latestBlogs}
+                      onMouseEnter={() => clearTimeout(dropdownTimeout)}
+                      onMouseLeave={() => {
+                        const timeout = setTimeout(
+                          () => setActiveDropdown(null),
+                          200
+                        );
+                        setDropdownTimeout(timeout);
+                      }}
+                    />
+                  )}
+                </div>
+              );
+            })}
           </div>
 
           {/* RIGHT */}

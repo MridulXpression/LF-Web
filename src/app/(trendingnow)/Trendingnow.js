@@ -1,11 +1,12 @@
 "use client";
 import React, { useState } from "react";
-import Image from "next/image";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import ProductCollectionCard from "@/components/homepage/CollectionCard";
 import ViewAllCard from "@/components/homepage/ViewAllCard";
 import useCollection from "@/hooks/useCollection";
 import BannerGrid from "@/components/collections/BannerGrid";
+import useSortProducts from "@/hooks/useSortProducts";
+import SortByDropdown from "@/components/SortByDropdown";
 
 const TrendingNowSection = () => {
   const {
@@ -14,8 +15,15 @@ const TrendingNowSection = () => {
     error,
   } = useCollection("displayFor=homepage");
   const [currentPages, setCurrentPages] = useState({});
-  const [sortOrders, setSortOrders] = useState({}); // Track sort order per collection
-  const [showSortDropdown, setShowSortDropdown] = useState({}); // Track dropdown visibility per collection
+
+  // Use the reusable sort hook
+  const {
+    sortOrders,
+    showSortDropdown,
+    handleSortChange,
+    toggleSortDropdown,
+    sortProducts,
+  } = useSortProducts();
 
   // Pagination: 4 products, then 4, then 3 (total 11)
   const pageItemCounts = [4, 4, 3];
@@ -32,44 +40,6 @@ const TrendingNowSection = () => {
       ...prev,
       [collectionId]: Math.min((prev[collectionId] || 0) + 1, totalPages - 1),
     }));
-  };
-
-  const handleSortChange = (collectionId, sortOption) => {
-    setSortOrders((prev) => ({
-      ...prev,
-      [collectionId]: sortOption,
-    }));
-    setShowSortDropdown((prev) => ({
-      ...prev,
-      [collectionId]: false,
-    }));
-  };
-
-  const toggleSortDropdown = (collectionId) => {
-    setShowSortDropdown((prev) => ({
-      ...prev,
-      [collectionId]: !prev[collectionId],
-    }));
-  };
-
-  const sortProducts = (products, sortOrder) => {
-    if (!sortOrder || sortOrder === "default") return products;
-
-    const sortedProducts = [...products];
-    if (sortOrder === "lowToHigh") {
-      return sortedProducts.sort((a, b) => {
-        const priceA = a.basePrice || a.price || 0;
-        const priceB = b.basePrice || b.price || 0;
-        return priceA - priceB;
-      });
-    } else if (sortOrder === "highToLow") {
-      return sortedProducts.sort((a, b) => {
-        const priceA = a.basePrice || a.price || 0;
-        const priceB = b.basePrice || b.price || 0;
-        return priceB - priceA;
-      });
-    }
-    return sortedProducts;
   };
 
   if (loading) {
@@ -136,60 +106,14 @@ const TrendingNowSection = () => {
               </h1>
 
               <div className="flex gap-2 sm:gap-3 ml-auto">
-                {/* Sort By Button with Dropdown */}
-                <div className="relative">
-                  <button
-                    onClick={() => toggleSortDropdown(collection.id)}
-                    className="h-8 sm:h-9 md:h-10 px-2 sm:px-3 md:px-4 py-1.5 sm:py-2 md:py-2.5 bg-white rounded-lg sm:rounded-xl outline outline-1 outline-offset-[-1px] outline-stone-950 inline-flex justify-center items-center gap-1 sm:gap-1.5 cursor-pointer"
-                  >
-                    <div className="flex flex-row justify-start items-center gap-1 sm:gap-1.5">
-                      <div className="text-center justify-start text-stone-950 text-xs sm:text-sm md:text-base font-medium leading-tight sm:leading-5 tracking-wide whitespace-nowrap">
-                        {sortOrders[collection.id] === "lowToHigh"
-                          ? "Price: Low to High"
-                          : sortOrders[collection.id] === "highToLow"
-                          ? "Price: High to Low"
-                          : "Sort By"}
-                      </div>
-                      <Image
-                        src="/images/sort.svg"
-                        alt="Sort"
-                        width={14}
-                        height={14}
-                        className="sm:w-4 sm:h-4 md:w-5 md:h-5"
-                      />
-                    </div>
-                  </button>
-
-                  {/* Dropdown Menu */}
-                  {showSortDropdown[collection.id] && (
-                    <div className="absolute top-full mt-2 right-0 bg-white border border-stone-950 rounded-lg shadow-lg z-10 min-w-[200px]">
-                      <button
-                        onClick={() =>
-                          handleSortChange(collection.id, "default")
-                        }
-                        className="w-full px-4 py-3 text-left text-sm md:text-base hover:bg-stone-100 transition"
-                      >
-                        Default
-                      </button>
-                      <button
-                        onClick={() =>
-                          handleSortChange(collection.id, "lowToHigh")
-                        }
-                        className="w-full px-4 py-3 text-left text-sm md:text-base hover:bg-stone-100 transition border-t border-stone-200"
-                      >
-                        Price: Low to High
-                      </button>
-                      <button
-                        onClick={() =>
-                          handleSortChange(collection.id, "highToLow")
-                        }
-                        className="w-full px-4 py-3 text-left text-sm md:text-base hover:bg-stone-100 transition border-t border-stone-200"
-                      >
-                        Price: High to Low
-                      </button>
-                    </div>
-                  )}
-                </div>
+                {/* Sort By Dropdown Component */}
+                <SortByDropdown
+                  collectionId={collection.id}
+                  currentSort={sortOrders[collection.id] || "default"}
+                  isOpen={showSortDropdown[collection.id]}
+                  onToggle={() => toggleSortDropdown(collection.id)}
+                  onSortChange={handleSortChange}
+                />
 
                 <button
                   onClick={() => handlePrevPage(collection.id)}
@@ -275,8 +199,7 @@ const TrendingNowSection = () => {
                 <div className="w-full">
                   <ViewAllCard
                     onClick={() => {
-                      (window.location.href = `/products?collectionId=${collection.id}`),
-                        "_blank";
+                      window.location.href = `/products?collectionId=${collection.id}`;
                     }}
                   />
                 </div>

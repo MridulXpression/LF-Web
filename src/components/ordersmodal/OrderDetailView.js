@@ -265,8 +265,6 @@ const OrderDetailView = ({ orderId, onBack, axiosHttp }) => {
           {orderData?.trackURL && orderData.trackURL.trim() !== "" ? (
             <a
               href={orderData.trackURL}
-              target="_blank"
-              rel="noopener noreferrer"
               className="px-4 py-2 text-sm font-medium bg-black text-white rounded hover:bg-gray-800 transition"
             >
               Track Order
@@ -355,6 +353,13 @@ const OrderDetailView = ({ orderId, onBack, axiosHttp }) => {
 
             <div className="space-y-2 text-sm">
               <div className="flex justify-between">
+                <span className="text-gray-600">Total MRP</span>
+                <span className="font-medium text-black">
+                  - ₹{order?.totalMRP || "0.00"}
+                </span>
+              </div>
+
+              <div className="flex justify-between">
                 <span className="text-gray-600">Item Total</span>
                 <span className="font-medium text-gray-900">
                   ₹{orderData?.unitPrice || "0.00"}
@@ -363,12 +368,12 @@ const OrderDetailView = ({ orderId, onBack, axiosHttp }) => {
 
               <div className="flex justify-between">
                 <span className="text-gray-600">Discount</span>
-                <span className="font-medium text-green-600">
+                <span className="font-medium text-[#9c90ff]">
                   - ₹{orderData?.discount || "0.00"}
                 </span>
               </div>
 
-              <div className="flex justify-between">
+              {/* <div className="flex justify-between">
                 <span className="text-gray-600">Tax</span>
                 <span className="font-medium text-gray-900">
                   ₹{orderData?.tax || "0.00"}
@@ -380,7 +385,7 @@ const OrderDetailView = ({ orderId, onBack, axiosHttp }) => {
                 <span className="font-medium text-gray-900">
                   ₹{orderData?.shippingCost || "0.00"}
                 </span>
-              </div>
+              </div> */}
 
               <div className="flex justify-between pt-3 mt-2 border-t border-gray-200 font-semibold text-base">
                 <span className="text-gray-900">TOTAL PAYABLE</span>

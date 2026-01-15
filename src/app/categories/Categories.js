@@ -27,17 +27,17 @@ const CategoryPage = () => {
   }
 
   return (
-    <div className="bg-white">
-      <div className="w-full md:px-[100px] md:py-0 px-4 p-12 mb-4 mt-[130px] md:mt-[160px]  ">
+    <div className="bg-white min-h-screen">
+      <div className="w-full px-4 py-6 sm:px-6 sm:py-8 md:px-12 lg:px-20 xl:px-[100px] mt-[120px] sm:mt-[130px] md:mt-[150px] lg:mt-[160px] mb-6 md:mb-8">
         {/* Category Header */}
-        <div className="mb-8">
-          <h1 className="text-lg md:text-3xl font-bold text-gray-900 mb-2">
+        <div className="mb-6 sm:mb-8 md:mb-10">
+          <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold text-gray-900 mb-2">
             {categoryProducts.name}
           </h1>
         </div>
 
         {/* Subcategories */}
-        <div className="space-y-12">
+        <div className="space-y-8 sm:space-y-10 md:space-y-12">
           {categoryProducts.children
             ?.filter((subcategory) => subcategory.products?.length > 0)
             .map((subcategory) => {
@@ -46,11 +46,11 @@ const CategoryPage = () => {
               return (
                 <div
                   key={subcategory.id}
-                  className="border-b border-gray-200 pb-12 last:border-b-0"
+                  className="border-b border-gray-200 pb-8 sm:pb-10 md:pb-12 last:border-b-0"
                 >
                   {/* Subcategory Name */}
-                  <div className="mb-6 flex justify-between items-center">
-                    <h2 className="text-lg md:text-2xl font-semibold text-gray-900 uppercase tracking-wide">
+                  <div className="mb-4 sm:mb-5 md:mb-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 sm:gap-4">
+                    <h2 className="text-base sm:text-lg md:text-xl lg:text-2xl font-semibold text-gray-900 uppercase tracking-wide">
                       {subcategory.name}
                     </h2>
 
@@ -58,7 +58,7 @@ const CategoryPage = () => {
                     {subcategory.products?.length > 5 && (
                       <Link
                         href={`/products?subCatId=${subcategory.id}`}
-                        className="hidden lg:block text-[#808080] border-b border-[#808080] text-sm "
+                        className="hidden lg:flex items-center text-[#808080] border-b border-[#808080] text-sm hover:text-gray-900 hover:border-gray-900 transition-colors whitespace-nowrap"
                       >
                         View All →
                       </Link>
@@ -67,7 +67,7 @@ const CategoryPage = () => {
 
                   {/* Products */}
                   {firstFiveProducts?.length > 0 ? (
-                    <div className="grid grid-cols-2 gap-5  md:grid-cols-4 lg:grid-cols-5 md:gap-5">
+                    <div className="grid grid-cols-2 gap-3 sm:gap-4 md:gap-5 lg:grid-cols-4 xl:grid-cols-5">
                       {firstFiveProducts.map((product) => (
                         <ListingCard
                           key={product.id}
@@ -92,21 +92,21 @@ const CategoryPage = () => {
                       ))}
                     </div>
                   ) : (
-                    <div className="text-center py-12">
-                      <p className="text-gray-500 text-lg">
+                    <div className="text-center py-8 sm:py-10 md:py-12">
+                      <p className="text-gray-500 text-sm sm:text-base md:text-lg">
                         No products available in this subcategory
                       </p>
                     </div>
                   )}
 
-                  {/* Mobile View All */}
+                  {/* Mobile & Tablet View All */}
                   {subcategory.products?.length > 5 && (
-                    <div className="mt-4 text-center lg:hidden">
+                    <div className="mt-4 sm:mt-5 md:mt-6 text-center lg:hidden">
                       <Link
                         href={`/products?subCatId=${subcategory.id}`}
-                        className="text-blue-600 font-medium hover:underline"
+                        className="inline-block text-sm sm:text-base text-blue-600 font-medium hover:underline hover:text-blue-700 transition-colors px-4 py-2"
                       >
-                        View All Products
+                        View All Products →
                       </Link>
                     </div>
                   )}

@@ -18,7 +18,7 @@ const HomeCarousel = () => {
   return (
     <div>
       {redirectUrl ? (
-        <Link href={redirectUrl} target="_blank" rel="noopener noreferrer">
+        <Link href={redirectUrl}>
           <BannerCarousel image={bannerImage} />
         </Link>
       ) : (

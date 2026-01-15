@@ -127,7 +127,7 @@ const NewInCard = ({
 
                 {/* Discount */}
                 {showOriginalPrice && (
-                  <span className="text-xs sm:text-sm font-medium text-emerald-600 uppercase">
+                  <span className="text-xs sm:text-sm font-medium text-[#9c90ff] uppercase">
                     ({discountPercentage}% OFF)
                   </span>
                 )}

@@ -38,6 +38,9 @@ const CartProductCard = ({
   const handleDecrease = () => {
     if (product.quantity > 1) {
       onQuantityChange(product.cartItemId, product.quantity - 1);
+    } else if (product.quantity === 1) {
+      // Remove item when quantity reaches 0
+      onRemove(product.productId);
     }
   };
 
@@ -106,7 +109,7 @@ const CartProductCard = ({
               <div className="flex items-center border rounded px-1 sm:px-2 py-1">
                 <button
                   onClick={handleDecrease}
-                  className="text-black text-base sm:text-lg font-semibold px-1 sm:px-2 hover:text-red-500 active:scale-95 transition-transform"
+                  className="text-black text-base sm:text-lg font-semibold px-1 sm:px-2 hover:text-[#ac9ffc] active:scale-95 transition-transform cursor-pointer"
                 >
                   −
                 </button>
@@ -115,7 +118,7 @@ const CartProductCard = ({
                 </span>
                 <button
                   onClick={handleIncrease}
-                  className="text-black text-base sm:text-lg font-semibold px-1 sm:px-2 hover:text-green-600 active:scale-95 transition-transform"
+                  className="text-black text-base sm:text-lg font-semibold px-1 sm:px-2 hover:text-[#ac9ffc] active:scale-95 transition-transform cursor-pointer"
                 >
                   +
                 </button>
@@ -125,14 +128,14 @@ const CartProductCard = ({
 
           {/* Stock Availability Message */}
           {showStockMessage && (
-            <div className="mt-1 sm:mt-2 text-[10px] sm:text-xs text-red-600 bg-red-50 px-2 py-1 rounded">
+            <div className="mt-1 sm:mt-2 text-[10px] sm:text-sm text-[#ac9ffc]  px-2 py-1 rounded">
               Only {product.availableStock || 0} items available in stock
             </div>
           )}
 
           {/* Price */}
           <div className="mt-2 sm:mt-3 flex flex-wrap items-center gap-1 sm:gap-2">
-            <span className="font-semibold text-black text-base sm:text-lg">
+            <span className=" text-black text-base sm:text-lg">
               Rs. {product.price}
             </span>
             {product.originalPrice > product.price && (
@@ -140,7 +143,7 @@ const CartProductCard = ({
                 <span className="text-black line-through text-xs sm:text-sm">
                   Rs. {product.originalPrice}
                 </span>
-                <span className="text-green-600 text-xs sm:text-sm font-medium">
+                <span className="text-[#ac9ffc] text-xs sm:text-sm font-medium">
                   ({discountPercent}% OFF)
                 </span>
               </>

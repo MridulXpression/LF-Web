@@ -265,7 +265,7 @@ const BrandDirectory = ({ brands }) => {
                                                   </span>
                                                 )}
                                                 {discount > 0 && (
-                                                  <span className="text-[10px] sm:text-xs font-semibold text-green-600">
+                                                  <span className="text-[10px] sm:text-xs font-semibold text-[#ac9ffc]">
                                                     {discount}% OFF
                                                   </span>
                                                 )}
@@ -280,8 +280,6 @@ const BrandDirectory = ({ brands }) => {
                                   <div className="flex justify-center">
                                     <Link
                                       href={`/brands/${expandedBrandId}`}
-                                      target="_blank"
-                                      rel="noopener noreferrer"
                                       className="px-6 sm:px-8 py-2.5 sm:py-3 bg-black text-white text-sm sm:text-base font-medium rounded-lg transition-colors w-full sm:w-auto text-center"
                                     >
                                       Explore All Products

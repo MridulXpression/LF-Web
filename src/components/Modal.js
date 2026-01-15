@@ -390,14 +390,14 @@ const ProductModal = () => {
   return (
     <div className="fixed inset-0  bg-black/10 backdrop-blur-[4px]  flex items-center justify-center z-50 p-4 overflow-auto">
       <div className="bg-white w-full max-w-3xl  overflow-hidden">
-        <div className="flex flex-col md:flex-row overflow-y-auto  max-h-[400px]">
+        <div className="flex flex-col md:flex-row overflow-y-auto  max-h-[450px]">
           {/* Product Image */}
           <div className="md:w-1/2 w-full relative bg-gray-50 flex items-center justify-center ">
             {/* <button className="absolute top-4 right-4 w-8 h-8 bg-white rounded-full flex items-center justify-center shadow-md z-10">
               <Heart className="w-5 h-5 text-gray-400 hover:text-red-500 transition-colors" />
             </button> */}
 
-            <div className="relative w-full h-70 md:h-[400px]">
+            <div className="relative w-full h-70 md:h-[450px]">
               <Image
                 src={
                   product?.imageUrls
@@ -417,8 +417,9 @@ const ProductModal = () => {
             <div className="flex items-start justify-between mb-4">
               <div>
                 <h2 className="text-2xl font-semibold text-gray-900 mb-1">
-                  {product.title}
+                  {product.title.split(" ").slice(0, 5).join(" ")}
                 </h2>
+
                 <p className="text-xl text-gray-900">Rs. {product.basePrice}</p>
               </div>
               <button
@@ -432,8 +433,8 @@ const ProductModal = () => {
             {/* Description */}
             <div className="mb-4">
               <p className="text-gray-600 mb-1 text-sm leading-snug">
-                {product.description?.split(" ").slice(0, 25).join(" ") +
-                  (product.description?.split(" ").length > 25 ? "..." : "")}
+                {product.description?.split(" ").slice(0, 10).join(" ") +
+                  (product.description?.split(" ").length > 10 ? "..." : "")}
               </p>
             </div>
 
@@ -493,6 +494,18 @@ const ProductModal = () => {
                 </div>
               </div>
             )}
+            {/* Message Display */}
+            {message && (
+              <div
+                className={`mb-4 p-3 rounded-md text-sm font-medium text-center ${
+                  messageType === "success"
+                    ? "text-[#ac9ffc]"
+                    : "text-[#ac9ffc]"
+                }`}
+              >
+                {message}
+              </div>
+            )}
 
             {/* Buttons in one row */}
             <div className="mb-4 flex gap-3">
@@ -512,24 +525,15 @@ const ProductModal = () => {
                 href={`/products/${product.id}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                onClick={() => localStorage.setItem("ProductId", product.id)}
+                onClick={() => {
+                  localStorage.setItem("ProductId", product.id);
+                  handleClose();
+                }}
                 className="flex-1 bg-white border border-black text-black py-2 px-4 rounded-md hover:bg-gray-50 transition-colors font-medium text-sm inline-flex items-center justify-center text-center"
               >
                 View Details
               </Link>
             </div>
-            {/* Message Display */}
-            {message && (
-              <div
-                className={`mb-4 p-3 rounded-md text-sm font-medium text-center ${
-                  messageType === "success"
-                    ? "bg-green-100 text-green-800"
-                    : "bg-red-100 text-red-800"
-                }`}
-              >
-                {message}
-              </div>
-            )}
           </div>
         </div>
       </div>

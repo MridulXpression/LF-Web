@@ -146,7 +146,7 @@ const ProductCollectionCard = ({ product, onLike }) => {
                 <span className="line-through opacity-60 text-sm md:text-md">
                   ₹{originalPrice}
                 </span>
-                <span className="text-emerald-600 text-sm md:text-md font-medium">
+                <span className="text-[#ac9ffc] text-sm md:text-md font-medium">
                   ({discountPercentage}% OFF)
                 </span>
               </>

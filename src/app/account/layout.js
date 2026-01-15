@@ -3,6 +3,7 @@ import AccountHeader from "@/components/accounts/AccountHeader";
 import AccountSidebar from "@/components/accounts/AccountSidebar";
 import Navbar from "../(navbar)/Navbar";
 import Footer from "@/components/footer";
+import TrendingBlog from "../(newsletter)/Newsletter";
 
 export default function AccountLayout({ children }) {
   return (
@@ -22,7 +23,7 @@ export default function AccountLayout({ children }) {
           </div>
         </div>
       </div>
-
+      <TrendingBlog />
       <Footer />
     </>
   );

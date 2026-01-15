@@ -424,10 +424,10 @@ export default function ProductPage({ params }) {
             {/* Display message below Add to Bag */}
             {message && (
               <div
-                className={`p-3 rounded text-sm font-medium ${
+                className={`p-3 rounded text-md font-medium ${
                   message.type === "success"
-                    ? "bg-green-100 text-green-800 border border-green-200"
-                    : "bg-red-100 text-red-800 border border-red-200"
+                    ? "text-[#9c90ff]  "
+                    : " text-[#9c90ff]"
                 }`}
               >
                 {message.text}

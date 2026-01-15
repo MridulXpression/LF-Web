@@ -51,13 +51,7 @@ const Footer = () => {
                 <Link href="/">Home</Link>
               </li>
               <li>
-                <Link
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  href="/about-us"
-                >
-                  About Us
-                </Link>
+                <Link href="/about-us">About Us</Link>
               </li>
               <li>Discover now</li>
               <li>La fetch quick</li>
@@ -66,51 +60,24 @@ const Footer = () => {
             {/* Column 3 */}
             <ul className="space-y-3 text-sm text-gray-300">
               <li>
-                <Link
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  href="/privacy-policy"
-                >
-                  Privacy policy
-                </Link>
+                <Link href="/privacy-policy">Privacy policy</Link>
               </li>
 
               <li>
-                <Link
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  href="/terms-and-conditions"
-                >
-                  Terms & conditions
-                </Link>
+                <Link href="/terms-and-conditions">Terms & conditions</Link>
               </li>
               <li>
-                <Link
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  href="/shipping-policy"
-                >
-                  {" "}
-                  Shipping policy
-                </Link>
+                <Link href="/shipping-policy"> Shipping policy</Link>
               </li>
               <li>
-                <Link
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  href="/cancellation-policy"
-                >
-                  Cancellation policy{" "}
-                </Link>
+                <Link href="/cancellation-policy">Cancellation policy </Link>
               </li>
             </ul>
 
             {/* Column 4 */}
             <ul className="space-y-3 text-sm text-gray-300">
               <li>
-                <Link target="_blank" rel="noopener noreferrer" href="/blogs">
-                  Blogs
-                </Link>
+                <Link href="/blogs">Blogs</Link>
               </li>
               <li>Email Us</li>
             </ul>

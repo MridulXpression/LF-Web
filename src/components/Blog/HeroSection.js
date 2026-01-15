@@ -14,12 +14,7 @@ const FashionBlogHero = ({ blogPost, loading }) => {
       ></div>
 
       {blogPost && (
-        <Link
-          href={`/blogs/${blogPost.id}`}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="block"
-        >
+        <Link href={`/blogs/${blogPost.id}`} className="block">
           <div
             className="relative mx-auto cursor-pointer px-4 sm:px-6 lg:px-0 max-w-full lg:max-w-5xl"
             style={{
