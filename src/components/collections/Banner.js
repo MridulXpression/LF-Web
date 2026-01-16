@@ -4,7 +4,7 @@ import React from "react";
 const Banner = ({ banner, bannerCount }) => {
   const handleClick = () => {
     if (banner.redirectUrl) {
-      window.open(banner.redirectUrl, "_blank");
+      window.location.href = banner.redirectUrl;
     }
   };
 

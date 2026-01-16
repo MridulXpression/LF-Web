@@ -118,7 +118,7 @@ const ProductCollectionCard = ({ product, onLike }) => {
               onClick={handlePreviewClick}
               className="absolute left-2 bottom-2 w-[calc(100%-16px)] h-9
                bg-stone-50 rounded-lg flex items-center justify-center
-               opacity-0 group-hover:opacity-100 transition-opacity"
+               opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer"
             >
               <span className="text-sm font-medium">Product Preview</span>
             </button>
@@ -146,7 +146,7 @@ const ProductCollectionCard = ({ product, onLike }) => {
                 <span className="line-through opacity-60 text-sm md:text-md">
                   ₹{originalPrice}
                 </span>
-                <span className="text-emerald-600 text-sm md:text-md font-medium">
+                <span className="text-[#ac9ffc] text-sm md:text-md font-medium">
                   ({discountPercentage}% OFF)
                 </span>
               </>

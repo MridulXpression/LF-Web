@@ -139,7 +139,7 @@ const extractColorsFromVariants = (variants) => {
 
 export default function ProductPage({ params }) {
   const unwrappedParams = React.use(params);
-  const data = useProductsById(unwrappedParams.id);
+  const { product: data, loading, error } = useProductsById(unwrappedParams.id);
 
   // Clear selectedVariantId when product changes
   useEffect(() => {
@@ -305,6 +305,53 @@ export default function ProductPage({ params }) {
     setTimeout(() => setMessage(null), 5000);
   };
 
+  if (loading)
+    return (
+      <div className="flex items-center justify-center h-screen bg-white">
+        <div className="w-12 h-12 border-4 border-gray-300 border-t-blue-500 rounded-full animate-spin"></div>
+      </div>
+    );
+
+  if (error)
+    return (
+      <div className="bg-white min-h-screen">
+        <Navbar />
+        <div className="flex flex-col items-center justify-center h-[calc(100vh-130px)] mt-[130px] px-4">
+          <div className="text-center max-w-md">
+            <div className="mb-4">
+              <svg
+                className="mx-auto h-16 w-16 text-gray-400"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                aria-hidden="true"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                />
+              </svg>
+            </div>
+            <h1 className="text-3xl font-bold text-gray-900 mb-2">
+              {error.status === 404 ? error.message : "Error"}
+            </h1>
+            {/* <p className="text-2xl font-bold text-gray-900 mb-4">
+              {error.message}
+            </p> */}
+            <button
+              onClick={() => (window.location.href = "/")}
+              className="px-6 py-3 bg-black cursor-pointer text-white rounded hover:bg-gray-800 transition-colors font-medium"
+            >
+              Continue Shopping
+            </button>
+          </div>
+        </div>
+        <Footer />
+      </div>
+    );
+
   if (!data)
     return (
       <div className="flex items-center justify-center h-screen bg-white">
@@ -318,7 +365,7 @@ export default function ProductPage({ params }) {
   return (
     <div className="bg-white">
       <Navbar />
-      <div className="max-w-7xl mx-auto px-4 py-8 mt-[150px] ">
+      <div className="max-w-7xl mx-auto px-4 py-8 mt-[130px] ">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {/* Left - Images */}
           <ProductImageGallery
@@ -377,10 +424,10 @@ export default function ProductPage({ params }) {
             {/* Display message below Add to Bag */}
             {message && (
               <div
-                className={`p-3 rounded text-sm font-medium ${
+                className={`p-3 rounded text-md font-medium ${
                   message.type === "success"
-                    ? "bg-green-100 text-green-800 border border-green-200"
-                    : "bg-red-100 text-red-800 border border-red-200"
+                    ? "text-[#9c90ff]  "
+                    : " text-[#9c90ff]"
                 }`}
               >
                 {message.text}

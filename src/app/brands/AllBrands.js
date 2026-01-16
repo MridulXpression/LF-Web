@@ -15,7 +15,7 @@ const AllBrands = () => {
     })) || [];
 
   return (
-    <div className="min-h-screen bg-gray-50 mt-[150px]  ">
+    <div className="min-h-screen bg-gray-50 mt-[130px]  ">
       <BrandDirectory brands={formattedBrands} />
     </div>
   );

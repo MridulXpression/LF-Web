@@ -44,7 +44,25 @@ const DeleteAccountModal = ({ isOpen, onClose }) => {
 
   return (
     <>
-      <Toaster position="top-center" reverseOrder={false} />
+      <Toaster
+        position="top-center"
+        toastOptions={{
+          success: {
+            iconTheme: {
+              primary: "#9c90ff",
+              secondary: "#fff",
+            },
+          },
+          error: {
+            iconTheme: {
+              primary: "#9c90ff",
+              secondary: "#fff",
+            },
+          },
+        }}
+        reverseOrder={false}
+      />
+
       <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50 px-4">
         <div className="bg-white w-full max-w-sm sm:max-w-md rounded-lg shadow-lg animate-fadeIn">
           {/* Header */}

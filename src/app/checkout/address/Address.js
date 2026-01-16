@@ -225,37 +225,29 @@ const CheckOutAddress = () => {
         return;
       }
 
-      // Build items array for initiate-payment using pricing data from API
+      // Build items array for initiate-payment using cart API data
       const items = cartData.map((item) => {
-        const pricing = item.pricing || {};
         const quantity = item.quantity || 1;
+        const unitPrice = Number(item.product_variant?.price || 0);
+        const itemTotal = unitPrice * quantity;
 
         return {
           productId: item.productId,
           variantId: item.variantId,
           quantity,
-          unitPrice: Number(pricing.unitPrice || pricing.basePrice || 0),
+          unitPrice: unitPrice,
           discount: 0,
-          total: Number(pricing.total || 0),
-          tax: 0,
-          gstAmount: Number(pricing.gstAmount || 0),
-          hsnCode: pricing.hsnCode || "",
-          gstRate: Number(pricing.gstRate || 0),
-          statutoryGSTRate: Number(pricing.statutoryGSTRate || 0),
-          gstRuleApplied: pricing.gstRuleApplied || "VALUE_BASED",
+          total: itemTotal,
         };
       });
 
-      // Calculate totals from cart pricing data
+      // Calculate totals from cart data
       const totalMRP = cartData.reduce((s, it) => {
         const qty = it.quantity || 1;
-        const basePrice = Number(
-          it.pricing?.basePrice || it.product?.mrp || it.product?.basePrice || 0
-        );
-        return s + basePrice * qty;
+        const mrp = Number(it.product?.mrp || it.product?.basePrice || 0);
+        return s + mrp * qty;
       }, 0);
 
-      const totalGST = items.reduce((s, it) => s + (it.gstAmount || 0), 0);
       const subtotalBeforeCoupon = items.reduce(
         (s, it) => s + (it.total || 0),
         0
@@ -283,7 +275,6 @@ const CheckOutAddress = () => {
         items: items,
         totalMRP: Number(totalMRP.toFixed(2)),
         couponDiscount: Number(couponDiscount.toFixed(2)),
-        tax: Number(totalGST.toFixed(2)),
         total: Number(paymentTotal.toFixed(2)),
         paymentMethod: "prepaid",
       };
@@ -472,7 +463,7 @@ const CheckOutAddress = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 mt-[150px] py-8">
+    <div className="min-h-screen bg-gray-50 mt-[130px] py-8">
       <div className="max-w-7xl mx-auto px-4">
         {/* Progress Steps */}
         <div className="mb-8 flex items-center justify-center gap-2 text-sm">

@@ -72,7 +72,7 @@ const AccountSidebar = () => {
 
   const handleNavigation = (id) => {
     if (externalUrls[id]) {
-      window.open(externalUrls[id], "_blank");
+      router.push(externalUrls[id]);
     } else {
       router.push(`/account/${id}`);
     }

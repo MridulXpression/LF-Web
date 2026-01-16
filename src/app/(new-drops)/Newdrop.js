@@ -48,21 +48,9 @@ const NewestAtLafetch = () => {
   const handleLike = (productId) => {};
 
   return (
-    <div
-      className="
-  w-full
- 
- 
-  p-[24px]
-  py-6 sm:py-8
-  bg-white
-  flex flex-col
-  gap-6 sm:gap-8 md:gap-10
-  
-"
-    >
+    <div className="w-full p-[24px] py-6 sm:py-8 bg-white flex flex-col gap-6 sm:gap-8 md:gap-10 ">
       {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-center gap-4 md:gap-10">
+      <div className="flex flex-col md:flex-row md:items-center gap-4 md:gap-10 ">
         <div className="flex-1 h-1 bg-stone-100/90 overflow-hidden relative">
           <div
             className="h-full bg-stone-950 transition-all duration-500"
@@ -79,7 +67,7 @@ const NewestAtLafetch = () => {
       </div>
 
       {/* Content */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 md:gap-7">
+      <div className=" max-w-[1400px] mx-auto grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 md:gap-[100px]">
         {/* Products */}
         <div className="flex flex-col gap-4 sm:gap-5 md:gap-6 lg:gap-7">
           {rows.map((row, rowIndex) => (
@@ -119,7 +107,7 @@ const NewestAtLafetch = () => {
             />
           </div>
 
-          <div className="relative h-41 sm:h-44  md:h-[220px] rounded-xl md:rounded-2xl overflow-hidden">
+          <div className="relative h-50 sm:h-44  md:h-[220px] rounded-xl md:rounded-2xl overflow-hidden">
             <div className="absolute inset-0 bg-[#e7e7e6] rounded-xl md:rounded-2xl" />
             <div className="absolute inset-0 left-4 sm:left-5 md:left-6 lg:left-7 top-4 sm:top-5 md:top-6  right-4 sm:right-5 md:right-6 lg:right-7 flex flex-col gap-3 sm:gap-3 md:gap-4 lg:gap-5">
               <div>

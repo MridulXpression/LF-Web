@@ -62,6 +62,17 @@ const OrderSummary = ({
 
   const isAddressPage = pathname === "/checkout/address";
 
+  // Auto-remove coupon if cart value falls below minimum
+  useEffect(() => {
+    if (
+      appliedCoupon &&
+      appliedCoupon.minCartValue &&
+      subtotal < appliedCoupon.minCartValue
+    ) {
+      dispatch(clearAppliedCoupon());
+    }
+  }, [subtotal, appliedCoupon, dispatch]);
+
   useEffect(() => {
     if (onAmountChange) {
       onAmountChange(totalPrice);
@@ -77,47 +88,36 @@ const OrderSummary = ({
             <span className="font-semibold text-black">COUPONS</span>
             <button
               onClick={() => setShowModal(true)}
-              className="text-sm text-blue-600 hover:underline cursor-pointer"
+              className="text-sm text-[#9c90ff] hover:underline cursor-pointer"
             >
               VIEW MORE
             </button>
           </div>
 
-          {coupons.length > 0 ? (
-            <div className="border rounded p-2 text-sm text-black">
+          {appliedCoupon ? (
+            <div className="border rounded p-2 text-sm text-black bg-green-100">
               <div className="flex justify-between items-center">
-                <span className="font-semibold">{coupons[0].name}</span>
+                <span className="font-semibold">{appliedCoupon.name}</span>
                 <button
-                  onClick={() => handleApplyCoupon(coupons[0])}
-                  className="text-blue-600 text-xs underline"
+                  onClick={handleRemoveCoupon}
+                  className="text-red-600 text-xs underline cursor-pointer"
                 >
-                  Apply
+                  Remove
                 </button>
               </div>
               <p className="text-xs text-gray-600 mt-1">
-                {coupons[0].description || "No description"}
+                Code: <span className="font-mono">{appliedCoupon.code}</span>
               </p>
-              <p className="text-xs text-gray-500 mt-1">
-                Discount: {coupons[0].discountType}
+              <p className="text-xs text-green-700 mt-1 font-medium">
+                ✓ Coupon Applied
               </p>
             </div>
+          ) : coupons.length > 0 ? (
+            <p className="text-gray-600 text-sm">
+              {coupons.length} coupon{coupons.length > 1 ? "s" : ""} available
+            </p>
           ) : (
             <p className="text-gray-500 text-sm">No coupons available</p>
-          )}
-
-          {appliedCoupon && (
-            <div className="mt-3 bg-green-100 p-2 rounded text-sm text-black flex justify-between items-center">
-              <div>
-                Applied Coupon: <strong>{appliedCoupon.code}</strong> (
-                {appliedCoupon.discountType})
-              </div>
-              <button
-                onClick={handleRemoveCoupon}
-                className="text-red-600 text-xs underline cursor-pointer"
-              >
-                Remove
-              </button>
-            </div>
           )}
         </div>
       )}
@@ -155,7 +155,7 @@ const OrderSummary = ({
 
           <div className="flex justify-between">
             <span className="text-black">Delivery Charges</span>
-            <span className="text-green-600">
+            <span className="text-[#9c90ff]">
               {deliveryCharges === 0 ? "Free" : `₹${deliveryCharges}`}
             </span>
           </div>
@@ -211,35 +211,53 @@ const OrderSummary = ({
 
             {coupons.length > 0 ? (
               <div className="space-y-4">
-                {coupons.map((coupon) => (
-                  <div
-                    key={coupon.id}
-                    className="border rounded p-3 hover:bg-gray-50"
-                  >
-                    <div className="flex justify-between items-center">
-                      <div>
-                        <h4 className="font-semibold text-black">
-                          {coupon.name}
-                        </h4>
-                        <p className="text-xs text-gray-600">
-                          Code: <span className="font-mono">{coupon.code}</span>
-                        </p>
+                {coupons.map((coupon) => {
+                  const isCouponDisabled = subtotal < coupon.minCartValue;
+                  return (
+                    <div
+                      key={coupon.id}
+                      className={`border rounded p-3 ${
+                        isCouponDisabled
+                          ? "bg-gray-100 opacity-75"
+                          : "hover:bg-gray-50"
+                      }`}
+                    >
+                      <div className="flex justify-between items-center">
+                        <div>
+                          <h4 className="font-semibold text-black">
+                            {coupon.name}
+                          </h4>
+                          <p className="text-xs text-gray-600">
+                            Code:{" "}
+                            <span className="font-mono">{coupon.code}</span>
+                          </p>
+                        </div>
+                        <button
+                          onClick={() => handleApplyCoupon(coupon)}
+                          disabled={isCouponDisabled}
+                          className={`text-xs underline ${
+                            isCouponDisabled
+                              ? "text-gray-400 cursor-not-allowed"
+                              : "text-blue-600 cursor-pointer"
+                          }`}
+                        >
+                          Apply
+                        </button>
                       </div>
-                      <button
-                        onClick={() => handleApplyCoupon(coupon)}
-                        className="text-xs text-blue-600 underline"
-                      >
-                        Apply
-                      </button>
+                      <p className="text-xs text-gray-600 mt-2">
+                        {coupon.description}
+                      </p>
+                      <p className="text-xs text-gray-500">
+                        Discount: {coupon.discountType}
+                      </p>
+                      {isCouponDisabled && (
+                        <p className="text-xs text-red-600 mt-2 font-medium">
+                          Min cart value: ₹{coupon.minCartValue}
+                        </p>
+                      )}
                     </div>
-                    <p className="text-xs text-gray-600 mt-2">
-                      {coupon.description}
-                    </p>
-                    <p className="text-xs text-gray-500">
-                      Discount: {coupon.discountType}
-                    </p>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             ) : (
               <p className="text-gray-500 text-sm">No coupons available.</p>

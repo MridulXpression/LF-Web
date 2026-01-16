@@ -171,17 +171,20 @@ const ProductInfo = ({
         </span>
 
         {/* Show MRP + Discount ONLY if MRP > 0 AND MRP > Price */}
-        {mrp && Number(mrp) > 0 && Number(mrp) > Number(variantPrice) && (
-          <>
-            <span className="text-base text-gray-400 line-through">
-              MRP ₹{mrp}
-            </span>
+        {mrp != null &&
+          mrp !== "" &&
+          Number(mrp) > 0 &&
+          Number(mrp) > Number(variantPrice) && (
+            <>
+              <span className="text-base text-gray-400 line-through">
+                MRP ₹{mrp}
+              </span>
 
-            <span className="text-base text-green-500 font-semibold">
-              ({discount}% OFF)
-            </span>
-          </>
-        )}
+              <span className="text-base text-[#9c90ff] font-semibold">
+                ({discount}% OFF)
+              </span>
+            </>
+          )}
       </div>
 
       <div className="text-sm text-[#9c90ff] font-semibold mb-6">
@@ -228,7 +231,7 @@ const ProductInfo = ({
               !size.available
                 ? "bg-white text-gray-300 border-gray-200 line-through cursor-not-allowed"
                 : selectedSize === size.value
-                ? "border-pink-600 text-pink-600 bg-white"
+                ? "border-[#9c90ff] text-[#9c90ff] bg-white"
                 : "border-gray-300 text-gray-700 bg-white hover:border-gray-400"
             }`}
                 >
@@ -238,7 +241,7 @@ const ProductInfo = ({
             ))}
           </div>
           {showSizeError && (
-            <div className="text-xs text-red-500 mt-2 font-semibold">
+            <div className="text-xs text-[#9c90ff] mt-2 font-semibold">
               Please select a size.
             </div>
           )}
@@ -266,7 +269,7 @@ const ProductInfo = ({
                       !color.available
                         ? "opacity-40 cursor-not-allowed border-gray-200 text-gray-300"
                         : selectedColor === color.value
-                        ? "ring-2 ring-pink-500 border-white text-pink-600"
+                        ? "ring-2 ring-[#9c90ff] border-white text-[#9c90ff]"
                         : "border-gray-300 text-gray-700 hover:border-gray-400"
                     }`}
                   >

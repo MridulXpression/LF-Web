@@ -96,7 +96,7 @@ const WishlistCard = ({
               <span className="text-xs text-gray-400 line-through">
                 Rs. {originalPrice}
               </span>
-              <span className="text-xs font-semibold text-green-600">
+              <span className="text-xs font-semibold text-[#9c90ff]">
                 ({discount}%)
               </span>
             </>

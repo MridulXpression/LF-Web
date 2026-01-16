@@ -82,7 +82,7 @@ const NewInCard = ({
             {/* Hover Preview */}
             <button
               onClick={handlePreviewClick}
-              className="absolute left-1/2 -translate-x-1/2 bottom-2 sm:bottom-3 w-[calc(100%-16px)] sm:w-[calc(100%-12px)] h-9 sm:h-10 md:h-11 py-2 bg-stone-50 rounded-lg flex justify-center items-center opacity-0 hover:opacity-100 transition-opacity cursor-pointer hover:bg-stone-100"
+              className="absolute left-1/2 -translate-x-1/2 bottom-2 sm:bottom-3 w-[calc(100%-16px)] sm:w-[calc(100%-12px)] h-9 sm:h-10 md:h-11 py-2 bg-stone-50 rounded-lg flex justify-center items-center opacity-0 hover:opacity-100 transition-opacity cursor-pointer hover:bg-stone-100 cursor-pointer"
             >
               <span className="text-stone-950 text-xs sm:text-sm font-medium">
                 Product Preview
@@ -127,7 +127,7 @@ const NewInCard = ({
 
                 {/* Discount */}
                 {showOriginalPrice && (
-                  <span className="text-xs sm:text-sm font-medium text-emerald-600 uppercase">
+                  <span className="text-xs sm:text-sm font-medium text-[#9c90ff] uppercase">
                     ({discountPercentage}% OFF)
                   </span>
                 )}

@@ -34,6 +34,8 @@ const useProducts = (query) => {
 
         if (result?.status === 200) {
           const newProducts = result?.data?.data?.products || [];
+          const totalPages = result?.data?.data?.totalPages;
+          const currentPage = result?.data?.data?.currentPage;
 
           if (isLoadMore) {
             // Append new products to existing ones
@@ -44,7 +46,12 @@ const useProducts = (query) => {
           }
 
           // Check if there are more products to load
-          setHasMore(newProducts.length > 0 && newProducts.length === 20);
+          // Use totalPages if available, otherwise fallback to checking products length
+          if (totalPages && currentPage) {
+            setHasMore(currentPage < totalPages);
+          } else {
+            setHasMore(newProducts.length > 0 && newProducts.length >= 20);
+          }
           setPage(pageNumber);
         } else {
           if (!isLoadMore) {

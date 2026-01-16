@@ -51,13 +51,7 @@ const Footer = () => {
                 <Link href="/">Home</Link>
               </li>
               <li>
-                <Link
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  href="/about-us"
-                >
-                  About Us
-                </Link>
+                <Link href="/about-us">About Us</Link>
               </li>
               <li>Discover now</li>
               <li>La fetch quick</li>
@@ -66,51 +60,24 @@ const Footer = () => {
             {/* Column 3 */}
             <ul className="space-y-3 text-sm text-gray-300">
               <li>
-                <Link
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  href="/privacy-policy"
-                >
-                  Privacy policy
-                </Link>
+                <Link href="/privacy-policy">Privacy policy</Link>
               </li>
 
               <li>
-                <Link
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  href="/terms-and-conditions"
-                >
-                  Terms & conditions
-                </Link>
+                <Link href="/terms-and-conditions">Terms & conditions</Link>
               </li>
               <li>
-                <Link
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  href="/shipping-policy"
-                >
-                  {" "}
-                  Shipping policy
-                </Link>
+                <Link href="/shipping-policy"> Shipping policy</Link>
               </li>
               <li>
-                <Link
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  href="/cancellation-policy"
-                >
-                  Cancellation policy{" "}
-                </Link>
+                <Link href="/cancellation-policy">Cancellation policy </Link>
               </li>
             </ul>
 
             {/* Column 4 */}
             <ul className="space-y-3 text-sm text-gray-300">
               <li>
-                <Link target="_blank" rel="noopener noreferrer" href="/blogs">
-                  Blogs
-                </Link>
+                <Link href="/blogs">Blogs</Link>
               </li>
               <li>Email Us</li>
             </ul>
@@ -148,20 +115,20 @@ const Footer = () => {
         </div>
 
         {/* Bottom Section */}
-        <div className="border-t border-white/20 pt-8">
+        <div className="border-t border-white/20 ">
           {/* Row 1: Big Center Logo */}
           <div className="flex justify-center">
             <Image
-              src="/images/lafetch-white.svg"
+              src="/images/logo-white.png"
               alt="LAFETCH Logo"
-              width={360}
-              height={140}
+              width={300}
+              height={100}
               className="object-contain"
             />
           </div>
 
           {/* Row 2: Copyright and Socials on same line */}
-          <div className="mt-10 flex flex-col md:flex-row justify-between items-center gap-6 md:gap-0">
+          <div className="mt-6 flex flex-col md:flex-row justify-between items-center gap-6 md:gap-0">
             <div className="text-sm text-gray-400 text-center md:text-left">
               ©2025 Powered By and All Right Reserved to AS10 TECH-RETAIL
               PRIVATE LIMITED

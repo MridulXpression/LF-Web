@@ -2,7 +2,7 @@ import React from "react";
 
 const FashionVideoBackground = ({ videoUrl, heading1, heading2, heading3 }) => {
   return (
-    <div className="relative w-full h-[50vh] md:h-[85vh] overflow-hidden mt-[130px] md:mt-[150px]  ">
+    <div className="relative w-full h-[50vh] md:h-[85vh] overflow-hidden mt-[120px] md:mt-[128px]  ">
       {/* Background Video */}
       <video
         className="absolute top-0 left-0 w-full h-full object-fill"

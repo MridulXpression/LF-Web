@@ -19,7 +19,11 @@ const TrendingBlog = () => {
     return null; // no content
   }
 
-  return <FashionGrid data={data} title="NEWSLETTERS" />;
+  return (
+    <div id="newsletters">
+      <FashionGrid data={data} title="NEWSLETTERS" />
+    </div>
+  );
 };
 
 export default TrendingBlog;

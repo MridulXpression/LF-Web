@@ -241,7 +241,23 @@ const PhoneAuthModal = () => {
   return (
     <div className=" flex items-center justify-center">
       {/* Add Toaster component */}
-      <Toaster position="top-center" />
+      <Toaster
+        position="top-center"
+        toastOptions={{
+          success: {
+            iconTheme: {
+              primary: "#9c90ff",
+              secondary: "#fff",
+            },
+          },
+          error: {
+            iconTheme: {
+              primary: "#9c90ff",
+              secondary: "#fff",
+            },
+          },
+        }}
+      />
 
       {/* Modal Overlay */}
       {isOpen && (
@@ -258,7 +274,7 @@ const PhoneAuthModal = () => {
             >
               {/* LaFetch Logo - Only show on steps 1-3 */}
               {currentStep !== "welcome" && (
-                <div className="absolute top-0 left-8 pt-[10px]">
+                <div className="absolute -top-[15px] left-8 ">
                   <Image
                     src="/images/logo-white.png"
                     alt="LaFetch Logo"
@@ -344,7 +360,7 @@ const PhoneAuthModal = () => {
                 // Phone Number Step with Auth Type Toggle
                 <>
                   <div className="text-center mt-8">
-                    <h2 className="text-2xl font-bold text-black mb-2">
+                    <h2 className="text-2xl  text-black mb-2">
                       Continue with Mobile Number
                     </h2>
                     <p className="text-black">
@@ -415,13 +431,8 @@ const PhoneAuthModal = () => {
 
                     <p className="text-sm text-black text-center">
                       By continuing, you agree to Lafetch's{" "}
-                      <span className="underline font-[700]">
-                        Terms & Conditions
-                      </span>{" "}
-                      and{" "}
-                      <span className="underline font-[700]">
-                        Privacy Policy
-                      </span>
+                      <span className=" font-[400]">Terms & Conditions</span>{" "}
+                      and <span className=" font-[400]">Privacy Policy</span>
                     </p>
                   </div>
                 </>
@@ -436,7 +447,7 @@ const PhoneAuthModal = () => {
                     >
                       ←
                     </button>
-                    <h2 className="text-2xl font-bold text-black mb-2">
+                    <h2 className="text-2xl  text-black mb-2">
                       Verify your Mobile Number
                     </h2>
                     <p className="text-black mb-4">
@@ -476,21 +487,21 @@ const PhoneAuthModal = () => {
                     </div>
 
                     {otpSuccess && (
-                      <div className="flex items-center justify-center text-green-600 text-sm font-medium">
+                      <div className="flex items-center justify-center text-[#9c90ff] text-sm font-medium">
                         <span className="text-lg mr-2">✓</span>
                         OTP has been sent successfully!
                       </div>
                     )}
 
                     {resendMessage && (
-                      <div className="flex items-center justify-center text-green-600 text-sm font-medium">
+                      <div className="flex items-center justify-center text-[#9c90ff] text-sm font-medium">
                         <span className="text-lg mr-2">✓</span>
                         {resendMessage}
                       </div>
                     )}
 
                     {resendError && (
-                      <div className="flex items-center justify-center text-red-600 text-sm font-medium">
+                      <div className="flex items-center justify-center text-[#9c90ff] text-sm font-medium">
                         <span className="text-lg mr-2">✕</span>
                         {resendError}
                       </div>
@@ -528,7 +539,7 @@ const PhoneAuthModal = () => {
                 // Step 3 - User Details Form (Only shown for signup)
                 <>
                   <div className="text-center mb-8">
-                    <h2 className="text-2xl font-bold text-black mb-2">
+                    <h2 className="text-2xl  text-black mb-2">
                       ONE LAST STEP!
                     </h2>
                     <p className="text-black">
@@ -632,7 +643,7 @@ const PhoneAuthModal = () => {
                 <>
                   <div className="text-center text-white h-full flex flex-col justify-between">
                     <div className="flex-1 flex flex-col justify-center">
-                      <h2 className="text-2xl font-bold mb-4">
+                      <h2 className="text-2xl  mb-4">
                         {authType === "login"
                           ? "Welcome Back!"
                           : "Welcome to LaFetch!"}

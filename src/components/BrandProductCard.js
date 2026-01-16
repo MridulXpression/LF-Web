@@ -25,7 +25,7 @@ const BrandProductCard = ({ image, title, price, productId, mrp }) => {
             {mrp > price && (
               <>
                 <p className="text-sm text-gray-500 line-through">₹{mrp}</p>
-                <p className=" text-[10px] md:text-sm text-green-600 font-medium">
+                <p className=" text-[10px] md:text-sm text-[#9c90ff] font-medium">
                   ({Math.round(((mrp - price) / mrp) * 100)}% OFF)
                 </p>
               </>

@@ -98,7 +98,7 @@ const FashionGrid = ({ data, title = "TRENDING NOW" }) => {
 
   return (
     <div id="newsletters" className="md:min-h-[80vh] bg-white">
-      <div className="max-w-full px-4 md:px-0 mx-auto">
+      <div className="py-4 px-4 sm:px-6 md:px-10">
         <div className="flex items-center mb-[40px] gap-8">
           <div className="flex-1 h-[2px] bg-stone-950" />
           <div className="text-stone-950 text-md  md:text-[38px] font-semibold uppercase tracking-wider whitespace-nowrap">
@@ -108,7 +108,7 @@ const FashionGrid = ({ data, title = "TRENDING NOW" }) => {
       </div>
 
       {/* First Row */}
-      <div className="flex flex-col md:flex-row w-full">
+      <div className="flex flex-col md:flex-row  px-4 sm:px-6 md:px-10">
         {firstRowItems.map((item, index) => {
           const fixedSize = fixedSizes[index];
           let position = item.position || "bottom-left";
@@ -125,8 +125,6 @@ const FashionGrid = ({ data, title = "TRENDING NOW" }) => {
           return (
             <div
               key={item.id}
-              target="_blank"
-              rel="noopener noreferrer"
               className={getContainerClasses(fixedSize.size)}
               onMouseEnter={() => setHoveredCardId(`first-${index}`)}
               onMouseLeave={() => setHoveredCardId(null)}
@@ -165,11 +163,7 @@ const FashionGrid = ({ data, title = "TRENDING NOW" }) => {
 
               {/* CTA Button (bottom only on hover) */}
               {isHovered && (
-                <Link
-                  href={`/newsletter/${item.id}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
+                <Link href={`/newsletter/${item.id}`}>
                   <div
                     className="absolute bottom-6 left-6 z-20 transition-all duration-300"
                     onMouseEnter={() => setHoveredButtonId(`first-${index}`)}
@@ -210,7 +204,7 @@ const FashionGrid = ({ data, title = "TRENDING NOW" }) => {
       </div>
 
       {/* Second Row */}
-      <div className="flex flex-col md:flex-row w-full">
+      <div className="flex flex-col md:flex-row px-4 sm:px-6 md:px-10">
         {secondRowItems.map((item, index) => {
           const fixedSize = fixedSizes[index + 3];
           let position = item.position || "bottom-left";
@@ -231,8 +225,6 @@ const FashionGrid = ({ data, title = "TRENDING NOW" }) => {
             <Link
               key={item.id}
               href={`/newsletter/${item.id}`}
-              target="_blank"
-              rel="noopener noreferrer"
               className={getContainerClasses(fixedSize.size)}
               onMouseEnter={() => setHoveredCardId(`second-${index}`)}
               onMouseLeave={() => setHoveredCardId(null)}
