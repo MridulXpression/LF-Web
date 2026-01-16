@@ -52,7 +52,7 @@ const NewInSection = () => {
   };
 
   return (
-    <section className="py-10 px-4 bg-white">
+    <section className=" px-4 bg-white">
       <div className="w-full p-[20px] lg:p-[50px]">
         {/* Section Title with Navigation */}
         <div className="flex flex-row justify-between items-center gap-2 sm:gap-4 mb-8 sm:mb-10">

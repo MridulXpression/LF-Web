@@ -157,7 +157,11 @@ const Navbar = () => {
                   onMouseEnter={() => {
                     clearTimeout(dropdownTimeout);
                     setHoveredMenu(index);
-                    menu.sections.length && setActiveDropdown(index);
+                    if (menu.sections.length) {
+                      setActiveDropdown(index);
+                    } else {
+                      setActiveDropdown(null);
+                    }
                   }}
                   onMouseLeave={() => {
                     setHoveredMenu(null);

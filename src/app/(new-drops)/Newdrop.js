@@ -13,22 +13,23 @@ const ITEMS_PER_ROW = 2;
 const NewestAtLafetch = () => {
   const { products = [] } = useProducts();
   const [currentPage, setCurrentPage] = useState(0);
+  const [isHovering, setIsHovering] = useState(false);
   const isModalOpen = useSelector((state) => state.modal.productViewModal);
   const isWishlistModalOpen = useSelector((state) => state.modal.wishlistModal);
 
   const topProducts = products.slice(0, 12);
   const totalPages = Math.ceil(topProducts.length / ITEMS_PER_PAGE);
 
-  // Auto-rotate products every 5 seconds (only when modals are NOT open)
+  // Auto-rotate products every 5 seconds (only when modals are NOT open and not hovering)
   useEffect(() => {
-    if (!totalPages || isModalOpen || isWishlistModalOpen) return;
+    if (!totalPages || isModalOpen || isWishlistModalOpen || isHovering) return;
 
     const interval = setInterval(() => {
       setCurrentPage((prev) => (prev + 1) % totalPages);
     }, 5000);
 
     return () => clearInterval(interval);
-  }, [totalPages, isModalOpen, isWishlistModalOpen]);
+  }, [totalPages, isModalOpen, isWishlistModalOpen, isHovering]);
 
   // Products for current page
   const currentProducts = useMemo(() => {
@@ -51,7 +52,11 @@ const NewestAtLafetch = () => {
     <div className="w-full p-[24px] py-6 sm:py-8 bg-white flex flex-col gap-6 sm:gap-8 md:gap-10 ">
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center gap-4 md:gap-10 ">
-        <div className="flex-1 h-1 bg-stone-100/90 overflow-hidden relative">
+        <div
+          className="flex-1 h-1 bg-stone-100/90 overflow-hidden relative cursor-pointer"
+          onMouseEnter={() => setIsHovering(true)}
+          onMouseLeave={() => setIsHovering(false)}
+        >
           <div
             className="h-full bg-stone-950 transition-all duration-500"
             style={{

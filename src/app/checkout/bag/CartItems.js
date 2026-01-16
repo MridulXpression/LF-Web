@@ -18,6 +18,7 @@ import {
   setItemSelected,
   setSelectedCartItems,
 } from "@/redux/slices/cartSlice";
+import Image from "next/image";
 
 const ShoppingCart = () => {
   const dispatch = useDispatch();
@@ -438,10 +439,12 @@ const ShoppingCart = () => {
           {/* Main Content */}
           {products.length === 0 ? (
             <div className="text-center py-8">
-              <img
+              <Image
                 src="/images/emptycart.png"
+                width={256}
+                height={256}
                 alt="Empty Cart"
-                className="mx-auto mb-2 w-64 h-64 object-contain"
+                className="mx-auto mb-2  object-contain"
               />
               <p className="text-gray-600 text-lg">Your cart is waiting</p>
               <button

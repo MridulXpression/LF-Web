@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { setAppliedCoupon, clearAppliedCoupon } from "@/redux/slices/cartSlice";
 import { X } from "lucide-react";
 import Link from "next/link";
+import useValidatePromo from "@/hooks/useValidatePromo";
 
 const OrderSummary = ({
   products,
@@ -18,6 +19,43 @@ const OrderSummary = ({
   const dispatch = useDispatch();
   const appliedCoupon = useSelector((state) => state.cart?.appliedCoupon);
   const [showModal, setShowModal] = useState(false);
+  const [promoCode, setPromoCode] = useState("");
+  const [promoError, setPromoError] = useState("");
+  const [appliedPromo, setAppliedPromo] = useState(null);
+  const { validatePromo, loading: promoLoading } = useValidatePromo();
+
+  // Load applied promo and coupon from localStorage on mount
+  useEffect(() => {
+    // Load promo
+    const savedPromo = localStorage.getItem("appliedPromo");
+    if (savedPromo) {
+      try {
+        setAppliedPromo(JSON.parse(savedPromo));
+      } catch (e) {
+        localStorage.removeItem("appliedPromo");
+      }
+    }
+
+    // Load coupon and sync with Redux if not already in Redux
+    const savedCoupon = localStorage.getItem("appliedCoupon");
+    if (savedCoupon && !appliedCoupon) {
+      try {
+        const couponData = JSON.parse(savedCoupon);
+        dispatch(setAppliedCoupon(couponData));
+      } catch (e) {
+        localStorage.removeItem("appliedCoupon");
+      }
+    }
+  }, []);
+
+  // Save coupon to localStorage whenever it changes
+  useEffect(() => {
+    if (appliedCoupon) {
+      localStorage.setItem("appliedCoupon", JSON.stringify(appliedCoupon));
+    } else {
+      localStorage.removeItem("appliedCoupon");
+    }
+  }, [appliedCoupon]);
 
   const totalMrp = products.reduce(
     (sum, p) => sum + (p.originalPrice || 0) * p.quantity,
@@ -37,7 +75,7 @@ const OrderSummary = ({
   const convenienceFee = 0;
 
   // Coupon Calculation
-  const calculateDiscount = (coupon) => {
+  const calculateCouponDiscount = (coupon) => {
     if (!coupon || !coupon.discountType) return 0;
 
     const discountPercent = parseFloat(coupon.discountType.replace("%", ""));
@@ -46,18 +84,73 @@ const OrderSummary = ({
     return Math.min(discountAmount, coupon.maxDiscountCap || discountAmount);
   };
 
-  const totalDiscount = appliedCoupon ? calculateDiscount(appliedCoupon) : 0;
+  // Promo Calculation
+  const calculatePromoDiscount = (promo) => {
+    if (!promo) return 0;
+
+    if (promo.promoType === "percentage_discount" && promo.discountValue) {
+      const discountAmount = (subtotal * promo.discountValue) / 100;
+      return Math.min(discountAmount, promo.maxDiscountCap || discountAmount);
+    }
+
+    return 0;
+  };
+
+  const couponDiscount = appliedCoupon
+    ? calculateCouponDiscount(appliedCoupon)
+    : 0;
+  const promoDiscount = appliedPromo ? calculatePromoDiscount(appliedPromo) : 0;
+  const totalDiscount = couponDiscount + promoDiscount;
 
   const totalPrice =
     subtotal + deliveryCharges + convenienceFee - totalDiscount;
 
   const handleApplyCoupon = (coupon) => {
     dispatch(setAppliedCoupon(coupon));
+    localStorage.setItem("appliedCoupon", JSON.stringify(coupon));
     setShowModal(false);
   };
 
   const handleRemoveCoupon = () => {
     dispatch(clearAppliedCoupon());
+    localStorage.removeItem("appliedCoupon");
+  };
+
+  const handleRemovePromo = () => {
+    setAppliedPromo(null);
+    localStorage.removeItem("appliedPromo");
+    setPromoCode("");
+    setPromoError("");
+  };
+
+  const handleValidatePromo = async () => {
+    if (!promoCode.trim()) {
+      setPromoError("Please enter a promo code");
+      return;
+    }
+
+    setPromoError("");
+    const result = await validatePromo(promoCode.trim());
+
+    if (result.success) {
+      const promoData = result.data;
+
+      // Check minimum cart value
+      if (promoData.minCartValue && subtotal < promoData.minCartValue) {
+        setPromoError(
+          `Minimum cart value of ₹${promoData.minCartValue} required`
+        );
+        return;
+      }
+
+      // Apply the promo separately and save to localStorage
+      setAppliedPromo(promoData);
+      localStorage.setItem("appliedPromo", JSON.stringify(promoData));
+      setPromoError("");
+      setPromoCode("");
+    } else {
+      setPromoError(result.error || "Invalid promo code");
+    }
   };
 
   const isAddressPage = pathname === "/checkout/address";
@@ -72,6 +165,18 @@ const OrderSummary = ({
       dispatch(clearAppliedCoupon());
     }
   }, [subtotal, appliedCoupon, dispatch]);
+
+  // Auto-remove promo if cart value falls below minimum
+  useEffect(() => {
+    if (
+      appliedPromo &&
+      appliedPromo.minCartValue &&
+      subtotal < appliedPromo.minCartValue
+    ) {
+      setAppliedPromo(null);
+      localStorage.removeItem("appliedPromo");
+    }
+  }, [subtotal, appliedPromo]);
 
   useEffect(() => {
     if (onAmountChange) {
@@ -94,13 +199,14 @@ const OrderSummary = ({
             </button>
           </div>
 
+          {/* Coupon Availability */}
           {appliedCoupon ? (
-            <div className="border rounded p-2 text-sm text-black bg-green-100">
+            <div className="border rounded p-2 text-sm text-black  mb-4">
               <div className="flex justify-between items-center">
                 <span className="font-semibold">{appliedCoupon.name}</span>
                 <button
                   onClick={handleRemoveCoupon}
-                  className="text-red-600 text-xs underline cursor-pointer"
+                  className="text-[#9c90ff] text-xs underline cursor-pointer"
                 >
                   Remove
                 </button>
@@ -108,16 +214,61 @@ const OrderSummary = ({
               <p className="text-xs text-gray-600 mt-1">
                 Code: <span className="font-mono">{appliedCoupon.code}</span>
               </p>
-              <p className="text-xs text-green-700 mt-1 font-medium">
+              <p className="text-xs text-[#9c90ff] mt-1 font-medium">
                 ✓ Coupon Applied
               </p>
             </div>
           ) : coupons.length > 0 ? (
-            <p className="text-gray-600 text-sm">
+            <p className="text-gray-600 text-sm mb-4">
               {coupons.length} coupon{coupons.length > 1 ? "s" : ""} available
             </p>
           ) : (
-            <p className="text-gray-500 text-sm">No coupons available</p>
+            <p className="text-gray-500 text-sm mb-4">No coupons available</p>
+          )}
+
+          {/* Promo Code Input */}
+          <div className="mb-4">
+            <div className="flex gap-2">
+              <input
+                type="text"
+                value={promoCode}
+                onChange={(e) => setPromoCode(e.target.value.toUpperCase())}
+                placeholder="Enter promo code"
+                disabled={!!appliedPromo}
+                className="flex-1 border rounded px-3 py-2 text-sm text-black disabled:bg-gray-100 disabled:cursor-not-allowed"
+              />
+              <button
+                onClick={handleValidatePromo}
+                disabled={promoLoading || !!appliedPromo}
+                className="bg-black text-white px-4 py-2 rounded text-sm hover:bg-gray-800 disabled:bg-gray-400 disabled:cursor-not-allowed cursor-pointer"
+              >
+                {promoLoading ? "..." : "Apply"}
+              </button>
+            </div>
+            {promoError && (
+              <p className="text-xs text-[#9c90ff] mt-1">{promoError}</p>
+            )}
+          </div>
+
+          {/* Applied Promo */}
+          {appliedPromo && (
+            <div className="border rounded p-2 text-sm text-black  mb-3">
+              <div className="flex justify-between items-center">
+                <span className="font-semibold">{appliedPromo.code}</span>
+                <button
+                  onClick={handleRemovePromo}
+                  className="text-[#9c90ff] text-xs underline cursor-pointer"
+                >
+                  Remove
+                </button>
+              </div>
+              <p className="text-xs text-gray-600 mt-1">
+                Promo: <span className="font-mono">{appliedPromo.code}</span>
+              </p>
+              <p className="text-xs text-[#9c90ff] mt-1 font-medium">
+                ✓ Promo Applied
+              </p>
+            </div>
           )}
         </div>
       )}
@@ -146,10 +297,17 @@ const OrderSummary = ({
             <span className="font-semibold text-black">₹{gst.toFixed(2)}</span>
           </div> */}
 
-          {totalDiscount > 0 && (
+          {couponDiscount > 0 && (
             <div className="flex justify-between text-black">
               <span>Coupon Discount</span>
-              <span>- ₹{totalDiscount.toFixed(2)}</span>
+              <span>- ₹{couponDiscount.toFixed(2)}</span>
+            </div>
+          )}
+
+          {promoDiscount > 0 && (
+            <div className="flex justify-between text-black">
+              <span>Promo Discount</span>
+              <span>- ₹{promoDiscount.toFixed(2)}</span>
             </div>
           )}
 
@@ -251,7 +409,7 @@ const OrderSummary = ({
                         Discount: {coupon.discountType}
                       </p>
                       {isCouponDisabled && (
-                        <p className="text-xs text-red-600 mt-2 font-medium">
+                        <p className="text-xs text-[#9c90ff] mt-2 font-medium">
                           Min cart value: ₹{coupon.minCartValue}
                         </p>
                       )}
