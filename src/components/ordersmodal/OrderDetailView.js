@@ -366,12 +366,14 @@ const OrderDetailView = ({ orderId, onBack, axiosHttp }) => {
                 </span>
               </div>
 
-              <div className="flex justify-between">
-                <span className="text-gray-600">Discount</span>
-                <span className="font-medium text-[#9c90ff]">
-                  - ₹{orderData?.discount || "0.00"}
-                </span>
-              </div>
+              {orderData?.discount > 0 && (
+                <div className="flex justify-between">
+                  <span className="text-gray-600">Discount</span>
+                  <span className="font-medium text-[#9c90ff]">
+                    - ₹{orderData?.discount || "0.00"}
+                  </span>
+                </div>
+              )}
 
               {/* <div className="flex justify-between">
                 <span className="text-gray-600">Tax</span>
@@ -389,9 +391,7 @@ const OrderDetailView = ({ orderId, onBack, axiosHttp }) => {
 
               <div className="flex justify-between pt-3 mt-2 border-t border-gray-200 font-semibold text-base">
                 <span className="text-gray-900">TOTAL PAYABLE</span>
-                <span className="text-gray-900">
-                  ₹{orderData?.total || "0.00"}
-                </span>
+                <span className="text-gray-900">₹{orderData?.total}</span>
               </div>
             </div>
           </div>

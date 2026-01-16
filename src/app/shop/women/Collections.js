@@ -41,7 +41,7 @@ const CollectionSection = () => {
 
   return (
     <div className=" px-0 bg-white">
-      <div className="w-full py-4 sm:py-6 md:py-8 px-4 sm:px-6 md:px-10">
+      <div className="w-full py-4  px-4 sm:px-6 md:px-10">
         {collections?.map((collection) => {
           // Don't show section if no products
           if (!collection.products || collection.products.length === 0) {
@@ -184,7 +184,7 @@ const CollectionSection = () => {
 
               {/* Banners Section */}
               {bannerCount > 0 && (
-                <div className="mt-8 sm:mt-10 md:mt-12 -mx-4 sm:-mx-6 md:-mx-10">
+                <div className="mt-6  -mx-4 sm:-mx-6 md:-mx-10">
                   <BannerGrid
                     banners={banners}
                     bannerCount={bannerCount}

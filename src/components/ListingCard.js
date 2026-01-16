@@ -104,7 +104,7 @@ const ListingCard = ({
               {/* Wishlist Icon */}
               <button
                 onClick={handleWishlistClick}
-                className="w-8 h-8 rounded-full bg-white shadow-md flex items-center justify-center hover:bg-gray-50 transition-colors duration-200 flex-shrink-0"
+                className="w-8 h-8 rounded-full  flex items-center justify-center hover:bg-gray-50 transition-colors duration-200 flex-shrink-0"
               >
                 <Heart
                   size={16}
