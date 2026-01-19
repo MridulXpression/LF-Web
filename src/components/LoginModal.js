@@ -401,7 +401,7 @@ const PhoneAuthModal = () => {
                       </label>
                       <div className="flex">
                         <div className="flex items-center px-3 py-2 border border-r-0 border-gray-300 bg-gray-50 rounded-l-md">
-                          <span className="text-orange-500 mr-2">🇮🇳</span>
+                          <span className="text-[#9c90ff] mr-2">🇮🇳</span>
                           <span className="text-black">+91</span>
                         </div>
                         <input
