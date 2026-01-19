@@ -17,9 +17,9 @@ const NavbarDropdown = ({ menu, latestBlogs, onMouseEnter, onMouseLeave }) => {
       ];
     } else if (title.includes("men")) {
       return [
-        { src: "/images/men-dropdown-1.jpg", alt: "Men Category 1" },
-        { src: "/images/men-dropdown-2.jpg", alt: "Men Category 2" },
-        { src: "/images/men-dropdown-3.jpg", alt: "Men Category 3" },
+        { src: "/images/men-top.png", alt: "Men Category 1" },
+        { src: "/images/men-nav2.png", alt: "Men Category 2" },
+        { src: "/images/men-nav3.png", alt: "Men Category 3" },
       ];
     } else if (title.includes("accessor")) {
       return [
@@ -104,7 +104,7 @@ const NavbarDropdown = ({ menu, latestBlogs, onMouseEnter, onMouseLeave }) => {
                         src={categoryImages[1].src}
                         alt={categoryImages[1].alt}
                         fill
-                        className="object-cover hover:scale-105 transition-transform duration-300"
+                        className="object-fill hover:scale-105 transition-transform duration-300"
                       />
                     </div>
                   )}
@@ -116,7 +116,7 @@ const NavbarDropdown = ({ menu, latestBlogs, onMouseEnter, onMouseLeave }) => {
                         src={categoryImages[2].src}
                         alt={categoryImages[2].alt}
                         fill
-                        className="object-cover hover:scale-105 transition-transform duration-300"
+                        className="object-fill hover:scale-105 transition-transform duration-300"
                       />
                     </div>
                   )}

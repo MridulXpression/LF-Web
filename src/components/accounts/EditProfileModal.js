@@ -106,7 +106,7 @@ const EditProfileModal = ({ isOpen, onClose, userData, onSave }) => {
                   onChange={handleInputChange}
                   className="w-full px-3 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-black outline-none  text-black"
                 />
-                <span className="text-green-500 text-xs">
+                <span className="text-[#9c90ff] text-xs">
                   You will receive updates at the email address listed above.
                 </span>
               </div>

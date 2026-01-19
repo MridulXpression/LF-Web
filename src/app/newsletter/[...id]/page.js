@@ -5,6 +5,7 @@ import useNewsletter from "@/hooks/useNewsletter";
 import BlogPostComponent from "@/components/Blog/BlogPost";
 import Navbar from "@/app/(navbar)/Navbar";
 import Footer from "@/components/footer";
+import TrendingBlog from "@/app/(newsletter)/Newsletter";
 
 export default function BlogDetailsPage() {
   const params = useParams();
@@ -37,6 +38,7 @@ export default function BlogDetailsPage() {
     <>
       <Navbar />
       <BlogPostComponent blogPost={newsletterData} />
+      <TrendingBlog />
       <Footer />
     </>
   );

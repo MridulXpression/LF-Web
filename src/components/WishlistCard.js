@@ -85,7 +85,11 @@ const WishlistCard = ({
         )}
 
         <h3 className="text-sm font-bold text-gray-900 mb-1">{brandName}</h3>
-        <p className="text-sm text-gray-600 mb-2">{productName}</p>
+        <p className="text-sm text-gray-600 mb-2">
+          {productName?.split(" ").length > 5
+            ? productName.split(" ").slice(0, 4).join(" ") + "..."
+            : productName}
+        </p>
 
         <div className="flex gap-2 mb-3">
           <span className="text-sm font-bold text-gray-900">

@@ -7,6 +7,13 @@ import { ArrowRight } from "lucide-react";
 const FashionGrid = ({ data, title = "TRENDING NOW" }) => {
   const [hoveredCardId, setHoveredCardId] = useState(null);
   const [hoveredButtonId, setHoveredButtonId] = useState(null);
+
+  // Helper function to strip HTML tags from text
+  const stripHtmlTags = (html) => {
+    if (!html) return "";
+    return html.replace(/<[^>]*>/g, "");
+  };
+
   // Helper function to get container classes based on size
   const getContainerClasses = (size) => {
     const baseClasses = "relative overflow-hidden group ";
@@ -156,8 +163,13 @@ const FashionGrid = ({ data, title = "TRENDING NOW" }) => {
                   {item.title}
                 </h2>
                 <p className={`${getDescriptionClasses()} max-w-[300px]`}>
-                  {item.description?.split(" ").slice(0, 20).join(" ")}
-                  {item.description?.split(" ").length > 20 ? "..." : ""}
+                  {stripHtmlTags(item.description)
+                    ?.split(" ")
+                    .slice(0, 20)
+                    .join(" ")}
+                  {stripHtmlTags(item.description)?.split(" ").length > 20
+                    ? "..."
+                    : ""}
                 </p>
               </div>
 
@@ -258,11 +270,13 @@ const FashionGrid = ({ data, title = "TRENDING NOW" }) => {
                     textColor
                   )} max-w-[300px]`}
                 >
-                  {(item.description || "hshdihiceidiiiicjsidje idijiweodoei ")
+                  {stripHtmlTags(
+                    item.description || "hshdihiceidiiiicjsidje idijiweodoei "
+                  )
                     .split(" ")
                     .slice(0, 20)
                     .join(" ")}
-                  {(
+                  {stripHtmlTags(
                     item.description || "hshdihiceidiiiicjsidje idijiweodoei "
                   ).split(" ").length > 20
                     ? "..."

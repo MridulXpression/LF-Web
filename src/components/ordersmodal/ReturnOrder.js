@@ -73,7 +73,7 @@ const ReturnModal = ({ order, onClose = () => {}, onSuccess = () => {} }) => {
         userId: userId,
         reason: selectedReason === "Other" ? customReason : selectedReason,
         addressId: selectedAddressId,
-        shipRocketId: order.order?.shiprocketOrderId || "",
+        shipRocketId: order.shiprocketOrderId || "",
       };
 
       const response = await axiosHttp.post("/request-return", payload);

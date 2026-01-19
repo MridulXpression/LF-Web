@@ -95,13 +95,10 @@ const TrendingNowSection = () => {
         const bannerCount = banners.length;
 
         return (
-          <section
-            key={collection.id}
-            className="py-4 sm:py-6 md:py-8 px-4 sm:px-6 md:px-10"
-          >
+          <section key={collection.id} className="py-4   px-4 sm:px-6 md:px-10">
             {/* Header */}
             <div className="flex flex-row justify-between items-center gap-2 sm:gap-4 mb-8 sm:mb-10">
-              <h1 className="text-[13px]  md:text-[35px] font-semibold uppercase text-black max-w-[200px] md:max-w-[500px] ">
+              <h1 className="text-[13px]  md:text-[35px] font-semibold  text-black max-w-[200px] md:max-w-[500px] ">
                 {collection.name}
               </h1>
 
@@ -208,7 +205,7 @@ const TrendingNowSection = () => {
 
             {/* Banners Section */}
             {bannerCount > 0 && (
-              <div className="mt-8 sm:mt-10 md:mt-12 -mx-4 sm:-mx-6 md:-mx-10">
+              <div className="mt-6  -mx-4 sm:-mx-6 md:-mx-10">
                 <BannerGrid
                   banners={banners}
                   bannerCount={bannerCount}
