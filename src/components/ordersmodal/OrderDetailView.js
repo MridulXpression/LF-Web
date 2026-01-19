@@ -208,7 +208,7 @@ const OrderDetailView = ({ orderId, onBack, axiosHttp }) => {
         </button>
         <p className="text-sm text-gray-600">
           Order ID:{" "}
-          <span className="font-semibold text-gray-900">#{orderId}</span>
+          <span className="font-semibold text-gray-900">#{order?.id}</span>
         </p>
       </div>
 

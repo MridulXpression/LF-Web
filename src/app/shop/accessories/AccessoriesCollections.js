@@ -175,7 +175,7 @@ const AccessoriesCollectionSection = () => {
                   <div className="w-full">
                     <ExploreAllCard
                       onClick={() => {
-                        window.location.href = `/products?collectionId=${collection.id}`;
+                        window.location.href = `/products?collectionId=${collection.id}&superCatId=3`;
                       }}
                     />
                   </div>

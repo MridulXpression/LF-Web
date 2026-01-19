@@ -174,7 +174,7 @@ const MenCollectionSection = () => {
                   <div className="w-full">
                     <ExploreAllCard
                       onClick={() => {
-                        window.location.href = `/products?collectionId=${collection.id}`;
+                        window.location.href = `/products?collectionId=${collection.id}&superCatId=1`;
                       }}
                     />
                   </div>
