@@ -5,6 +5,7 @@ import { endPoints } from "@/utils/endpoints";
 
 const useCartSync = () => {
   const isInitialSync = useRef(false);
+  const syncInProgress = useRef(false);
 
   // Get userId from Redux
   const userInfo = useSelector((state) => state.user?.userInfo);
@@ -16,11 +17,15 @@ const useCartSync = () => {
   // Sync cart when user logs in
   useEffect(() => {
     const syncCartToServer = async () => {
+      // Prevent concurrent syncs
+      if (syncInProgress.current) return;
+
       // Only sync if:
       // 1. User is logged in (userId exists)
       // 2. Redux has cart items
       // 3. This is the first time syncing for this session
       if (userId && cartItems.length > 0 && !isInitialSync.current) {
+        syncInProgress.current = true;
         isInitialSync.current = true;
 
         try {
@@ -40,12 +45,15 @@ const useCartSync = () => {
         } catch (error) {
           // Don't throw error - let the app continue normally
           // User's local cart is still intact
+          console.error("Cart sync error:", error);
+        } finally {
+          syncInProgress.current = false;
         }
       }
     };
 
     syncCartToServer();
-  }, [userId, cartItems]);
+  }, [userId, cartItems.length]);
 
   return {
     isSynced: isInitialSync.current,

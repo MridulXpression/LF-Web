@@ -62,6 +62,13 @@ const MyOrders = () => {
     fetchOrders();
   }, []);
 
+  // Scroll to top when switching to detail view
+  useEffect(() => {
+    if (viewMode === "detail") {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  }, [viewMode]);
+
   // Handle actions passed from card
   const handleOrderAction = (order, actionType) => {
     setSelectedOrder(order);
@@ -137,7 +144,7 @@ const MyOrders = () => {
     selectedStatus === "all"
       ? orders
       : orders.filter((order) =>
-          order.status?.toLowerCase().includes(selectedStatus)
+          order.status?.toLowerCase().includes(selectedStatus),
         );
 
   // Main layout

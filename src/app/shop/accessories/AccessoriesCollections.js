@@ -7,6 +7,7 @@ import BannerGrid from "@/components/collections/BannerGrid";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import useSortProducts from "@/hooks/useSortProducts";
 import SortByDropdown from "@/components/SortByDropdown";
+import Link from "next/link";
 
 const AccessoriesCollectionSection = () => {
   const query = "gender=3&displayFor=accessories";
@@ -74,9 +75,11 @@ const AccessoriesCollectionSection = () => {
             <section key={collection.id} className="mb-16">
               {/* Section Title with Navigation */}
               <div className="flex flex-row justify-between items-center gap-2 sm:gap-4 mb-8 sm:mb-10">
-                <h2 className="text-[20px] md:text-4xl font-bold text-black tracking-wide">
-                  {collection.name}
-                </h2>
+                <Link href={`/products?collectionId=${collection.id}`}>
+                  <h2 className="text-[13px]  md:text-[35px] font-semibold  text-black max-w-[200px] md:max-w-[500px] ">
+                    {collection.name}
+                  </h2>
+                </Link>
 
                 <div className="flex gap-2 sm:gap-3 ml-auto">
                   {/* Sort By Dropdown Component */}
@@ -140,7 +143,7 @@ const AccessoriesCollectionSection = () => {
                             options = [];
                           }
                           const sizeOption = options.find(
-                            (opt) => opt.name === "Size"
+                            (opt) => opt.name === "Size",
                           );
                           return sizeOption?.value || "";
                         })
