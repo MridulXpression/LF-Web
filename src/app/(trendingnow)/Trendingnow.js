@@ -7,6 +7,7 @@ import useCollection from "@/hooks/useCollection";
 import BannerGrid from "@/components/collections/BannerGrid";
 import useSortProducts from "@/hooks/useSortProducts";
 import SortByDropdown from "@/components/SortByDropdown";
+import Link from "next/link";
 
 const TrendingNowSection = () => {
   const {
@@ -25,8 +26,8 @@ const TrendingNowSection = () => {
     sortProducts,
   } = useSortProducts();
 
-  // Pagination: 4 products, then 4, then 3 (total 11)
-  const pageItemCounts = [4, 4, 3];
+  // Pagination: 8 products, then 8, then 7 (total 23)
+  const pageItemCounts = [8, 8, 7];
 
   const handlePrevPage = (collectionId) => {
     setCurrentPages((prev) => ({
@@ -75,7 +76,7 @@ const TrendingNowSection = () => {
         const currentPage = currentPages[collection.id] || 0;
         const totalPages = pageItemCounts.length;
         const totalProducts = collection.products.length;
-        const shouldDisableChevrons = totalProducts <= 5;
+        const shouldDisableChevrons = totalProducts <= 8;
 
         // Apply sorting before pagination
         const sortOrder = sortOrders[collection.id] || "default";
@@ -98,10 +99,11 @@ const TrendingNowSection = () => {
           <section key={collection.id} className="py-4   px-4 sm:px-6 md:px-10">
             {/* Header */}
             <div className="flex flex-row justify-between items-center gap-2 sm:gap-4 mb-8 sm:mb-10">
-              <h1 className="text-[13px]  md:text-[35px] font-semibold  text-black max-w-[200px] md:max-w-[500px] ">
-                {collection.name}
-              </h1>
-
+              <Link href={`/products?collectionId=${collection.id}`}>
+                <h1 className="text-[13px]  md:text-[35px] font-semibold  text-black max-w-[200px] md:max-w-[500px] ">
+                  {collection.name}
+                </h1>
+              </Link>
               <div className="flex gap-2 sm:gap-3 ml-auto">
                 {/* Sort By Dropdown Component */}
                 <SortByDropdown
@@ -147,7 +149,7 @@ const TrendingNowSection = () => {
             </div>
 
             {/* Grid */}
-            <div className="grid grid-cols-2 sm:flex sm:flex-row sm:flex-nowrap gap-3 sm:gap-4 md:gap-6">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 md:gap-6">
               {displayedProducts.map((product) => {
                 // Extract variant sizes from variants array
                 const availableSizes = product.variants
@@ -164,7 +166,7 @@ const TrendingNowSection = () => {
                           options = [];
                         }
                         const sizeOption = options.find(
-                          (opt) => opt.name === "Size"
+                          (opt) => opt.name === "Size",
                         );
                         return sizeOption?.value || "";
                       })

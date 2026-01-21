@@ -2,27 +2,30 @@
 
 import { X } from "lucide-react";
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 const QuickModal = ({ isOpen, onClose }) => {
-  const [locationStatus, setLocationStatus] = useState("loading");
-  // loading → asking browser
-  // success → got location
-  // error → user denied or failed
+  const [zipCode, setZipCode] = useState("");
+  const [isChecked, setIsChecked] = useState(false);
 
-  useEffect(() => {
-    if (!isOpen) return;
+  const handleZipCodeChange = (e) => {
+    const value = e.target.value.replace(/\D/g, ""); // Only digits
+    if (value.length <= 6) {
+      setZipCode(value);
+    }
+  };
 
-    // Ask browser for location
-    navigator.geolocation.getCurrentPosition(
-      (pos) => {
-        setLocationStatus("success");
-      },
-      (err) => {
-        setLocationStatus("error");
-      }
-    );
-  }, [isOpen]);
+  const handleCheck = () => {
+    if (zipCode.length === 6) {
+      setIsChecked(true);
+    }
+  };
+
+  const handleClose = () => {
+    setZipCode("");
+    setIsChecked(false);
+    onClose();
+  };
 
   if (!isOpen) return null;
 
@@ -31,14 +34,14 @@ const QuickModal = ({ isOpen, onClose }) => {
       {/* Backdrop */}
       <div
         className="fixed inset-0 bg-black/50 z-[9999]"
-        onClick={onClose}
+        onClick={handleClose}
       ></div>
 
       {/* Modal */}
       <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-[10000] bg-white rounded-lg shadow-2xl w-[90%] max-w-md">
         {/* Close Button */}
         <button
-          onClick={onClose}
+          onClick={handleClose}
           className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors cursor-pointer"
         >
           <X className="w-6 h-6" />
@@ -57,35 +60,37 @@ const QuickModal = ({ isOpen, onClose }) => {
             />
           </div>
 
-          {/* STEP 1 — Asking for location */}
-          {locationStatus === "loading" && (
-            <p className="text-gray-700 text-lg">
-              Asking browser for your location…
-              <br />
-              <span className="text-sm text-gray-500">
-                Please click **Allow** to continue.
-              </span>
-            </p>
+          {/* Zip Code Input */}
+          {!isChecked && (
+            <div className="space-y-4">
+              <p className="text-gray-700 text-lg mb-4">
+                Enter your 6-digit zip code
+              </p>
+              <input
+                type="text"
+                value={zipCode}
+                onChange={handleZipCodeChange}
+                placeholder="000000"
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg text-center text-xl tracking-widest focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent"
+                maxLength={6}
+              />
+              <button
+                onClick={handleCheck}
+                disabled={zipCode.length !== 6}
+                className="w-full px-6 py-3 bg-purple-600 text-white rounded-lg font-semibold hover:bg-purple-700 disabled:bg-gray-300 disabled:cursor-not-allowed cursor-pointer transition-colors"
+              >
+                Check
+              </button>
+            </div>
           )}
 
-          {/* STEP 2 — After we get location */}
-          {locationStatus === "success" && (
+          {/* After Check */}
+          {isChecked && (
             <p className="text-gray-700 text-lg leading-relaxed">
               Currently out of your area's league.
               <br />
               <span className="font-semibold text-purple-600">
                 Manifest LaFetch harder.
-              </span>
-            </p>
-          )}
-
-          {/* STEP 3 — If user denies location */}
-          {locationStatus === "error" && (
-            <p className="text-red-600 text-lg leading-relaxed">
-              Location access denied.
-              <br />
-              <span className="text-gray-600 text-sm">
-                Please allow location to check your area.
               </span>
             </p>
           )}

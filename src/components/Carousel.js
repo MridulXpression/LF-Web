@@ -3,18 +3,32 @@ import React from "react";
 import Image from "next/image";
 
 const BannerCarousel = ({ image }) => {
+  // Check if the URL is a video
+  const isVideo = /\.(mp4|webm|ogg|mov)$/i.test(image);
+
   return (
     <div className="py-4  px-4 sm:px-6 md:px-10 bg-white relative">
       <div className="w-full">
         <div className="relative h-[140px] md:h-[400px]  w-full overflow-hidden">
-          <Image
-            src={image}
-            alt="Banner"
-            fill
-            className="object-fill w-full h-full"
-            loading="lazy"
-            sizes="100vw"
-          />
+          {isVideo ? (
+            <video
+              src={image}
+              autoPlay
+              loop
+              muted
+              playsInline
+              className="object-fill w-full h-full"
+            />
+          ) : (
+            <Image
+              src={image}
+              alt="Banner"
+              fill
+              className="object-fill w-full h-full"
+              loading="lazy"
+              sizes="100vw"
+            />
+          )}
         </div>
       </div>
     </div>

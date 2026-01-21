@@ -62,7 +62,12 @@ const CancelOrderModal = ({
         setShowSuccessModal(true);
       }
     } catch (error) {
-      toast.error(error?.response?.data?.message || "Failed to cancel order");
+      const errorData = error?.response?.data?.message;
+      const errorMessage =
+        typeof errorData === "object"
+          ? errorData?.message || "Failed to cancel order"
+          : errorData || "Failed to cancel order";
+      toast.error(errorMessage);
     } finally {
       setIsSubmitting(false);
     }
