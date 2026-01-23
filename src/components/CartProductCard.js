@@ -17,7 +17,7 @@ const CartProductCard = ({
     product.originalPrice > product.price
       ? Math.round(
           ((product.originalPrice - product.price) / product.originalPrice) *
-            100
+            100,
         )
       : 0;
 
@@ -39,8 +39,8 @@ const CartProductCard = ({
     if (product.quantity > 1) {
       onQuantityChange(product.cartItemId, product.quantity - 1);
     } else if (product.quantity === 1) {
-      // Remove item when quantity reaches 0
-      onRemove(product.productId);
+      // Directly remove item by setting quantity to 0 (bypasses popup)
+      onQuantityChange(product.cartItemId, 0);
     }
   };
 

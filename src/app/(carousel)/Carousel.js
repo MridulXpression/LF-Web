@@ -1,29 +1,19 @@
 "use client";
 import React from "react";
-import Link from "next/link";
 import useBanner from "@/hooks/useBanner";
 import BannerCarousel from "@/components/Carousel";
 
 const HomeCarousel = () => {
   const fetchBanners = useBanner();
 
-  // Get the first banner image and redirect URL
-  const bannerImage = fetchBanners?.[0]?.image;
-  const redirectUrl = fetchBanners?.[0]?.redirectUrl;
-
-  if (!bannerImage) {
+  if (!fetchBanners || fetchBanners.length === 0) {
     return null;
   }
 
+  // Pass all banners to the carousel component
   return (
     <div>
-      {redirectUrl ? (
-        <Link href={redirectUrl}>
-          <BannerCarousel image={bannerImage} />
-        </Link>
-      ) : (
-        <BannerCarousel image={bannerImage} />
-      )}
+      <BannerCarousel banners={fetchBanners} />
     </div>
   );
 };

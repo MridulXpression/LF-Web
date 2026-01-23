@@ -112,7 +112,7 @@ const CheckOutAddress = () => {
             selected:
               (
                 cartItemsFromRedux.find(
-                  (ci) => ci.cartItemId === m.cartItemId
+                  (ci) => ci.cartItemId === m.cartItemId,
                 ) || {}
               ).selected ?? true,
           }));
@@ -132,7 +132,7 @@ const CheckOutAddress = () => {
         setAddresses(response.data.data);
         // Auto-select default address
         const defaultAddress = response.data.data.find(
-          (addr) => addr.isDefaultAddress
+          (addr) => addr.isDefaultAddress,
         );
         if (defaultAddress) {
           setSelectedAddressId(defaultAddress.id);
@@ -185,7 +185,7 @@ const CheckOutAddress = () => {
     try {
       setDeleteLoading(true);
       const response = await axiosHttp.delete(
-        `/profile/address/${deletingAddressId}`
+        `/profile/address/${deletingAddressId}`,
       );
       if (response.data.status === 200) {
         fetchAddresses();
@@ -197,7 +197,9 @@ const CheckOutAddress = () => {
         }
       }
     } catch (error) {
-      toast.error("Failed to delete address. Please try again.");
+      toast.error(
+        "Failed to delete. This address is linked to an existing order.",
+      );
     } finally {
       setDeleteLoading(false);
     }
@@ -250,19 +252,19 @@ const CheckOutAddress = () => {
 
       const subtotalBeforeCoupon = items.reduce(
         (s, it) => s + (it.total || 0),
-        0
+        0,
       );
 
       // Calculate coupon discount
       let couponDiscount = 0;
       if (appliedCoupon && appliedCoupon.discountType) {
         const discountPercent = parseFloat(
-          appliedCoupon.discountType.replace("%", "")
+          appliedCoupon.discountType.replace("%", ""),
         );
         const discountAmount = (subtotalBeforeCoupon * discountPercent) / 100;
         couponDiscount = Math.min(
           discountAmount,
-          appliedCoupon.maxDiscountCap || discountAmount
+          appliedCoupon.maxDiscountCap || discountAmount,
         );
       }
 
@@ -281,7 +283,7 @@ const CheckOutAddress = () => {
 
       const initiateResp = await axiosHttp.post(
         `/initiate-payment`,
-        initiatePayload
+        initiatePayload,
       );
 
       if (
@@ -289,7 +291,7 @@ const CheckOutAddress = () => {
         (initiateResp.data.status !== 200 && initiateResp.data.status !== 201)
       ) {
         throw new Error(
-          initiateResp.data?.message || "Failed to initiate payment"
+          initiateResp.data?.message || "Failed to initiate payment",
         );
       }
 
@@ -314,7 +316,7 @@ const CheckOutAddress = () => {
       try {
         sessionStorage.setItem(
           `lafetch_payment_${userId}`,
-          JSON.stringify(paymentData)
+          JSON.stringify(paymentData),
         );
       } catch (e) {}
 
@@ -355,7 +357,7 @@ const CheckOutAddress = () => {
 
             // Retrieve payment data from sessionStorage
             const storedData = sessionStorage.getItem(
-              `lafetch_payment_${userId}`
+              `lafetch_payment_${userId}`,
             );
             if (!storedData) {
               throw new Error("Payment data not found in storage");
@@ -376,7 +378,7 @@ const CheckOutAddress = () => {
 
             const placeResp = await axiosHttp.post(
               `/place-order`,
-              placeOrderPayload
+              placeOrderPayload,
             );
 
             if (
@@ -449,7 +451,8 @@ const CheckOutAddress = () => {
       rzp.open();
     } catch (err) {
       toast.error(
-        "Could not start payment: " + (err.message || "Please try again later.")
+        "Could not start payment: " +
+          (err.message || "Please try again later."),
       );
     }
   };

@@ -85,7 +85,7 @@ const SavedAddresses = () => {
     try {
       setDeleteLoading(true);
       const response = await axiosHttp.delete(
-        `/profile/address/${deletingAddressId}`
+        `/profile/address/${deletingAddressId}`,
       );
       if (response.data.status === 200) {
         fetchAddresses();
@@ -96,7 +96,9 @@ const SavedAddresses = () => {
         }
       }
     } catch (error) {
-      toast.error("Failed to delete address. Please try again.");
+      toast.error(
+        "Failed to delete. This address is linked to an existing order.",
+      );
     } finally {
       setDeleteLoading(false);
     }
