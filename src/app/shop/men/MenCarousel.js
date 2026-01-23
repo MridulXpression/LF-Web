@@ -7,16 +7,13 @@ const MenCarousel = () => {
   const query = "gender=1";
   const fetchBanners = useBanner(query);
 
-  // Get the first banner image
-  const bannerImage = fetchBanners?.[0]?.image;
-
-  if (!bannerImage) {
+  if (!fetchBanners || fetchBanners.length === 0) {
     return null;
   }
 
   return (
     <div>
-      <BannerCarousel image={bannerImage} />
+      <BannerCarousel banners={fetchBanners} />
     </div>
   );
 };

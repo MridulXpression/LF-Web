@@ -28,6 +28,8 @@ const ShoppingCart = () => {
   const isInitialMount = useRef(true);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [deleteTargetId, setDeleteTargetId] = useState(null);
+  const [deleteError, setDeleteError] = useState(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const getCoupons = useGetCoupons();
   const { updateQuantity: updateCartQuantity } = useUpdateCartQuantity();
@@ -118,7 +120,7 @@ const ShoppingCart = () => {
               parsed.items.forEach((s) => {
                 const match = transformedData.find(
                   (t) =>
-                    t.productId === s.productId && t.variantId === s.variantId
+                    t.productId === s.productId && t.variantId === s.variantId,
                 );
                 if (match) savedCartItemIds.add(match.cartItemId);
               });
@@ -192,7 +194,7 @@ const ShoppingCart = () => {
           // Update localStorage
           try {
             const savedKeys = Object.keys(localStorage).filter((key) =>
-              key.startsWith("lafetch_checkout_")
+              key.startsWith("lafetch_checkout_"),
             );
             if (savedKeys.length > 0) {
               const lastKey = savedKeys[savedKeys.length - 1];
@@ -201,7 +203,7 @@ const ShoppingCart = () => {
                 const saved = JSON.parse(raw);
                 if (saved.items && Array.isArray(saved.items)) {
                   saved.items = saved.items.filter(
-                    (item) => item.productId !== productId
+                    (item) => item.productId !== productId,
                   );
                   localStorage.setItem(lastKey, JSON.stringify(saved));
                 }
@@ -237,6 +239,16 @@ const ShoppingCart = () => {
       }
     } catch (error) {
       console.error("Error removing item:", error);
+      // Check if it's a foreign key constraint error
+      if (
+        error.response?.data?.message?.includes("foreign key constraint") ||
+        error.response?.data?.message?.includes("linked to")
+      ) {
+        throw new Error(
+          "Failed to delete. This item is linked to an existing order.",
+        );
+      }
+      throw new Error("Failed to remove item. Please try again.");
     }
   };
 
@@ -246,11 +258,17 @@ const ShoppingCart = () => {
       const product = products.find((p) => p.cartItemId === cartItemId);
       if (!product) return;
 
+      // If quantity is 0, remove the item directly without showing modal
+      if (quantity === 0) {
+        await handleRemove(product.productId);
+        return;
+      }
+
       // Optimistically update UI
       setProducts((prevProducts) =>
         prevProducts.map((p) =>
-          p.cartItemId === cartItemId ? { ...p, quantity } : p
-        )
+          p.cartItemId === cartItemId ? { ...p, quantity } : p,
+        ),
       );
 
       // Call API to update quantity on server
@@ -258,7 +276,7 @@ const ShoppingCart = () => {
         userId,
         product.productId,
         product.variantId,
-        quantity
+        quantity,
       );
 
       // If API call fails, revert the optimistic update
@@ -274,8 +292,8 @@ const ShoppingCart = () => {
     try {
       setProducts((prevProducts) =>
         prevProducts.map((p) =>
-          p.cartItemId === cartItemId ? { ...p, size } : p
-        )
+          p.cartItemId === cartItemId ? { ...p, size } : p,
+        ),
       );
     } catch (error) {}
   };
@@ -321,12 +339,24 @@ const ShoppingCart = () => {
 
   const openDeleteModal = (productId) => {
     setDeleteTargetId(productId);
+    setDeleteError(null);
     setIsDeleteModalOpen(true);
   };
 
   const handleConfirmDelete = async () => {
-    await handleRemove(deleteTargetId);
-    setIsDeleteModalOpen(false);
+    try {
+      setIsDeleting(true);
+      setDeleteError(null);
+      await handleRemove(deleteTargetId);
+      setIsDeleteModalOpen(false);
+      setDeleteTargetId(null);
+    } catch (error) {
+      setDeleteError(
+        error.message || "Failed to remove item. Please try again.",
+      );
+    } finally {
+      setIsDeleting(false);
+    }
   };
 
   // Load cart from Redux or localStorage if user is not logged in
@@ -340,7 +370,7 @@ const ShoppingCart = () => {
             // Find the selected variant
             const selectedVariant =
               item.variants?.find(
-                (v) => v.id?.toString() === item.variantId?.toString()
+                (v) => v.id?.toString() === item.variantId?.toString(),
               ) || item.variants?.[0];
 
             return {
@@ -370,7 +400,7 @@ const ShoppingCart = () => {
 
           setProducts(transformedReduxItems);
           setSelectedItems(
-            new Set(transformedReduxItems.map((p) => p.cartItemId))
+            new Set(transformedReduxItems.map((p) => p.cartItemId)),
           );
           setLoading(false);
           return;
@@ -378,7 +408,7 @@ const ShoppingCart = () => {
 
         // Fallback: Try to get any saved checkout data from localStorage
         const savedKeys = Object.keys(localStorage).filter((key) =>
-          key.startsWith("lafetch_checkout_")
+          key.startsWith("lafetch_checkout_"),
         );
 
         if (savedKeys.length > 0) {
@@ -404,7 +434,7 @@ const ShoppingCart = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen  flex items-center justify-center">
         <div className="text-lg text-black">Loading your cart...</div>
       </div>
     );
@@ -412,7 +442,7 @@ const ShoppingCart = () => {
 
   return (
     <>
-      <div className="min-h-screen bg-gray-50 py-8 mt-[130px]">
+      <div className="min-h-screen  py-8 mt-[130px]">
         <div className="max-w-7xl mx-auto px-4">
           {/* Progress Steps */}
           <div className="mb-8 flex items-center justify-center gap-2 text-sm">
@@ -490,11 +520,17 @@ const ShoppingCart = () => {
 
                   <DeleteConfirmModal
                     isOpen={isDeleteModalOpen}
-                    onClose={() => setIsDeleteModalOpen(false)}
+                    onClose={() => {
+                      setIsDeleteModalOpen(false);
+                      setDeleteError(null);
+                      setDeleteTargetId(null);
+                    }}
                     onConfirm={handleConfirmDelete}
+                    loading={isDeleting}
                     title="Remove Item"
                     message="Are you sure you want to remove this item from your cart?"
                     confirmText="Remove"
+                    error={deleteError}
                   />
                 </div>
               </div>

@@ -8,6 +8,7 @@ const DeleteConfirmModal = ({
   title = "Remove Item",
   message = "Are you sure you want to remove this item from your cart?",
   confirmText = "Remove",
+  error = null,
 }) => {
   if (!isOpen) return null;
 
@@ -18,7 +19,14 @@ const DeleteConfirmModal = ({
         <h2 className="text-xl font-semibold text-black mb-4">{title}</h2>
 
         {/* Message */}
-        <p className="text-gray-600 mb-6">{message}</p>
+        <p className="text-gray-600 mb-4">{message}</p>
+
+        {/* Error Message */}
+        {error && (
+          <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded">
+            <p className="text-[#988BFF] text-sm">{error}</p>
+          </div>
+        )}
 
         {/* Buttons */}
         <div className="flex justify-end gap-3">

@@ -5,6 +5,7 @@ import Image from "next/image";
 import { endPoints } from "@/utils/endpoints";
 import axiosHttp from "@/utils/axioshttp";
 import { Toaster, toast } from "react-hot-toast";
+import GoogleLogin from "./GoogleLogin";
 
 import { useDispatch, useSelector } from "react-redux";
 import { setUser } from "@/redux/slices/userSlice";
@@ -45,6 +46,7 @@ const PhoneAuthModal = () => {
   const verifyOtpendPoint = `${endPoints.verifyOtp}`;
   const resendOtpendPoint = `${endPoints.resendOtp}`;
   const updateUserEndPoint = `${endPoints.updateUser}`;
+  const socialSignInEndPoint = `${endPoints.socialSignIn}`;
 
   const handlePhoneSubmit = async () => {
     if (!phoneNumber || phoneNumber.length < 10) {
@@ -163,7 +165,7 @@ const PhoneAuthModal = () => {
         setCurrentStep("welcome");
       } else {
         toast.error(
-          `Signup failed: ${res.data?.message || "Please try again"}`
+          `Signup failed: ${res.data?.message || "Please try again"}`,
         );
       }
     } catch (error) {
@@ -236,6 +238,77 @@ const PhoneAuthModal = () => {
     setPhoneNumber("");
     setOtp(["", "", "", ""]);
     setUserDetails({ name: "", email: "", gender: "" });
+  };
+
+  const handleGoogleLoginSuccess = async ({ user, token }) => {
+    console.log("🔥 Google Login - Full Response:", { user, token });
+    console.log("👤 User Object:", user);
+    console.log("🔑 Token:", token);
+    console.log("📧 Email:", user?.email);
+    console.log("👨 Display Name:", user?.displayName);
+    console.log("📱 Phone Number:", user?.phoneNumber);
+    console.log("🖼️ Photo URL:", user?.photoURL);
+    console.log("🆔 User UID:", user?.uid);
+    console.log("🔍 Provider Data:", user?.providerData);
+
+    setLoading(true);
+    try {
+      // Extract provider data
+      const providerData = user.providerData[0];
+
+      // Format data for API
+      const socialSignInData = {
+        email: providerData.email,
+        name: providerData.displayName,
+        provider: providerData.providerId,
+        providerId: providerData.uid,
+      };
+
+      console.log("📤 Sending to API:", socialSignInData);
+
+      // Send to backend API
+      const response = await axiosHttp.post(
+        socialSignInEndPoint,
+        socialSignInData,
+      );
+
+      console.log("✅ API Response:", response.data);
+
+      if (response.data?.status === 200) {
+        const userData = response.data.data;
+
+        // Store the entire user data (including token) in Redux - same as phone login
+        dispatch(setUser(userData));
+
+        console.log("💾 User Data saved to Redux:", userData);
+
+        toast.success("Successfully signed in with Google!");
+        setCurrentStep("welcome");
+      } else {
+        toast.error(response.data?.message || "Failed to sign in");
+      }
+    } catch (error) {
+      console.error("❌ Error handling Google login:", error);
+      console.error("Error response:", error.response?.data);
+      toast.error(
+        error.response?.data?.message || "Failed to complete Google sign-in",
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleGoogleLoginError = (error) => {
+    console.error("Google login error:", error);
+
+    // Handle specific error cases
+    if (error.code === "auth/popup-closed-by-user") {
+      toast.error("Sign-in popup was closed");
+    } else if (error.code === "auth/popup-blocked") {
+      toast.error("Please allow popups for this site");
+    } else {
+      toast.error("Failed to sign in with Google");
+    }
   };
 
   return (
@@ -425,9 +498,26 @@ const PhoneAuthModal = () => {
                       {loading
                         ? "Sending..."
                         : authType === "login"
-                        ? "Sign In"
-                        : "Sign Up"}
+                          ? "Sign In"
+                          : "Sign Up"}
                     </button>
+
+                    {/* Divider */}
+                    <div className="relative flex items-center">
+                      <div className="flex-grow border-t border-gray-300"></div>
+                      <span className="flex-shrink mx-4 text-gray-500 text-sm">
+                        or
+                      </span>
+                      <div className="flex-grow border-t border-gray-300"></div>
+                    </div>
+
+                    {/* Google Login */}
+                    <div className="w-full">
+                      <GoogleLogin
+                        onSuccess={handleGoogleLoginSuccess}
+                        onError={handleGoogleLoginError}
+                      />
+                    </div>
 
                     <p className="text-sm text-black text-center">
                       By continuing, you agree to Lafetch's{" "}
@@ -475,7 +565,7 @@ const PhoneAuthModal = () => {
                               index > 0
                             ) {
                               const prevInput = document.getElementById(
-                                `otp-${index - 1}`
+                                `otp-${index - 1}`,
                               );
                               if (prevInput) prevInput.focus();
                             }
