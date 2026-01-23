@@ -15,6 +15,13 @@ const CartBanner = () => {
     }
   };
 
+  // Helper function to check if URL is a video
+  const isVideo = (url) => {
+    if (!url) return false;
+    const videoExtensions = [".mp4", ".webm", ".ogg", ".mov"];
+    return videoExtensions.some((ext) => url.toLowerCase().includes(ext));
+  };
+
   // Don't render if no banners
   if (!banners || banners.length === 0) {
     return null;
@@ -63,24 +70,55 @@ const CartBanner = () => {
                 : "translateX(0)",
           }}
         >
-          {banners.map((banner, index) => (
-            <div
-              key={banner._id || index}
-              className={`flex-shrink-0 ${
-                banners.length > 1 ? "w-[72%]" : "w-full"
-              }`}
-            >
-              <div className="relative w-full h-64 md:h-96 rounded-lg overflow-hidden">
-                <Image
-                  src={banner.image || banner.imageUrl}
-                  alt={banner.title || `Banner ${index + 1}`}
-                  fill
-                  className="object-fill"
-                  priority={index === 0}
-                />
+          {banners.map((banner, index) => {
+            const mediaUrl = banner.image || banner.imageUrl;
+            const isVideoContent = isVideo(mediaUrl);
+            const hasRedirectUrl =
+              banner.redirectUrl && banner.redirectUrl.trim() !== "";
+
+            const mediaContent = isVideoContent ? (
+              <video
+                src={mediaUrl}
+                autoPlay
+                loop
+                muted
+                playsInline
+                className="w-full h-full object-cover"
+              />
+            ) : (
+              <Image
+                src={mediaUrl}
+                alt={banner.title || `Banner ${index + 1}`}
+                fill
+                className="object-fill"
+                priority={index === 0}
+              />
+            );
+
+            return (
+              <div
+                key={banner._id || index}
+                className={`flex-shrink-0 ${
+                  banners.length > 1 ? "w-[72%]" : "w-full"
+                }`}
+              >
+                <div className="relative w-full h-64 md:h-96 rounded-lg overflow-hidden">
+                  {hasRedirectUrl ? (
+                    <a
+                      href={banner.redirectUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="block w-full h-full"
+                    >
+                      {mediaContent}
+                    </a>
+                  ) : (
+                    mediaContent
+                  )}
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
     </div>
