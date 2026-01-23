@@ -4,7 +4,7 @@ import useBanner from "@/hooks/useBanner";
 import BannerCarousel from "@/components/Carousel";
 
 const AccessoriesCarousel = () => {
-  const query = "gender=3";
+  const query = "gender=3&isCartBanner=false";
   const fetchBanners = useBanner(query);
 
   if (!fetchBanners || fetchBanners.length === 0) {
