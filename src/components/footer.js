@@ -39,7 +39,7 @@ const Footer = () => {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-x-14 gap-y-6">
             {/* Column 1 */}
             <ul className="space-y-3 text-sm text-gray-300">
-              <li>Welcome to La Fetch</li>
+              <li>Welcome to LaFetch</li>
               <li>Announcements</li>
               <li>What's new</li>
               <li>Contact us</li>
@@ -54,7 +54,7 @@ const Footer = () => {
                 <Link href="/about-us">About Us</Link>
               </li>
               <li>Discover now</li>
-              <li>La fetch quick</li>
+              <li>LaFetch quick</li>
             </ul>
 
             {/* Column 3 */}

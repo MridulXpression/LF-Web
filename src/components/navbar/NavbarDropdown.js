@@ -21,7 +21,7 @@ const NavbarDropdown = ({ menu, latestBlogs, onMouseEnter, onMouseLeave }) => {
         { src: "/images/men-nav2.png", alt: "Men Category 2" },
         { src: "/images/men-nav3.png", alt: "Men Category 3" },
       ];
-    } else if (title.includes("accessor")) {
+    } else if (title.includes("essentials")) {
       return [
         {
           src: "/images/access-nav-top.png",

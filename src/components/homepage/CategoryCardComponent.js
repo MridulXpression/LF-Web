@@ -48,7 +48,7 @@ export default function ShopByCategory({ categories: externalCategories }) {
             key={category.id}
             href={category.href}
             className={`${getCardWidth(
-              index
+              index,
             )} relative rounded-lg sm:rounded-xl md:rounded-2xl lg:rounded-[20px] overflow-hidden transition-all duration-500 ease-in-out cursor-pointer group bg-neutral-200`}
             onMouseEnter={() => setHoveredIndex(index)}
             onMouseLeave={() => setHoveredIndex(null)}

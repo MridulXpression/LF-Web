@@ -84,7 +84,7 @@ const Navbar = () => {
 
     if (t.includes("men")) return "/shop/men";
 
-    if (t.includes("accessor")) return "/shop/accessories";
+    if (t.includes("essentials")) return "/shop/accessories";
 
     if (t === "track order") return "/account/orders";
 
@@ -167,7 +167,7 @@ const Navbar = () => {
                     setHoveredMenu(null);
                     const timeout = setTimeout(
                       () => setActiveDropdown(null),
-                      200
+                      200,
                     );
                     setDropdownTimeout(timeout);
                   }}
@@ -187,7 +187,7 @@ const Navbar = () => {
                       onMouseLeave={() => {
                         const timeout = setTimeout(
                           () => setActiveDropdown(null),
-                          200
+                          200,
                         );
                         setDropdownTimeout(timeout);
                       }}

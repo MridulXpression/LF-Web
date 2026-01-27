@@ -59,8 +59,13 @@ const WishlistProductCard = () => {
   };
 
   return (
-    <div className="bg-white p-6 min-h-screen flex md:items-center md:justify-center mt-[100px] ">
-      <div className="w-full md:px-[100px] md:py-0 px-4 p-12 mb-4 ">
+    <div className="bg-white p-6 min-h-screen flex md:items-center md:justify-center mt-[100px] md:mt-[50px] ">
+      <div className="w-full  md:py-0  px-4 md:px-[50px] p-8 mb-4 ">
+        {products.length > 0 && products[0]?.wishlist_board?.name && (
+          <h1 className="text-2xl md:text-3xl font-bold mb-6 text-gray-900 capitalize">
+            {products[0].wishlist_board.name}
+          </h1>
+        )}
         {products.length === 0 ? (
           <div className="flex flex-col items-center justify-center min-h-[60vh]">
             <p className="text-gray-500 mb-6">
@@ -74,7 +79,7 @@ const WishlistProductCard = () => {
             </a>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-5 gap-6">
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-6">
             {products.map((item) => {
               const { product } = item;
               const fallbackImage = "";
@@ -87,7 +92,7 @@ const WishlistProductCard = () => {
                   imageAlt={product?.title || "Product Image"}
                   rating={product?.rating}
                   reviewCount={product?.numReviews}
-                  brandName={product?.brand}
+                  brandName={product?.brand?.name}
                   productName={product?.title}
                   currentPrice={product?.basePrice || 0}
                   originalPrice={product?.mrp || 0}

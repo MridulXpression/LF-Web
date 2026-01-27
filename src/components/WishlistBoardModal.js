@@ -9,12 +9,18 @@ import { useDispatch, useSelector } from "react-redux";
 import { Toaster, toast } from "react-hot-toast";
 import Image from "next/image";
 import { closeWishlistModal } from "@/redux/slices/loginmodalSlice";
+import axiosHttp from "@/utils/axioshttp";
+import { endPoints } from "@/utils/endpoints";
 
 const CreateBoardModal = ({ productData, onClose }) => {
   const [selectedBoard, setSelectedBoard] = useState(null);
   const [newBoardName, setNewBoardName] = useState("");
   const [isCreating, setIsCreating] = useState(false);
   const [isAddingProduct, setIsAddingProduct] = useState(false);
+  const [selectedSuggestion, setSelectedSuggestion] = useState(null);
+
+  // Static suggestions
+  const BOARD_SUGGESTIONS = ["tshirt", "jacket", "sweatshirt"];
 
   const dispatch = useDispatch();
   const isOpen = useSelector((state) => state.modal.wishlistModal); // Update selector to match slice
@@ -70,11 +76,66 @@ const CreateBoardModal = ({ productData, onClose }) => {
   };
 
   const handleContinue = async () => {
-    if (!selectedBoard || !productData) return;
+    if ((!selectedBoard && !selectedSuggestion) || !productData) return;
 
     setIsAddingProduct(true);
     try {
-      const response = await addProductToBoard(selectedBoard.id, productData);
+      let boardId;
+
+      // If a suggestion is selected, create the board first
+      if (selectedSuggestion) {
+        const userId = user?.id;
+        const createPayload = {
+          userId: parseInt(userId, 10),
+          name: selectedSuggestion,
+        };
+
+        const createResponse = await createBoard(createPayload);
+
+        if (createResponse?.status !== 201 && createResponse?.status !== 200) {
+          toast.error("Failed to create board");
+          setIsAddingProduct(false);
+          return;
+        }
+
+        // Refetch boards directly to get the newly created board with ID
+        try {
+          const endPoint = `${endPoints.getBoards}/${userId}`;
+          const result = await axiosHttp.get(endPoint);
+
+          if (result?.status === 200 && result?.data?.data) {
+            // Find the newly created board by name
+            const newBoard = result.data.data.find(
+              (board) =>
+                board.name.toLowerCase() === selectedSuggestion.toLowerCase(),
+            );
+
+            if (newBoard?.id) {
+              boardId = newBoard.id;
+              fetchBoards(); // Update the local state for UI
+            } else {
+              toast.error("Failed to find created board");
+              setIsAddingProduct(false);
+              return;
+            }
+          } else {
+            toast.error("Failed to fetch updated boards");
+            setIsAddingProduct(false);
+            return;
+          }
+        } catch (err) {
+          console.error("Error fetching boards:", err);
+          toast.error("Failed to fetch updated boards");
+          setIsAddingProduct(false);
+          return;
+        }
+      } else {
+        // Use existing selected board
+        boardId = selectedBoard.id;
+      }
+
+      // Add product to board
+      const response = await addProductToBoard(boardId, productData);
 
       if (response?.success) {
         toast.success(response.message || "Added to board successfully");
@@ -99,7 +160,20 @@ const CreateBoardModal = ({ productData, onClose }) => {
 
   const handleBoardSelect = (board) => {
     setSelectedBoard((prev) => (prev?.id === board.id ? null : board));
+    setSelectedSuggestion(null); // Clear suggestion selection
   };
+
+  const handleSuggestionSelect = (suggestion) => {
+    setSelectedSuggestion((prev) => (prev === suggestion ? null : suggestion));
+    setSelectedBoard(null); // Clear board selection
+  };
+
+  // Filter suggestions that don't already exist as boards
+  const availableSuggestions = BOARD_SUGGESTIONS.filter((suggestion) => {
+    return !getBoards?.some(
+      (board) => board.name.toLowerCase() === suggestion.toLowerCase(),
+    );
+  });
 
   if (!isOpen) return null;
 
@@ -109,7 +183,7 @@ const CreateBoardModal = ({ productData, onClose }) => {
 
       <div className="relative bg-white w-full max-w-3xl mx-auto flex flex-col md:flex-row overflow-hidden max-h-[90vh] md:max-h-[500px]">
         {/* Left Panel */}
-        <div className="flex-1 p-6">
+        <div className="flex-1 p-6 overflow-y-auto">
           {/* Header */}
           <div className="flex items-center justify-between mb-4 md:mb-6">
             <div>
@@ -164,7 +238,7 @@ const CreateBoardModal = ({ productData, onClose }) => {
             <h3 className="text-xs md:text-sm font-medium text-gray-900 mb-2 md:mb-3">
               Select Existing Board
             </h3>
-            <div className="space-y-2 max-h-[120px] md:max-h-[150px] overflow-y-auto">
+            <div className="space-y-2">
               {!getBoards ? (
                 <div className="text-center py-4 text-gray-500">
                   Loading boards...
@@ -178,7 +252,7 @@ const CreateBoardModal = ({ productData, onClose }) => {
                   <div
                     key={board.id}
                     onClick={() => handleBoardSelect(board)}
-                    className={`flex items-center gap-2 md:gap-3 p-2 md:p-3 border cursor-pointer transition-colors ${
+                    className={`flex items-center gap-2 p-[8px] border cursor-pointer transition-colors ${
                       selectedBoard?.id === board.id
                         ? "border-gray-900 bg-gray-50"
                         : "border-gray-200 hover:border-gray-300"
@@ -198,10 +272,43 @@ const CreateBoardModal = ({ productData, onClose }) => {
             </div>
           </div>
 
+          {/* Suggestions */}
+          {availableSuggestions.length > 0 && (
+            <div className="mb-4 md:mb-6">
+              <h3 className="text-xs md:text-sm font-medium text-gray-900 mb-2 md:mb-3">
+                Suggestions
+              </h3>
+              <div className="space-y-2">
+                {availableSuggestions.map((suggestion) => (
+                  <div
+                    key={suggestion}
+                    onClick={() => handleSuggestionSelect(suggestion)}
+                    className={`flex items-center gap-2 p-[8px] border cursor-pointer transition-colors ${
+                      selectedSuggestion === suggestion
+                        ? "border-gray-900 bg-gray-50"
+                        : "border-gray-200 hover:border-gray-300"
+                    }`}
+                  >
+                    <div className="flex-1">
+                      <h4 className="text-xs md:text-sm font-medium text-gray-900 capitalize">
+                        {suggestion}
+                      </h4>
+                    </div>
+                    <span className="text-xs md:text-sm text-gray-400">0</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
           {/* Continue Button */}
           <button
             onClick={handleContinue}
-            disabled={!selectedBoard || isAddingProduct || addProductLoading}
+            disabled={
+              (!selectedBoard && !selectedSuggestion) ||
+              isAddingProduct ||
+              addProductLoading
+            }
             className="w-full bg-gray-900 text-white py-2 md:py-3 text-sm md:text-base font-medium hover:bg-gray-800 disabled:bg-gray-400 disabled:cursor-not-allowed"
           >
             {isAddingProduct || addProductLoading
@@ -221,7 +328,7 @@ const CreateBoardModal = ({ productData, onClose }) => {
                     alt={productData.title || "Product Image"}
                     width={250}
                     height={250}
-                    className="object-contain max-w-full max-h-[180px] md:max-h-[220px]"
+                    className="object-contain max-w-full max-h-[180px] md:max-h-[350px]"
                   />
                 ) : (
                   <div className="w-full h-64 bg-gray-200 flex items-center justify-center text-gray-500">

@@ -154,7 +154,7 @@ const FashionGrid = ({ data, title = "TRENDING NOW" }) => {
               {/* Text (top/middle position) - moves up on hover if at bottom */}
               <div
                 className={`${getTextPositionClasses(
-                  position
+                  position,
                 )} z-20 transition-all duration-300 ${
                   position === "bottom-left" && isHovered ? "bottom-32" : ""
                 }`}
@@ -228,8 +228,8 @@ const FashionGrid = ({ data, title = "TRENDING NOW" }) => {
           // Item 5: text at top with custom title and description color
           if (index === 1) {
             position = "top-left";
-            titleColor = "text-[#59291D]";
-            textColor = "text-black";
+            titleColor = "text-white";
+            textColor = "text-white";
           }
           // Item 6: text at bottom (default)
 
@@ -257,7 +257,7 @@ const FashionGrid = ({ data, title = "TRENDING NOW" }) => {
 
               <div
                 className={`${getTextPositionClasses(
-                  position
+                  position,
                 )} z-20 transition-all duration-300 ${
                   position === "bottom-left" && isHovered ? "bottom-32" : ""
                 }`}
@@ -267,17 +267,17 @@ const FashionGrid = ({ data, title = "TRENDING NOW" }) => {
                 </h2>
                 <p
                   className={`${getDescriptionClasses(
-                    textColor
+                    textColor,
                   )} max-w-[300px]`}
                 >
                   {stripHtmlTags(
-                    item.description || "hshdihiceidiiiicjsidje idijiweodoei "
+                    item.description || "hshdihiceidiiiicjsidje idijiweodoei ",
                   )
                     .split(" ")
                     .slice(0, 20)
                     .join(" ")}
                   {stripHtmlTags(
-                    item.description || "hshdihiceidiiiicjsidje idijiweodoei "
+                    item.description || "hshdihiceidiiiicjsidje idijiweodoei ",
                   ).split(" ").length > 20
                     ? "..."
                     : ""}

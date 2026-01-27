@@ -67,7 +67,7 @@ const NewestAtLafetch = () => {
         </div>
 
         <h2 className="w-full md:w-[600px] text-left md:text-right text-2xl  md:text-[36px] font-semibold uppercase text-[#0F0F0F]">
-          What's Newest at Lafetch
+          What's New at Lafetch
         </h2>
       </div>
 
@@ -117,12 +117,12 @@ const NewestAtLafetch = () => {
             <div className="absolute inset-0 left-4 sm:left-5 md:left-6 lg:left-7 top-4 sm:top-5 md:top-6  right-4 sm:right-5 md:right-6 lg:right-7 flex flex-col gap-3 sm:gap-3 md:gap-4 lg:gap-5">
               <div>
                 <h3 className="text-lg   md:text-[23px] font-[550] text-[#0F0F0F] uppercase">
-                  Top Trending Collection
+                  Fresh Fits Just Landed
                 </h3>
                 <p className="text-xs  md:text-[13px] font-[500] text-[#0F0F0FCC] leading-5 sm:leading-6 md:leading-7 lg:leading-[24px]">
-                  Explore our curated collection of the season's must-have
-                  styles. From runway-inspired looks to timeless classics, find
-                  your next favorite piece here.
+                  Explore our curated picks for the season. From trend-led
+                  silhouettes to forever classics -your next favorite starts
+                  here.
                 </p>
               </div>
 
