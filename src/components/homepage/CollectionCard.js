@@ -27,7 +27,7 @@ const ProductCollectionCard = ({ product, onLike }) => {
   const price = useMemo(() => Number(product.price), [product.price]);
   const originalPrice = useMemo(
     () => Number(product.originalPrice),
-    [product.originalPrice]
+    [product.originalPrice],
   );
 
   const showOriginalPrice = originalPrice > price;
@@ -62,10 +62,10 @@ const ProductCollectionCard = ({ product, onLike }) => {
           brand: product.brand,
           variants: product.variants || [],
           availableSizes: product.availableSizes || [],
-        })
+        }),
       );
     },
-    [dispatch, product, images, price]
+    [dispatch, product, images, price],
   );
 
   const handleLike = useCallback(
@@ -76,7 +76,7 @@ const ProductCollectionCard = ({ product, onLike }) => {
       dispatch(openWishlistModal());
       onLike?.(product.id);
     },
-    [dispatch, onLike, product.id]
+    [dispatch, onLike, product.id],
   );
 
   const handleMouseLeave = useCallback(() => {
@@ -139,17 +139,17 @@ const ProductCollectionCard = ({ product, onLike }) => {
             </button>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex flex-col gap-1">
             <span className="text-sm md:text-md">₹{price}</span>
             {showOriginalPrice && (
-              <>
+              <div className="flex items-center gap-2">
                 <span className="line-through opacity-60 text-sm md:text-md">
                   ₹{originalPrice}
                 </span>
                 <span className="text-[#ac9ffc] text-sm md:text-md font-medium">
                   ({discountPercentage}% OFF)
                 </span>
-              </>
+              </div>
             )}
           </div>
         </div>

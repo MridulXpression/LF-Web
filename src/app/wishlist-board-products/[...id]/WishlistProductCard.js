@@ -42,7 +42,7 @@ const WishlistProductCard = () => {
 
       // ✅ Remove item locally (instant UI update)
       setProducts((prev) =>
-        prev.filter((item) => item.product?.id !== productId)
+        prev.filter((item) => item.product?.id !== productId),
       );
 
       // ✅ Optional: Save last deleted product id
@@ -59,7 +59,7 @@ const WishlistProductCard = () => {
   };
 
   return (
-    <div className="bg-white p-6 min-h-screen flex md:items-center md:justify-center mt-[100px] md:mt-[150px]">
+    <div className="bg-white p-6 min-h-screen flex md:items-center md:justify-center mt-[100px] ">
       <div className="w-full md:px-[100px] md:py-0 px-4 p-12 mb-4 ">
         {products.length === 0 ? (
           <div className="flex flex-col items-center justify-center min-h-[60vh]">

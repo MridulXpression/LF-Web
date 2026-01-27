@@ -2,6 +2,7 @@
 import React, { useState } from "react";
 import { X, Phone, Shield, Play } from "lucide-react";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { endPoints } from "@/utils/endpoints";
 import axiosHttp from "@/utils/axioshttp";
 import { Toaster, toast } from "react-hot-toast";
@@ -16,6 +17,7 @@ import {
 import useNewsletterSubscribe from "@/hooks/useNewsletterSubscribe";
 
 const PhoneAuthModal = () => {
+  const router = useRouter();
   const dispatch = useDispatch(); // ✅ Initialize dispatch
   const isOpen = useSelector((state) => state.modal.phoneAuthModal); // 🔥 use redux
   const { subscribeToNewsletter } = useNewsletterSubscribe();
@@ -744,7 +746,10 @@ const PhoneAuthModal = () => {
                           : "You're all set! Start exploring amazing fashion deals."}
                       </p>
                       <button
-                        onClick={closeModal}
+                        onClick={() => {
+                          router.push("/");
+                          closeModal();
+                        }}
                         className="w-full bg-white text-black py-3 rounded-md font-medium cursor-pointer transition-colors hover:bg-gray-100"
                       >
                         Get Started
