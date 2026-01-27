@@ -8,6 +8,7 @@ import AddressModal from "@/components/AddressModal";
 import DeleteConfirmModal from "@/components/DeleteModal";
 import PaymentStatusModal from "@/components/ordersmodal/PayementConfirmationModal";
 import axiosHttp from "@/utils/axioshttp";
+import { endPoints } from "@/utils/endpoints";
 import useGetCoupons from "@/hooks/useGetCoupons";
 import Link from "next/link";
 import Footer from "@/components/footer";
@@ -69,9 +70,9 @@ const CheckOutAddress = () => {
     if (userId) {
       fetchCartItems();
       fetchAddresses();
-      // Load saved checkout from memory (using state instead of localStorage)
+      // Load saved checkout from localStorage
       try {
-        const saved = sessionStorage.getItem(`lafetch_checkout_${userId}`);
+        const saved = localStorage.getItem(`lafetch_checkout_${userId}`);
         if (saved) {
           const parsed = JSON.parse(saved);
           if (parsed.selectedAddressId)
@@ -101,7 +102,30 @@ const CheckOutAddress = () => {
           quantity: item.quantity || 1, // Use quantity directly from API
         }));
 
-        setProducts(transformedData);
+        // Filter products based on saved selection from localStorage
+        let selectedProducts = transformedData;
+        try {
+          const saved = localStorage.getItem(`lafetch_checkout_${userId}`);
+          if (saved) {
+            const parsed = JSON.parse(saved);
+            if (parsed.items && Array.isArray(parsed.items)) {
+              const selectedCartItemIds = new Set(
+                parsed.items
+                  .filter((item) => item.selected)
+                  .map((item) => item.cartItemId),
+              );
+              if (selectedCartItemIds.size > 0) {
+                selectedProducts = transformedData.filter((p) =>
+                  selectedCartItemIds.has(p.cartItemId),
+                );
+              }
+            }
+          }
+        } catch (e) {
+          console.error("Error reading selection from localStorage:", e);
+        }
+
+        setProducts(selectedProducts);
 
         // Keep Redux cart items in sync for selection state only
         try {
@@ -218,19 +242,16 @@ const CheckOutAddress = () => {
     }
 
     try {
-      // Step 1: Fetch latest cart items
-      const cartResp = await axiosHttp.get(`/cart-items/${userId}`);
-      const cartData = (cartResp.data && cartResp.data.data) || [];
-
-      if (cartData.length === 0) {
-        toast.error("Your cart is empty. Please add items to proceed.");
+      // Use already filtered products (only selected items from cart)
+      if (products.length === 0) {
+        toast.error("No items selected. Please select items to proceed.");
         return;
       }
 
-      // Build items array for initiate-payment using cart API data
-      const items = cartData.map((item) => {
+      // Build items array for initiate-payment using selected products
+      const items = products.map((item) => {
         const quantity = item.quantity || 1;
-        const unitPrice = Number(item.product_variant?.price || 0);
+        const unitPrice = Number(item.price || 0);
         const itemTotal = unitPrice * quantity;
 
         return {
@@ -243,10 +264,10 @@ const CheckOutAddress = () => {
         };
       });
 
-      // Calculate totals from cart data
-      const totalMRP = cartData.reduce((s, it) => {
+      // Calculate totals from selected products
+      const totalMRP = products.reduce((s, it) => {
         const qty = it.quantity || 1;
-        const mrp = Number(it.product?.mrp || it.product?.basePrice || 0);
+        const mrp = Number(it.originalPrice || 0);
         return s + mrp * qty;
       }, 0);
 
@@ -385,10 +406,54 @@ const CheckOutAddress = () => {
               placeResp.data &&
               (placeResp.data.status === 200 || placeResp.data.status === 201)
             ) {
+              // Clear cart items from backend - delete only ordered items one by one
+              try {
+                // Use the items array that was sent in the order
+                const orderedItems = items;
+
+                // Delete each ordered item from cart sequentially
+                for (const item of orderedItems) {
+                  try {
+                    await axiosHttp.delete(endPoints.deleteCartItem, {
+                      data: {
+                        userId: userId,
+                        productId: item.productId,
+                      },
+                    });
+                    console.log(
+                      `Successfully deleted cart item ${item.productId}`,
+                    );
+                  } catch (deleteError) {
+                    console.error(
+                      `Failed to delete cart item ${item.productId}:`,
+                      deleteError,
+                    );
+                  }
+                }
+              } catch (e) {
+                console.error("Failed to clear cart:", e);
+              }
+
+              // Clear Redux cart state - remove only ordered items
+              const orderedProductIds = new Set(
+                items.map((item) => item.productId),
+              );
+              const remainingItems = cartItemsFromRedux.filter(
+                (item) => !orderedProductIds.has(item.productId),
+              );
+              dispatch(setCartItems(remainingItems));
+
+              // Clear local state - remove only ordered items
+              const remainingProducts = products.filter(
+                (product) => !orderedProductIds.has(product.productId),
+              );
+              setProducts(remainingProducts);
+
               // Clear stored payment and checkout data
               try {
                 sessionStorage.removeItem(`lafetch_payment_${userId}`);
                 sessionStorage.removeItem(`lafetch_checkout_${userId}`);
+                localStorage.removeItem(`lafetch_checkout_${userId}`);
               } catch (e) {}
 
               // Open payment confirmation modal with success

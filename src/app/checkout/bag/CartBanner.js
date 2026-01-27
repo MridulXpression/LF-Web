@@ -102,7 +102,7 @@ const CartBanner = () => {
                   banners.length > 1 ? "w-[72%]" : "w-full"
                 }`}
               >
-                <div className="relative w-full h-64 md:h-96 rounded-lg overflow-hidden">
+                <div className="relative w-full h-64 md:h-[450px] rounded-lg overflow-hidden">
                   {hasRedirectUrl ? (
                     <a
                       href={banner.redirectUrl}

@@ -47,15 +47,50 @@ const ShoppingCart = () => {
     }
   }, [userId]);
 
-  // Auto-select all items ONLY when products load initially
+  // Auto-select all items ONLY when products load initially, or restore from localStorage
   useEffect(() => {
     if (products.length > 0 && isInitialMount.current) {
-      setSelectedItems(new Set(products.map((p) => p.cartItemId)));
-      // keep redux selection in sync
-      dispatch(setSelectedCartItems(products.map((p) => p.cartItemId)));
+      // Try to restore saved selection from localStorage first
+      let restoredSelection = false;
+      try {
+        const saved = localStorage.getItem(`lafetch_checkout_${userId}`);
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          if (parsed.items && Array.isArray(parsed.items)) {
+            const savedCartItemIds = new Set(
+              parsed.items
+                .filter((item) => item.selected)
+                .map((item) => item.cartItemId),
+            );
+            // Only restore if some items were selected
+            if (savedCartItemIds.size > 0) {
+              // Filter to only include items that exist in current products
+              const validSelectedIds = new Set(
+                Array.from(savedCartItemIds).filter((id) =>
+                  products.some((p) => p.cartItemId === id),
+                ),
+              );
+              if (validSelectedIds.size > 0) {
+                setSelectedItems(validSelectedIds);
+                dispatch(setSelectedCartItems(Array.from(validSelectedIds)));
+                restoredSelection = true;
+              }
+            }
+          }
+        }
+      } catch (e) {
+        console.error("Error restoring selection:", e);
+      }
+
+      // If no saved selection was restored, select all items by default
+      if (!restoredSelection) {
+        setSelectedItems(new Set(products.map((p) => p.cartItemId)));
+        dispatch(setSelectedCartItems(products.map((p) => p.cartItemId)));
+      }
+
       isInitialMount.current = false;
     }
-  }, [products]);
+  }, [products, userId, dispatch]);
 
   const fetchCartItems = async () => {
     try {
@@ -109,29 +144,6 @@ const ShoppingCart = () => {
         }));
 
         dispatch(setCartItems(payload));
-
-        // Try to restore saved checkout selection (match by productId+variantId)
-        try {
-          const saved = localStorage.getItem(`lafetch_checkout_${userId}`);
-          if (saved) {
-            const parsed = JSON.parse(saved);
-            if (parsed.items && Array.isArray(parsed.items)) {
-              const savedCartItemIds = new Set();
-              parsed.items.forEach((s) => {
-                const match = transformedData.find(
-                  (t) =>
-                    t.productId === s.productId && t.variantId === s.variantId,
-                );
-                if (match) savedCartItemIds.add(match.cartItemId);
-              });
-              if (savedCartItemIds.size > 0) {
-                setSelectedItems(savedCartItemIds);
-                // mirror selection into redux
-                dispatch(setSelectedCartItems(Array.from(savedCartItemIds)));
-              }
-            }
-          }
-        } catch (e) {}
       }
       setLoading(false);
     } catch (error) {
