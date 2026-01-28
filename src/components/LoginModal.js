@@ -243,16 +243,6 @@ const PhoneAuthModal = () => {
   };
 
   const handleGoogleLoginSuccess = async ({ user, token }) => {
-    console.log("🔥 Google Login - Full Response:", { user, token });
-    console.log("👤 User Object:", user);
-    console.log("🔑 Token:", token);
-    console.log("📧 Email:", user?.email);
-    console.log("👨 Display Name:", user?.displayName);
-    console.log("📱 Phone Number:", user?.phoneNumber);
-    console.log("🖼️ Photo URL:", user?.photoURL);
-    console.log("🆔 User UID:", user?.uid);
-    console.log("🔍 Provider Data:", user?.providerData);
-
     setLoading(true);
     try {
       // Extract provider data
@@ -266,15 +256,11 @@ const PhoneAuthModal = () => {
         providerId: providerData.uid,
       };
 
-      console.log("📤 Sending to API:", socialSignInData);
-
       // Send to backend API
       const response = await axiosHttp.post(
         socialSignInEndPoint,
         socialSignInData,
       );
-
-      console.log("✅ API Response:", response.data);
 
       if (response.data?.status === 200) {
         const userData = response.data.data;
@@ -282,16 +268,12 @@ const PhoneAuthModal = () => {
         // Store the entire user data (including token) in Redux - same as phone login
         dispatch(setUser(userData));
 
-        console.log("💾 User Data saved to Redux:", userData);
-
         toast.success("Successfully signed in with Google!");
         setCurrentStep("welcome");
       } else {
         toast.error(response.data?.message || "Failed to sign in");
       }
     } catch (error) {
-      console.error("❌ Error handling Google login:", error);
-      console.error("Error response:", error.response?.data);
       toast.error(
         error.response?.data?.message || "Failed to complete Google sign-in",
       );
@@ -301,8 +283,6 @@ const PhoneAuthModal = () => {
   };
 
   const handleGoogleLoginError = (error) => {
-    console.error("Google login error:", error);
-
     // Handle specific error cases
     if (error.code === "auth/popup-closed-by-user") {
       toast.error("Sign-in popup was closed");
@@ -339,7 +319,7 @@ const PhoneAuthModal = () => {
         <div className="fixed inset-0 bg-black/10 backdrop-blur-xs bg-opacity-50 flex items-center justify-center z-80">
           <div
             className="bg-white shadow-xl w-full max-w-4xl 
-                h-[80vh] md:h-auto md:max-h-[600px]
+                h-[80vh] md:h-auto md:min-h-[600px]
                 flex flex-col md:flex-row overflow-hidden rounded-lg"
           >
             {/* Left Side - Image */}

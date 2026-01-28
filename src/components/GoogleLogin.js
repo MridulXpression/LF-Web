@@ -9,29 +9,17 @@ const provider = new GoogleAuthProvider();
 export default function GoogleLogin({ onSuccess, onError, className = "" }) {
   const handleLogin = async () => {
     try {
-      console.log("Starting Google sign-in...");
-      console.log("Auth instance:", auth);
-
       const result = await signInWithPopup(auth, provider);
       const user = result.user;
 
-      console.log("Logged in user:", user);
-
       // 🔑 ID token (send this to backend if needed)
       const token = await user.getIdToken();
-      console.log("Firebase ID Token:", token);
 
       // Call success callback if provided
       if (onSuccess) {
         onSuccess({ user, token });
       }
     } catch (error) {
-      console.error("Google login error details:", {
-        code: error.code,
-        message: error.message,
-        details: error,
-      });
-
       // Call error callback if provided
       if (onError) {
         onError(error);

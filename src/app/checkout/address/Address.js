@@ -121,9 +121,7 @@ const CheckOutAddress = () => {
               }
             }
           }
-        } catch (e) {
-          console.error("Error reading selection from localStorage:", e);
-        }
+        } catch (e) {}
 
         setProducts(selectedProducts);
 
@@ -420,19 +418,9 @@ const CheckOutAddress = () => {
                         productId: item.productId,
                       },
                     });
-                    console.log(
-                      `Successfully deleted cart item ${item.productId}`,
-                    );
-                  } catch (deleteError) {
-                    console.error(
-                      `Failed to delete cart item ${item.productId}:`,
-                      deleteError,
-                    );
-                  }
+                  } catch (deleteError) {}
                 }
-              } catch (e) {
-                console.error("Failed to clear cart:", e);
-              }
+              } catch (e) {}
 
               // Clear Redux cart state - remove only ordered items
               const orderedProductIds = new Set(

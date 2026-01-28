@@ -124,7 +124,6 @@ const CreateBoardModal = ({ productData, onClose }) => {
             return;
           }
         } catch (err) {
-          console.error("Error fetching boards:", err);
           toast.error("Failed to fetch updated boards");
           setIsAddingProduct(false);
           return;

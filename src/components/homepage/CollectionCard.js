@@ -98,7 +98,7 @@ const ProductCollectionCard = ({ product, onLike }) => {
           rel="noopener noreferrer"
         >
           <div
-            className="relative h-[250px] sm:h-[280px] md:h-[340px] lg:h-[400px]
+            className="relative w-full aspect-[4/5] 
              p-4 bg-stone-200 rounded-xl overflow-hidden group
              flex items-center justify-center"
             onMouseLeave={handleMouseLeave}
@@ -110,7 +110,7 @@ const ProductCollectionCard = ({ product, onLike }) => {
                 alt={product.name}
                 width={400}
                 height={500}
-                className="max-h-full max-w-full object-contain"
+                className="w-full h-full object-contain"
               />
             )}
 

@@ -91,11 +91,11 @@ const Footer = () => {
                 Subscribe to our newsletter
               </p>
 
-              <div className="w-full  px-1 py-1 rounded-full border border-white/25 flex items-center gap-3">
+              <div className="w-full px-1 py-1 rounded-full border border-white/25 flex items-center gap-2 sm:gap-3">
                 <input
                   type="email"
-                  placeholder="Write your email here"
-                  className="flex-1 bg-transparent text-sm  outline-none placeholder-white/60 pl-4"
+                  placeholder="Your email"
+                  className="flex-1 bg-transparent text-sm outline-none placeholder-white/60 pl-3 sm:pl-4 min-w-0"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   onKeyPress={(e) =>
@@ -105,9 +105,9 @@ const Footer = () => {
                 <button
                   onClick={handleNewsletterSubmit}
                   disabled={loading}
-                  className="px-6 py-3 bg-zinc-800 rounded-full text-xs uppercase disabled:opacity-50 cursor-pointer"
+                  className="px-3 sm:px-6 py-2 sm:py-3 bg-zinc-800 rounded-full text-[10px] sm:text-xs uppercase disabled:opacity-50 cursor-pointer whitespace-nowrap flex-shrink-0"
                 >
-                  {loading ? "Subscribing..." : "Subscribe"}
+                  {loading ? "..." : "Subscribe"}
                 </button>
               </div>
             </div>
