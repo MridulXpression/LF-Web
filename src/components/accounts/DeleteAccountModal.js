@@ -5,10 +5,12 @@ import { useSelector } from "react-redux";
 import { X } from "lucide-react";
 import axiosHttp from "@/utils/axioshttp";
 import toast, { Toaster } from "react-hot-toast";
+import useLogout from "@/hooks/useLogout";
 
 const DeleteAccountModal = ({ isOpen, onClose }) => {
   const router = useRouter();
   const [isDeleting, setIsDeleting] = useState(false);
+  const { onLogout } = useLogout();
 
   const userInfo = useSelector((state) => state.user?.userInfo);
   const userId = userInfo?.id;
@@ -23,14 +25,15 @@ const DeleteAccountModal = ({ isOpen, onClose }) => {
       setIsDeleting(true);
       const response = await axiosHttp.post(`/auth/delete-account/${userId}`);
 
-      toast.success(response.data?.message);
+      if (response.status === 200) {
+        toast.success(response.data?.message);
 
-      // Close modal
-      onClose();
+        // Close modal
+        onClose();
 
-      // Clear storage and redirect
-      localStorage.clear();
-      router.push("/");
+        // Logout user automatically
+        await onLogout(userId);
+      }
     } catch (error) {
       const errorMessage =
         error.response?.data?.message || "Failed to delete account";

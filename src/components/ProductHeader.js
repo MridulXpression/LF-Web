@@ -4,6 +4,7 @@ import { Share2, Star } from "lucide-react";
 import axiosHttp from "@/utils/axioshttp";
 import { endPoints } from "@/utils/endpoints";
 import SizeChartModal from "@/components/SizeChartModal";
+import Link from "next/link";
 
 const ProductInfo = ({
   title,
@@ -148,9 +149,12 @@ const ProductInfo = ({
         <div className="flex items-start justify-between">
           <div>
             <h1 className="text-xl font-normal text-gray-900 mt-1">{title}</h1>
-            <h2 className="text-sm font-semibold text-gray-700 uppercase tracking-wide">
+            <Link
+              href={`/brands/${brandId}`}
+              className="text-sm font-semibold text-gray-700 uppercase tracking-wide"
+            >
               {brand}
-            </h2>
+            </Link>
           </div>
         </div>
 
@@ -203,7 +207,7 @@ const ProductInfo = ({
                 try {
                   setSizeChartLoading(true);
                   const resp = await axiosHttp.get(
-                    `${endPoints.fetchSizeChart}?brandId=${brandId}&superCatId=${superCatId}&catId=${catId}&subCatId=${subcatId}`
+                    `${endPoints.fetchSizeChart}?brandId=${brandId}&superCatId=${superCatId}&catId=${catId}&subCatId=${subcatId}`,
                   );
                   setSizeChartData(resp?.data?.data ?? null);
                   setSizeChartOpen(true);
@@ -231,8 +235,8 @@ const ProductInfo = ({
               !size.available
                 ? "bg-white text-gray-300 border-gray-200 line-through cursor-not-allowed"
                 : selectedSize === size.value
-                ? "border-[#9c90ff] text-[#9c90ff] bg-white"
-                : "border-gray-300 text-gray-700 bg-white hover:border-gray-400"
+                  ? "border-[#9c90ff] text-[#9c90ff] bg-white"
+                  : "border-gray-300 text-gray-700 bg-white hover:border-gray-400"
             }`}
                 >
                   {size.label ? size.label : "ONE SIZE"}
@@ -269,8 +273,8 @@ const ProductInfo = ({
                       !color.available
                         ? "opacity-40 cursor-not-allowed border-gray-200 text-gray-300"
                         : selectedColor === color.value
-                        ? "ring-2 ring-[#9c90ff] border-white text-[#9c90ff]"
-                        : "border-gray-300 text-gray-700 hover:border-gray-400"
+                          ? "ring-2 ring-[#9c90ff] border-white text-[#9c90ff]"
+                          : "border-gray-300 text-gray-700 hover:border-gray-400"
                     }`}
                   >
                     {color.label}

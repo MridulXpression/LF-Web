@@ -18,6 +18,7 @@ import QuickModal from "@/components/QuickModal";
 
 import useGetCategoriesHierarchy from "@/hooks/useCategoriesHirerarchy";
 import useBlog from "@/hooks/useBlog";
+import useCartSync from "@/hooks/useCartSync";
 
 // ---------- Menu Builder ----------
 const getMenuData = (categories) => {
@@ -51,6 +52,9 @@ const Navbar = () => {
   const router = useRouter();
   const pathname = usePathname();
 
+  // Sync cart with backend
+  useCartSync();
+
   const categoriesHierarchy = useGetCategoriesHierarchy();
   const menuData = getMenuData(categoriesHierarchy);
 
@@ -71,6 +75,97 @@ const Navbar = () => {
   const [hoveredMenu, setHoveredMenu] = useState(null);
 
   const [searchQuery, setSearchQuery] = useState("");
+
+  // Revalidate cart on route change (SPA navigation)
+  useEffect(() => {
+    if (user?.id) {
+      // Trigger a cart refetch when pathname changes
+      const refetchCart = async () => {
+        try {
+          const response = await axiosHttp.get(`/cart-items/${user.id}`);
+          if (response.data.status === 200 && response.data.data) {
+            const transformedData = response.data.data.map((item) => ({
+              id: item.productId,
+              cartItemId: item.id,
+              productId: item.productId,
+              variantId: item.variantId,
+              title: item.product.title,
+              quantity: item.quantity || 1,
+              basePrice:
+                item.pricing?.unitPrice ||
+                item.product_variant?.price ||
+                item.product.basePrice ||
+                0,
+              imageUrls: item.product.imageUrls || [],
+              variants: item.product_variant
+                ? [{ id: item.variantId, title: item.product_variant.title }]
+                : [],
+              selected: true,
+            }));
+            dispatch({ type: "cart/setCartItems", payload: transformedData });
+          }
+        } catch (error) {
+          // Silent fail - cart will sync on next attempt
+        }
+      };
+      refetchCart();
+    }
+  }, [pathname, user?.id, dispatch]);
+
+  // Refetch cart when window gains focus (tab switching)
+  useEffect(() => {
+    if (!user?.id) return;
+
+    const handleFocus = async () => {
+      try {
+        const response = await axiosHttp.get(`/cart-items/${user.id}`);
+        if (response.data.status === 200 && response.data.data) {
+          const transformedData = response.data.data.map((item) => ({
+            id: item.productId,
+            cartItemId: item.id,
+            productId: item.productId,
+            variantId: item.variantId,
+            title: item.product.title,
+            quantity: item.quantity || 1,
+            basePrice:
+              item.pricing?.unitPrice ||
+              item.product_variant?.price ||
+              item.product.basePrice ||
+              0,
+            imageUrls: item.product.imageUrls || [],
+            variants: item.product_variant
+              ? [{ id: item.variantId, title: item.product_variant.title }]
+              : [],
+            selected: true,
+          }));
+          dispatch({ type: "cart/setCartItems", payload: transformedData });
+        }
+      } catch (error) {
+        // Silent fail
+      }
+    };
+
+    window.addEventListener("focus", handleFocus);
+    return () => window.removeEventListener("focus", handleFocus);
+  }, [user?.id, dispatch]);
+
+  // Cross-tab cart sync via localStorage storage event
+  useEffect(() => {
+    const handleStorageChange = (e) => {
+      // Listen for cart changes from other tabs
+      if (e.key === "lafetch_cart_updated" && e.newValue) {
+        try {
+          const cartData = JSON.parse(e.newValue);
+          dispatch({ type: "cart/setCartItems", payload: cartData });
+        } catch (error) {
+          // Invalid cart data, ignore
+        }
+      }
+    };
+
+    window.addEventListener("storage", handleStorageChange);
+    return () => window.removeEventListener("storage", handleStorageChange);
+  }, [dispatch]);
 
   const getMenuHref = (title = "") => {
     const t = title.toLowerCase().trim();

@@ -23,10 +23,9 @@ export default function NavbarSearchComponent({
   const [isLoadingSuggestions, setIsLoadingSuggestions] = useState(false);
 
   const trendingSearches = [
-    "Poplin Shirts",
-    "Sweater Vests",
-    "Tank Tops",
-    "Muscle Tanks",
+    "Valentines fits",
+    "For Office",
+    "Vacation Wear",
     "Thermal Shirts",
   ];
 
@@ -38,7 +37,7 @@ export default function NavbarSearchComponent({
       setIsLoadingSuggestions(true);
       try {
         const res = await axiosHttp.post(
-          `product-suggestion?key=${searchQuery}`
+          `product-suggestion?key=${searchQuery}`,
         );
         setSuggestions(res.data.data || []);
       } catch (error) {

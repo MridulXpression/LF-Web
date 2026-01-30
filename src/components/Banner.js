@@ -1,6 +1,12 @@
 import React from "react";
 
-const FashionVideoBackground = ({ videoUrl, heading1, heading2, heading3 }) => {
+const FashionVideoBackground = ({
+  videoUrl,
+  heading1,
+  heading2,
+  heading3,
+  Heading4,
+}) => {
   return (
     <div className="relative w-full h-[50vh] md:h-[85vh] overflow-hidden mt-[120px] md:mt-[128px]  ">
       {/* Background Video */}
@@ -27,7 +33,7 @@ const FashionVideoBackground = ({ videoUrl, heading1, heading2, heading3 }) => {
             </p>
           </div>
           <p className="text-sm mt-[5px] md:text-[24px] font-[400] text-white tracking-[1.08px] uppercase leading-tight">
-            {heading3}
+            {heading3} <span className="font-[700]">{Heading4}</span>
           </p>
         </div>
       </div>

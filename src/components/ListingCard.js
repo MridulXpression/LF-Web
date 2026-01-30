@@ -39,7 +39,7 @@ const ListingCard = ({
 
   return (
     <>
-      <div className="relative overflow-hidden md:w-[220px] md:h-[430px] flex flex-col">
+      <div className="relative overflow-hidden w-full flex flex-col">
         {/* Product Image with Link */}
         <Link
           href={`/products/${id}`}
@@ -47,7 +47,7 @@ const ListingCard = ({
           rel="noopener noreferrer"
           onClick={() => localStorage.setItem("ProductId", id)}
         >
-          <div className="relative bg-gray-50 overflow-hidden group flex-shrink-0 h-[300px] cursor-pointer">
+          <div className="relative bg-gray-50 overflow-hidden group flex-shrink-0 w-full aspect-[4/5] cursor-pointer">
             {imageUrls?.[0] ? (
               <Image
                 src={imageUrls[0]}

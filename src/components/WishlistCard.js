@@ -37,9 +37,9 @@ const WishlistCard = ({
   };
 
   return (
-    <div className="relative overflow-hidden  md:w-[250px] md:max-h-[500px] bg-white flex flex-col">
+    <div className="relative overflow-hidden w-full bg-white flex flex-col">
       {/* Product Image */}
-      <div className="relative h-[150px] md:h-[300px] bg-gray-100">
+      <div className="relative w-full aspect-[4/5] bg-gray-100">
         <Image
           src={imageSrc || "/placeholder.png"}
           alt={imageAlt || "Product Image"}

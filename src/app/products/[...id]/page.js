@@ -172,7 +172,7 @@ export default function ProductPage({ params }) {
     if (data?.variants?.length) {
       const storedVariantId = localStorage.getItem("selectedVariantId");
       const foundVariant = data.variants.find(
-        (variant) => variant.id === Number(storedVariantId)
+        (variant) => variant.id === Number(storedVariantId),
       );
 
       // If no stored variant, default to first variant
@@ -387,7 +387,7 @@ export default function ProductPage({ params }) {
               sizes={sizes}
               colors={colors}
               variantId={selectedVariant?.id || sizes?.[0]?.variantId}
-              brandId={data.brandId}
+              brandId={data.brand?.id}
               superCatId={data.superCatId}
               catId={data.catId}
               subcatId={data.subCatId}
@@ -443,12 +443,12 @@ export default function ProductPage({ params }) {
                 selectedVariant
                   ? Boolean(
                       selectedVariant.available ??
-                        selectedVariant.inventory?.availableStock > 0
+                      selectedVariant.inventory?.availableStock > 0,
                     )
                   : Boolean(
                       data?.variants?.some(
-                        (v) => v.inventory?.availableStock > 0
-                      )
+                        (v) => v.inventory?.availableStock > 0,
+                      ),
                     )
               }
               onMessage={handleMessage}

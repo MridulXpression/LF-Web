@@ -78,9 +78,7 @@ const ShoppingCart = () => {
             }
           }
         }
-      } catch (e) {
-        console.error("Error restoring selection:", e);
-      }
+      } catch (e) {}
 
       // If no saved selection was restored, select all items by default
       if (!restoredSelection) {
@@ -144,6 +142,16 @@ const ShoppingCart = () => {
         }));
 
         dispatch(setCartItems(payload));
+
+        // Trigger cross-tab sync via localStorage
+        try {
+          localStorage.setItem("lafetch_cart_updated", JSON.stringify(payload));
+          // Clear immediately so it can be triggered again
+          setTimeout(
+            () => localStorage.removeItem("lafetch_cart_updated"),
+            100,
+          );
+        } catch (e) {}
       }
       setLoading(false);
     } catch (error) {
@@ -221,9 +229,7 @@ const ShoppingCart = () => {
                 }
               }
             }
-          } catch (e) {
-            console.error("Error updating localStorage:", e);
-          }
+          } catch (e) {}
         }
         return;
       }
@@ -250,7 +256,6 @@ const ShoppingCart = () => {
         fetchCartItems();
       }
     } catch (error) {
-      console.error("Error removing item:", error);
       // Check if it's a foreign key constraint error
       if (
         error.response?.data?.message?.includes("foreign key constraint") ||

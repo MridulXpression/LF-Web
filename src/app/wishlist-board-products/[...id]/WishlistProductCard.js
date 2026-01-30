@@ -59,7 +59,7 @@ const WishlistProductCard = () => {
   };
 
   return (
-    <div className="bg-white p-6 min-h-screen flex md:items-center md:justify-center mt-[100px] md:mt-[50px] ">
+    <div className="bg-white p-6 min-h-screen flex md:items-center md:justify-center mt-[100px] md:mt-[70px] ">
       <div className="w-full  md:py-0  px-4 md:px-[50px] p-8 mb-4 ">
         {products.length > 0 && products[0]?.wishlist_board?.name && (
           <h1 className="text-2xl md:text-3xl font-bold mb-6 text-gray-900 capitalize">
