@@ -32,7 +32,7 @@ const BannerCarousel = ({ image, banners }) => {
   const isVideo = /\.(mp4|webm|ogg|mov)$/i.test(currentImage);
 
   const carouselContent = (
-    <div className="relative h-[140px] md:h-[400px] w-full overflow-hidden">
+    <div className="relative h-[140px] md:h-[400px] w-full overflow-hidden rounded-xl">
       {isVideo ? (
         <video
           src={currentImage}

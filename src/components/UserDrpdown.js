@@ -58,13 +58,14 @@ const UserDropdown = ({ user }) => {
       }}
     >
       {/* Profile Icon */}
-      <button
-        onClick={() => setOpen((prev) => !prev)}
-        className="text-[#808080] hover:text-gray-900 cursor-pointer p-1"
+      <Link
+        href="/account/orders"
+        onClick={() => setOpen(false)}
+        className="text-[#808080] hover:text-gray-900 cursor-pointer p-1 block"
         aria-label="User menu"
       >
         <User className="w-5 h-5 sm:w-6 sm:h-6 text-black" />
-      </button>
+      </Link>
 
       {/* DROPDOWN */}
       {open && (
@@ -82,13 +83,13 @@ const UserDropdown = ({ user }) => {
             )}
 
             <div className="space-y-1">
-              <Link
+              {/* <Link
                 href="/account/orders"
                 className="block px-2 md:px-3 py-2 text-xs md:text-sm text-gray-700 hover:bg-gray-50 rounded"
                 onClick={() => setOpen(false)}
               >
                 Orders
-              </Link>
+              </Link> */}
 
               <Link
                 href="/wishlist-boards"

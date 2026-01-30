@@ -17,13 +17,13 @@ export default function ShopByCategory({ categories: externalCategories }) {
     {
       id: 2,
       name: "Women",
-      image: "/images/women.png",
+      image: "/images/women-v2.png",
       href: "/shop/women",
     },
     {
       id: 3,
       name: "Essentials",
-      image: "/images/Accesories.png",
+      image: "/images/Accesories-v2.png",
       href: "/shop/accessories",
     },
   ];

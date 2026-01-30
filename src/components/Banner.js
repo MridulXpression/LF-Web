@@ -1,12 +1,6 @@
 import React from "react";
 
-const FashionVideoBackground = ({
-  videoUrl,
-  heading1,
-  heading2,
-  heading3,
-  Heading4,
-}) => {
+const FashionVideoBackground = ({ videoUrl, heroText, loading }) => {
   return (
     <div className="relative w-full h-[50vh] md:h-[85vh] overflow-hidden mt-[120px] md:mt-[128px]  ">
       {/* Background Video */}
@@ -24,17 +18,14 @@ const FashionVideoBackground = ({
       {/* Overlay Content - Right Side, Above Bottom */}
       <div className="absolute inset-0 flex items-end justify-end bg-gradient-to-b from-black/0 to-black/70">
         <div className="text-left px-8 md:px-12 lg:px-16 pb-16 md:pb-20 lg:pb-24">
-          <div className="space-y-1">
-            <p className="text-sm md:text-[25px] font-[600] text-white tracking-[1px]  uppercase leading-tight">
-              {heading1}
-            </p>
-            <p className="text-sm md:text-[40px] font-[600] text-white tracking-[1px] uppercase leading-tight">
-              {heading2}
-            </p>
-          </div>
-          <p className="text-sm mt-[5px] md:text-[24px] font-[400] text-white tracking-[1.08px] uppercase leading-tight">
-            {heading3} <span className="font-[700]">{Heading4}</span>
-          </p>
+          {loading ? (
+            <div className="text-white">Loading...</div>
+          ) : (
+            <div
+              className="text-sm md:text-[25px] font-[600] text-white tracking-[1px] uppercase leading-tight [&>strong]:font-[700] [&>strong]:md:text-[40px] [&>br]:block"
+              dangerouslySetInnerHTML={{ __html: heroText }}
+            />
+          )}
         </div>
       </div>
     </div>

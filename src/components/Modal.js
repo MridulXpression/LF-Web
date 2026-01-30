@@ -21,6 +21,8 @@ const ProductModal = () => {
   const [showSizeColorOptions, setShowSizeColorOptions] = useState(false);
   const [message, setMessage] = useState(null);
   const [messageType, setMessageType] = useState(null); // 'success' or 'error'
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [isHovering, setIsHovering] = useState(false);
 
   // Helper function to extract sizes from variants
   const extractSizesFromVariants = (variants) => {
@@ -158,6 +160,10 @@ const ProductModal = () => {
     return sizeEntry?.colors || [];
   }, [selectedSize, sizes, colors]);
 
+  // Get all available images from product
+  const productImages = product?.imageUrls || [];
+  const hasMultipleImages = productImages.length > 1;
+
   // Reset state when product changes
   useEffect(() => {
     if (product) {
@@ -167,8 +173,23 @@ const ProductModal = () => {
       setLoading(false);
       setMessage(null);
       setMessageType(null);
+      setCurrentImageIndex(0);
+      setIsHovering(false);
     }
   }, [product?.id]);
+
+  // Auto-change image on hover with 2 second interval
+  useEffect(() => {
+    let interval;
+    if (isHovering && productImages.length > 1) {
+      interval = setInterval(() => {
+        setCurrentImageIndex((prev) => (prev + 1) % productImages.length);
+      }, 2000);
+    }
+    return () => {
+      if (interval) clearInterval(interval);
+    };
+  }, [isHovering, productImages.length]);
 
   // Auto-dismiss message after 4 seconds
   useEffect(() => {
@@ -203,7 +224,7 @@ const ProductModal = () => {
     if (selectedColor && selectedSize && selectedSize !== "ONE SIZE") {
       const sizeEntry = sizes.find((s) => s.value === selectedSize);
       const colorEntry = sizeEntry?.colors.find(
-        (c) => c.value === selectedColor
+        (c) => c.value === selectedColor,
       );
       return colorEntry?.variantId;
     } else if (selectedSize && selectedSize !== "ONE SIZE") {
@@ -223,6 +244,8 @@ const ProductModal = () => {
 
   if (!isOpen || !product) return null;
 
+  const currentImage = productImages[currentImageIndex];
+
   const handleAddToCart = async () => {
     // If ONE SIZE product, add to cart directly
     if (selectedSize === "ONE SIZE") {
@@ -239,7 +262,7 @@ const ProductModal = () => {
 
         // Get the available stock from the selected variant
         const selectedVariant = product.variants.find(
-          (v) => v.id === variantId
+          (v) => v.id === variantId,
         );
         const availableQuantity =
           selectedVariant?.inventory?.availableStock ?? 1;
@@ -271,7 +294,7 @@ const ProductModal = () => {
 
         const result = await axiosHttp.post(
           endPoints.addProductToCart,
-          payload
+          payload,
         );
 
         if (result.status === 200 || result.status === 201) {
@@ -280,7 +303,7 @@ const ProductModal = () => {
 
           showMessage(
             result.data?.message || "Added to bag successfully",
-            "success"
+            "success",
           );
 
           // Keep modal open for 4 seconds to show message, then close
@@ -366,7 +389,7 @@ const ProductModal = () => {
 
         showMessage(
           result.data?.message || "Added to bag successfully",
-          "success"
+          "success",
         );
 
         // Keep modal open for 4 seconds to show message, then close
@@ -392,23 +415,46 @@ const ProductModal = () => {
       <div className="bg-white w-full max-w-3xl  overflow-hidden">
         <div className="flex flex-col md:flex-row overflow-y-auto  max-h-[420px]">
           {/* Product Image */}
-          <div className="md:w-1/2 w-full relative bg-gray-50 flex items-center justify-center ">
+          <div
+            className="md:w-1/2 w-full relative bg-gray-50 flex items-center justify-center"
+            onMouseEnter={() => setIsHovering(true)}
+            onMouseLeave={() => {
+              setIsHovering(false);
+              setCurrentImageIndex(0);
+            }}
+          >
             {/* <button className="absolute top-4 right-4 w-8 h-8 bg-white rounded-full flex items-center justify-center shadow-md z-10">
               <Heart className="w-5 h-5 text-gray-400 hover:text-red-500 transition-colors" />
             </button> */}
 
             <div className="relative w-full h-70 md:h-[420px]">
               <Image
-                src={
-                  product?.imageUrls
-                    ? product?.imageUrls[0]
-                    : "https://cdn.shopify.com/s/files/1/0553/6186/3863/products/0I1A6958copy-pichi.jpg?v=1617717071"
-                }
+                src={currentImage}
                 alt={product?.title || "product-img"}
                 fill
                 className="object-fill"
               />
             </div>
+
+            {/* Image Navigation Indicators */}
+            {/* {hasMultipleImages && (
+              <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-1.5 z-10">
+                {productImages.map((_, index) => (
+                  <button
+                    key={index}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setCurrentImageIndex(index);
+                    }}
+                    className={`w-2 h-2 rounded-full transition-all ${
+                      index === currentImageIndex
+                        ? "bg-black w-6"
+                        : "bg-gray-300 hover:bg-gray-400"
+                    }`}
+                  />
+                ))}
+              </div>
+            )} */}
           </div>
 
           {/* Product Details */}
@@ -457,8 +503,8 @@ const ProductModal = () => {
                         selectedSize === size.value
                           ? "bg-black text-white border-black"
                           : size.available
-                          ? "bg-white text-black border-gray-300 hover:border-black"
-                          : "bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed"
+                            ? "bg-white text-black border-gray-300 hover:border-black"
+                            : "bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed"
                       }`}
                     >
                       {size.label}
@@ -484,8 +530,8 @@ const ProductModal = () => {
                         selectedColor === color.value
                           ? "bg-black text-white border-black"
                           : color.available
-                          ? "bg-white text-black border-gray-300 hover:border-black"
-                          : "bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed"
+                            ? "bg-white text-black border-gray-300 hover:border-black"
+                            : "bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed"
                       }`}
                     >
                       {color.label}
@@ -517,8 +563,8 @@ const ProductModal = () => {
                 {loading
                   ? "Adding..."
                   : showSizeColorOptions
-                  ? "Add to Bag"
-                  : "Add to Cart"}
+                    ? "Add to Bag"
+                    : "Add to Cart"}
               </button>
 
               <Link

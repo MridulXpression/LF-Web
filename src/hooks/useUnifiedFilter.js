@@ -34,6 +34,7 @@ const useUnifiedFilter = () => {
       try {
         // Build query parameters
         const params = new URLSearchParams();
+        params.append("status", "true");
 
         if (brandIds && brandIds.length > 0) {
           params.append("brandIds", brandIds.join(","));
@@ -59,7 +60,7 @@ const useUnifiedFilter = () => {
         params.append("page", pageNumber);
 
         const response = await axiosHttp.post(
-          `/filter-products?${params.toString()}`
+          `/filter-products?${params.toString()}`,
         );
 
         if (response?.status === 200) {
@@ -116,7 +117,7 @@ const useUnifiedFilter = () => {
         }
       }
     },
-    []
+    [],
   );
 
   const loadMore = useCallback(() => {

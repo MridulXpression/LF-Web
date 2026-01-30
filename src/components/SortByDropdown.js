@@ -32,10 +32,10 @@ const SortByDropdown = ({
     <div className="relative">
       <button
         onClick={onToggle}
-        className="h-8 sm:h-9 md:h-10 px-2 sm:px-3 md:px-4 py-1.5 sm:py-2 md:py-2.5 bg-white rounded-lg sm:rounded-xl outline outline-1 outline-offset-[-1px] outline-stone-950 inline-flex justify-center items-center gap-1 sm:gap-1.5 cursor-pointer"
+        className="group h-8 sm:h-9 md:h-10 px-2 sm:px-3 md:px-4 py-1.5 sm:py-2 md:py-2.5 bg-white rounded-lg sm:rounded-xl outline outline-1 outline-offset-[-1px] outline-stone-950 inline-flex justify-center items-center gap-1 sm:gap-1.5 cursor-pointer hover:bg-black "
       >
         <div className="flex flex-row justify-start items-center gap-1 sm:gap-1.5">
-          <div className="text-center justify-start text-stone-950 text-xs sm:text-sm md:text-base font-medium leading-tight sm:leading-5 tracking-wide whitespace-nowrap">
+          <div className="text-center justify-start text-stone-950 group-hover:text-white text-xs sm:text-sm md:text-base font-medium leading-tight sm:leading-5 tracking-wide whitespace-nowrap transition">
             {getSortLabel()}
           </div>
           <Image
@@ -43,7 +43,14 @@ const SortByDropdown = ({
             alt="Sort"
             width={14}
             height={14}
-            className="sm:w-4 sm:h-4 md:w-5 md:h-5"
+            className="sm:w-4 sm:h-4 md:w-5 md:h-5 group-hover:hidden"
+          />
+          <Image
+            src="/images/sort-white.svg"
+            alt="Sort"
+            width={14}
+            height={14}
+            className="sm:w-4 sm:h-4 md:w-5 md:h-5 hidden group-hover:block"
           />
         </div>
       </button>
