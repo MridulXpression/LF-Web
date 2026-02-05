@@ -194,6 +194,7 @@ export default function ProductPage({ params }) {
       const rest = base.filter((u) => u !== variantImg);
       return [variantImg, ...rest];
     }
+
     return base;
   }, [selectedVariant, data?.imageUrls]);
 
@@ -279,16 +280,27 @@ export default function ProductPage({ params }) {
     } catch (error) {}
   };
 
-  // ✅ Check if variants have both size AND color
+  // ✅ Check if variants have both size AND multiple colors (more than 1 unique color)
   const hasColorVariants = useMemo(() => {
     if (!data?.variants || !Array.isArray(data.variants)) return false;
-    return data.variants.some((variant) => {
+
+    const uniqueColors = new Set();
+    let hasSize = false;
+
+    data.variants.forEach((variant) => {
       const selectedOptions = getParsedSelectedOptions(variant.selectedOptions);
-      const hasSize = selectedOptions.some((o) => o.name === "Size");
-      const hasColor = selectedOptions.some((o) => o.name === "Color");
-      return hasSize && hasColor;
+      const sizeOption = selectedOptions.find((o) => o.name === "Size");
+      const colorOption = selectedOptions.find((o) => o.name === "Color");
+
+      if (sizeOption) hasSize = true;
+      if (colorOption?.value) uniqueColors.add(colorOption.value);
     });
-  }, [data?.variants]);
+
+    // Only return true if there are multiple colors AND sizes
+    const result = hasSize && uniqueColors.size > 1;
+
+    return result;
+  }, [data?.variants, data?.imageUrls]);
 
   // Fetch reviews when product data becomes available
   useEffect(() => {
@@ -452,6 +464,8 @@ export default function ProductPage({ params }) {
                     )
               }
               onMessage={handleMessage}
+              selectedVariant={selectedVariant}
+              sizes={sizes}
             />
 
             <ProductDelivery

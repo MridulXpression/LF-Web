@@ -109,7 +109,7 @@ const useCartSync = () => {
     };
 
     syncCartToServer();
-  }, [userId, cartItems.length]);
+  }, [userId]); // Only depend on userId, not cartItems.length
 
   return {
     isSynced: isInitialSync.current,

@@ -1,5 +1,5 @@
 import { useState, useMemo, useEffect } from "react";
-import { X, Heart } from "lucide-react";
+import { X, Heart, ChevronLeft, ChevronRight, Share2 } from "lucide-react";
 import Image from "next/image";
 import { useSelector, useDispatch } from "react-redux";
 import { closeProductViewModal } from "@/redux/slices/loginmodalSlice";
@@ -52,13 +52,12 @@ const ProductModal = () => {
       const sizeValue = normalizeSize(rawSize);
 
       // If no size option or "Default Title", treat as ONE SIZE
-      const finalSizeValue = sizeValue || "ONE SIZE";
-      const finalSizeLabel = sizeValue || "ONE SIZE";
+      const finalSize = sizeValue || "ONE SIZE";
 
-      if (!sizesMap.has(finalSizeValue)) {
-        sizesMap.set(finalSizeValue, {
-          label: finalSizeLabel,
-          value: finalSizeValue,
+      if (!sizesMap.has(finalSize)) {
+        sizesMap.set(finalSize, {
+          label: finalSize,
+          value: finalSize,
           variantId: variant.id,
           available: availableStock > 0,
           price: variant.price,
@@ -66,7 +65,7 @@ const ProductModal = () => {
         });
       }
 
-      const sizeEntry = sizesMap.get(finalSizeValue);
+      const sizeEntry = sizesMap.get(finalSize);
 
       colorOptions.forEach((c) => {
         const colorVal = c.value;
@@ -208,6 +207,50 @@ const ProductModal = () => {
     setMessageType(type);
   };
 
+  // Handle share functionality
+  const handleShare = async () => {
+    const productUrl = `${window.location.origin}/products/${product.id}`;
+
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: product.title,
+          text: `Check out ${product.title}`,
+          url: productUrl,
+        });
+      } catch (error) {
+        if (error.name !== "AbortError") {
+          copyToClipboard(productUrl);
+        }
+      }
+    } else {
+      copyToClipboard(productUrl);
+    }
+  };
+
+  const copyToClipboard = (text) => {
+    navigator.clipboard
+      .writeText(text)
+      .then(() => {
+        showMessage("Link copied to clipboard", "success");
+      })
+      .catch(() => {
+        showMessage("Failed to copy link", "error");
+      });
+  };
+
+  // Navigate to previous image
+  const handlePrevImage = () => {
+    setCurrentImageIndex((prev) =>
+      prev === 0 ? productImages.length - 1 : prev - 1,
+    );
+  };
+
+  // Navigate to next image
+  const handleNextImage = () => {
+    setCurrentImageIndex((prev) => (prev + 1) % productImages.length);
+  };
+
   // Auto-select size when there's only one size or if no sizes available (ONE SIZE)
   useEffect(() => {
     if (isOpen && product) {
@@ -241,6 +284,16 @@ const ProductModal = () => {
   const handleClose = () => {
     dispatch(closeProductViewModal());
   };
+
+  // Debug: Log brand data to verify brandId
+  useEffect(() => {
+    if (product) {
+      console.log("Product brand data:", {
+        brand: product.brand,
+        brandId: product.brandId,
+      });
+    }
+  }, [product]);
 
   if (!isOpen || !product) return null;
 
@@ -413,7 +466,7 @@ const ProductModal = () => {
   return (
     <div className="fixed inset-0  bg-black/10 backdrop-blur-[4px]  flex items-center justify-center z-50 p-4 overflow-auto">
       <div className="bg-white w-full max-w-3xl  overflow-hidden">
-        <div className="flex flex-col md:flex-row overflow-y-auto  max-h-[420px]">
+        <div className="flex flex-col md:flex-row">
           {/* Product Image */}
           <div
             className="md:w-1/2 w-full relative bg-gray-50 flex items-center justify-center"
@@ -423,11 +476,15 @@ const ProductModal = () => {
               setCurrentImageIndex(0);
             }}
           >
-            {/* <button className="absolute top-4 right-4 w-8 h-8 bg-white rounded-full flex items-center justify-center shadow-md z-10">
-              <Heart className="w-5 h-5 text-gray-400 hover:text-red-500 transition-colors" />
-            </button> */}
+            {/* Share Button */}
+            <button
+              onClick={handleShare}
+              className="absolute top-4 right-4 w-8 h-8 bg-white rounded-full flex items-center justify-center shadow-md z-10 hover:bg-gray-100 transition-colors"
+            >
+              <Share2 className="w-4 h-4 text-gray-700" />
+            </button>
 
-            <div className="relative w-full h-70 md:h-[420px]">
+            <div className="relative w-full h-70 md:min-h-[420px]">
               <Image
                 src={currentImage}
                 alt={product?.title || "product-img"}
@@ -436,37 +493,64 @@ const ProductModal = () => {
               />
             </div>
 
-            {/* Image Navigation Indicators */}
-            {/* {hasMultipleImages && (
-              <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-1.5 z-10">
-                {productImages.map((_, index) => (
-                  <button
-                    key={index}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setCurrentImageIndex(index);
-                    }}
-                    className={`w-2 h-2 rounded-full transition-all ${
-                      index === currentImageIndex
-                        ? "bg-black w-6"
-                        : "bg-gray-300 hover:bg-gray-400"
-                    }`}
-                  />
-                ))}
-              </div>
-            )} */}
+            {/* Navigation Arrows */}
+            {hasMultipleImages && (
+              <>
+                <button
+                  onClick={handlePrevImage}
+                  className="absolute left-2 top-1/2 -translate-y-1/2 w-8 h-8 bg-white/90 rounded-full flex items-center justify-center shadow-md z-10  transition-colors cursor-pointer"
+                >
+                  <ChevronLeft className="w-5 h-5 text-gray-700" />
+                </button>
+                <button
+                  onClick={handleNextImage}
+                  className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 bg-white/90 rounded-full flex items-center justify-center shadow-md z-10 transition-colors cursor-pointer"
+                >
+                  <ChevronRight className="w-5 h-5 text-gray-700" />
+                </button>
+              </>
+            )}
           </div>
 
           {/* Product Details */}
-          <div className="md:w-1/2 w-full p-6 flex flex-col justify-between">
+          <div className="md:w-1/2 w-full p-6 flex flex-col justify-between overflow-y-auto max-h-[420px]">
             {/* Header with Close Button */}
             <div className="flex items-start justify-between mb-4">
               <div>
-                <h2 className="text-2xl font-semibold text-gray-900 mb-1">
+                <h2 className="text-xl font-semibold text-gray-900 mb-1">
                   {product.title.split(" ").slice(0, 5).join(" ")}
                 </h2>
-
-                <p className="text-xl text-gray-900">Rs. {product.basePrice}</p>
+                {product.brand && (
+                  <Link
+                    href={`/brands/${product.brandId}`}
+                    onClick={() => {
+                      handleClose();
+                    }}
+                  >
+                    <p className="text-md font-semibold text-gray-600 uppercase mb-2">
+                      {typeof product.brand === "object"
+                        ? product.brand.name
+                        : product.brand}
+                    </p>
+                  </Link>
+                )}
+                <div className="flex items-center gap-2">
+                  <p className="text-xl text-gray-900 font-semibold">
+                    Rs. {product.basePrice}
+                  </p>
+                  {product.mrp && product.mrp > product.basePrice && (
+                    <>
+                      <p className="text-md text-gray-500 line-through">
+                        Rs. {product.mrp}
+                      </p>
+                      {product.discountPercentage > 0 && (
+                        <p className="text-sm text-[#ac9ffc] font-medium">
+                          ({product.discountPercentage}% OFF)
+                        </p>
+                      )}
+                    </>
+                  )}
+                </div>
               </div>
               <button
                 onClick={handleClose}
@@ -482,6 +566,18 @@ const ProductModal = () => {
                 {product.description?.split(" ").slice(0, 10).join(" ") +
                   (product.description?.split(" ").length > 10 ? "..." : "")}
               </p>
+              <Link
+                href={`/products/${product.id}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={() => {
+                  localStorage.setItem("ProductId", product.id);
+                  handleClose();
+                }}
+                className="text-sm text-[#ac9ffc] underline font-[500] inline-block mt-1"
+              >
+                VIEW DETAILS
+              </Link>
             </div>
 
             {/* Size Selection */}
@@ -568,16 +664,11 @@ const ProductModal = () => {
               </button>
 
               <Link
-                href={`/products/${product.id}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                onClick={() => {
-                  localStorage.setItem("ProductId", product.id);
-                  handleClose();
-                }}
+                href="/checkout/bag"
+                onClick={handleClose}
                 className="flex-1 bg-white border border-black text-black py-2 px-4 rounded-md hover:bg-gray-50 transition-colors font-medium text-sm inline-flex items-center justify-center text-center"
               >
-                View Details
+                Buy Now
               </Link>
             </div>
           </div>

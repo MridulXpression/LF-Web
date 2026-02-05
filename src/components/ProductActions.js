@@ -13,6 +13,8 @@ const ProductActions = ({
   quantity = 1,
   isInStock = true,
   onMessage = null,
+  selectedVariant = null,
+  sizes = [],
 }) => {
   const [showModal, setShowModal] = useState(false);
   const dispatch = useDispatch();
@@ -24,16 +26,25 @@ const ProductActions = ({
   };
 
   const handleAddToBag = async () => {
+    // Check if size selection is required but not made
+    const hasSizes = sizes && sizes.length > 0;
+    if (hasSizes && !selectedVariant) {
+      if (onMessage) onMessage({ type: "error", text: "Please select a size" });
+      return; // Exit early - don't call API or dispatch to Redux
+    }
+
     if (!isInStock) {
       if (onMessage) onMessage({ type: "error", text: "Out of Stock" });
       return;
     }
+
     const result = await addProductToCart(productId, quantity);
 
     const variantId = localStorage.getItem("selectedVariantId");
-    dispatch(addToCart({ product: productData, variantId }));
 
+    // Only dispatch to Redux if API call was successful
     if (result.success) {
+      dispatch(addToCart({ product: productData, variantId }));
       if (onMessage) onMessage({ type: "success", text: result.message });
     } else {
       if (onMessage) onMessage({ type: "error", text: result.message });

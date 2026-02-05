@@ -485,21 +485,21 @@ const PhoneAuthModal = () => {
                     </button>
 
                     {/* Divider */}
-                    {/* <div className="relative flex items-center">
+                    <div className="relative flex items-center">
                       <div className="flex-grow border-t border-gray-300"></div>
                       <span className="flex-shrink mx-4 text-gray-500 text-sm">
                         or
                       </span>
                       <div className="flex-grow border-t border-gray-300"></div>
-                    </div> */}
+                    </div>
 
                     {/* Google Login */}
-                    {/* <div className="w-full">
+                    <div className="w-full">
                       <GoogleLogin
                         onSuccess={handleGoogleLoginSuccess}
                         onError={handleGoogleLoginError}
                       />
-                    </div> */}
+                    </div>
 
                     <p className="text-sm text-black text-center">
                       By continuing, you agree to Lafetch's{" "}

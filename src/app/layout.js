@@ -6,6 +6,7 @@ import { Providers } from "./providers";
 import RazorpayScriptLoader from "@/components/razorpay";
 import GlobalLoader from "@/components/GlobalLoader";
 import AnnouncementBar from "@/components/AnnouncementBar";
+import FloatingVideoAd from "@/components/FloatingVideoAd";
 
 const clashDisplay = localFont({
   src: [
@@ -83,6 +84,24 @@ export default function RootLayout({ children }) {
       `,
           }}
         />
+
+        {/* Google Analytics */}
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=G-LJ1BQ15P6B"
+          strategy="afterInteractive"
+        />
+        <Script
+          id="google-analytics"
+          strategy="afterInteractive"
+          dangerouslySetInnerHTML={{
+            __html: `
+              window.dataLayer = window.dataLayer || [];
+              function gtag(){dataLayer.push(arguments);}
+              gtag('js', new Date());
+              gtag('config', 'G-LJ1BQ15P6B');
+            `,
+          }}
+        />
       </head>
 
       <body className={`${clashDisplay.className} antialiased`}>
@@ -101,6 +120,7 @@ export default function RootLayout({ children }) {
           <AnnouncementBar />
           <GlobalLoader />
           <RazorpayScriptLoader />
+          {/* <FloatingVideoAd /> */}
           {children}
         </Providers>
       </body>

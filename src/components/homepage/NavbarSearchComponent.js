@@ -22,12 +22,7 @@ export default function NavbarSearchComponent({
   const [suggestions, setSuggestions] = useState([]);
   const [isLoadingSuggestions, setIsLoadingSuggestions] = useState(false);
 
-  const trendingSearches = [
-    "Valentines fits",
-    "For Office",
-    "Vacation Wear",
-    "Thermal Shirts",
-  ];
+  const trendingSearches = ["Valentines fits", "For Office", "Vacation Wear"];
 
   // Fetch suggestions on search query change
   useEffect(() => {
@@ -100,7 +95,7 @@ export default function NavbarSearchComponent({
                 onChange={(e) => setSearchQuery(e.target.value)}
                 onKeyDown={handleSearch}
                 placeholder="Search To Explore More"
-                className="text-left justify-start text-stone-950 text-xs sm:text-sm font-medium uppercase leading-4 border-none outline-none bg-transparent flex-1 min-w-0"
+                className="text-left justify-start text-stone-950 text-xs sm:text-sm font-medium leading-4 border-none outline-none bg-transparent flex-1 min-w-0"
                 autoFocus
               />
               {/* Hidden anchor for Enter key navigation */}
@@ -133,7 +128,7 @@ export default function NavbarSearchComponent({
         ref={searchDropdownRef}
         className="w-full px-4 sm:px-8 md:px-16 lg:px-32 xl:px-44 pt-4 sm:pt-7 pb-8 sm:pb-14 bg-stone-50 inline-flex justify-center items-start gap-6 md:gap-10"
       >
-        <div className="flex-1 inline-flex flex-col justify-start items-start gap-3.5">
+        <div className="flex-1 inline-flex flex-col justify-start items-start gap-3.5 max-w-4xl">
           <div className="self-stretch flex flex-col md:inline-flex md:flex-row justify-start items-start gap-6 md:gap-0">
             {/* Recent Searches */}
             <div className="w-full md:w-auto md:pr-8 inline-flex flex-col justify-start items-start gap-3.5">
@@ -209,6 +204,42 @@ export default function NavbarSearchComponent({
                 </div>
               </div>
             </div>
+          </div>
+        </div>
+
+        {/* Product Images */}
+        <div className="hidden lg:flex justify-start items-center gap-2">
+          <div className="w-[110px] h-[130px] relative rounded-xl overflow-hidden">
+            <Image
+              src="/images/search1.png"
+              alt="Product 1"
+              fill
+              className="object-fill"
+            />
+          </div>
+          <div className="w-[110px] h-[130px] relative rounded-xl overflow-hidden">
+            <Image
+              src="/images/search2.png"
+              alt="Product 2"
+              fill
+              className="object-fill"
+            />
+          </div>
+          <div className="w-[110px] h-[130px] relative rounded-xl  overflow-hidden">
+            <Image
+              src="/images/search3.png"
+              alt="Product 3"
+              fill
+              className="object-fill"
+            />
+          </div>
+          <div className="w-[110px] h-[130px] relative rounded-xl overflow-hidden">
+            <Image
+              src="/images/search4.png"
+              alt="Product 4"
+              fill
+              className="object-fill"
+            />
           </div>
         </div>
       </div>

@@ -28,7 +28,7 @@ const ShopByCategoriesPage = () => {
   // ===== FILTER STATE =====
   const [selectedBrands, setSelectedBrands] = useState([]);
   const [selectedSuperCategory, setSelectedSuperCategory] = useState(
-    superCatId ? Number(superCatId) : null
+    superCatId ? Number(superCatId) : null,
   );
   const [priceRange, setPriceRange] = useState({
     min: searchParams.get("minPrice") || "0",
@@ -60,6 +60,8 @@ const ShopByCategoriesPage = () => {
       selectedSuperCategory ?? (superCatId ? Number(superCatId) : null),
     catId: catId ? Number(catId) : null,
     subCatId: subCategoryId ? Number(subCategoryId) : null,
+    collectionId: collectionId ? Number(collectionId) : null,
+    brandIds: selectedBrands,
   });
 
   // ===== SUPER CATEGORIES =====
@@ -143,7 +145,7 @@ const ShopByCategoriesPage = () => {
   // ===== HANDLERS =====
   const toggleSelection = (setter, value) => {
     setter((prev) =>
-      prev.includes(value) ? prev.filter((v) => v !== value) : [...prev, value]
+      prev.includes(value) ? prev.filter((v) => v !== value) : [...prev, value],
     );
   };
 

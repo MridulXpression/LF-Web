@@ -178,6 +178,7 @@ const TrendingNowSection = () => {
                   id: product.id,
                   name: product.title || product.name,
                   brand: product.brand?.name || product.brand,
+                  brandId: product.brand?.id,
                   price: product.basePrice || product.price,
                   originalPrice: product.mrp,
                   description: product.description || "",

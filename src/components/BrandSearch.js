@@ -30,14 +30,14 @@ const SearchFilterBar = ({
             </div>
           </div>
 
-          {/* <div className="flex gap-3 flex-wrap">
-            <button
+          <div className="flex gap-3 flex-wrap">
+            {/* <button
               onClick={() => setShowFilters(!showFilters)}
               className="flex items-center gap-2 px-4 py-2 border-r border-black hover:bg-gray-50"
             >
               <SlidersHorizontal className="w-4 h-4 text-black" />
               <span className="text-black">Filters</span>
-            </button>
+            </button> */}
 
             <div className="relative">
               <select
@@ -60,14 +60,16 @@ const SearchFilterBar = ({
                 onChange={(e) => setSortBy(e.target.value)}
                 className="appearance-none text-black px-4 py-2 pr-8 rounded-lg hover:bg-gray-50 focus:outline-none cursor-pointer"
               >
-                <option value="featured">Sort By</option>
-                <option value="priceLow">Price: Low to High</option>
-                <option value="priceHigh">Price: High to Low</option>
-                <option value="newest">Newest</option>
+                <option value="" hidden>
+                  Sort By
+                </option>
+                <option value="price_asc">Price: Low to High</option>
+                <option value="price_desc">Price: High to Low</option>
+                <option value="discount">Discount</option>
               </select>
               <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-500 pointer-events-none" />
             </div>
-          </div> */}
+          </div>
         </div>
       </div>
     </div>

@@ -58,10 +58,10 @@ const NavbarSearch = ({
               {isLoadingSuggestions
                 ? "Loading..."
                 : suggestions.length > 0
-                ? "Suggestions"
-                : recentSearches.length > 0
-                ? "Recent Searches"
-                : "Searches"}
+                  ? "Suggestions"
+                  : recentSearches.length > 0
+                    ? "Recent Searches"
+                    : "Searches"}
             </h3>
 
             <div className="grid grid-cols-1 gap-3">

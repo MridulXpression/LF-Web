@@ -60,8 +60,11 @@ const ProductCollectionCard = ({ product, onLike }) => {
           basePrice: price,
           description: product.description || "",
           brand: product.brand,
+          brandId: product.brandId,
           variants: product.variants || [],
           availableSizes: product.availableSizes || [],
+          mrp: showOriginalPrice ? originalPrice : null,
+          discountPercentage: discountPercentage,
         }),
       );
     },

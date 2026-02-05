@@ -7,9 +7,17 @@ import axiosHttp from "@/utils/axioshttp";
  * @param {number|null} params.superCatId
  * @param {number|null} params.catId
  * @param {number|null} params.subCatId
+ * @param {number|null} params.collectionId
+ * @param {Array} params.brandIds
  * @returns {Object} { brands, sizes, colors, loading, error }
  */
-export default function useFilterMetadata({ superCatId, catId, subCatId }) {
+export default function useFilterMetadata({
+  superCatId,
+  catId,
+  subCatId,
+  collectionId,
+  brandIds = [],
+}) {
   const [brands, setBrands] = useState([]);
   const [sizes, setSizes] = useState([]);
   const [colors, setColors] = useState([]);
@@ -23,6 +31,8 @@ export default function useFilterMetadata({ superCatId, catId, subCatId }) {
     if (superCatId) params.superCatId = superCatId;
     if (catId) params.catId = catId;
     if (subCatId) params.subCatId = subCatId;
+    if (collectionId) params.collectionId = collectionId;
+    if (brandIds && brandIds.length > 0) params.brandId = brandIds.join(",");
     axiosHttp
       .get("/filter-metadata", { params })
       .then((res) => {
@@ -38,7 +48,7 @@ export default function useFilterMetadata({ superCatId, catId, subCatId }) {
         setColors([]);
       })
       .finally(() => setLoading(false));
-  }, [superCatId, catId, subCatId]);
+  }, [superCatId, catId, subCatId, collectionId, brandIds]);
 
   return { brands, sizes, colors, loading, error };
 }
