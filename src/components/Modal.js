@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useSelector, useDispatch } from "react-redux";
 import { closeProductViewModal } from "@/redux/slices/loginmodalSlice";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import axiosHttp from "@/utils/axioshttp";
 import { endPoints } from "@/utils/endpoints";
 import { addToCart } from "@/redux/slices/cartSlice";
@@ -11,6 +12,7 @@ import { getParsedSelectedOptions } from "@/utils/variantUtils";
 
 const ProductModal = () => {
   const dispatch = useDispatch();
+  const router = useRouter();
   const isOpen = useSelector((state) => state.modal.productViewModal);
   const product = useSelector((state) => state.modal.selectedProduct);
   const user = useSelector((state) => state.user.userInfo);
@@ -196,7 +198,7 @@ const ProductModal = () => {
       const timer = setTimeout(() => {
         setMessage(null);
         setMessageType(null);
-      }, 4000);
+      }, 2000);
       return () => clearTimeout(timer);
     }
   }, [message]);
@@ -299,7 +301,7 @@ const ProductModal = () => {
 
   const currentImage = productImages[currentImageIndex];
 
-  const handleAddToCart = async () => {
+  const handleAddToCart = async (isBuyNow = false) => {
     // If ONE SIZE product, add to cart directly
     if (selectedSize === "ONE SIZE") {
       setLoading(true);
@@ -328,11 +330,23 @@ const ProductModal = () => {
           // Add to Redux cart state for cart sync
           dispatch(addToCart({ product, variantId, quantity: 1 }));
 
+          if (isBuyNow) {
+            // Store buyNow flag with variant ID for cart page
+            localStorage.setItem("buyNowVariantId", variantId.toString());
+            // Close modal instantly before redirect
+            handleClose();
+            // Small delay to ensure modal closes before navigation
+            setTimeout(() => {
+              router.push("/checkout/bag");
+            }, 50);
+            return;
+          }
+
           showMessage("Item added to cart", "success");
           // Keep modal open for 4 seconds to show message, then close
           setTimeout(() => {
             handleClose();
-          }, 4000);
+          }, 2000);
           setLoading(false);
           return;
         }
@@ -354,6 +368,18 @@ const ProductModal = () => {
           // Add to Redux cart state
           dispatch(addToCart({ product, variantId }));
 
+          if (isBuyNow) {
+            // Store buyNow flag with variant ID for cart page
+            localStorage.setItem("buyNowVariantId", variantId.toString());
+            // Close modal before redirect
+            handleClose();
+            // Small delay to ensure modal closes before navigation
+            setTimeout(() => {
+              router.push("/checkout/bag");
+            }, 100);
+            return;
+          }
+
           showMessage(
             result.data?.message || "Added to bag successfully",
             "success",
@@ -362,7 +388,7 @@ const ProductModal = () => {
           // Keep modal open for 4 seconds to show message, then close
           setTimeout(() => {
             handleClose();
-          }, 4000);
+          }, 2000);
         } else {
           showMessage(result.data?.message || "Something went wrong", "error");
         }
@@ -417,11 +443,23 @@ const ProductModal = () => {
         // Add to Redux cart state for cart sync
         dispatch(addToCart({ product, variantId, quantity: 1 }));
 
+        if (isBuyNow) {
+          // Store buyNow flag with variant ID for cart page
+          localStorage.setItem("buyNowVariantId", variantId.toString());
+          // Close modal instantly before redirect
+          handleClose();
+          // Redirect to cart immediately
+          setTimeout(() => {
+            router.push("/checkout/bag");
+          }, 50);
+          return;
+        }
+
         showMessage("Item added to cart", "success");
         // Keep modal open for 4 seconds to show message, then close
         setTimeout(() => {
           handleClose();
-        }, 4000);
+        }, 2000);
         setLoading(false);
         return;
       }
@@ -440,6 +478,18 @@ const ProductModal = () => {
         // Add to Redux cart state
         dispatch(addToCart({ product, variantId }));
 
+        if (isBuyNow) {
+          // Store buyNow flag with variant ID for cart page
+          localStorage.setItem("buyNowVariantId", variantId.toString());
+          // Close modal instantly before redirect
+          handleClose();
+          // Redirect to cart immediately
+          setTimeout(() => {
+            router.push("/checkout/bag");
+          }, 50);
+          return;
+        }
+
         showMessage(
           result.data?.message || "Added to bag successfully",
           "success",
@@ -448,7 +498,7 @@ const ProductModal = () => {
         // Keep modal open for 4 seconds to show message, then close
         setTimeout(() => {
           handleClose();
-        }, 4000);
+        }, 2000);
       } else {
         showMessage(result.data?.message || "Something went wrong", "error");
       }
@@ -463,9 +513,13 @@ const ProductModal = () => {
     }
   };
 
+  const handleBuyNow = async () => {
+    await handleAddToCart(true);
+  };
+
   return (
-    <div className="fixed inset-0  bg-black/10 backdrop-blur-[4px]  flex items-center justify-center z-50 p-4 overflow-auto">
-      <div className="bg-white w-full max-w-3xl  overflow-hidden">
+    <div className="fixed inset-0  bg-black/10 backdrop-blur-[4px]  flex items-center justify-center z-50 p-4 overflow-auto ">
+      <div className="bg-white w-full max-w-3xl  overflow-hidden rounded-lg">
         <div className="flex flex-col md:flex-row">
           {/* Product Image */}
           <div
@@ -652,7 +706,7 @@ const ProductModal = () => {
             {/* Buttons in one row */}
             <div className="mb-4 flex gap-3">
               <button
-                onClick={handleAddToCart}
+                onClick={() => handleAddToCart(false)}
                 disabled={loading}
                 className="flex-1 bg-black border border-black text-white py-2 px-5 rounded-md hover:bg-gray-800 transition-colors font-medium text-sm disabled:bg-gray-400 disabled:cursor-not-allowed"
               >
@@ -663,13 +717,13 @@ const ProductModal = () => {
                     : "Add to Cart"}
               </button>
 
-              <Link
-                href="/checkout/bag"
-                onClick={handleClose}
-                className="flex-1 bg-white border border-black text-black py-2 px-4 rounded-md hover:bg-gray-50 transition-colors font-medium text-sm inline-flex items-center justify-center text-center"
+              <button
+                onClick={handleBuyNow}
+                disabled={loading}
+                className="flex-1 bg-white border border-black text-black py-2 px-4 rounded-md hover:bg-gray-50 transition-colors font-medium text-sm disabled:bg-gray-400 disabled:cursor-not-allowed"
               >
-                Buy Now
-              </Link>
+                {loading ? "Processing..." : "Buy Now"}
+              </button>
             </div>
           </div>
         </div>

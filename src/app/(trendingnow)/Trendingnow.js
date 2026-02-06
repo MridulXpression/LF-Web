@@ -68,10 +68,31 @@ const TrendingNowSection = () => {
   return (
     <div className="bg-white">
       {collections?.map((collection, collectionIndex) => {
-        // Don't show section if no products
-        if (!collection.products || collection.products.length === 0) {
+        // Get banners from collection data
+        const banners = collection.banners || [];
+        const hasProducts =
+          collection.products && collection.products.length > 0;
+        const hasBanners = banners.length > 0;
+
+        // If no products and no banners, don't show anything
+        if (!hasProducts && !hasBanners) {
           return null;
         }
+
+        // If no products but has banners, show only banners
+        // if (!hasProducts && hasBanners) {
+        //   return (
+        //     <section key={collection.id} className="py-4 px-4 sm:px-6 md:px-10">
+        //       <div className="-mx-4 sm:-mx-6 md:-mx-10">
+        //         <BannerGrid
+        //           banners={banners}
+        //           bannerCount={banners.length}
+        //           displayFor="homepage"
+        //         />
+        //       </div>
+        //     </section>
+        //   );
+        // }
 
         const currentPage = currentPages[collection.id] || 0;
         const totalPages = pageItemCounts.length;
@@ -90,10 +111,6 @@ const TrendingNowSection = () => {
         const endIndex = startIndex + (pageItemCounts[currentPage] || 0);
 
         const displayedProducts = sortedProducts.slice(startIndex, endIndex);
-
-        // Get banners from collection data
-        const banners = collection.banners || [];
-        const bannerCount = banners.length;
 
         return (
           <section key={collection.id} className="py-4   px-4 sm:px-6 md:px-10">
@@ -207,15 +224,15 @@ const TrendingNowSection = () => {
             </div>
 
             {/* Banners Section */}
-            {bannerCount > 0 && (
+            {/* {banners.length > 0 && (
               <div className="mt-6 -mx-4 sm:-mx-6 md:-mx-10">
                 <BannerGrid
                   banners={banners}
-                  bannerCount={bannerCount}
+                  bannerCount={banners.length}
                   displayFor="homepage"
                 />
               </div>
-            )}
+            )} */}
           </section>
         );
       })}

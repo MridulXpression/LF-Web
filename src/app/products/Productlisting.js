@@ -26,7 +26,10 @@ const ShopByCategoriesPage = () => {
     : null;
 
   // ===== FILTER STATE =====
-  const [selectedBrands, setSelectedBrands] = useState([]);
+  const [selectedBrands, setSelectedBrands] = useState(() => {
+    const brandIds = searchParams.get("brandIds");
+    return brandIds ? brandIds.split(",").map(Number) : [];
+  });
   const [selectedSuperCategory, setSelectedSuperCategory] = useState(
     superCatId ? Number(superCatId) : null,
   );
@@ -35,8 +38,14 @@ const ShopByCategoriesPage = () => {
     max: searchParams.get("maxPrice") || "10000",
   });
 
-  const [selectedSizes, setSelectedSizes] = useState([]); // stores actual size values like "S", "M"
-  const [selectedColors, setSelectedColors] = useState([]); // stores actual color values like "Black", "Red"
+  const [selectedSizes, setSelectedSizes] = useState(() => {
+    const sizes = searchParams.get("size");
+    return sizes ? sizes.split(",") : [];
+  }); // stores actual size values like "S", "M"
+  const [selectedColors, setSelectedColors] = useState(() => {
+    const colors = searchParams.get("color");
+    return colors ? colors.split(",") : [];
+  }); // stores actual color values like "Black", "Red"
 
   // ===== EXPAND / COLLAPSE UI STATE =====
   const [expandedBrands, setExpandedBrands] = useState(false);
@@ -44,7 +53,9 @@ const ShopByCategoriesPage = () => {
   const [expandedColors, setExpandedColors] = useState(false);
 
   // ===== SORT STATE =====
-  const [selectedSort, setSelectedSort] = useState("");
+  const [selectedSort, setSelectedSort] = useState(
+    searchParams.get("sort") || "",
+  );
 
   // ===== FILTER PANEL STATE =====
   const [isFilterOpen, setIsFilterOpen] = useState(false);

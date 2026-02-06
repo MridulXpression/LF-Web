@@ -50,6 +50,30 @@ const ShoppingCart = () => {
   // Auto-select all items ONLY when products load initially, or restore from localStorage
   useEffect(() => {
     if (products.length > 0 && isInitialMount.current) {
+      // Check if user came from "Buy Now" button
+      const buyNowVariantId = localStorage.getItem("buyNowVariantId");
+
+      if (buyNowVariantId) {
+        // Find the product with matching variant ID
+        const buyNowProduct = products.find(
+          (p) => p.variantId?.toString() === buyNowVariantId,
+        );
+
+        if (buyNowProduct) {
+          // Only select the Buy Now item
+          setSelectedItems(new Set([buyNowProduct.cartItemId]));
+          dispatch(setSelectedCartItems([buyNowProduct.cartItemId]));
+
+          // Clear the flag
+          localStorage.removeItem("buyNowVariantId");
+          isInitialMount.current = false;
+          return;
+        }
+
+        // Clear the flag even if product not found
+        localStorage.removeItem("buyNowVariantId");
+      }
+
       // Try to restore saved selection from localStorage first
       let restoredSelection = false;
       try {
