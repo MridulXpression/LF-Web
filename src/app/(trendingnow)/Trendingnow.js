@@ -100,7 +100,7 @@ const TrendingNowSection = () => {
             {/* Header */}
             <div className="flex flex-row justify-between items-center gap-2 sm:gap-4 mb-8 sm:mb-10">
               <Link href={`/products?collectionId=${collection.id}`}>
-                <h1 className="text-[13px]  md:text-[35px] font-semibold  text-black max-w-[200px] md:max-w-[500px] ">
+                <h1 className="text-[13px]  md:text-[35px] font-semibold  text-black max-w-[200px] md:max-w-[700px] ">
                   {collection.name}
                 </h1>
               </Link>

@@ -130,10 +130,10 @@ const OrderDetailView = ({ orderId, onBack, axiosHttp }) => {
           step.key === "confirmed"
             ? "Order Confirmed"
             : step.key === "shipped"
-            ? "Shipped"
-            : step.key === "out_for_delivery"
-            ? "Out For Delivery"
-            : "Delivered",
+              ? "Shipped"
+              : step.key === "out_for_delivery"
+                ? "Out For Delivery"
+                : "Delivered",
         date: step.key === "delivered" ? orderData?.order?.deliveredAt : null,
         active: isActive,
         completed: isCompleted,
@@ -263,12 +263,19 @@ const OrderDetailView = ({ orderId, onBack, axiosHttp }) => {
 
           {/* Tracking */}
           {orderData?.trackURL && orderData.trackURL.trim() !== "" ? (
-            <a
-              href={orderData.trackURL}
-              className="px-4 py-2 text-sm font-medium bg-black text-white rounded hover:bg-gray-800 transition"
-            >
-              Track Order
-            </a>
+            orderData.trackURL.startsWith("http://") ||
+            orderData.trackURL.startsWith("https://") ? (
+              <a
+                href={orderData.trackURL}
+                className="px-4 py-2 text-sm font-medium bg-black text-white rounded hover:bg-gray-800 transition"
+              >
+                Track Order
+              </a>
+            ) : (
+              <span className="text-sm text-gray-700 font-medium">
+                Estimated Delivery: {formatDate(orderData.trackURL)}
+              </span>
+            )
           ) : (
             <span className="text-sm text-orange-600 font-medium"></span>
           )}
