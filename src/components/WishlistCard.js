@@ -39,12 +39,13 @@ const WishlistCard = ({
   return (
     <div className="relative overflow-hidden w-full bg-white flex flex-col">
       {/* Product Image */}
-      <div className="relative w-full aspect-[4/5] bg-gray-100">
+      <div className="relative w-full aspect-[4/5] px-4 bg-stone-200 rounded-xl overflow-hidden flex items-center justify-center">
         <Image
           src={imageSrc || "/placeholder.png"}
           alt={imageAlt || "Product Image"}
-          fill
-          className="object-fill w-full h-full"
+          width={500}
+          height={500}
+          className="w-full h-full object-contain"
         />
 
         {/* Delete Button */}

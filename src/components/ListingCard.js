@@ -47,13 +47,14 @@ const ListingCard = ({
           rel="noopener noreferrer"
           onClick={() => localStorage.setItem("ProductId", id)}
         >
-          <div className="relative bg-gray-50 overflow-hidden group flex-shrink-0 w-full aspect-[4/5] cursor-pointer">
+          <div className="relative bg-gray-50 overflow-hidden group flex-shrink-0 w-full aspect-[4/5] cursor-pointer px-4 flex items-center justify-center">
             {imageUrls?.[0] ? (
               <Image
                 src={imageUrls[0]}
                 alt={title || "Product"}
-                fill
-                className="w-full h-full object-fill transition-transform duration-500 group-hover:scale-105"
+                width={400}
+                height={500}
+                className="w-full h-full object-contain transition-transform duration-500 group-hover:scale-105"
               />
             ) : (
               <div className="absolute inset-0 bg-gray-300" />

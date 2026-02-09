@@ -18,7 +18,7 @@ const BrandProductCard = ({ image, title, price, productId, mrp }) => {
       setShowWishlistModal(true);
       dispatch(openWishlistModal());
     },
-    [dispatch]
+    [dispatch],
   );
 
   const discountPercentage =
@@ -27,13 +27,13 @@ const BrandProductCard = ({ image, title, price, productId, mrp }) => {
   return (
     <div className="bg-white overflow-hidden  transition-shadow">
       <Link href={`/products/${productId}`}>
-        <div className="aspect-[3/4] overflow-hidden">
+        <div className="aspect-[4/5] overflow-hidden px-4 bg-stone-200 rounded-xl flex items-center justify-center">
           <Image
             src={image}
             alt={title}
             width={500}
             height={500}
-            className="w-full h-full object-fill hover:scale-105 transition-transform duration-300"
+            className="w-full h-full object-contain hover:scale-105 transition-transform duration-300"
           />
         </div>
         <div className="p-3">

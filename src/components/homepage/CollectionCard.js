@@ -102,7 +102,7 @@ const ProductCollectionCard = ({ product, onLike }) => {
         >
           <div
             className="relative w-full aspect-[4/5] 
-             p-4 bg-stone-200 rounded-xl overflow-hidden group
+             px-4  bg-stone-200 rounded-xl overflow-hidden group
              flex items-center justify-center"
             onMouseLeave={handleMouseLeave}
             onMouseEnter={() => setIsHovering(true)}

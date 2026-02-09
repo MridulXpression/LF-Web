@@ -9,13 +9,14 @@ const ProductImageGallery = ({ images = [], hasColorVariants = false }) => {
   return (
     <div className="space-y-4">
       {/* Main Image */}
-      <div className="relative w-full bg-gray-50 rounded-lg overflow-hidden h-[400px] md:h-[800px]">
+      <div className="relative w-full bg-gray-50 rounded-lg overflow-hidden h-[400px] md:h-[500px] flex items-center justify-center">
         {images?.[selectedImage] ? (
           <Image
             src={images[selectedImage]}
             alt={`Product ${selectedImage + 1}`}
-            fill
-            className="w-full h-auto object-fit"
+            width={500}
+            height={500}
+            className="w-full h-full object-contain"
             priority
           />
         ) : (
