@@ -224,7 +224,7 @@ const TrendingNowSection = () => {
             </div>
 
             {/* Banners Section */}
-            {/* {banners.length > 0 && (
+            {banners.length > 0 && (
               <div className="mt-6 -mx-4 sm:-mx-6 md:-mx-10">
                 <BannerGrid
                   banners={banners}
@@ -232,7 +232,7 @@ const TrendingNowSection = () => {
                   displayFor="homepage"
                 />
               </div>
-            )} */}
+            )}
           </section>
         );
       })}
