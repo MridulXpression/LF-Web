@@ -523,7 +523,7 @@ const ProductModal = () => {
         <div className="flex flex-col md:flex-row">
           {/* Product Image */}
           <div
-            className="md:w-1/2 w-full relative bg-gray-50 flex items-center justify-center"
+            className="md:w-1/2 w-full relative bg-gray-50 flex-shrink-0"
             onMouseEnter={() => setIsHovering(true)}
             onMouseLeave={() => {
               setIsHovering(false);
@@ -538,12 +538,12 @@ const ProductModal = () => {
               <Share2 className="w-4 h-4 text-gray-700" />
             </button>
 
-            <div className="relative w-full h-70 md:min-h-[420px]">
+            <div className="relative w-full aspect-[3/4] md:h-[400px]">
               <Image
                 src={currentImage}
                 alt={product?.title || "product-img"}
                 fill
-                className="object-fill"
+                className="object-contain"
               />
             </div>
 
@@ -563,7 +563,7 @@ const ProductModal = () => {
                   <ChevronRight className="w-5 h-5 text-gray-700" />
                 </button>
               </>
-            )}
+            )}/
           </div>
 
           {/* Product Details */}
