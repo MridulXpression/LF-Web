@@ -523,7 +523,7 @@ const ProductModal = () => {
         <div className="flex flex-col md:flex-row">
           {/* Product Image */}
           <div
-            className="md:w-1/2 w-full relative bg-gray-50 flex-shrink-0"
+            className="md:w-1/2 w-full relative bg-gray-50 flex items-center justify-center"
             onMouseEnter={() => setIsHovering(true)}
             onMouseLeave={() => {
               setIsHovering(false);
@@ -535,15 +535,15 @@ const ProductModal = () => {
               onClick={handleShare}
               className="absolute top-4 right-4 w-8 h-8 bg-white rounded-full flex items-center justify-center shadow-md z-10 hover:bg-gray-100 transition-colors"
             >
-              <Share2 className="w-4 h-4 text-gray-700" />
+              <Share2 className="w-4 h-4 text-gray-700">
             </button>
 
-            <div className="relative w-full aspect-[3/4] md:h-[400px]">
+            <div className="relative w-full h-70 md:h-[400px]">
               <Image
                 src={currentImage}
                 alt={product?.title || "product-img"}
                 fill
-                className="object-contain"
+                className="object-fill"
               />
             </div>
 
