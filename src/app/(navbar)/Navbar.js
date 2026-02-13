@@ -201,8 +201,8 @@ const Navbar = () => {
   return (
     <>
       {/* HEADER */}
-      <div className="fixed top-14 inset-x-0 bg-white z-40 shadow-sm">
-        <div className="max-w-full mx-auto px-4 md:px-16 py-6 md:py-7 h-20 md:h-18 flex items-center justify-between">
+      <div className="fixed top-10 inset-x-0 bg-white z-40 shadow-sm">
+        <div className="max-w-full mx-auto px-4 md:px-16 py-6 md:py-7 h-10 flex items-center justify-between">
           {/* LEFT */}
           <div className="flex items-center gap-1 md:gap-4">
             <button className="md:hidden" onClick={() => setIsMobileOpen(true)}>

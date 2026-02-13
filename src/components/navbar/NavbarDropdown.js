@@ -44,7 +44,7 @@ const NavbarDropdown = ({ menu, latestBlogs, onMouseEnter, onMouseLeave }) => {
 
   return (
     <div
-      className="fixed left-0 right-0 top-32 z-40 max-h-[90vh] overflow-y-auto"
+      className="fixed left-0 right-0 top-22 z-40 max-h-[90vh] overflow-y-auto"
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
     >

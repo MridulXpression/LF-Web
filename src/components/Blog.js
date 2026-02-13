@@ -38,13 +38,13 @@ const FashionGrid = ({ data, title = "TRENDING NOW" }) => {
   const getTextPositionClasses = (position) => {
     switch (position) {
       case "top-left":
-        return "absolute top-8 left-8 w-full text-white";
+        return "absolute top-8 left-8 right-8 text-white";
       case "bottom-left":
-        return "absolute bottom-6 left-6 w-full  text-white";
+        return "absolute bottom-6 left-6 right-6 text-white";
       case "center-left":
-        return "absolute top-[20%] left-8 transform -translate-y-1/2 text-white max-w-md";
+        return "absolute top-[20%] left-8 right-8 transform -translate-y-1/2 text-white";
       default:
-        return "absolute bottom-6 left-6 text-white";
+        return "absolute bottom-6 left-6 right-6 text-white";
     }
   };
 
@@ -55,18 +55,18 @@ const FashionGrid = ({ data, title = "TRENDING NOW" }) => {
 
     switch (size) {
       case "large":
-        return `text-xl md:text-3xl ${baseClasses} ${colorClass}`;
+        return `text-base sm:text-lg md:text-2xl lg:text-3xl ${baseClasses} ${colorClass}`;
       case "extra-large":
-        return `text-xl md:text-4xl ${baseClasses} ${colorClass}`;
+        return `text-lg sm:text-xl md:text-3xl lg:text-4xl ${baseClasses} ${colorClass}`;
       default:
-        return `text-lg md:text-2xl ${baseClasses} ${colorClass}`;
+        return `text-sm sm:text-base md:text-xl lg:text-2xl ${baseClasses} ${colorClass}`;
     }
   };
 
   // Helper function to get description classes
   const getDescriptionClasses = (textColor = "text-white") => {
     const colorClass = textColor || "text-white";
-    return `text-xs md:text-sm opacity-90 ${colorClass}`;
+    return `text-[10px] sm:text-xs md:text-sm opacity-90 ${colorClass}`;
   };
 
   // Helper function to get dimensions for each item
@@ -159,10 +159,14 @@ const FashionGrid = ({ data, title = "TRENDING NOW" }) => {
                   position === "bottom-left" && isHovered ? "bottom-32" : ""
                 }`}
               >
-                <h2 className={getTitleClasses(fixedSize.size)}>
+                <h2
+                  className={`${getTitleClasses(fixedSize.size)} max-w-[120px] sm:max-w-[150px] md:max-w-[250px]`}
+                >
                   {item.title}
                 </h2>
-                <p className={`${getDescriptionClasses()} max-w-[300px]`}>
+                <p
+                  className={`${getDescriptionClasses()} max-w-[120px] sm:max-w-[150px] md:max-w-[250px]`}
+                >
                   {stripHtmlTags(item.description)
                     ?.split(" ")
                     .slice(0, 20)
@@ -262,13 +266,15 @@ const FashionGrid = ({ data, title = "TRENDING NOW" }) => {
                   position === "bottom-left" && isHovered ? "bottom-32" : ""
                 }`}
               >
-                <h2 className={getTitleClasses(fixedSize.size, titleColor)}>
+                <h2
+                  className={`${getTitleClasses(fixedSize.size, titleColor)} max-w-[120px] sm:max-w-[150px] md:max-w-[250px]`}
+                >
                   {item.title}
                 </h2>
                 <p
                   className={`${getDescriptionClasses(
                     textColor,
-                  )} max-w-[300px]`}
+                  )} max-w-[120px] sm:max-w-[150px] md:max-w-[250px]`}
                 >
                   {stripHtmlTags(
                     item.description || "hshdihiceidiiiicjsidje idijiweodoei ",

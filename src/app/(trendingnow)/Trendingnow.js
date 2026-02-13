@@ -65,6 +65,7 @@ const TrendingNowSection = () => {
     );
   }
 
+  //product collection now showing according to the position
   return (
     <div className="bg-white">
       {collections?.map((collection, collectionIndex) => {

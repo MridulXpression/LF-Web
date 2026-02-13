@@ -7,7 +7,7 @@ export default function AnnouncementBar() {
   const { announcements, loading, error } = useAnnouncements();
 
   return (
-    <div className="fixed top-0 left-0 right-0 w-full bg-zinc-800 overflow-hidden py-3 z-30">
+    <div className="fixed top-0 left-0 right-0 w-full bg-zinc-800 overflow-hidden py-1 z-30">
       {loading || !announcements.length ? (
         <div className="flex items-center justify-center h-10 text-neutral-100 text-sm">
           {error ? "Error loading announcements" : "Loading..."}
@@ -21,16 +21,16 @@ export default function AnnouncementBar() {
                 <React.Fragment key={`${setIndex}-${index}`}>
                   <div className="h-8 w-px bg-neutral-100/30 mx-4" />
                   <div className="flex items-center gap-2 mx-8">
-                    <div className="w-7 h-7 bg-zinc-300/20 rounded-full flex items-center justify-center">
+                    <div className="w-6 h-6 bg-zinc-300/20 rounded-full flex items-center justify-center">
                       <Image
                         src={item.iconUrl}
                         alt={item.text}
-                        width={16}
-                        height={16}
+                        width={10}
+                        height={10}
                         className="w-4 h-4"
                       />
                     </div>
-                    <span className="text-neutral-100 text-sm font-[400] uppercase tracking-wide">
+                    <span className="text-neutral-100 text-[12px] font-[400] uppercase tracking-wide">
                       {item.text}
                     </span>
                   </div>

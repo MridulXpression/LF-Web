@@ -66,7 +66,7 @@ export default function NavbarSearchComponent({
   if (!isOpen) return null;
 
   return (
-    <div className="w-full max-h-screen bg-white z-[1000] fixed top-15 left-0">
+    <div className="w-full max-h-screen bg-white z-[1000] fixed top-12 left-0">
       {/* Search Input Area */}
       <div className="w-full h-auto min-h-20 md:h-24 px-4 sm:px-8 md:px-12 lg:px-16 py-4 md:py-7 bg-white inline-flex justify-between items-center">
         <div className="flex-1 flex justify-start items-center gap-4 md:gap-8 lg:gap-32">
@@ -144,15 +144,18 @@ export default function NavbarSearchComponent({
                   suggestions.map((suggestion, index) => (
                     <a
                       key={index}
-                      href={`/products?key=${suggestion.trim()}`}
-                      onClick={() => handleSuggestionClick(suggestion)}
-                      className="h-auto sm:h-7 px-2 sm:px-2.5 py-1 sm:py-1.5 bg-zinc-100 rounded flex justify-center items-center gap-1 cursor-pointer hover:bg-zinc-200 transition-colors"
+                      href={`/products?key=${suggestion.keyword.trim()}`}
+                      onClick={() => handleSuggestionClick(suggestion.keyword)}
+                      className="h-auto sm:h-7 px-2 sm:px-2.5 py-1 sm:py-1.5 bg-zinc-100 rounded flex justify-between items-center gap-2 cursor-pointer hover:bg-zinc-200 transition-colors min-w-fit"
                     >
                       <div className="flex justify-center items-start gap-2.5">
                         <div className="justify-start text-neutral-700 text-xs sm:text-sm font-normal">
-                          {suggestion}
+                          {suggestion.keyword}
                         </div>
                       </div>
+                      {/* <div className="text-neutral-500 text-xs sm:text-sm font-normal">
+                        {suggestion.count}
+                      </div> */}
                     </a>
                   ))
                 ) : recentSearches.length > 0 ? (

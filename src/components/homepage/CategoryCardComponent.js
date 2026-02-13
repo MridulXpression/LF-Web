@@ -58,7 +58,7 @@ export default function ShopByCategory({ categories: externalCategories }) {
               src={category.image}
               alt={category.name}
               fill
-              className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+              className="absolute inset-0 w-full h-full object-cover object-[center_10%] transition-transform duration-500 group-hover:scale-105"
             />
 
             {/* Gradient Overlay */}
