@@ -535,9 +535,8 @@ const ProductModal = () => {
               onClick={handleShare}
               className="absolute top-4 right-4 w-8 h-8 bg-white rounded-full flex items-center justify-center shadow-md z-10 hover:bg-gray-100 transition-colors"
             >
-              <Share2 className="w-4 h-4 text-gray-700">
+              <Share2 className="w-4 h-4 text-gray-700" />
             </button>
-
             <div className="relative w-full h-70 md:h-[400px]">
               <Image
                 src={currentImage}
@@ -546,7 +545,6 @@ const ProductModal = () => {
                 className="object-fill"
               />
             </div>
-
             {/* Navigation Arrows */}
             {hasMultipleImages && (
               <>
@@ -563,7 +561,7 @@ const ProductModal = () => {
                   <ChevronRight className="w-5 h-5 text-gray-700" />
                 </button>
               </>
-            )}/
+            )}
           </div>
 
           {/* Product Details */}
