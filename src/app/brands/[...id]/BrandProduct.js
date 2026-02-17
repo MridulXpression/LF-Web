@@ -88,7 +88,7 @@ const BrandProduct = () => {
   }
 
   return (
-    <div className="min-h-screen bg-white mt-[135px] md:mt-[130px]">
+    <div className="min-h-screen bg-white mt-[135px] md:mt-[90px]">
       <HeroBanner
         brandName={brandName}
         description={brandDescription}

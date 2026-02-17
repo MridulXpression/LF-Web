@@ -97,7 +97,7 @@ const WishlistCard = ({
         </p>
 
         <div className="flex flex-wrap gap-1 md:gap-2 mb-3 items-center">
-          <span className="text-sm md:text-base lg:text-lg font-bold text-gray-900">
+          <span className="text-sm md:text-base lg:text-lg font-[500] text-gray-900">
             Rs. {currentPrice}
           </span>
           {originalPrice > currentPrice && (

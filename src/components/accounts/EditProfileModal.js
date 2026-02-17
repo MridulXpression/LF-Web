@@ -1,6 +1,7 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import { X } from "lucide-react";
+import toast from "react-hot-toast";
 
 const EditProfileModal = ({ isOpen, onClose, userData, onSave }) => {
   const [loading, setLoading] = useState(false);
@@ -27,9 +28,15 @@ const EditProfileModal = ({ isOpen, onClose, userData, onSave }) => {
 
   const handleSubmit = async () => {
     setLoading(true);
-    await onSave(formData);
-    setLoading(false);
-    onClose();
+    try {
+      await onSave(formData);
+      toast.success("Profile updated successfully!");
+      onClose();
+    } catch (error) {
+      toast.error("Failed to update profile. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   if (!isOpen) return null;

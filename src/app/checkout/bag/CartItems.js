@@ -483,7 +483,7 @@ const ShoppingCart = () => {
 
   return (
     <>
-      <div className="min-h-screen  py-8 mt-[130px]">
+      <div className="min-h-screen  py-8 mt-[90px]">
         <div className="max-w-7xl mx-auto px-4">
           {/* Progress Steps */}
           <div className="mb-8 flex items-center justify-center gap-2 text-sm">

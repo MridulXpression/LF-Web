@@ -13,7 +13,19 @@ const UserDropdown = ({ user }) => {
   const [open, setOpen] = useState(false);
   const [showLogoutModal, setShowLogoutModal] = useState(false);
   const [dropdownTimeout, setDropdownTimeout] = useState(null);
+  const [isDesktop, setIsDesktop] = useState(false);
   const dropdownRef = useRef(null);
+
+  // Detect desktop/mobile
+  useEffect(() => {
+    const checkDevice = () => {
+      setIsDesktop(window.innerWidth >= 768);
+    };
+
+    checkDevice();
+    window.addEventListener("resize", checkDevice);
+    return () => window.removeEventListener("resize", checkDevice);
+  }, []);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -40,7 +52,14 @@ const UserDropdown = ({ user }) => {
     setShowLogoutModal(false);
   };
 
-  const isDesktop = typeof window !== "undefined" && window.innerWidth >= 768;
+  const handleIconClick = (e) => {
+    // On mobile, toggle dropdown instead of navigating
+    if (!isDesktop) {
+      e.preventDefault();
+      setOpen(!open);
+    }
+    // On desktop, let the Link navigate naturally
+  };
 
   return (
     <div
@@ -60,7 +79,7 @@ const UserDropdown = ({ user }) => {
       {/* Profile Icon */}
       <Link
         href="/account/orders"
-        onClick={() => setOpen(false)}
+        onClick={handleIconClick}
         className="text-[#808080] hover:text-gray-900 cursor-pointer p-1 block"
         aria-label="User menu"
       >
@@ -69,7 +88,7 @@ const UserDropdown = ({ user }) => {
 
       {/* DROPDOWN */}
       {open && (
-        <div className="absolute right-0 md:right-0 top-[20px] md:top-[45px] mt-2 w-48 sm:w-56 bg-white shadow-lg border border-gray-100 z-50 rounded-md">
+        <div className="absolute right-0 md:right-0 top-[20px] md:top-[35px] mt-2 w-48 sm:w-56 bg-white shadow-lg border border-gray-100 z-50 rounded-md">
           <div className="p-3 md:p-4">
             {user && (
               <div className="border-b border-gray-200 pb-2 md:pb-3 mb-2 md:mb-3">
@@ -83,13 +102,15 @@ const UserDropdown = ({ user }) => {
             )}
 
             <div className="space-y-1">
-              {/* <Link
-                href="/account/orders"
-                className="block px-2 md:px-3 py-2 text-xs md:text-sm text-gray-700 hover:bg-gray-50 rounded"
-                onClick={() => setOpen(false)}
-              >
-                Orders
-              </Link> */}
+              {!isDesktop && (
+                <Link
+                  href="/account/orders"
+                  className="block px-2 md:px-3 py-2 text-xs md:text-sm text-gray-700 hover:bg-gray-50 rounded"
+                  onClick={() => setOpen(false)}
+                >
+                  Orders
+                </Link>
+              )}
 
               <Link
                 href="/wishlist-boards"

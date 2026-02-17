@@ -33,7 +33,10 @@ const Footer = () => {
   return (
     <footer className="bg-[#0F0F0F] text-white w-full flex flex-col justify-end ">
       <div className="px-4 sm:px-6 lg:px-8 py-10 flex flex-col flex-1 justify-end">
-        <h1 className="px-5 font-bold text-lg text-[#a298fa] uppercase  mb-[10px] ">
+        <h1
+          className="px-5 font-bold text-lg text-[#a298fa] uppercase mb-[10px]"
+          style={{ wordSpacing: "0.2rem" }}
+        >
           Welcome to LaFetch
         </h1>
         {/* Main Footer Content */}

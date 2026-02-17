@@ -65,14 +65,14 @@ const AccountHeader = () => {
           role: user.userInfo.role,
           token: user.token,
           refreshToken: user.refreshToken,
-        })
+        }),
       );
       await fetchUserData();
     } catch (error) {}
   };
 
   return (
-    <div className="bg-gray-50 w-full mt-[130px]">
+    <div className="bg-gray-50 w-full mt-[90px]">
       <div className="bg-white border-b border-gray-200 px-4 sm:px-6 py-3 sm:py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-0">
         {/* Left: User Info */}
         <div className="flex items-center gap-3 sm:gap-4">

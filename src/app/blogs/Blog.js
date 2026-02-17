@@ -19,7 +19,7 @@ const HomePage = () => {
 
       {/* Blog Grid Section */}
       {remainingBlogs.length > 0 && (
-        <div className="w-full md:px-[100px] md:py-[50px] px-4 py-4">
+        <div className="w-full md:px-[100px] md:py-[40px] px-4 py-4">
           <h2 className="text-3xl font-bold text-gray-900 mb-8 ">MUST READS</h2>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">

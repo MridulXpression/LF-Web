@@ -328,7 +328,7 @@ export default function ProductPage({ params }) {
     return (
       <div className="bg-white min-h-screen">
         <Navbar />
-        <div className="flex flex-col items-center justify-center h-[calc(100vh-130px)] mt-[130px] px-4">
+        <div className="flex flex-col items-center justify-center h-[calc(100vh-130px)] mt-[90px] px-4">
           <div className="text-center max-w-md">
             <div className="mb-4">
               <svg
@@ -377,7 +377,7 @@ export default function ProductPage({ params }) {
   return (
     <div className="bg-white">
       <Navbar />
-      <div className="max-w-7xl mx-auto px-4 py-8 mt-[130px] ">
+      <div className="max-w-7xl mx-auto px-4 py-8 mt-[90px] ">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {/* Left - Images */}
           <ProductImageGallery
