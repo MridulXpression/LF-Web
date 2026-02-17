@@ -33,16 +33,19 @@ const Footer = () => {
   return (
     <footer className="bg-[#0F0F0F] text-white w-full flex flex-col justify-end ">
       <div className="px-4 sm:px-6 lg:px-8 py-10 flex flex-col flex-1 justify-end">
+        <h1 className="px-5 font-bold text-lg text-[#a298fa] uppercase  mb-[10px] ">
+          Welcome to LaFetch
+        </h1>
         {/* Main Footer Content */}
         <div className="flex flex-col lg:flex-row justify-between gap-20 mb-16 px-[20px]">
           {/* Left: 4 Columns */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-x-14 gap-y-6">
             {/* Column 1 */}
             <ul className="space-y-3 text-sm text-gray-300">
-              <li>Welcome to LaFetch</li>
               <li>Announcements</li>
               <li>What's new</li>
               <li>Contact us</li>
+              <li>Email Us</li>
             </ul>
 
             {/* Column 2 */}
@@ -79,7 +82,6 @@ const Footer = () => {
               <li>
                 <Link href="/blogs">Blogs</Link>
               </li>
-              <li>Email Us</li>
             </ul>
           </div>
 

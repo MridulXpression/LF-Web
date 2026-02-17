@@ -537,7 +537,8 @@ const ProductModal = () => {
             >
               <Share2 className="w-4 h-4 text-gray-700" />
             </button>
-            <div className="relative w-full h-70 md:h-[400px]">
+
+            <div className="relative w-full h-70 md:min-h-[420px]">
               <Image
                 src={currentImage}
                 alt={product?.title || "product-img"}
@@ -545,6 +546,7 @@ const ProductModal = () => {
                 className="object-fill"
               />
             </div>
+
             {/* Navigation Arrows */}
             {hasMultipleImages && (
               <>
