@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useRef, useState } from "react";
-import { X, Search } from "lucide-react";
+import { X, Search, ArrowUpRight } from "lucide-react";
 import { useSelector, useDispatch } from "react-redux";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
@@ -126,98 +126,104 @@ export default function NavbarSearchComponent({
       {/* Dropdown Area */}
       <div
         ref={searchDropdownRef}
-        className="w-full px-4 sm:px-8 md:px-16 lg:px-32 xl:px-44 pt-4 sm:pt-7 pb-8 sm:pb-14 bg-stone-50 inline-flex justify-center items-start gap-6 md:gap-10"
+        className="w-full px-4 sm:px-8 md:px-16 lg:px-32 xl:px-44 pt-4 sm:pt-7 pb-8 sm:pb-14 bg-white inline-flex justify-between items-start gap-6 md:gap-10"
       >
-        <div className="flex-1 inline-flex flex-col justify-start items-start gap-3.5 max-w-4xl">
-          <div className="self-stretch flex flex-col md:inline-flex md:flex-row justify-start items-start gap-6 md:gap-0">
-            {/* Recent Searches */}
-            <div className="w-full md:w-auto md:pr-8 inline-flex flex-col justify-start items-start gap-3.5">
-              <div className="justify-start text-neutral-700 text-xs sm:text-sm font-normal">
-                {suggestions.length > 0 ? "Suggestions" : "Recent Searches"}
-              </div>
-              <div className="w-full md:max-w-[500px] inline-flex justify-start items-start gap-2 sm:gap-3.5 flex-wrap content-start">
-                {isLoadingSuggestions ? (
-                  <div className="justify-start text-neutral-700 text-xs sm:text-sm font-normal">
-                    Loading...
-                  </div>
-                ) : suggestions.length > 0 ? (
-                  suggestions.map((suggestion, index) => (
-                    <a
-                      key={index}
-                      href={`/products?key=${suggestion.keyword.trim()}`}
-                      onClick={() => handleSuggestionClick(suggestion.keyword)}
-                      className="h-auto sm:h-7 px-2 sm:px-2.5 py-1 sm:py-1.5 bg-zinc-100 rounded flex justify-between items-center gap-2 cursor-pointer hover:bg-zinc-200 transition-colors min-w-fit"
-                    >
-                      <div className="flex justify-center items-start gap-2.5">
-                        <div className="justify-start text-neutral-700 text-xs sm:text-sm font-normal">
-                          {suggestion.keyword}
-                        </div>
-                      </div>
-                      {/* <div className="text-neutral-500 text-xs sm:text-sm font-normal">
-                        {suggestion.count}
-                      </div> */}
-                    </a>
-                  ))
-                ) : recentSearches.length > 0 ? (
-                  recentSearches.map((search, index) => (
-                    <a
-                      key={index}
-                      href={`/products?key=${search.trim()}`}
-                      onClick={() => handleSuggestionClick(search)}
-                      className="h-auto sm:h-7 px-2 sm:px-2.5 py-1 sm:px-2.5 bg-zinc-100 rounded flex justify-center items-center gap-1 cursor-pointer hover:bg-zinc-200 transition-colors"
-                    >
-                      <div className="flex justify-center items-start gap-2.5">
-                        <div className="justify-start text-neutral-700 text-xs sm:text-sm font-normal">
-                          {search}
-                        </div>
-                      </div>
-                    </a>
-                  ))
-                ) : (
-                  <div className="justify-start text-neutral-700 text-xs sm:text-sm font-normal">
-                    No recent searches
-                  </div>
-                )}
-              </div>
-            </div>
-
-            {/* Trending Searches */}
-            <div className="w-full md:w-auto md:pl-8 md:border-l-[0.50px] border-stone-950 inline-flex flex-col justify-start items-start gap-3.5">
-              <div className="justify-start text-neutral-700 text-xs sm:text-sm font-normal">
-                Trending Searches
-              </div>
-              <div className="inline-flex justify-start items-start gap-1">
-                <div className="w-full sm:w-56 self-stretch px-3 sm:px-4 py-2.5 sm:py-3.5 bg-zinc-100 flex justify-start items-start gap-2.5">
-                  <div className="flex-1 inline-flex flex-col justify-start items-start gap-3.5">
-                    <div className="flex flex-col justify-start items-start gap-1.5">
-                      {trendingSearches.map((item, index) => (
-                        <a
-                          key={index}
-                          href={`/products?key=${item.trim()}`}
-                          onClick={() => handleSuggestionClick(item)}
-                          className="inline-flex justify-center items-center gap-2.5 cursor-pointer hover:opacity-70 transition-opacity"
-                        >
-                          <div className="justify-start text-neutral-700 text-xs sm:text-sm font-normal">
-                            {item}
-                          </div>
-                        </a>
-                      ))}
+        {/* Left Side - Suggestions */}
+        <div className="flex-1 inline-flex flex-col justify-start items-start gap-1.5 max-w-4xl">
+          {searchQuery.trim() && suggestions.length > 0 ? (
+            // Show only suggestions when typing
+            <div className="w-full inline-flex flex-col justify-start items-start gap-0.3">
+              {isLoadingSuggestions ? (
+                <div className="justify-start text-neutral-700 text-sm font-normal py-2 ">
+                  Loading...
+                </div>
+              ) : (
+                suggestions.map((suggestion, index) => (
+                  <a
+                    key={index}
+                    href={`/products?key=${suggestion.keyword.trim()}`}
+                    onClick={() => handleSuggestionClick(suggestion.keyword)}
+                    className="w-full flex justify-between items-center py-2 cursor-pointer hover:bg-gray-50 transition-colors group border-b border-gray-200"
+                  >
+                    <div className="text-neutral-500 text-sm font-normal group-hover:text-neutral-700">
+                      {suggestion.keyword}
                     </div>
-                  </div>
+                    <div className="flex items-center gap-3">
+                      <span className="text-neutral-400 text-sm font-normal">
+                        {suggestion.count} results
+                      </span>
+                      <ArrowUpRight className="w-5 h-5 text-black" />
+                    </div>
+                  </a>
+                ))
+              )}
+            </div>
+          ) : (
+            // Show Recent and Trending when not typing
+            <div className="self-stretch flex flex-col md:inline-flex md:flex-row justify-start items-start gap-6 md:gap-0">
+              {/* Recent Searches */}
+              <div className="w-full md:w-auto md:pr-8 inline-flex flex-col justify-start items-start gap-3.5">
+                <div className="justify-start text-neutral-600 text-md font-normal">
+                  Recent Searches
+                </div>
+                <div className="w-full md:max-w-[500px] inline-flex justify-start items-start gap-2 sm:gap-3.5 flex-wrap content-start">
+                  {recentSearches.length > 0 ? (
+                    recentSearches.map((search, index) => (
+                      <a
+                        key={index}
+                        href={`/products?key=${search.trim()}`}
+                        onClick={() => handleSuggestionClick(search)}
+                        className="h-auto sm:h-7 px-2 sm:px-2.5 py-1 sm:px-2.5 bg-gray-200 rounded-lg flex justify-center items-center gap-1 cursor-pointer hover:bg-zinc-200 transition-colors"
+                      >
+                        <div className="flex justify-center items-start gap-2.5">
+                          <div className="justify-start text-neutral-700 text-xs sm:text-sm font-normal">
+                            {search}
+                          </div>
+                        </div>
+                      </a>
+                    ))
+                  ) : (
+                    <div className="justify-start text-neutral-700 text-xs sm:text-sm font-normal">
+                      No recent searches
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Trending Searches */}
+              <div className="w-full md:w-auto md:pl-8 md:border-l-[0.50px] border-stone-950 inline-flex flex-col justify-start items-start gap-3.5">
+                <div className="justify-start text-neutral-600 text-md font-normal">
+                  Trending searches
+                </div>
+                <div className="w-full md:max-w-[500px] inline-flex justify-start items-start gap-2 sm:gap-3.5 flex-wrap content-start">
+                  {trendingSearches.map((item, index) => (
+                    <a
+                      key={index}
+                      href={`/products?key=${item.trim()}`}
+                      onClick={() => handleSuggestionClick(item)}
+                      className="h-auto sm:h-7 px-2 sm:px-2.5 py-1 sm:px-2.5 bg-gray-200 rounded-lg flex justify-center items-center gap-1 cursor-pointer hover:bg-zinc-200 transition-colors"
+                    >
+                      <div className="flex justify-center items-start gap-2.5">
+                        <div className="justify-start text-neutral-700 text-xs sm:text-sm font-normal">
+                          {item}
+                        </div>
+                      </div>
+                    </a>
+                  ))}
                 </div>
               </div>
             </div>
-          </div>
+          )}
         </div>
 
-        {/* Product Images */}
+        {/* Product Images - Always visible */}
         <div className="hidden lg:flex justify-start items-center gap-2">
           <div className="w-[110px] h-[130px] relative rounded-xl overflow-hidden">
             <Image
               src="/images/search1.png"
               alt="Product 1"
               fill
-              className="object-fill"
+              className="object-cover"
             />
           </div>
           <div className="w-[110px] h-[130px] relative rounded-xl overflow-hidden">
@@ -225,15 +231,15 @@ export default function NavbarSearchComponent({
               src="/images/search2.png"
               alt="Product 2"
               fill
-              className="object-fill"
+              className="object-cover"
             />
           </div>
-          <div className="w-[110px] h-[130px] relative rounded-xl  overflow-hidden">
+          <div className="w-[110px] h-[130px] relative rounded-xl overflow-hidden">
             <Image
               src="/images/search3.png"
               alt="Product 3"
               fill
-              className="object-fill"
+              className="object-cover"
             />
           </div>
           <div className="w-[110px] h-[130px] relative rounded-xl overflow-hidden">
@@ -241,7 +247,7 @@ export default function NavbarSearchComponent({
               src="/images/search4.png"
               alt="Product 4"
               fill
-              className="object-fill"
+              className="object-cover"
             />
           </div>
         </div>

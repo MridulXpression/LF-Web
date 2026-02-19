@@ -91,14 +91,16 @@ const UserDropdown = ({ user }) => {
         <div className="absolute right-0 md:right-0 top-[20px] md:top-[35px] mt-2 w-48 sm:w-56 bg-white shadow-lg border border-gray-100 z-50 rounded-md">
           <div className="p-3 md:p-4">
             {user && (
-              <div className="border-b border-gray-200 pb-2 md:pb-3 mb-2 md:mb-3">
-                <p className="font-semibold text-gray-900 text-sm md:text-base truncate">
-                  {user.fullName}
-                </p>
-                <p className="text-xs md:text-sm text-gray-600 truncate">
-                  {user.phone}
-                </p>
-              </div>
+              <Link href="/account/orders" onClick={() => setOpen(false)}>
+                <div className="border-b border-gray-200 pb-2 md:pb-3 mb-2 md:mb-3 cursor-pointer hover:bg-gray-50 rounded -m-2 p-2">
+                  <p className="font-semibold text-gray-900 text-sm md:text-base truncate">
+                    {user.fullName}
+                  </p>
+                  <p className="text-xs md:text-sm text-gray-600 truncate">
+                    {user.phone}
+                  </p>
+                </div>
+              </Link>
             )}
 
             <div className="space-y-1">

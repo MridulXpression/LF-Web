@@ -28,7 +28,7 @@ const CategoryPage = () => {
 
   return (
     <div className="bg-white min-h-screen">
-      <div className="w-full px-4 py-6 sm:px-6  md:px-12   mt-[120px] md:mt-[150px]  mb-6 md:mb-8">
+      <div className="w-full px-4 py-6 sm:px-6  md:px-12     mt-[90px]  mb-6 md:mb-8">
         {/* Category Header */}
         <div className="mb-6 sm:mb-8 md:mb-10">
           <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold text-gray-900 mb-2">
