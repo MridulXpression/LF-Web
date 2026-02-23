@@ -16,6 +16,13 @@ const useProductById = (id) => {
       const result = await axiosHttp.get(endPoint);
 
       if (result?.status === 200) {
+        fbq("track", "ViewContent", {
+          content_ids: [id],
+          content_name: result?.data?.data?.title || "Product",
+          content_type: "product",
+          value: result?.data?.data?.basePrice || 0,
+          currency: "INR",
+        });
         setProduct(result?.data?.data);
       }
     } catch (err) {

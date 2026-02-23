@@ -287,16 +287,6 @@ const ProductModal = () => {
     dispatch(closeProductViewModal());
   };
 
-  // Debug: Log brand data to verify brandId
-  useEffect(() => {
-    if (product) {
-      console.log("Product brand data:", {
-        brand: product.brand,
-        brandId: product.brandId,
-      });
-    }
-  }, [product]);
-
   if (!isOpen || !product) return null;
 
   const currentImage = productImages[currentImageIndex];
@@ -357,6 +347,7 @@ const ProductModal = () => {
           productId: parseInt(product.id, 10),
           variantId: parseInt(variantId, 10),
           quantity: 1,
+          price: product.basePrice || 0,
         };
 
         const result = await axiosHttp.post(
@@ -470,6 +461,7 @@ const ProductModal = () => {
         productId: parseInt(product.id, 10),
         variantId: parseInt(variantId, 10),
         quantity: 1,
+        price: product.basePrice || 0,
       };
 
       const result = await axiosHttp.post(endPoints.addProductToCart, payload);

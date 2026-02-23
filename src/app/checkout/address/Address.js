@@ -314,6 +314,14 @@ const CheckOutAddress = () => {
         );
       }
 
+      // Track successful checkout initiation
+      fbq("track", "InitiateCheckout", {
+        content_ids: items.map((i) => i.productId),
+        num_items: items.reduce((s, i) => s + (i.quantity || 0), 0),
+        value: paymentTotal,
+        currency: "INR",
+      });
+
       const { orderId, paymentId, providerOrderId } = initiateResp.data.data;
 
       if (!providerOrderId) {
@@ -404,6 +412,12 @@ const CheckOutAddress = () => {
               placeResp.data &&
               (placeResp.data.status === 200 || placeResp.data.status === 201)
             ) {
+              fbq("track", "Purchase", {
+                content_ids: items.map((i) => i.productId),
+                content_type: "product",
+                value: paymentTotal,
+                currency: "INR",
+              });
               // Clear cart items from backend - delete only ordered items one by one
               try {
                 // Use the items array that was sent in the order

@@ -39,6 +39,13 @@ const useAddProductToBoard = () => {
         result?.data?.message || result?.data?.data?.message || result?.message;
 
       if (status === 200 || status === 201) {
+        fbq("track", "AddToWishlist", {
+          content_ids: [productData.id || productData.productId],
+          content_type: "product",
+          value: productData.basePrice || 0,
+          content_name: productData.title || "Product",
+          currency: "INR",
+        });
         return {
           success: true,
           message: serverMessage || "Added to board successfully",

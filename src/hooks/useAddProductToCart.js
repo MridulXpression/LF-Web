@@ -10,7 +10,12 @@ const useAddProductToCart = () => {
   const user = useSelector((state) => state.user.userInfo);
   const userId = user?.id;
 
-  const addProductToCart = async (productId, quantity = 1) => {
+  const addProductToCart = async (
+    productId,
+    quantity = 1,
+    price = 0,
+    productTitle = "Product",
+  ) => {
     setLoading(true);
     setError(null);
 
@@ -33,12 +38,21 @@ const useAddProductToCart = () => {
         productId: parseInt(productId, 10),
         variantId: parseInt(variantId, 10),
         quantity: parseInt(quantity, 10),
+        price: parseFloat(price) || 0,
       };
       const result = await axiosHttp.post(endPoints.addProductToCart, payload);
 
       setLoading(false);
 
       if (result.status === 200 || result.status === 201) {
+        fbq("track", "AddToCart", {
+          content_ids: [productId],
+          content_type: "product",
+          content_name: productTitle,
+          value: price || 0,
+          currency: "INR",
+        });
+
         return {
           success: true,
           message: result.data?.message || "Added to bag successfully",

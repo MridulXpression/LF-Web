@@ -38,7 +38,8 @@ const ProductActions = ({
       return;
     }
 
-    const result = await addProductToCart(productId, quantity);
+    const price = productData?.basePrice || 0;
+    const result = await addProductToCart(productId, quantity, price);
 
     const variantId = localStorage.getItem("selectedVariantId");
 
