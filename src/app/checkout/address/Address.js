@@ -37,6 +37,10 @@ const CheckOutAddress = () => {
   const userId = userInfo?.id;
   const dispatch = useDispatch();
   const router = useRouter();
+  
+  const buyNowProduct = useSelector((state) => state.buyNow?.product);
+  const cartItems = useSelector((state) => state.cart.items);
+  
 
   // Load Razorpay script
   useEffect(() => {
@@ -66,11 +70,33 @@ const CheckOutAddress = () => {
     loadRazorpayScript();
   }, []);
 
+  // useEffect(() => {
+  //   if (userId) {
+  //     fetchCartItems();
+  //     fetchAddresses();
+  //     // Load saved checkout from localStorage
+  //     try {
+  //       const saved = localStorage.getItem(`lafetch_checkout_${userId}`);
+  //       if (saved) {
+  //         const parsed = JSON.parse(saved);
+  //         if (parsed.selectedAddressId)
+  //           setSelectedAddressId(parsed.selectedAddressId);
+  //         if (parsed.orderTotal) setOrderTotal(parsed.orderTotal);
+  //       }
+  //     } catch (e) {}
+  //   }
+  // }, [userId]);
   useEffect(() => {
-    if (userId) {
+  if (userId) {
+    if (buyNowProduct) {
+      // Buy Now flow: show only the selected product
+      setProducts([buyNowProduct]);
+      setLoading(false);
+    } else {
+      // Normal cart flow
       fetchCartItems();
-      fetchAddresses();
-      // Load saved checkout from localStorage
+
+      // Load saved checkout from localStorage only for cart items
       try {
         const saved = localStorage.getItem(`lafetch_checkout_${userId}`);
         if (saved) {
@@ -81,7 +107,13 @@ const CheckOutAddress = () => {
         }
       } catch (e) {}
     }
-  }, [userId]);
+
+    // Always fetch addresses for both flows
+    fetchAddresses();
+  }
+}, [userId, buyNowProduct]);
+
+  
 
   const fetchCartItems = async () => {
     try {
@@ -103,25 +135,52 @@ const CheckOutAddress = () => {
         }));
 
         // Filter products based on saved selection from localStorage
-        let selectedProducts = transformedData;
-        try {
-          const saved = localStorage.getItem(`lafetch_checkout_${userId}`);
-          if (saved) {
-            const parsed = JSON.parse(saved);
-            if (parsed.items && Array.isArray(parsed.items)) {
-              const selectedCartItemIds = new Set(
-                parsed.items
-                  .filter((item) => item.selected)
-                  .map((item) => item.cartItemId),
-              );
-              if (selectedCartItemIds.size > 0) {
-                selectedProducts = transformedData.filter((p) =>
-                  selectedCartItemIds.has(p.cartItemId),
+        // let selectedProducts = transformedData;
+        // try {
+        //   const saved = localStorage.getItem(`lafetch_checkout_${userId}`);
+        //   if (saved) {
+        //     const parsed = JSON.parse(saved);
+        //     if (parsed.items && Array.isArray(parsed.items)) {
+        //       const selectedCartItemIds = new Set(
+        //         parsed.items
+        //           .filter((item) => item.selected)
+        //           .map((item) => item.cartItemId),
+        //       );
+        //       if (selectedCartItemIds.size > 0) {
+        //         selectedProducts = transformedData.filter((p) =>
+        //           selectedCartItemIds.has(p.cartItemId),
+        //         );
+        //       }
+        //     }
+        //   }
+        // } catch (e) {}
+        let selectedProducts;
+
+        // 🔹 If Buy Now exists → ignore cart completely
+        if (buyNowProduct) {
+          selectedProducts = [buyNowProduct];
+        } else {
+          selectedProducts = transformedData;
+
+          try {
+            const saved = localStorage.getItem(`lafetch_checkout_${userId}`);
+            if (saved) {
+              const parsed = JSON.parse(saved);
+              if (parsed.items && Array.isArray(parsed.items)) {
+                const selectedCartItemIds = new Set(
+                  parsed.items
+                    .filter((item) => item.selected)
+                    .map((item) => item.cartItemId),
                 );
+                if (selectedCartItemIds.size > 0) {
+                  selectedProducts = transformedData.filter((p) =>
+                    selectedCartItemIds.has(p.cartItemId),
+                  );
+                }
               }
             }
-          }
-        } catch (e) {}
+          } catch (e) {}
+        }
 
         setProducts(selectedProducts);
 
@@ -332,7 +391,7 @@ const CheckOutAddress = () => {
         userId,
       };
 
-      try {
+      try { 
         sessionStorage.setItem(
           `lafetch_payment_${userId}`,
           JSON.stringify(paymentData),
@@ -509,6 +568,8 @@ const CheckOutAddress = () => {
       );
     }
   };
+
+
 
   if (loading) {
     return (

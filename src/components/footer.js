@@ -6,11 +6,15 @@ import {
   Facebook,
   MessageCircle,
   Youtube,
+  Linkedin,
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import useNewsletterSubscribe from "@/hooks/useNewsletterSubscribe";
 import toast from "react-hot-toast";
+import { CiLinkedin } from "react-icons/ci";
+import { FaAppStore } from "react-icons/fa";
+import { BiLogoPlayStore } from "react-icons/bi";
 
 const Footer = () => {
   const [email, setEmail] = useState("");
@@ -34,18 +38,11 @@ const Footer = () => {
     <footer className="bg-[#0F0F0F] text-white w-full flex flex-col justify-end ">
       <div className="px-4 sm:px-6 lg:px-8 py-10 flex flex-col flex-1 justify-end">
         {/* Main Footer Content */}
-        <div className="flex flex-col lg:flex-row justify-between gap-20 mb-16 px-[20px]">
+        <div className="flex flex-col lg:flex-row gap-20 mb-16 px-[20px]">
           {/* Left: 4 Columns */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-x-14 gap-y-6">
-            {/* Column 1 */}
-            <ul className="space-y-3 text-sm text-gray-300">
-              <li>Welcome to LaFetch</li>
-              <li>Announcements</li>
-              <li>What's new</li>
-              <li>Contact us</li>
-            </ul>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-x-14 gap-y-6 flex-1">
 
-            {/* Column 2 */}
+            {/* Column 1 */}
             <ul className="space-y-3 text-sm text-gray-300">
               <li>
                 <Link href="/">Home</Link>
@@ -57,7 +54,7 @@ const Footer = () => {
               <li>LaFetch quick</li>
             </ul>
 
-            {/* Column 3 */}
+            {/* Column 2 */}
             <ul className="space-y-3 text-sm text-gray-300">
               <li>
                 <Link href="/privacy-policy">Privacy policy</Link>
@@ -73,20 +70,54 @@ const Footer = () => {
                 <Link href="/cancellation-policy">Cancellation policy </Link>
               </li>
             </ul>
+            {/* Column 3 */}
+            <ul className="space-y-3 text-sm text-gray-300">
+              <li>Announcements</li>
+              <li>Track Your Order</li>
+              <li>FAQ's</li>
+              <Link href="/contact-us">Contact Us</Link>
+            </ul>
 
             {/* Column 4 */}
             <ul className="space-y-3 text-sm text-gray-300">
               <li>
                 <Link href="/blogs">Blogs</Link>
               </li>
-              <li>Email Us</li>
+              
+              {/* <li>
+              Email Us:{" "}
+              </li> */}
+              
+              {/* <a
+                href="mailto:customersupport@la-fetch.com"
+                className="text-blue-600 hover:underline"
+              >
+                customersupport@la-fetch.com
+              </a> */}
+              <li>Careers</li>
+              <li>Partner Brands</li>
+              <li>Site Map</li>
+            
             </ul>
-          </div>
+            <div className="flex items-center gap-6 flex-nowrap">
+              <p className="text-sm font-medium whitespace-nowrap">DOWNLOAD THE APP NOW</p>
+              <div className="flex items-center gap-4">
+                <a   href="https://apps.apple.com/in/app/lafetch-fetch-your-fashion/id6739497338">
+                  <FaAppStore size={25}/>
+                </a>
 
+                <a href="https://play.google.com/store/apps/details?id=com.lafetch.customer&hl=en_IN">
+                  <BiLogoPlayStore size={25}/>
+                </a>
+
+              </div>
+            </div>
+            
+          </div>
           {/* Right: Newsletter */}
           <div className="flex justify-end">
             {/* YOUR PROVIDED SUBSCRIBE UI */}
-            <div className="w-96 inline-flex flex-col gap-4">
+            <div className="w-96 inline-flex flex-col gap-6">
               <p className="text-sm uppercase font-medium">
                 Subscribe to our newsletter
               </p>
@@ -110,31 +141,8 @@ const Footer = () => {
                   {loading ? "..." : "Subscribe"}
                 </button>
               </div>
-            </div>
-          </div>
-        </div>
 
-        {/* Bottom Section */}
-        <div className="border-t border-white/20 ">
-          {/* Row 1: Big Center Logo */}
-          <div className="flex justify-center">
-            <Image
-              src="/images/logo-white.png"
-              alt="LAFETCH Logo"
-              width={300}
-              height={100}
-              className="object-contain"
-            />
-          </div>
-
-          {/* Row 2: Copyright and Socials on same line */}
-          <div className="mt-6 flex flex-col md:flex-row justify-between items-center gap-6 md:gap-0">
-            <div className="text-sm text-gray-400 text-center md:text-left">
-              ©2025 Powered By and All Right Reserved to AS10 TECH-RETAIL
-              PRIVATE LIMITED
-            </div>
-
-            <div className="flex items-center gap-5">
+              <div className="flex items-center gap-5 pt-2">
               <a
                 href="https://www.instagram.com/stylewithlafetch/"
                 target="_blank"
@@ -168,6 +176,35 @@ const Footer = () => {
               >
                 <Youtube className="w-6 h-6 text-white" />
               </a>
+
+              <a href="https://www.linkedin.com/company/lafetch"
+              target="_blank" rel="noopener noreferrer">
+                <CiLinkedin className="w-6 h-6 text-white"/>
+              </a>
+            </div>
+            </div>
+          </div>
+          
+        </div>
+
+        {/* Bottom Section */}
+        <div className="border-t border-white/20 ">
+          {/* Row 1: Big Center Logo */}
+          <div className="flex justify-center">
+            <Image
+              src="/images/logo-white.png"
+              alt="LAFETCH Logo"
+              width={300}
+              height={100}
+              className="object-contain"
+            />
+          </div>
+
+          {/* Row 2: Copyright and Socials on same line */}
+          <div className="mt-6 flex flex-col md:flex-row justify-between items-center gap-6 md:gap-0">
+            <div className="text-sm text-gray-400 text-center md:text-left">
+              ©2025 Powered By and All Right Reserved to AS10 TECH-RETAIL
+              PRIVATE LIMITED
             </div>
           </div>
         </div>

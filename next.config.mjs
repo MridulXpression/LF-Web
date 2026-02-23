@@ -11,6 +11,10 @@ const nextConfig = {
         protocol: "https",
         hostname: "la-fetch.s3.ap-south-1.amazonaws.com",
       },
+       {
+        protocol: "https",
+        hostname: "via.placeholder.com",
+      },
     ],
   },
 };

@@ -21,6 +21,8 @@ export default function useFilterMetadata({
   const [brands, setBrands] = useState([]);
   const [sizes, setSizes] = useState([]);
   const [colors, setColors] = useState([]);
+  const [fits, setFits] = useState([]);
+  const [clothingTypes, setClothingTypes] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
@@ -40,15 +42,19 @@ export default function useFilterMetadata({
         setBrands((data.brands || []).map((b) => ({ id: b.id, name: b.name })));
         setSizes(data.sizes || []);
         setColors(data.colors || []);
+        setFits(data.fits || []);
+        setClothingTypes(data.clothingTypes || []);
       })
       .catch((err) => {
         setError(err);
         setBrands([]);
         setSizes([]);
         setColors([]);
+        setFits([]);
+        setClothingTypes([]);
       })
       .finally(() => setLoading(false));
   }, [superCatId, catId, subCatId, collectionId, brandIds]);
 
-  return { brands, sizes, colors, loading, error };
+  return { brands, sizes, colors,fits,clothingTypes, loading, error };
 }

@@ -14,14 +14,16 @@ import NavbarDropdown from "@/components/navbar/NavbarDropdown";
 import MobileNavbar from "@/components/navbar/MobileNavbar";
 import NavbarSearchComponent from "@/components/homepage/NavbarSearchComponent";
 import UserDropdown from "@/components/UserDrpdown";
-import QuickModal from "@/components/QuickModal";
+import QuickModal from "@/components/QuickModal"; 
 
+import usegetBrands from "@/hooks/useGetBrands";
 import useGetCategoriesHierarchy from "@/hooks/useCategoriesHirerarchy";
 import useBlog from "@/hooks/useBlog";
 import useCartSync from "@/hooks/useCartSync";
+import useBanner from "@/hooks/useBanner";
 
 // ---------- Menu Builder ----------
-const getMenuData = (categories) => {
+const getMenuData = (categories, brands ) => {
   const dynamicMenus =
     categories?.map((cat) => ({
       title: cat.name,
@@ -35,8 +37,18 @@ const getMenuData = (categories) => {
       })),
     })) || [];
 
+    const brandSections = [{
+      id:"all-brands",
+      heading:"All Brands",
+      items:
+      brands?.map((brand)=>({
+        id:brand.id,
+        name:brand.name,
+      }))||[],
+    }];
+
   return [
-    { title: "ALL BRANDS", sections: [] },
+    { title: "ALL BRANDS", sections: brandSections },
     ...dynamicMenus,
     { title: "BLOGS", sections: [] },
     { title: "NEWSLETTERS", sections: [] },
@@ -44,19 +56,21 @@ const getMenuData = (categories) => {
   ];
 };
 
+
 const Navbar = () => {
   const user = useSelector((state) => state.user.userInfo);
   const cartTotal = useSelector((state) => state.cart.totalItems);
-
+  const { brands } = usegetBrands();
   const dispatch = useDispatch();
   const router = useRouter();
   const pathname = usePathname();
+  const fetchBanner = useBanner("isCartBanner=false");
 
   // Sync cart with backend
   useCartSync();
 
   const categoriesHierarchy = useGetCategoriesHierarchy();
-  const menuData = getMenuData(categoriesHierarchy);
+  const menuData = getMenuData(categoriesHierarchy,brands);
 
   const filteredMenuData = menuData.filter((menu) => {
     // Hide TRACK ORDER if user is not logged in
@@ -294,8 +308,9 @@ const Navbar = () => {
           </div>
 
           {/* RIGHT */}
-          <div className="flex items-center gap-1 md:gap-4">
+          {/* <div className="flex items-center gap-1 md:gap-4">
             <div className="border-r border-black/50 w-28 h-8 flex items-center justify-center ">
+            <NavbarMiniCarousel banners={fetchBanner}/>
               <button
                 onClick={() => setIsQuickModalOpen(true)}
                 className="relative overflow-hidden cursor-pointer"
@@ -346,7 +361,69 @@ const Navbar = () => {
                 onClick={() => dispatch(openPhoneAuthModal("navbar"))}
               />
             )}
+          </div> */}
+          <div className="flex items-center gap-2 md:gap-4">
+          {/* Mini Carousel Removed add drop down of current event and its product */}
+          
+
+          {/* Quick Button */}
+          <div className="flex-shrink-0">
+            <button
+              onClick={() => setIsQuickModalOpen(true)}
+              className="relative overflow-hidden cursor-pointer"
+            >
+              <div className="md:block hidden pr-2">
+                <Image
+                  src="/images/quick.png"
+                  alt="Quick"
+                  width={100}
+                  height={30}
+                />
+              </div>
+              <div className="md:hidden pr-2">
+                <Image
+                  src="/images/quick.png"
+                  alt="Quick"
+                  width={80}
+                  height={40}
+                />
+              </div>
+              <div className="absolute inset-0 shine-overlay"></div>
+            </button>
           </div>
+
+          {/* Search */}
+          <Search
+            className="text-black cursor-pointer"
+            onClick={() => setShowSearchDropdown(true)}
+          />
+
+          {/* Wishlist */}
+          <Link href="/wishlist-boards">
+            <Heart className="text-black" />
+          </Link>
+
+          {/* Cart */}
+          <Link href="/checkout/bag" className="relative">
+            <ShoppingBag className="text-black" />
+            {cartTotal > 0 && (
+              <span className="absolute -top-1 -right-1 text-xs bg-red-500 text-white rounded-full px-1">
+                {cartTotal}
+              </span>
+            )}
+          </Link>
+
+          {/* User */}
+          {user ? (
+            <UserDropdown user={user} />
+          ) : (
+            <User
+              className="text-black"
+              onClick={() => dispatch(openPhoneAuthModal("navbar"))}
+            />
+          )}
+        </div>
+
         </div>
       </div>
 

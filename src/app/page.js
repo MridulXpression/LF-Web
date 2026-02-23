@@ -8,10 +8,13 @@ import HomeCarousel from "./(carousel)/Carousel";
 import TrendingBlog from "./(newsletter)/Newsletter";
 import PhoneAuthModal from "@/components/LoginModal";
 import Footer from "@/components/footer";
+import ScrollButtons from "@/components/homepage/ScrollButton";
+import AppDownloadModal from "@/components/AppDownloadModal";
 
 const page = () => {
   return (
     <div>
+      <AppDownloadModal/>
       <Navbar />
       <HomePage />
       <NewestAtLafetch />
@@ -21,6 +24,8 @@ const page = () => {
       <TrendingBlog />
       <PhoneAuthModal />
       <Footer />
+
+      <ScrollButtons/>
     </div>
   );
 };

@@ -82,6 +82,13 @@ const MenCollectionSection = () => {
                 </Link>
 
                 <div className="flex gap-2 sm:gap-3 ml-auto">
+                   {/* Explore All Button */}
+                  <button
+                    onClick={() => ( window.location.href = `/products?collectionId=${collection.id}&superCatId=1`)}
+                    className="px-3 py-1 border rounded text-black border-black hover:bg-stone-950 hover:text-white transition text-sm sm:text-base"
+                  >
+                    Explore All
+                  </button>
                   {/* Sort By Dropdown Component */}
                   <SortByDropdown
                     collectionId={collection.id}

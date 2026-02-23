@@ -22,13 +22,15 @@ export default function AnnouncementBar() {
                   <div className="h-8 w-px bg-neutral-100/30 mx-4" />
                   <div className="flex items-center gap-2 mx-8">
                     <div className="w-6 h-6 bg-zinc-300/20 rounded-full flex items-center justify-center">
-                      <Image
-                        src={item.iconUrl}
-                        alt={item.text}
-                        width={10}
-                        height={10}
-                        className="w-4 h-4"
-                      />
+                      {item.iconUrl && item.iconUrl.trim() !== "" && (
+                        <Image
+                          src={item.iconUrl}
+                          alt={item.text}
+                          width={10}
+                          height={10}
+                          className="w-4 h-4"
+                        />
+                      )}
                     </div>
                     <span className="text-neutral-100 text-[12px] font-[400] uppercase tracking-wide">
                       {item.text}

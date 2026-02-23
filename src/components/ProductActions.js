@@ -5,6 +5,9 @@ import { openWishlistModal } from "@/redux/slices/loginmodalSlice";
 import CreateBoardModal from "./WishlistBoardModal";
 import useAddProductToCart from "@/hooks/useAddProductToCart";
 import { addToCart } from "@/redux/slices/cartSlice";
+import { setBuyNowProduct } from "@/redux/slices/buyNowSlice";
+import { useRouter } from "next/navigation";
+import { text } from "@fortawesome/fontawesome-svg-core";
 
 const ProductActions = ({
   onAddToWishlist,
@@ -19,6 +22,7 @@ const ProductActions = ({
   const [showModal, setShowModal] = useState(false);
   const dispatch = useDispatch();
   const { addProductToCart, loading } = useAddProductToCart();
+  const router = useRouter();
 
   const handleWishlistClick = () => {
     setShowModal(true);
@@ -51,10 +55,27 @@ const ProductActions = ({
     }
   };
 
+  const handleBuyNow = async () =>{
+    if(!selectedVariant){
+      if(onMessage) onMessage({type:"error", text:"Please select a size"});
+      return;
+    }
+
+    dispatch(
+      setBuyNowProduct({
+        ...productData,
+        variantId:selectedVariant,
+        quantity:1,
+      })
+    );
+
+    router.push("/checkout/address");
+  }
+
   return (
     <>
       <div className="flex flex-col gap-3">
-        <button
+        <button 
           onClick={handleAddToBag}
           disabled={loading || !isInStock}
           className="w-full cursor-pointer bg-black text-white py-3.5 rounded font-bold text-sm   shadow-sm disabled:bg-gray-400 disabled:cursor-not-allowed"
@@ -67,6 +88,12 @@ const ProductActions = ({
           className="w-full cursor-pointer border border-gray-300 text-gray-900 py-3.5 rounded font-bold text-sm hover:border-gray-400 transition-colors"
         >
           WISHLIST
+        </button>
+
+        <button
+          onClick={handleBuyNow}
+ className="w-full cursor-pointer border border-gray-300 text-gray-900 py-3.5 rounded font-bold text-sm hover:border-gray-400 transition-colors">
+          BUY NOW
         </button>
       </div>
 

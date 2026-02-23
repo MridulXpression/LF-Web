@@ -712,7 +712,7 @@ const ProductModal = () => {
                   ? "Adding..."
                   : showSizeColorOptions
                     ? "Add to Bag"
-                    : "Add to Cart"}
+                    : "Add to Cart"} 
               </button>
 
               <button

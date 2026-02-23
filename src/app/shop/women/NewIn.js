@@ -61,6 +61,12 @@ const NewInSection = () => {
           </h2>
 
           <div className="flex gap-2 sm:gap-3 ml-auto">
+             <button
+              onClick={() => (window.location.href = "/products?superCatId=2")}
+              className="px-3 py-1 border rounded text-black border-black hover:bg-stone-950 hover:text-white transition text-sm sm:text-base"
+            >
+              Explore All
+            </button>
             {/* Sort By Dropdown Component */}
             <SortByDropdown
               collectionId="newin"

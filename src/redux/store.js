@@ -5,6 +5,7 @@ import cartReducer from "./slices/cartSlice";
 import userReducer from "./slices/userSlice";
 import modalReducer from "./slices/loginmodalSlice";
 import searchReducer from "./slices/searchSlice";
+import buyNowReducer from "./slices/buyNowSlice";
 import loadingReducer from "./slices/loadingSlice";
 import { combineReducers } from "redux";
 
@@ -14,6 +15,7 @@ const rootReducer = combineReducers({
   modal: modalReducer,
   search: searchReducer,
   loading: loadingReducer,
+  buyNow: buyNowReducer,
 });
 
 const persistConfig = {

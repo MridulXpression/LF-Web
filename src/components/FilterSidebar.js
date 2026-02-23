@@ -24,8 +24,20 @@ const FilterSidebar = ({
   toggleColorSelection,
   expandedColors,
   setExpandedColors,
+
+  fits,
+  selectedFits,
+  toggleFitSelection,
+  expandedFits,
+  setExpandedFits,
+  clothingTypes,
+  selectedClothingTypes,
+  toggleClothingTypeSelection,
+  expandedClothingTypes,
+  setExpandedClothingTypes,
+
   onApplyFilters,
-  onClearFilters,
+  onClearFilters, 
   isLoading,
 }) => {
   const filterRef = useRef(null);
@@ -62,7 +74,7 @@ const FilterSidebar = ({
       <div
         ref={filterRef}
         className={`
-          fixed lg:static top-0 left-0 h-full lg:h-auto 
+          uppercase fixed lg:static top-0 left-0 h-full lg:h-auto 
           w-72 bg-white p-6 border-r border-gray-400 overflow-y-auto z-50 md:z-8  
           transform transition-transform duration-300
           ${
@@ -76,18 +88,18 @@ const FilterSidebar = ({
           className="lg:hidden mb-4 text-black font-bold text-lg"
           onClick={() => setIsFilterOpen(false)}
         >
-          ✕ Close
+          ✕ CLOSE
         </button>
 
         <h2 className="text-xl font-bold mb-6 uppercase tracking-wide text-black">
-          Filters
+          FILTERS
         </h2>
 
         {/* Super Category Filter */}
         {superCategories && superCategories.length > 0 && (
           <div className="mb-8">
             <h3 className="text-lg font-semibold text-gray-800 mb-2">
-              Category
+              CATEGORY
             </h3>
             <div className="space-y-2">
               {superCategories.map((cat) => (
@@ -151,7 +163,7 @@ const FilterSidebar = ({
             {/* Min Price Input */}
             <div>
               <label className="text-sm text-gray-700 mb-1 block">
-                Min Price
+                MIN PRICE
               </label>
               <input
                 type="number"
@@ -165,7 +177,7 @@ const FilterSidebar = ({
             {/* Max Price Input */}
             <div>
               <label className="text-sm text-gray-700 mb-1 block">
-                Max Price
+                MAX PRICE
               </label>
               <input
                 type="number"
@@ -185,10 +197,63 @@ const FilterSidebar = ({
               disabled={isLoading}
               className="w-full bg-black text-white py-2 rounded cursor-pointer disabled:opacity-50 hover:bg-gray-800 transition-colors font-semibold text-sm"
             >
-              Apply Price Range
+              APPLY PRICE RANGE
             </button>
           </div>
         </div>
+         {fits?.length > 0 && (
+          <div className="mb-8">
+            <h3 className="text-lg font-semibold text-gray-800 mb-2">Fit</h3>
+            <div className="space-y-2">
+              {fits.slice(0, expandedFits ? fits.length : 5).map((fit) => (
+                <label key={fit} className="flex items-center space-x-2 text-sm text-gray-700">
+                  <input
+                    type="checkbox"
+                    checked={selectedFits.includes(fit)}
+                    onChange={() => toggleFitSelection(fit)}
+                    className="w-4 h-4 accent-black"
+                  />
+                  <span>{fit}</span>
+                </label>
+              ))}
+            </div>
+            {fits.length > 5 && (
+              <button
+                onClick={() => setExpandedFits(!expandedFits)}
+                className="mt-3 text-sm text-blue-600 hover:text-blue-800 font-semibold cursor-pointer"
+              >
+                {expandedFits ? "View Less" : "View More"}
+              </button>
+            )}
+          </div>
+        )}
+           {clothingTypes?.length > 0 && (
+          <div className="mb-8">
+            <h3 className="text-lg font-semibold text-gray-800 mb-2">Wear</h3>
+            <div className="space-y-2">
+              {clothingTypes.slice(0, expandedClothingTypes ? clothingTypes.length : 5).map((wear) => (
+                <label key={wear} className="flex items-center space-x-2 text-sm text-gray-700">
+                  <input
+                    type="checkbox"
+                    checked={selectedClothingTypes.includes(wear)}
+                    onChange={() => toggleClothingTypeSelection(wear)}
+                    className="w-4 h-4 accent-black"
+                  />
+                  <span>{wear}</span>
+                </label>
+              ))}
+            </div>
+            {clothingTypes.length > 5 && (
+              <button
+                onClick={() => setExpandedClothingTypes(!expandedClothingTypes)}
+                className="mt-3 text-sm text-blue-600 hover:text-blue-800 font-semibold cursor-pointer"
+              >
+                {expandedClothingTypes ? "View Less" : "View More"}
+              </button>
+            )}
+          </div>
+        )}
+
 
         {/* Size Filter */}
         {sizes && sizes.length > 0 && (
@@ -259,7 +324,7 @@ const FilterSidebar = ({
           disabled={isLoading}
           className="w-full border border-gray-300 py-2 rounded text-black cursor-pointer disabled:opacity-50"
         >
-          Clear Filters
+          CLEAR FILTERS
         </button>
       </div>
     </>

@@ -141,7 +141,26 @@ export default function NavbarSearchComponent({
                     Loading...
                   </div>
                 ) : suggestions.length > 0 ? (
-                  suggestions.map((suggestion, index) => (
+                  // suggestions.map((suggestion, index) => (
+                  //   <a
+                  //     key={index}
+                  //     href={`/products?key=${suggestion.keyword.trim()}`}
+                  //     onClick={() => handleSuggestionClick(suggestion.keyword)}
+                  //     className="h-auto sm:h-7 px-2 sm:px-2.5 py-1 sm:py-1.5 bg-zinc-100 rounded flex justify-between items-center gap-2 cursor-pointer hover:bg-zinc-200 transition-colors min-w-fit"
+                  //   >
+                  //     <div className="flex justify-center items-start gap-2.5">
+                  //       <div className="justify-start text-neutral-700 text-xs sm:text-sm font-normal">
+                  //         {suggestion.keyword}
+                  //       </div>
+                  //     </div>
+                  //     {/* <div className="text-neutral-500 text-xs sm:text-sm font-normal">
+                  //       {suggestion.count}
+                  //     </div> */}
+                  //   </a>
+                  // ))
+                  suggestions
+                  .filter((s) => s.keyword) // Only keep suggestions with a keyword
+                  .map((suggestion, index) => (
                     <a
                       key={index}
                       href={`/products?key=${suggestion.keyword.trim()}`}
@@ -153,7 +172,8 @@ export default function NavbarSearchComponent({
                           {suggestion.keyword}
                         </div>
                       </div>
-                      {/* <div className="text-neutral-500 text-xs sm:text-sm font-normal">
+                      {/* Optional: display count
+                      <div className="text-neutral-500 text-xs sm:text-sm font-normal">
                         {suggestion.count}
                       </div> */}
                     </a>

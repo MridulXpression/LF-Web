@@ -62,6 +62,15 @@ const TermsAndConditionsPage = () => {
         {
           text: `Products and services are for personal use only and not for resale. Lafetch shall not be responsible for manufacturer-related side effects.`,
         },
+        {
+          text: `Lafetch does not provide medical advice. Any beauty, skincare, health, or wellness-related information made available on the Platform is for informational purposes only.`,
+        },
+        {
+          text: `Users are advised to consult a certified medical or healthcare professional before using any health or cosmetic products purchased through the Platform.`,
+        },
+        {
+          text: `Lafetch shall not be liable for any adverse reactions, allergies, health complications, or misuse of products purchased through the Platform.`,
+        },
       ],
     },
 
@@ -81,6 +90,12 @@ const TermsAndConditionsPage = () => {
       content: [
         {
           text: `Prices and availability are subject to change. Lafetch reserves the right to cancel orders due to pricing errors.`,
+        },
+        {
+          text: `In the event of incorrect pricing due to technical error, typographical error, or system malfunction, Lafetch reserves the right to cancel the order and refund any amounts paid.`,
+        },
+        {
+          text: `If an order is cancelled after payment due to pricing error, the amount shall be refunded to the original mode of payment.`,
         },
         {
           subtitle: "7.2 Convenience Fee",
@@ -137,15 +152,31 @@ const TermsAndConditionsPage = () => {
       ],
     },
 
-    {
+   {
       id: "user-content",
-      title: "12. User Content",
+      title: "12. User Content & Conduct",
       content: [
         {
-          text: `All content uploaded by users is their responsibility. Lafetch does not endorse user-generated content and reserves the right to remove any content.`,
+          text: `Users are solely responsible for content posted, uploaded, or transmitted through the Platform.`,
+        },
+        {
+          text: `Users shall not post or transmit any content that:`,
+          subpoints: [
+            "Is unlawful, harmful, threatening, abusive, defamatory, obscene, or invasive of privacy.",
+            "Violates intellectual property rights of any third party.",
+            "Contains viruses, malware, or harmful code.",
+            "Encourages illegal activity.",
+            "Violates the sovereignty, integrity, or security of India.",
+            "Impersonates another person or entity.",
+            "Contains misleading or false information.",
+          ],
+        },
+        {
+          text: `Lafetch reserves the right to remove any user-generated content at its sole discretion and may suspend or terminate accounts for violations.`,
         },
       ],
     },
+
 
     {
       id: "ip",
@@ -228,8 +259,25 @@ const TermsAndConditionsPage = () => {
     },
 
     {
+      id: "arbitration",
+      title: "21. Dispute Resolution & Arbitration",
+      content: [
+        {
+          text: `Any dispute, controversy, or claim arising out of or relating to these Terms shall be resolved by arbitration in accordance with the Arbitration and Conciliation Act, 1996 of India.`,
+        },
+        {
+          text: `The seat and venue of arbitration shall be New Delhi, India. The proceedings shall be conducted in English. The arbitration shall be conducted by a sole arbitrator appointed by Lafetch.`,
+        },
+        {
+          text: `The award rendered by the arbitrator shall be final and binding on the parties. Nothing in this clause shall prevent Lafetch from seeking injunctive or equitable relief before a court of competent jurisdiction.`,
+        },
+      ],
+    },
+
+
+    {
       id: "security",
-      title: "21. Site Security",
+      title: "22. Site Security",
       content: [
         {
           text: `You are prohibited from violating Site security. Violations may lead to civil or criminal liability.`,
@@ -239,7 +287,7 @@ const TermsAndConditionsPage = () => {
 
     {
       id: "entire-agreement",
-      title: "22. Entire Agreement",
+      title: "23. Entire Agreement",
       content: [
         {
           text: `These Terms constitute the entire agreement and supersede all prior communications.`,
@@ -249,7 +297,7 @@ const TermsAndConditionsPage = () => {
 
     {
       id: "general",
-      title: "23. General",
+      title: "24. General",
       content: [
         {
           text: `Failure to enforce any provision shall not constitute waiver. Headings are for convenience only.`,
@@ -259,7 +307,7 @@ const TermsAndConditionsPage = () => {
 
     {
       id: "contact",
-      title: "24. Contact Information",
+      title: "25. Contact Information",
       content: [
         {
           text: `Email: info@la-fetch.com`,

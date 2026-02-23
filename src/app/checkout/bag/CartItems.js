@@ -167,7 +167,7 @@ const ShoppingCart = () => {
 
         dispatch(setCartItems(payload));
 
-        // Trigger cross-tab sync via localStorage
+        // Trigger cross-tab sync via localStorage 
         try {
           localStorage.setItem("lafetch_cart_updated", JSON.stringify(payload));
           // Clear immediately so it can be triggered again

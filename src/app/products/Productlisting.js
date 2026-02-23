@@ -46,11 +46,16 @@ const ShopByCategoriesPage = () => {
     const colors = searchParams.get("color");
     return colors ? colors.split(",") : [];
   }); // stores actual color values like "Black", "Red"
+  const [ selectedFits, setSelectedFits] =  useState([]);
+  const [ selectedClothingType, setSelectedClothingTypes] = useState([]);
+
 
   // ===== EXPAND / COLLAPSE UI STATE =====
   const [expandedBrands, setExpandedBrands] = useState(false);
   const [expandedSizes, setExpandedSizes] = useState(false);
   const [expandedColors, setExpandedColors] = useState(false);
+  const [ expandedFits, setExpandedFits ] = useState(false);
+  const [ expandedClothingTypes, setExpandedClothingTypes ] = useState(false);
 
   // ===== SORT STATE =====
   const [selectedSort, setSelectedSort] = useState(
@@ -65,6 +70,8 @@ const ShopByCategoriesPage = () => {
     brands,
     sizes,
     colors,
+    fits =[],
+    clothingTypes =[],
     loading: filterMetaLoading,
   } = useFilterMetadata({
     superCatId:
@@ -90,6 +97,8 @@ const ShopByCategoriesPage = () => {
     priceRange.max !== "10000" ||
     selectedSizes.length > 0 ||
     selectedColors.length > 0 ||
+    selectedFits.length>0||
+    selectedClothingType.length>0||
     selectedSort ||
     subCategoryId ||
     catId ||
@@ -137,9 +146,12 @@ const ShopByCategoriesPage = () => {
       sizes: selectedSizes,
       colors: selectedColors,
       collectionId: collectionId ? Number(collectionId) : null,
+      fits: selectedFits,
+      clothingTypes:selectedClothingType,
       key: searchQuery,
     });
   }, [
+
     selectedBrands,
     priceRange,
     selectedSort,
@@ -149,6 +161,8 @@ const ShopByCategoriesPage = () => {
     selectedSizes,
     selectedColors,
     collectionId,
+    selectedFits,
+    selectedClothingType,
     searchQuery,
     applyFilters,
   ]);
@@ -173,6 +187,8 @@ const ShopByCategoriesPage = () => {
     if (subCategoryId) params.set("subCatId", subCategoryId);
     if (catId) params.set("catId", catId);
     if (collectionId) params.set("collectionId", collectionId);
+    if (selectedFits.length) params.set("fit", selectedFits.join(","));
+    if (selectedClothingType.length) params.set("clothingType", selectedClothingType.join(","));
     if (searchQuery) params.set("key", encodeURIComponent(searchQuery));
 
     router.push(`/products?${params.toString()}`);
@@ -185,6 +201,8 @@ const ShopByCategoriesPage = () => {
     setPriceRange({ min: "0", max: "10000" });
     setSelectedSizes([]);
     setSelectedColors([]);
+    setSelectedFits([]);
+    setSelectedClothingTypes([]);
     setSelectedSort("");
     router.push("/products");
   };

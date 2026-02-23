@@ -2,169 +2,287 @@
 import React from "react";
 
 const ShippingDeliveryPolicyPage = () => {
+  // const sections = [
+  //   {
+  //     id: "introduction",
+  //     title: "1. Introduction",
+  //     content: [
+  //       {
+  //         text: `This Shipping & Delivery Policy (“Policy”) governs the shipping, handling, and delivery of orders placed on the Lafetch e-commerce platform (“Platform”), owned and operated by AS10 Techretail Pvt Ltd (“Company”, “we”, “us”, or “our”).`,
+  //       },
+  //       {
+  //         text: `Lafetch does not purchase, own, or store inventory. It acts as a facilitator, enabling seamless delivery of products by coordinating logistics between brands, their stores/warehouses, and customers.`,
+  //       },
+  //       {
+  //         text: `This Policy forms an integral part of the Terms & Conditions and is legally binding on all users (“User”, “Customer”, “you”, or “your”) of the Platform. By placing an order on Lafetch, you agree to this Policy.`,
+  //       },
+  //     ],
+  //   },
+
+  //   {
+  //     id: "shipping-services",
+  //     title: "2. Shipping Services",
+  //     content: [
+  //       {
+  //         text: `Lafetch facilitates the shipping of all orders through its designated logistics partners. All deliveries, including standard and express shipments, are handled exclusively by Lafetch.`,
+  //       },
+  //       {
+  //         subtitle: "2.1 Standard Shipping",
+  //         subpoints: [
+  //           "(a) Nationwide shipping across India to serviceable pin codes.",
+  //           "(b) Estimated delivery: 10–15 business days from order confirmation.",
+  //           "(c) Orders dispatched within one week excluding Sundays and public holidays.",
+  //           "(d) Delivery timelines may vary due to logistics, weather, or location.",
+  //         ],
+  //       },
+  //       {
+  //         subtitle: "2.2 Express Delivery – LAFETCH QUICK",
+  //         subpoints: [
+  //           "(a) Express Delivery available for select products and locations within 1–4 hours.",
+  //           "(b) Eligibility displayed at checkout based on serviceable zones.",
+  //           "(c) Orders must be placed between 10 AM – 6 PM.",
+  //           "(d) One reattempt will be made if delivery fails due to Customer unavailability.",
+  //         ],
+  //       },
+  //       {
+  //         subtitle: "2.3 Shipping Charges",
+  //         subpoints: [
+  //           "(a) Standard shipping charges vary by location, weight, and courier fees.",
+  //           "(b) Express Delivery charges are additional and non-refundable once dispatched.",
+  //         ],
+  //       },
+  //       {
+  //         subtitle: "2.4 Refusal of Delivery & Reattempts",
+  //         subpoints: [
+  //           "(a) Two (2) reattempts will be made if the Customer refuses delivery.",
+  //           "(b) Continued refusal results in forcible return and a fine of 10%–20% of order value.",
+  //         ],
+  //       },
+  //     ],
+  //   },
+
+  //   {
+  //     id: "order-tracking",
+  //     title: "3. Order Tracking & Delivery Timelines",
+  //     content: [
+  //       {
+  //         subtitle: "3.1 Order Tracking",
+  //         subpoints: [
+  //           "(a) Tracking link shared via email/SMS upon dispatch.",
+  //           "(b) Real-time tracking available in the “My Orders” section.",
+  //           "(c) Support available at customersupport@la-fetch.com.",
+  //         ],
+  //       },
+  //       {
+  //         subtitle: "3.2 Delivery Delays & Exceptional Circumstances",
+  //         subpoints: [
+  //           "(a) Natural disasters or force majeure events.",
+  //           "(b) Incorrect address provided by the Customer.",
+  //           "(c) Courier operational or regulatory issues.",
+  //           "(d) High order volumes during sales or festive periods.",
+  //           "(e) Delays from the brand’s side.",
+  //         ],
+  //       },
+  //     ],
+  //   },
+
+  //   {
+  //     id: "undeliverable",
+  //     title: "4. Undeliverable Orders",
+  //     content: [
+  //       {
+  //         subtitle: "4.1 Reasons for Undeliverable Orders",
+  //         subpoints: [
+  //           "(a) Incorrect, incomplete, or unserviceable address.",
+  //           "(b) Customer unavailable or refusal despite attempts.",
+  //           "(c) Invalid contact details.",
+  //         ],
+  //       },
+  //       {
+  //         subtitle: "4.2 Handling of Undelivered Orders",
+  //         subpoints: [
+  //           "(a) Order returned to brand warehouse or Lafetch holding unit.",
+  //           "(b) Customer notified via email/SMS.",
+  //           "(c) Refunds may deduct shipping and return logistics costs.",
+  //         ],
+  //       },
+  //     ],
+  //   },
+
+  //   {
+  //     id: "restrictions",
+  //     title: "5. Shipping Restrictions",
+  //     content: [
+  //       {
+  //         subpoints: [
+  //           "(a) Lafetch ships only within India to serviceable pin codes.",
+  //           "(b) Certain products may have shipping restrictions due to regulations or product nature.",
+  //         ],
+  //       },
+  //     ],
+  //   },
+
+  //   {
+  //     id: "modification-cancellation",
+  //     title: "6. Modifications & Cancellations",
+  //     content: [
+  //       {
+  //         subpoints: [
+  //           "(a) Shipping details cannot be modified once pickup is completed.",
+  //           "(b) Orders can be canceled only before pickup as per Cancellation Policy.",
+  //         ],
+  //       },
+  //     ],
+  //   },
+
+  //   {
+  //     id: "support",
+  //     title: "7. Customer Support & Escalations",
+  //     content: [
+  //       {
+  //         text: `For shipping-related queries, contact Lafetch Support at customersupport@la-fetch.com.`,
+  //       },
+  //     ],
+  //   },
+
+  //   {
+  //     id: "amendments",
+  //     title: "8. Amendments to the Shipping Policy",
+  //     content: [
+  //       {
+  //         text: `Lafetch reserves the right to modify this Policy at any time. Changes are effective immediately upon posting.`,
+  //       },
+  //     ],
+  //   },
+
+  //   {
+  //     id: "law",
+  //     title: "9. Governing Law & Dispute Resolution",
+  //     content: [
+  //       {
+  //         text: `This Policy shall be governed by Indian law. Disputes shall be subject to the jurisdiction of courts in New Delhi and/or Haryana.`,
+  //       },
+  //     ],
+  //   },
+  // ];
   const sections = [
-    {
-      id: "introduction",
-      title: "1. Introduction",
-      content: [
-        {
-          text: `This Shipping & Delivery Policy (“Policy”) governs the shipping, handling, and delivery of orders placed on the Lafetch e-commerce platform (“Platform”), owned and operated by AS10 Techretail Pvt Ltd (“Company”, “we”, “us”, or “our”).`,
-        },
-        {
-          text: `Lafetch does not purchase, own, or store inventory. It acts as a facilitator, enabling seamless delivery of products by coordinating logistics between brands, their stores/warehouses, and customers.`,
-        },
-        {
-          text: `This Policy forms an integral part of the Terms & Conditions and is legally binding on all users (“User”, “Customer”, “you”, or “your”) of the Platform. By placing an order on Lafetch, you agree to this Policy.`,
-        },
-      ],
-    },
+  {
+    id: "introduction",
+    title: "1. Introduction",
+    content: [
+      {
+        text: `This Shipping & Delivery Policy (“Shipping Policy”) governs the shipment and delivery of products purchased by customers (“Customers”) through the LaFetch platform, operated by AS10 Techretail Private Limited (“LaFetch”, “Platform”, “we”, “us”).`,
+      },
+      {
+        text: `LaFetch operates as an intermediary marketplace platform facilitating logistics and delivery on behalf of independent brands (“Brands”).`,
+      },
+    ],
+  },
 
-    {
-      id: "shipping-services",
-      title: "2. Shipping Services",
-      content: [
-        {
-          text: `Lafetch facilitates the shipping of all orders through its designated logistics partners. All deliveries, including standard and express shipments, are handled exclusively by Lafetch.`,
-        },
-        {
-          subtitle: "2.1 Standard Shipping",
-          subpoints: [
-            "(a) Nationwide shipping across India to serviceable pin codes.",
-            "(b) Estimated delivery: 10–15 business days from order confirmation.",
-            "(c) Orders dispatched within one week excluding Sundays and public holidays.",
-            "(d) Delivery timelines may vary due to logistics, weather, or location.",
-          ],
-        },
-        {
-          subtitle: "2.2 Express Delivery – LAFETCH QUICK",
-          subpoints: [
-            "(a) Express Delivery available for select products and locations within 1–4 hours.",
-            "(b) Eligibility displayed at checkout based on serviceable zones.",
-            "(c) Orders must be placed between 10 AM – 6 PM.",
-            "(d) One reattempt will be made if delivery fails due to Customer unavailability.",
-          ],
-        },
-        {
-          subtitle: "2.3 Shipping Charges",
-          subpoints: [
-            "(a) Standard shipping charges vary by location, weight, and courier fees.",
-            "(b) Express Delivery charges are additional and non-refundable once dispatched.",
-          ],
-        },
-        {
-          subtitle: "2.4 Refusal of Delivery & Reattempts",
-          subpoints: [
-            "(a) Two (2) reattempts will be made if the Customer refuses delivery.",
-            "(b) Continued refusal results in forcible return and a fine of 10%–20% of order value.",
-          ],
-        },
-      ],
-    },
+  {
+    id: "shipping-coverage",
+    title: "2. Shipping Coverage",
+    content: [
+      {
+        text: `LaFetch delivers products across India, subject to serviceability of the customer’s pin code by authorised logistics partners. Certain locations may not be serviceable due to operational or regulatory constraints.`,
+      },
+    ],
+  },
 
-    {
-      id: "order-tracking",
-      title: "3. Order Tracking & Delivery Timelines",
-      content: [
-        {
-          subtitle: "3.1 Order Tracking",
-          subpoints: [
-            "(a) Tracking link shared via email/SMS upon dispatch.",
-            "(b) Real-time tracking available in the “My Orders” section.",
-            "(c) Support available at customersupport@la-fetch.com.",
-          ],
-        },
-        {
-          subtitle: "3.2 Delivery Delays & Exceptional Circumstances",
-          subpoints: [
-            "(a) Natural disasters or force majeure events.",
-            "(b) Incorrect address provided by the Customer.",
-            "(c) Courier operational or regulatory issues.",
-            "(d) High order volumes during sales or festive periods.",
-            "(e) Delays from the brand’s side.",
-          ],
-        },
-      ],
-    },
+  {
+    id: "shipping-partners",
+    title: "3. Shipping Partners",
+    content: [
+      {
+        text: `Orders are shipped using LaFetch-authorised third-party logistics partners. Delivery timelines and serviceability depend on partner networks and operational conditions.`,
+      },
+    ],
+  },
 
-    {
-      id: "undeliverable",
-      title: "4. Undeliverable Orders",
-      content: [
-        {
-          subtitle: "4.1 Reasons for Undeliverable Orders",
-          subpoints: [
-            "(a) Incorrect, incomplete, or unserviceable address.",
-            "(b) Customer unavailable or refusal despite attempts.",
-            "(c) Invalid contact details.",
-          ],
-        },
-        {
-          subtitle: "4.2 Handling of Undelivered Orders",
-          subpoints: [
-            "(a) Order returned to brand warehouse or Lafetch holding unit.",
-            "(b) Customer notified via email/SMS.",
-            "(c) Refunds may deduct shipping and return logistics costs.",
-          ],
-        },
-      ],
-    },
+  {
+    id: "processing-dispatch",
+    title: "4. Order Processing & Dispatch",
+    content: [
+      {
+        text: `Orders are generally processed within 1–3 business days from confirmation, unless otherwise stated. Dispatch timelines may vary depending on product category, brand fulfilment timelines, Made-to-Order status, and availability.`,
+      },
+    ],
+  },
 
-    {
-      id: "restrictions",
-      title: "5. Shipping Restrictions",
-      content: [
-        {
-          subpoints: [
-            "(a) Lafetch ships only within India to serviceable pin codes.",
-            "(b) Certain products may have shipping restrictions due to regulations or product nature.",
-          ],
-        },
-      ],
-    },
+  {
+    id: "delivery-timelines",
+    title: "5. Delivery Timelines",
+    content: [
+      {
+        subpoints: [
+          "Standard Products: 3–7 business days.",
+          "Express / Priority Orders: As displayed at checkout.",
+          "Made-to-Order Products: 15–30 business days or as specified.",
+        ],
+      },
+    ],
+  },
 
-    {
-      id: "modification-cancellation",
-      title: "6. Modifications & Cancellations",
-      content: [
-        {
-          subpoints: [
-            "(a) Shipping details cannot be modified once pickup is completed.",
-            "(b) Orders can be canceled only before pickup as per Cancellation Policy.",
-          ],
-        },
-      ],
-    },
+  {
+    id: "shipping-charges",
+    title: "6. Shipping Charges",
+    content: [
+      {
+        text: `Shipping charges, if applicable, will be disclosed at checkout. Promotional campaigns may include free shipping subject to communicated terms.`,
+      },
+    ],
+  },
 
-    {
-      id: "support",
-      title: "7. Customer Support & Escalations",
-      content: [
-        {
-          text: `For shipping-related queries, contact Lafetch Support at customersupport@la-fetch.com.`,
-        },
-      ],
-    },
+  {
+    id: "cod",
+    title: "7. Cash on Delivery (COD)",
+    content: [
+      {
+        text: `COD availability depends on pin code serviceability, order value, and brand-level restrictions. LaFetch reserves the right to disable COD for certain orders.`,
+      },
+    ],
+  },
 
-    {
-      id: "amendments",
-      title: "8. Amendments to the Shipping Policy",
-      content: [
-        {
-          text: `Lafetch reserves the right to modify this Policy at any time. Changes are effective immediately upon posting.`,
-        },
-      ],
-    },
+  {
+    id: "delivery-failure",
+    title: "8. Delivery Attempts & Failure",
+    content: [
+      {
+        text: `Logistics partners typically attempt delivery twice. Failed deliveries due to incorrect address, unavailability, or refusal may result in return-to-origin and cancellation, with applicable deductions.`,
+      },
+    ],
+  },
 
-    {
-      id: "law",
-      title: "9. Governing Law & Dispute Resolution",
-      content: [
-        {
-          text: `This Policy shall be governed by Indian law. Disputes shall be subject to the jurisdiction of courts in New Delhi and/or Haryana.`,
-        },
-      ],
-    },
-  ];
+  {
+    id: "force-majeure",
+    title: "9. Delays & Force Majeure",
+    content: [
+      {
+        text: `LaFetch is not liable for delays caused by events beyond reasonable control, including natural disasters, government restrictions, strikes, pandemics, or logistics disruptions.`,
+      },
+    ],
+  },
+
+  {
+    id: "ownership",
+    title: "10. Ownership & Risk",
+    content: [
+      {
+        text: `Risk of loss transfers upon successful delivery. Title remains with the Brand until delivery.`,
+      },
+    ],
+  },
+
+  {
+    id: "support",
+    title: "11. Customer Support",
+    content: [
+      {
+        text: `For shipping-related queries, customers may contact customersupport@la-fetch.com. Responses are provided within 24–48 business hours.`,
+      },
+    ],
+  },
+];
 
   return (
     <div className="min-h-screen bg-white">

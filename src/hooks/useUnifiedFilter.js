@@ -24,6 +24,8 @@ const useUnifiedFilter = () => {
       colors = [],
       collectionId = null,
       key = null,
+      fits=[],
+      clothingTypes=[],
       pageNumber = 1,
       isLoadMore = false,
     }) => {
@@ -55,6 +57,12 @@ const useUnifiedFilter = () => {
         }
         if (collectionId) params.append("collectionId", collectionId);
         if (key) params.append("key", key);
+        if(fits && fits.length>0){
+          params.append("fit",fits.join(","));
+        }
+        if(clothingTypes && clothingTypes.length>0){
+          params.append("clothingType",clothingTypes.join(","));
+        }
 
         // Add page parameter
         params.append("page", pageNumber);
@@ -94,6 +102,8 @@ const useUnifiedFilter = () => {
               colors,
               collectionId,
               key,
+              fits,
+              clothingTypes,
             };
           }
 

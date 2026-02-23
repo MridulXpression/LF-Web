@@ -8,6 +8,7 @@ import BannerGrid from "@/components/collections/BannerGrid";
 import useSortProducts from "@/hooks/useSortProducts";
 import SortByDropdown from "@/components/SortByDropdown";
 import Link from "next/link";
+import { ArrowRight } from "lucide-react";
 
 const TrendingNowSection = () => {
   const {
@@ -65,10 +66,27 @@ const TrendingNowSection = () => {
     );
   }
 
+  // Reorder collections so priority sections appear first
+  const priorityOrder = ["Trending Now", "Celebrity Edit"];
+
+  const sortedCollections = [...(collections || [])].sort((a, b) => {
+    const aIndex = priorityOrder.indexOf(a.name);
+    const bIndex = priorityOrder.indexOf(b.name);
+
+    if (aIndex !== -1 && bIndex !== -1) {
+      return aIndex - bIndex;
+    }
+
+    if (aIndex !== -1) return -1;
+    if (bIndex !== -1) return 1;
+
+    return 0; // keep original API order for others
+  });
+
   //product collection now showing according to the position
   return (
     <div className="bg-white">
-      {collections?.map((collection, collectionIndex) => {
+      {sortedCollections?.map((collection, collectionIndex) => {
         // Get banners from collection data
         const banners = collection.banners || [];
         const hasProducts =
@@ -122,7 +140,25 @@ const TrendingNowSection = () => {
                   {collection.name}
                 </h1>
               </Link>
-              <div className="flex gap-2 sm:gap-3 ml-auto">
+              <div className="flex gap-3 sm:gap-4 ml-auto items-center">
+                <Link
+                  href={`/products?collectionId=${collection.id}`}
+                  className="group flex items-center gap-2 px-3 py-2 
+                            rounded-md outline outline-1 outline-black 
+                            text-black transition hover:bg-black hover:text-white"
+                >
+                  <span className="text-[10px] sm:text-xs uppercase font-semibold tracking-wide">
+                    View All
+                  </span>
+
+                  <div className="w-5 h-5 rounded-full bg-black 
+                                  flex items-center justify-center 
+                                  transition group-hover:bg-white">
+                    <ArrowRight className="w-3 h-3 text-white 
+                                          transition group-hover:text-black 
+                                          rotate-[-45deg]" />
+                  </div>
+                </Link>
                 {/* Sort By Dropdown Component */}
                 <SortByDropdown
                   collectionId={collection.id}

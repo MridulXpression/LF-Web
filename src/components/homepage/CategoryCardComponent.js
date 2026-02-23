@@ -65,20 +65,26 @@ export default function ShopByCategory({ categories: externalCategories }) {
             <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent opacity-60 sm:opacity-40 md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-500" />
 
             {/* Category Label */}
-            <div
-              className={`absolute bottom-4 sm:bottom-6 md:bottom-8 lg:bottom-10 left-4 sm:left-6 md:left-8 flex items-center gap-1 md:gap-2 transition-all duration-500 md:opacity-0 md:translate-y-4 ${
+            {/* <div
+              className={`absolute bottom-4 sm:bottom-6 md:bottom-8 lg:bottom-10 left-4 sm:left-6 md:left-8 flex items-center gap-1 md:gap-2 transition-all duration-500 
+                md:opacity-0 md:translate-y-4 ${
                 hoveredIndex === index
                   ? "md:opacity-100 md:translate-y-0 opacity-100"
                   : "opacity-100 md:group-hover:opacity-100 md:group-hover:translate-y-0"
-              }`}
+              }`
+            }
+            > */}
+            <div
+              className={`absolute bottom-4 sm:bottom-6 md:bottom-8 lg:bottom-10 left-4 sm:left-6 md:left-8 flex items-center gap-1 md:gap-2 transition-all duration-500`
+            }
             >
-              <h2 className="text-neutral-100 text-[10px] md:text-3xl  font-semibold uppercase">
+              <h2 className="text-black text-[10px] md:text-3xl  font-semibold uppercase">
                 {category.name}
               </h2>
 
               {/* Arrow is now visual-only */}
               <div className="w-5  md:w-10 h-5  md:h-10 rounded-full flex items-center justify-center flex-shrink-0">
-                <ArrowRight className="w-4 md:w-6 h-4 md:h-6 text-white" />
+                <ArrowRight className="w-4 md:w-6 h-4 md:h-6 text-black" />
               </div>
             </div>
           </Link>

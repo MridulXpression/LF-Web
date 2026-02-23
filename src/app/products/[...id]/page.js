@@ -432,7 +432,7 @@ export default function ProductPage({ params }) {
                 </div>
               </div>
             )}
-
+ 
             {/* Display message below Add to Bag */}
             {message && (
               <div
