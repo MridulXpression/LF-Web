@@ -1,5 +1,5 @@
 import { useState, useCallback, useRef } from "react";
-import axiosHttp from "@/utils/axioshttp";
+import axios from "axios";
 
 const useUnifiedFilter = () => {
   const [products, setProducts] = useState([]);
@@ -59,8 +59,8 @@ const useUnifiedFilter = () => {
         // Add page parameter
         params.append("page", pageNumber);
 
-        const response = await axiosHttp.post(
-          `/filter-products?${params.toString()}`,
+        const response = await axios.post(
+          `${process.env.NEXT_PUBLIC_BASE_URL}/filter-products?${params.toString()}`,
         );
 
         if (response?.status === 200) {

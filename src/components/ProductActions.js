@@ -39,7 +39,13 @@ const ProductActions = ({
     }
 
     const price = productData?.basePrice || 0;
-    const result = await addProductToCart(productId, quantity, price);
+    const productTitle = productData?.title || "Product";
+    const result = await addProductToCart(
+      productId,
+      quantity,
+      price,
+      productTitle,
+    );
 
     const variantId = localStorage.getItem("selectedVariantId");
 

@@ -12,6 +12,7 @@ import axiosHttp from "@/utils/axioshttp";
 import Footer from "@/components/footer";
 import { getParsedSelectedOptions } from "@/utils/variantUtils";
 import WriteReviewModal from "@/components/WriteReviewModal";
+import axios from "axios";
 
 const extractSizesFromVariants = (variants) => {
   if (!variants || !Array.isArray(variants)) return [];
@@ -218,7 +219,10 @@ export default function ProductPage({ params }) {
       if (!variantId || !pin || pin.length !== 6) return;
 
       const payload = { variantId, deliveryPostalCode: pin };
-      const response = await axiosHttp.post("/check-serviceability", payload);
+      const response = await axios.post(
+        `${process.env.NEXT_PUBLIC_BASE_URL}/check-serviceability`,
+        payload,
+      );
 
       if (response?.data?.status === 200 && response?.data?.data) {
         const { courier, estimatedDate, estimatedDays } = response.data.data;

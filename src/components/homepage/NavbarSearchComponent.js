@@ -5,8 +5,8 @@ import { X, Search, ArrowUpRight } from "lucide-react";
 import { useSelector, useDispatch } from "react-redux";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import axiosHttp from "@/utils/axioshttp";
 import { addSearch } from "@/redux/slices/searchSlice";
+import axios from "axios";
 
 export default function NavbarSearchComponent({
   searchQuery,
@@ -31,8 +31,8 @@ export default function NavbarSearchComponent({
     const timer = setTimeout(async () => {
       setIsLoadingSuggestions(true);
       try {
-        const res = await axiosHttp.post(
-          `product-suggestion?key=${searchQuery}`,
+        const res = await axios.post(
+          `${process.env.NEXT_PUBLIC_BASE_URL}/product-suggestion?key=${searchQuery}`,
         );
         setSuggestions(res.data.data || []);
       } catch (error) {
@@ -66,7 +66,7 @@ export default function NavbarSearchComponent({
   if (!isOpen) return null;
 
   return (
-    <div className="w-full max-h-screen bg-white z-[1000] fixed top-12 left-0">
+    <div className="w-full max-h-screen bg-transparent z-[1000] fixed top-12 left-0">
       {/* Search Input Area */}
       <div className="w-full h-auto min-h-20 md:h-24 px-4 sm:px-8 md:px-12 lg:px-16 py-4 md:py-7 bg-white inline-flex justify-between items-center">
         <div className="flex-1 flex justify-start items-center gap-4 md:gap-8 lg:gap-32">
@@ -130,12 +130,16 @@ export default function NavbarSearchComponent({
       >
         {/* Left Side - Suggestions */}
         <div className="flex-1 inline-flex flex-col justify-start items-start gap-1.5 max-w-4xl">
-          {searchQuery.trim() && suggestions.length > 0 ? (
+          {searchQuery.trim() &&
+          (suggestions.length > 0 || isLoadingSuggestions) ? (
             // Show only suggestions when typing
             <div className="w-full inline-flex flex-col justify-start items-start gap-0.3">
               {isLoadingSuggestions ? (
-                <div className="justify-start text-neutral-700 text-sm font-normal py-2 ">
-                  Loading...
+                <div className="w-full flex items-center py-4">
+                  <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-gray-900"></div>
+                  <span className="ml-3 text-neutral-500 text-sm font-normal">
+                    Searching...
+                  </span>
                 </div>
               ) : (
                 suggestions.map((suggestion, index) => (
