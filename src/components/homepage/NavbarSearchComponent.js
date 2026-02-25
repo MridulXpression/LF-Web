@@ -5,8 +5,10 @@ import { X, Search } from "lucide-react";
 import { useSelector, useDispatch } from "react-redux";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
+import Link from "next/link";
 import axiosHttp from "@/utils/axioshttp";
 import { addSearch } from "@/redux/slices/searchSlice";
+import useCollection from "@/hooks/useCollection";
 
 export default function NavbarSearchComponent({
   searchQuery,
@@ -23,6 +25,14 @@ export default function NavbarSearchComponent({
   const [isLoadingSuggestions, setIsLoadingSuggestions] = useState(false);
 
   const trendingSearches = ["Valentines fits", "For Office", "Vacation Wear"];
+  const {data:collections} = useCollection("displayFor=homepage");
+
+  const trendingCollection = collections?.find(
+    (col)=>col.name ==="Trending Now"
+  );
+
+  const trendingProducts = trendingCollection?.products?.slice(0,4)||[];
+
 
   // Fetch suggestions on search query change
   useEffect(() => {
@@ -230,41 +240,35 @@ export default function NavbarSearchComponent({
           </div>
         </div>
 
-        {/* Product Images */}
-        <div className="hidden lg:flex justify-start items-center gap-2">
-          <div className="w-[110px] h-[130px] relative rounded-xl overflow-hidden">
-            <Image
-              src="/images/search1.png"
-              alt="Product 1"
-              fill
-              className="object-fill"
-            />
+        {/* Trending Now Collections Preview */}
+        {!searchQuery && trendingCollection && (
+        <Link
+          href={`/products?collectionId=${trendingCollection.id}`}
+          onClick={() => setIsOpen(false)}
+          className="hidden lg:flex justify-start items-center gap-3 group"
+        >
+          {trendingProducts.map((product) => (
+            <div
+              key={product.id}
+              className="w-[110px] h-[130px] relative rounded-xl overflow-hidden"
+            >
+              <Image
+                src={
+                  product.imageUrls?.[0] ||
+                  product.image 
+                }
+                alt={product.title || product.name}
+                fill
+                className="object-cover transition-transform duration-300 group-hover:scale-105"
+              />
+            </div>
+          ))}
+
+          <div className="absolute bottom-2 left-2 text-white text-xs font-semibold">
+            POPULAR CHOICES
           </div>
-          <div className="w-[110px] h-[130px] relative rounded-xl overflow-hidden">
-            <Image
-              src="/images/search2.png"
-              alt="Product 2"
-              fill
-              className="object-fill"
-            />
-          </div>
-          <div className="w-[110px] h-[130px] relative rounded-xl  overflow-hidden">
-            <Image
-              src="/images/search3.png"
-              alt="Product 3"
-              fill
-              className="object-fill"
-            />
-          </div>
-          <div className="w-[110px] h-[130px] relative rounded-xl overflow-hidden">
-            <Image
-              src="/images/search4.png"
-              alt="Product 4"
-              fill
-              className="object-fill"
-            />
-          </div>
-        </div>
+        </Link>
+      )}
       </div>
     </div>
   );

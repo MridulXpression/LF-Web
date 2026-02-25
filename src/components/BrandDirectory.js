@@ -225,8 +225,8 @@ const BrandDirectory = ({ brands }) => {
                                         return (
                                           <Link
                                             href={`/products/${product.id}`}
-                                            target="_blank"
-                                            rel="noopener noreferrer"
+                                           // target="_blank"
+                                           // rel="noopener noreferrer"
                                             key={product.id}
                                             className="bg-white border border-gray-200 rounded-lg overflow-hidden hover:shadow-md transition-shadow cursor-pointer group"
                                           >

@@ -4,7 +4,7 @@ import { X, Apple, Play } from "lucide-react";
 import { FaAppStore } from "react-icons/fa";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { BiLogoPlayStore } from "react-icons/bi";
-
+import Image from "next/image";
 const AppDownloadModal = () => {
   const [isOpen, setIsOpen] = useState(false);
 
@@ -45,8 +45,9 @@ const AppDownloadModal = () => {
         {/* Content */}
         <div className="text-center space-y-6">
 
-          <h2 className="md:text-3xl  tracking-wide uppercase">
-            Experience LaFetch
+          <h2 className="md:text-4xl font-semibold  tracking-wide uppercase flex justify-center gap-2">
+            Experience 
+            <Image src="/images/logo-black.svg"alt="LaFetch Logo" width={140}height={40}className="object-contain"/>
           </h2>
 
           <p className="text-sm md:text-base leading-relaxed max-w-sm mx-auto uppercase">

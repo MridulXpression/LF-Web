@@ -1,6 +1,6 @@
 "use client";
 import React from "react";
-
+import Footer from "@/components/footer";
 const CancellationReturnExchangeRefundPolicyPage = () => {
    const sections = [
     {
@@ -170,6 +170,7 @@ const CancellationReturnExchangeRefundPolicyPage = () => {
           </section>
         ))}
       </div>
+      <Footer />
     </div>
   );
 };

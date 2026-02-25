@@ -1,6 +1,6 @@
 "use client";
 import React from "react";
-
+import Footer from "@/components/footer";
 const AboutUsPage = () => {
   const sections = [
     {
@@ -79,6 +79,7 @@ than ever before.`,
           ))}
         </div>
       </div>
+      <Footer />
     </div>
   );
 };

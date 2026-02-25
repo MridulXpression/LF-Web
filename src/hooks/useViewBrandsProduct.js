@@ -8,6 +8,7 @@ const useGetBrandsProducts = (query) => {
   const getBrandsProducts = async () => {
     try {
       const endPoint = `${endPoints.getBrandsProducts}/${query}`;
+      
       const result = await axiosHttp.get(endPoint);
 
       if (result?.status === 200) {

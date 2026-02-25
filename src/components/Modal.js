@@ -537,12 +537,12 @@ const ProductModal = () => {
             >
               <Share2 className="w-4 h-4 text-gray-700" />
             </button>
-            <div className="relative w-full h-70 md:h-[400px]">
+            <div className="relative w-full h-[320px] md:h-[400px]">
               <Image
                 src={currentImage}
                 alt={product?.title || "product-img"}
                 fill
-                className="object-fill"
+                className="object-contain"
               />
             </div>
             {/* Navigation Arrows */}
@@ -620,8 +620,8 @@ const ProductModal = () => {
               </p>
               <Link
                 href={`/products/${product.id}`}
-                target="_blank"
-                rel="noopener noreferrer"
+                //target="_blank"
+                //rel="noopener noreferrer"
                 onClick={() => {
                   localStorage.setItem("ProductId", product.id);
                   handleClose();

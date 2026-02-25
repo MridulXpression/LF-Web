@@ -41,8 +41,8 @@ const ProductCard = ({ images, title, price, id, product, brand, mrp }) => {
         <div className="relative bg-gray-50 overflow-hidden group w-[160px] h-[240px] md:w-[300px] md:h-[380px]">
           <Link
             href={`/products/${id}`}
-            target="_blank"
-            rel="noopener noreferrer"
+           // target="_blank"
+           // rel="noopener noreferrer"
             onClick={() => localStorage.setItem("ProductId", id)}
           >
             <Image

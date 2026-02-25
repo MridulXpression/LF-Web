@@ -72,7 +72,8 @@ const useUnifiedFilter = () => {
         );
 
         if (response?.status === 200) {
-          const newProducts = response?.data?.data?.products || [];
+          //const newProducts = response?.data?.data?.products || [];
+          const newProducts = response?.data?.data || [];
           const pagination = response?.data?.data?.pagination || {};
 
           if (isLoadMore) {

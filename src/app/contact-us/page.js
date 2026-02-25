@@ -1,5 +1,6 @@
 "use client";
 import React from "react";
+import Footer from "@/components/footer";
 
 const ContactUsPage = () => {
   const sections = [
@@ -62,6 +63,7 @@ const ContactUsPage = () => {
           ))}
         </div>
       </div>
+      <Footer />
     </div>
   );
 };

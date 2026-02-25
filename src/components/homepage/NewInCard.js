@@ -60,8 +60,7 @@ const NewInCard = ({
     <>
       <Link
         href={`/products/${id}`}
-        target="_blank"
-        rel="noopener noreferrer"
+       
         onClick={() => localStorage.setItem("ProductId", id)}
       >
         <div className="w-full rounded-xl inline-flex flex-col gap-2 sm:gap-2.5 overflow-hidden cursor-pointer">

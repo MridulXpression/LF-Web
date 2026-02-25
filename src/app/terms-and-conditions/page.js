@@ -1,6 +1,6 @@
 "use client";
 import React from "react";
-
+import Footer from "@/components/footer";
 const TermsAndConditionsPage = () => {
   const sections = [
     {
@@ -366,6 +366,7 @@ const TermsAndConditionsPage = () => {
           </section>
         ))}
       </div>
+      <Footer />
     </div>
   );
 };

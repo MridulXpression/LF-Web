@@ -106,8 +106,6 @@ const CartBanner = () => {
                   {hasRedirectUrl ? (
                     <a
                       href={banner.redirectUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
                       className="block w-full h-full"
                     >
                       {mediaContent}

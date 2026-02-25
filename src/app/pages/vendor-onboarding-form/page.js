@@ -1,3 +1,4 @@
+import Footer from "@/components/footer";
 export default function VendorOnboardingForm() {
   return (
     <div>
@@ -8,6 +9,7 @@ export default function VendorOnboardingForm() {
         width="100%"
         title="Vendor Registration Page"
       ></iframe>
+      <Footer />
     </div>
   );
 }

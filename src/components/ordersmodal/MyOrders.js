@@ -113,8 +113,7 @@ const OrderCard = ({ order, onAction, onClick }) => {
               <a
                 onClick={(e) => e.stopPropagation()}
                 href={invoiceUrl}
-                target="_blank"
-                rel="noopener noreferrer"
+             
                 className="flex items-center gap-1 text-sm text-[#988BFF] hover:text-blue-700 mb-2 ml-auto cursor-pointer"
               >
                 <Download className="w-4 h-4" />

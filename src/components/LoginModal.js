@@ -345,8 +345,8 @@ const PhoneAuthModal = () => {
                 <div className="absolute top-4 right-4 flex gap-2">
                   <a
                     href="https://apps.apple.com/in/app/lafetch-fetch-your-fashion/id6739497338"
-                    target="_blank"
-                    rel="noopener noreferrer"
+                    //target="_blank"
+                   // rel="noopener noreferrer"
                     className="bg-white hover:bg-gray-100 rounded-lg p-2 transition-all cursor-pointer shadow-md"
                     title="Download on App Store"
                   >
@@ -360,8 +360,8 @@ const PhoneAuthModal = () => {
                   </a>
                   <a
                     href="https://play.google.com/store/search?q=lafetch&c=apps&hl=en"
-                    target="_blank"
-                    rel="noopener noreferrer"
+                   // target="_blank"
+                   // rel="noopener noreferrer"
                     className="bg-white hover:bg-gray-100 rounded-lg p-2 transition-all cursor-pointer shadow-md"
                     title="Get it on Google Play"
                   >

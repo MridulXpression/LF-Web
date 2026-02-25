@@ -548,6 +548,6 @@ export default function ProductPage({ params }) {
           }}
         />
       )}
-    </div>
+    </div> 
   );
 }

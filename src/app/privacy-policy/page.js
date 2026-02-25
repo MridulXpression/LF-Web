@@ -1,6 +1,6 @@
 "use client";
 import React from "react";
-
+import Footer from "@/components/footer";
 const PrivacyPolicyPage = () => {
   const sections = [
     {
@@ -377,7 +377,7 @@ Personal Information and Sensitive Personal Data/Information are collectively re
         ))}
       </div>
 
-      {/* <Footer /> */}
+      <Footer />
     </div>
   );
 };
