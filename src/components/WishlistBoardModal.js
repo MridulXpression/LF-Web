@@ -90,7 +90,20 @@ const CreateBoardModal = ({ productData, onClose }) => {
           name: selectedSuggestion,
         };
 
-        const createResponse = await createBoard(createPayload);
+        let createResponse;
+        try {
+          createResponse = await createBoard(createPayload);
+        } catch (createError) {
+          const apiMessage = createError?.response?.data?.message;
+
+          if (apiMessage === "Unauthorized!") {
+            toast.error("Please login to create a board");
+          } else {
+            toast.error(apiMessage || "Failed to create board");
+          }
+          setIsAddingProduct(false);
+          return;
+        }
 
         if (createResponse?.status !== 201 && createResponse?.status !== 200) {
           toast.error("Failed to create board");
@@ -130,10 +143,12 @@ const CreateBoardModal = ({ productData, onClose }) => {
         }
       } else {
         // Use existing selected board
+
         boardId = selectedBoard.id;
       }
 
       // Add product to board
+
       const response = await addProductToBoard(boardId, productData);
 
       if (response?.success) {
@@ -218,6 +233,8 @@ const CreateBoardModal = ({ productData, onClose }) => {
               <button
                 onClick={handleCreateBoard}
                 disabled={!newBoardName.trim() || isCreating}
+                data-fb-event="CreateWishlistBoard"
+                id="create-board-button"
                 className="px-4 py-2 bg-gray-900 text-white text-sm font-medium hover:bg-gray-800 disabled:bg-gray-400 flex items-center gap-1 cursor-pointer"
               >
                 <Plus size={16} />
@@ -308,6 +325,8 @@ const CreateBoardModal = ({ productData, onClose }) => {
               isAddingProduct ||
               addProductLoading
             }
+            data-fb-event="AddToWishlist"
+            id="add-to-wishlist-button"
             className="w-full bg-gray-900 text-white py-2 md:py-3 text-sm md:text-base font-medium hover:bg-gray-800 disabled:bg-gray-400 disabled:cursor-not-allowed"
           >
             {isAddingProduct || addProductLoading

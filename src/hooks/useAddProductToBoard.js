@@ -39,6 +39,8 @@ const useAddProductToBoard = () => {
         result?.data?.message || result?.data?.data?.message || result?.message;
 
       if (status === 200 || status === 201) {
+        // Track AddToWishlist event with Facebook Pixel
+
         fbq("track", "AddToWishlist", {
           content_ids: [productData.id || productData.productId],
           content_type: "product",

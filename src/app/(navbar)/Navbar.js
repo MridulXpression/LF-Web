@@ -342,7 +342,7 @@ const Navbar = () => {
               <UserDropdown user={user} />
             ) : (
               <User
-                className="text-black"
+                className="text-black cursor-pointer"
                 onClick={() => dispatch(openPhoneAuthModal("navbar"))}
               />
             )}

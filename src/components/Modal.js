@@ -317,6 +317,17 @@ const ProductModal = () => {
           localStorage.setItem("ProductId", product.id);
           localStorage.setItem("selectedVariantId", variantId);
 
+          // Track AddToCart event with Facebook Pixel
+          if (typeof fbq !== "undefined") {
+            fbq("track", "AddToCart", {
+              content_ids: [product.id],
+              content_type: "product",
+              content_name: product.title || "Product",
+              value: product.basePrice || 0,
+              currency: "INR",
+            });
+          }
+
           // Add to Redux cart state for cart sync
           dispatch(addToCart({ product, variantId, quantity: 1 }));
 
@@ -356,6 +367,17 @@ const ProductModal = () => {
         );
 
         if (result.status === 200 || result.status === 201) {
+          // Track AddToCart event with Facebook Pixel
+          if (typeof fbq !== "undefined") {
+            fbq("track", "AddToCart", {
+              content_ids: [product.id],
+              content_type: "product",
+              content_name: product.title || "Product",
+              value: product.basePrice || 0,
+              currency: "INR",
+            });
+          }
+
           // Add to Redux cart state
           dispatch(addToCart({ product, variantId }));
 
@@ -431,6 +453,17 @@ const ProductModal = () => {
         localStorage.setItem("ProductId", product.id);
         localStorage.setItem("selectedVariantId", variantId);
 
+        // Track AddToCart event with Facebook Pixel
+        if (typeof fbq !== "undefined") {
+          fbq("track", "AddToCart", {
+            content_ids: [product.id],
+            content_type: "product",
+            content_name: product.title || "Product",
+            value: product.basePrice || 0,
+            currency: "INR",
+          });
+        }
+
         // Add to Redux cart state for cart sync
         dispatch(addToCart({ product, variantId, quantity: 1 }));
 
@@ -467,6 +500,17 @@ const ProductModal = () => {
       const result = await axiosHttp.post(endPoints.addProductToCart, payload);
 
       if (result.status === 200 || result.status === 201) {
+        // Track AddToCart event with Facebook Pixel
+        if (typeof fbq !== "undefined") {
+          fbq("track", "AddToCart", {
+            content_ids: [product.id],
+            content_type: "product",
+            content_name: product.title || "Product",
+            value: product.basePrice || 0,
+            currency: "INR",
+          });
+        }
+
         // Add to Redux cart state
         dispatch(addToCart({ product, variantId }));
 

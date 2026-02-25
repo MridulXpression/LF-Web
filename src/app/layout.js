@@ -79,7 +79,7 @@ export default function RootLayout({ children }) {
         t.src=v;s=b.getElementsByTagName(e)[0];
         s.parentNode.insertBefore(t,s)}(window, document,'script',
         'https://connect.facebook.net/en_US/fbevents.js');
-        fbq('init', '708965264792579');
+      fbq('init', '708965264792579', { autoConfig: false });
         fbq('track', 'PageView');
       `,
           }}
@@ -120,7 +120,7 @@ export default function RootLayout({ children }) {
           <AnnouncementBar />
           <GlobalLoader />
           <RazorpayScriptLoader />
-          {/* <FloatingVideoAd /> */}
+
           {children}
         </Providers>
       </body>
