@@ -116,29 +116,12 @@ const BrandProduct = () => {
         ) : products.length > 0 ? (
           <>
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
-              {products.map((product, index) => {
-                // Attach ref to the last product for infinite scroll
-                if (products.length === index + 1) {
-                  return (
-                    <div ref={lastProductRef} key={product.id}>
-                      <BrandProductCard
-                        image={
-                          product.imageUrls?.[0] ||
-                          "https://via.placeholder.com/400"
-                        }
-                        title={product.title}
-                        price={product.basePrice}
-                        mrp={product.mrp}
-                        productId={product.id}
-                        hasCOD={product.hasCOD}
-                        hasExchange={product.hasExchange}
-                      />
-                    </div>
-                  );
-                }
-                return (
+              {products.map((product, index) => (
+                <div
+                  key={product.id}
+                  ref={products.length === index + 1 ? lastProductRef : null}
+                >
                   <BrandProductCard
-                    key={product.id}
                     image={
                       product.imageUrls?.[0] ||
                       "https://via.placeholder.com/400"
@@ -150,8 +133,8 @@ const BrandProduct = () => {
                     hasCOD={product.hasCOD}
                     hasExchange={product.hasExchange}
                   />
-                );
-              })}
+                </div>
+              ))}
             </div>
             {isLoading && products.length > 0 && (
               <div className="flex items-center justify-center py-8">
