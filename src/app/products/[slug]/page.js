@@ -1,5 +1,6 @@
 "use client";
 import React, { useMemo, useState, useEffect } from "react";
+import Head from "next/head";
 import useProductsById from "@/hooks/useProductById";
 import ProductImageGallery from "@/components/ProductImages";
 import ProductInfo from "@/components/ProductHeader";
@@ -12,6 +13,8 @@ import axiosHttp from "@/utils/axioshttp";
 import Footer from "@/components/footer";
 import { getParsedSelectedOptions } from "@/utils/variantUtils";
 import WriteReviewModal from "@/components/WriteReviewModal";
+import { shouldRedirect, redirectToSlug } from "@/utils/redirectHandler";
+import { generateProductSchema, injectSchemaTag } from "@/utils/seoSchema";
 
 const extractSizesFromVariants = (variants) => {
   if (!variants || !Array.isArray(variants)) return [];
@@ -139,7 +142,18 @@ const extractColorsFromVariants = (variants) => {
 
 export default function ProductPage({ params }) {
   const unwrappedParams = React.use(params);
-  const { product: data, loading, error } = useProductsById(unwrappedParams.id);
+  
+  // Guard: ensure slug is provided
+  if (!unwrappedParams.slug) return null;
+  
+  const { product: data, loading, error } = useProductsById(unwrappedParams.slug);
+
+  // 🔄 Handle redirect from numeric ID to slug URL (for SEO)
+  useEffect(() => {
+    if (data?.slug && shouldRedirect(unwrappedParams.slug, data.slug)) {
+      redirectToSlug(unwrappedParams.slug, data.slug);
+    }
+  }, [data?.slug, unwrappedParams.slug]);
 
   // Clear selectedVariantId when product changes
   useEffect(() => {
@@ -310,6 +324,17 @@ export default function ProductPage({ params }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data?.id]);
 
+  // 🔍 Inject SEO structured data (JSON-LD) for rich snippets
+  useEffect(() => {
+    if (data && typeof window !== "undefined") {
+      const origin = window.location.origin;
+      const schema = generateProductSchema(data, origin);
+      if (schema) {
+        injectSchemaTag(schema);
+      }
+    }
+  }, [data]);
+
   // Handle message display
   const handleMessage = (msg) => {
     setMessage(msg);
@@ -376,6 +401,19 @@ export default function ProductPage({ params }) {
 
   return (
     <div className="bg-white">
+      {/* SEO: Canonical URL */}
+      <Head>
+        <link 
+          rel="canonical" 
+          href={`${typeof window !== 'undefined' ? window.location.origin : ''}/products/${unwrappedParams.slug}`}
+        />
+        {/* OG Tags for Social Sharing */}
+        <meta property="og:title" content={data?.title || 'Product'} />
+        <meta property="og:description" content={data?.description?.substring(0, 160) || ''} />
+        <meta property="og:image" content={data?.imageUrls?.[0] || ''} />
+        <meta property="og:url" content={`${typeof window !== 'undefined' ? window.location.origin : ''}/products/${unwrappedParams.slug}`} />
+        <meta name="description" content={data?.description?.substring(0, 160) || ''} />
+      </Head>
       <Navbar />
       <div className="max-w-7xl mx-auto px-4 py-8 mt-[130px] ">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">

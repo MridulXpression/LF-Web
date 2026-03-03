@@ -97,6 +97,8 @@ const WishlistProductCard = () => {
                   currentPrice={product?.basePrice || 0}
                   originalPrice={product?.mrp || 0}
                   onDelete={handleDelete}
+                  slug={product?.slug}
+                  shopifyHandles={product?.shopifyHandles}
                 />
               );
             })}

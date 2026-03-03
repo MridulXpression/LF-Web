@@ -67,7 +67,10 @@ const useUnifiedFilter = () => {
         // Add page parameter
         params.append("page", pageNumber);
 
-        const response = await axiosHttp.post(
+        // const response = await axiosHttp.post(
+        //   `/filter-products?${params.toString()}`,
+        // );
+        const response = await axiosHttp.get(
           `/filter-products?${params.toString()}`,
         );
 
