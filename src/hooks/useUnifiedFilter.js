@@ -22,7 +22,9 @@ const useUnifiedFilter = () => {
       catId = null,
       sizes = [],
       colors = [],
-      collectionId = null,
+      //collectionId = null,
+      // Normalize collectionId to number
+      collectionId = collectionId ? Number(collectionId) : null,
       key = null,
       fits=[],
       clothingTypes=[],
@@ -56,6 +58,7 @@ const useUnifiedFilter = () => {
           params.append("color", colors.join(","));
         }
         if (collectionId) params.append("collectionId", collectionId);
+        
         if (key) params.append("key", key);
         if(fits && fits.length>0){
           params.append("fit",fits.join(","));
